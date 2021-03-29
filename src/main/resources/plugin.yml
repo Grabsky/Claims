@@ -1,0 +1,10 @@
+name: ClaimsGUI
+version: ${project.version}
+main: net.skydistrict.claimsgui.ClaimsGUI
+api-version: 1.16
+depend: [ ProtectionStones, WorldGuard, WorldEdit ]
+authors: [ Grabsky ]
+commands:
+  claim:
+    permission: 'skydistrict.claim'
+    permission-message: 'Insufficient permissions.'
