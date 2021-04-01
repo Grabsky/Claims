@@ -1,6 +1,6 @@
 package net.skydistrict.claimsgui.commands;
 
-import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.Component;
 import net.skydistrict.claimsgui.panel.Panel;
 import net.skydistrict.claimsgui.panel.sections.MainSection;
 import org.bukkit.command.Command;
@@ -15,9 +15,9 @@ public class ClaimCommand implements CommandExecutor {
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
             Player player = (Player) sender;
-            Panel panel = new Panel(45, (MiniMessage.get().parse("<rainbow>Claim")));
+            Panel panel = new Panel(54, Component.text("§f\u7000\u7001"));
+            panel.applySection(new MainSection(panel, player));
             panel.open(player);
-            new MainSection(panel, player);
         }
         return true;
     }

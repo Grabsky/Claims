@@ -4,23 +4,15 @@ import net.skydistrict.claimsgui.panel.Panel;
 import org.bukkit.entity.Player;
 
 public abstract class Section {
-    private final Panel panel;
-    private final Player player;
 
+    /** Constructor required to prepare and apply Section to a Panel */
     public Section(Panel panel, Player player) {
-        this.panel = panel;
-        this.player = player;
-        this.panel.clear();
-        this.load();
+        panel.clear();
     }
 
-    public Panel getPanel() {
-        return panel;
-    }
+    /** Here, you can prepare your section before applying it */
+    public abstract void prepare();
 
-    public Player getPlayer() {
-        return player;
-    }
-
-    public abstract void load();
+    /** Here, you can make changes in the Panel*/
+    public abstract void apply();
 }

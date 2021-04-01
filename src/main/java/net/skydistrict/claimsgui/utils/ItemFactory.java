@@ -1,45 +1,60 @@
 package net.skydistrict.claimsgui.utils;
 
 import net.kyori.adventure.text.Component;
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 public class ItemFactory {
-    public static ItemStack create(@NotNull ItemStack item, @NotNull Boolean isGlowing, @NotNull Component name, @NotNull Component... lore) {
-        ItemMeta meta = item.getItemMeta();
-        if(meta != null) {
-            meta.displayName(name);
-            meta.lore(Arrays.asList(lore));
-            if (isGlowing) {
-                item.addUnsafeEnchantment(Enchantment.ARROW_INFINITE, 7);
-                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-            }
-            item.setItemMeta(meta);
-        }
-        return item;
+    private final ItemStack item;
+    private final ItemMeta meta;
+
+    public ItemFactory(Material material, int amount) {
+        this.item = new ItemStack(material, amount);
+        this.meta = item.getItemMeta();
     }
 
-    public static ItemStack create(@NotNull ItemStack item, @NotNull Component name, @NotNull Component... lore) {
-        ItemMeta meta = item.getItemMeta();
-        if(meta != null) {
-            meta.displayName(name);
-            meta.lore(Arrays.asList(lore));
-            item.setItemMeta(meta);
-        }
-        return item;
+    public ItemFactory(Material material) {
+        this.item = new ItemStack(material);
+        this.meta = item.getItemMeta();
     }
 
-    public static ItemStack create(@NotNull ItemStack item, @NotNull Component name) {
-        ItemMeta meta = item.getItemMeta();
-        if(meta != null) {
-            meta.displayName(name);
-            item.setItemMeta(meta);
-        }
-        return item;
+    public ItemFactory setName(String name) {
+        this.meta.setDisplayName(name);
+        return this;
+    }
+
+    public ItemFactory setName(Component name) {
+        this.meta.displayName(name);
+        return this;
+    }
+
+    public ItemFactory setLore(String... lines) {
+        this.meta.setLore(Arrays.asList(lines));
+        return this;
+    }
+
+    public ItemFactory setCustomModelData(int value) {
+        this.meta.setCustomModelData(value);
+        return this;
+    }
+
+    public ItemFactory setItemFlags(ItemFlag... itemFlags) {
+        this.meta.addItemFlags(itemFlags);
+        return this;
+    }
+
+    public ItemFactory addEnchantment(Enchantment enchantment, int level) {
+        this.item.addUnsafeEnchantment(enchantment, level);
+        return this;
+    }
+
+    public ItemStack build() {
+        this.item.setItemMeta(this.meta);
+        return this.item;
     }
 }

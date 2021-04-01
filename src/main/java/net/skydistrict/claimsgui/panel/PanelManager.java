@@ -14,6 +14,7 @@ import org.bukkit.inventory.Inventory;
 import java.util.HashMap;
 import java.util.Map;
 
+// TO-DO: InventoryDragEvent to fix some possible issues
 public class PanelManager implements Listener {
     private Map<Player, Panel> openInventories;
     private Map<Player, Long> clickCooldowns;
@@ -34,7 +35,7 @@ public class PanelManager implements Listener {
         System.out.println(this.openInventories);
         if (openInventories.containsKey(player)) {
             event.setCancelled(true);
-            // Return if clicked outside inventory or empty slot
+            // Return if clicked slot is outside the inventory or empty
             if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) return;
             Panel panel = openInventories.get(player);
             Inventory inventory = panel.getInventory();
