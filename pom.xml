@@ -6,7 +6,7 @@
 
     <groupId>net.skydistrict</groupId>
     <artifactId>ClaimsGUI</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>pre-0.0.1</version>
     <packaging>jar</packaging>
 
     <name>ClaimsGUI</name>
@@ -55,10 +55,6 @@
 
     <repositories>
         <repository>
-            <id>spigot-repo</id>
-            <url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
-        </repository>
-        <repository>
             <id>papermc-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
@@ -69,6 +65,7 @@
     </repositories>
 
     <dependencies>
+        <!-- Paper API -->
         <dependency>
             <groupId>com.destroystokyo.paper</groupId>
             <artifactId>paper-api</artifactId>
@@ -89,7 +86,7 @@
             <scope>system</scope>
             <systemPath>/home/user/Documents/Projects/builds/Indigo.jar</systemPath>
         </dependency>
-        <!-- Local MC Jar for NMS -->
+        <!-- Local server jar for NMS -->
         <dependency>
             <groupId>net.minecraft</groupId>
             <artifactId>Server</artifactId>
