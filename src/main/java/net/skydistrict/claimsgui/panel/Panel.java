@@ -41,6 +41,11 @@ public class Panel {
         }
     }
 
+    /** Sets item in panel inventory */
+    public void setItem(int slot, @NotNull ItemStack item) {
+        this.inventory.setItem(slot, item);
+    }
+
     /** Returns ClickAction (callback) for specified slot */
     @Nullable public ClickAction getAction(int slot) {
         return actions[slot];

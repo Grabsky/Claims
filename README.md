@@ -11,11 +11,11 @@ To build, run `mvn install` or `mvn clean install`.
 Jar file named `ClaimsGUI-[VERSION].jar` will be placed in `../build/`
 
 ## TO-DO
-- [ ] Make GUIs work with sections (in OOP friendly way)
+- [x] Make GUIs work with sections (in OOP friendly way)
 - [ ] Add `/teren <player>` for administrators
-- [ ] Section: MAIN
-- [ ] Section: ADD (paginated)
+- [x] Section: MAIN
+- [x] Section: ADD (paginated)
 - [ ] Section: REMOVE
 - [ ] Section: FLAGS (with working click-to-next feature)
 - [ ] Section: UPGRADE
-- [ ] Subsections: MEMBERS, SETTINGS
+- [x] Subsections: MEMBERS, SETTINGS

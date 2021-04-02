@@ -1,12 +1,13 @@
 package net.skydistrict.claimsgui.panel.sections;
 
+import dev.espi.protectionstones.PSRegion;
 import net.skydistrict.claimsgui.panel.Panel;
 import org.bukkit.entity.Player;
 
 public abstract class Section {
 
     /** Constructor required to prepare and apply Section to a Panel */
-    public Section(Panel panel, Player player) {
+    public Section(Panel panel, Player player, PSRegion region) {
         panel.clear();
     }
 
