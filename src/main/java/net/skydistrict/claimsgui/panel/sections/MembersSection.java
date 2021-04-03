@@ -8,6 +8,9 @@ import net.skydistrict.claimsgui.utils.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 public class MembersSection extends Section {
     private final Panel panel;
     private final Player player;
@@ -25,10 +28,18 @@ public class MembersSection extends Section {
 
     @Override
     public void prepare() {
+        final ArrayList<UUID> members = region.getMembers();
         // ADD
         if (region.getMembers().size() >= 8) {
             this.unableAddReason = "§7Osiągnąłeś limit (8) graczy dodanych do terenu.";
-        } else if (Bukkit.getOnlinePlayers().size() == 1) {
+        }
+        int count = 0;
+        for (UUID uuid : members) {
+            if(Bukkit.getPlayer(uuid) != null) {
+                count++;
+            }
+        }
+        if (Bukkit.getOnlinePlayers().size() == 1 || count > 0) {
             this.unableAddReason = "§7Aktualnie nie ma nikogo na serwerze.";
         }
         // REMOVE
@@ -51,7 +62,7 @@ public class MembersSection extends Section {
         // REMOVE
         if (unableRemoveReason == null) {
             panel.setItem(14, StaticItems.REMOVE, event -> {
-                // panel.applySection(new MembersRemoveSection(panel, player, region));
+                panel.applySection(new MembersRemoveSection(panel, player, region));
             });
         } else {
             panel.setItem(14, StaticItems.REMOVE_DISABLED.setLore(unableRemoveReason).build());
