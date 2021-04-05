@@ -94,7 +94,7 @@
             <artifactId>Indigo</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>/home/user/Documents/Projects/builds/Indigo.jar</systemPath>
+            <systemPath>C:/Users/admin/Development/builds/Indigo.jar</systemPath>
         </dependency>
         <!-- ProtectionStones API -->
         <dependency>
@@ -130,7 +130,7 @@
             <artifactId>Server</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>/home/user/Documents/Servers/dev/cache/patched_1.16.5.jar</systemPath>
+            <systemPath>C:/Users/admin/Development/local/patched_1.16.5.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
