@@ -4,7 +4,7 @@ import dev.espi.protectionstones.PSRegion;
 import net.minecraft.server.v1_16_R3.Containers;
 import net.skydistrict.claimsgui.config.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.utils.ItemBuilder;
+import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.utils.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -61,14 +61,14 @@ public class MembersAddSection extends Section {
             UUID uuid = guiPlayer.getUniqueId();
             // Add skull to gui
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
-                    .setName("§e§l" + guiPlayer.getName())
-                    .setLore("§7Kliknij, aby dodać do terenu.")
+                    .setName("§a§l" + guiPlayer.getName())
+                    .setLore("§7Kliknij, aby §adodać§7 do terenu.")
                     .setSkullOwner(uuid)
                     .build(), event -> {
                 // One more check just in case something changed while GUI was open
                 if (region.getMembers().size() < 8) {
                     region.addMember(uuid);
-                    generatePage(pageToDisplay, maxOnPage, players);
+                    panel.applySection(new MembersSection(panel, player, region));
                 } else {
                     player.closeInventory();
                     player.sendMessage("§6§lS§e§lD§8 » §cOsiągnąłeś limit (8) graczy dodanych do terenu.");

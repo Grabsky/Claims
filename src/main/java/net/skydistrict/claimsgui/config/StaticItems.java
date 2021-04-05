@@ -1,6 +1,6 @@
 package net.skydistrict.claimsgui.config;
 
-import net.skydistrict.claimsgui.utils.ItemBuilder;
+import net.skydistrict.claimsgui.builders.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -37,22 +37,11 @@ public class StaticItems {
 
 
     // Members
-    public static ItemStack ADD = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§a§lDodaj")
+    public static ItemStack ADD = new ItemBuilder(Material.STRUCTURE_VOID)
+            .setName("§7&lDodaj")
             .setLore("§7Kliknij, aby przeglądać listę graczy.")
-            .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTU3YmJlMmVmY2U3NThmMDA5ZjhhNzQzNGQyNDY2NGNkZGZlN2EyZDAzOTQxOTAxYzA1YjMzMWM0NjEyZTljNCJ9fX0")
+            .setCustomModelData(3)
             .build();
-    public static ItemBuilder ADD_DISABLED = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§7§lDodaj")
-            .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmRmN2E2ZDUxM2M3ZjIzMmE0OTFmMTVlYWRjOGM0ZWI3YTE5NTk5Y2VmMjQxYzVmNjIwYTM4NTNmZWYxMzkxNCJ9fX0=");
-    public static ItemStack REMOVE = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§c§lWyrzuć")
-            .setLore("§7Kliknij, aby przeglądać listę graczy.")
-            .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDVhMWI4MzBkNTI0NDljODAyMDk5OWM2MTcwYjI3YTZjOTgzZTczMmIyNmRhNzMzN2I2NmFkYzEyZjM4MzIyYiJ9fX0=")
-            .build();
-    public static ItemBuilder REMOVE_DISABLED = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§7§lWyrzuć")
-            .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjBjNDQ4NGE1MGU1NzllZDE1OTgyN2JiZGE3N2E3NDBlYTE3MDk3YzMwN2YzY2I2Y2FkOWU2YWQ1NWE5NzFkYSJ9fX0=");
 
 
     // Navigation

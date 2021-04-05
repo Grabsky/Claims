@@ -20,3 +20,4 @@ Jar file named `ClaimsGUI-[VERSION].jar` will be placed in `../build/`
 - [ ] Section: FLAGS (with working click-to-next feature)
 - [ ] Section: UPGRADE
 - [x] Subsections: MEMBERS, SETTINGS
+- [x] Rewrite of MEMBERS subsection (integration with REMOVE)

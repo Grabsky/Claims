@@ -2,7 +2,7 @@ package net.skydistrict.claimsgui.panel;
 
 import net.kyori.adventure.text.Component;
 import net.skydistrict.claimsgui.ClaimsGUI;
-import net.skydistrict.claimsgui.panel.interfaces.ClickAction;
+import net.skydistrict.claimsgui.interfaces.ClickAction;
 import net.skydistrict.claimsgui.panel.sections.Section;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -10,10 +10,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 
 public class Panel {
     private static final PanelManager panelManager = ClaimsGUI.getInstance().getPanelManager();

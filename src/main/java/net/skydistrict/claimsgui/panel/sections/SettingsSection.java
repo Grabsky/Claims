@@ -31,7 +31,7 @@ public class SettingsSection extends Section {
     public void apply() {
         NMS.updateTitle(player, "§f\u7000\u7002", Containers.GENERIC_9X6);
         panel.setItem(12, StaticItems.FLAGS, event -> {
-            // panel.applySection(new FlagsSection(panel, player, region));
+            panel.applySection(new FlagsSection(panel, player, region));
         });
         panel.setItem(14, this.UPGRADE, event -> {
             // panel.applySection(new UpgradeSection(panel, player, region));

@@ -1,4 +1,4 @@
-package net.skydistrict.claimsgui.panel.interfaces;
+package net.skydistrict.claimsgui.interfaces;
 
 import org.bukkit.event.inventory.InventoryClickEvent;
 

@@ -1,10 +1,11 @@
-package net.skydistrict.claimsgui.utils;
+package net.skydistrict.claimsgui.builders;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import me.grabsky.indigo.api.SkullCache;
 import net.kyori.adventure.text.Component;
+import net.skydistrict.claimsgui.utils.Text;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -30,7 +31,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setName(String name) {
-        this.meta.setDisplayName(TextUtils.color(name));
+        this.meta.setDisplayName(Text.color(name));
         return this;
     }
 
@@ -42,7 +43,7 @@ public class ItemBuilder {
     public ItemBuilder setLore(String... lines) {
         ArrayList<String> lore = new ArrayList<>(lines.length);
         for (String line : lines) {
-            lore.add(TextUtils.color(line));
+            lore.add(Text.color(line));
         }
         this.meta.setLore(lore);
         return this;
@@ -86,6 +87,10 @@ public class ItemBuilder {
             this.setSkullValue(value);
         }
         return this;
+    }
+
+    public ItemMeta getMeta() {
+        return meta;
     }
 
     public ItemStack build() {
