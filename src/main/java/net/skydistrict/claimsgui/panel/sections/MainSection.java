@@ -2,9 +2,9 @@ package net.skydistrict.claimsgui.panel.sections;
 
 import dev.espi.protectionstones.PSRegion;
 import net.minecraft.server.v1_16_R3.Containers;
+import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.config.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.utils.NMS;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -39,19 +39,17 @@ public class MainSection extends Section {
 
     @Override
     public void apply() {
+        // Changing panel texture
         NMS.updateTitle(player, "§f\u7000\u7001", Containers.GENERIC_9X6);
+        // Setting menu items
         panel.setItem(10, StaticItems.HOMES, event -> {
             if (event.getAction() == InventoryAction.PICKUP_ALL) {
                 // LMB - teleport
             } else if (event.getAction() == InventoryAction.PICKUP_HALF);
                 // RMB - list of teleports
         });
-        panel.setItem(12, this.MEMBERS, event -> {
-            panel.applySection(new MembersSection(panel, player, region));
-        });
-        panel.setItem(14, StaticItems.SETTINGS, event -> {
-            panel.applySection(new SettingsSection(panel, player, region));
-        });
+        panel.setItem(12, this.MEMBERS, event -> panel.applySection(new MembersSection(panel, player, region)));
+        panel.setItem(14, StaticItems.SETTINGS, event -> panel.applySection(new SettingsSection(panel, player, region)));
         panel.setItem(16, this.INFO);
         panel.setItem(40, StaticItems.RETURN, (event) -> player.closeInventory());
     }

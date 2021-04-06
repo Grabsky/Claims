@@ -39,7 +39,7 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <outputFile>../builds/${project.artifactId}-${project.version}.jar</outputFile>
+                            <outputFile>../git-builds/${project.artifactId}-${project.version}.jar</outputFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -94,7 +94,7 @@
             <artifactId>Indigo</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>C:/Users/admin/Development/builds/Indigo.jar</systemPath>
+            <systemPath>C:/Users/admin/Development/LocalProjects/local-builds/Indigo.jar</systemPath>
         </dependency>
         <!-- ProtectionStones API -->
         <dependency>

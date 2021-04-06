@@ -3,6 +3,7 @@ package net.skydistrict.claimsgui.panel;
 import net.skydistrict.claimsgui.ClaimsGUI;
 import net.skydistrict.claimsgui.config.Config;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -44,6 +45,7 @@ public class PanelManager implements Listener {
                 clickCooldowns.put(player, System.currentTimeMillis());
                 int slot = event.getSlot();
                 if (panel.getAction(slot) != null) {
+                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1F, 1.5F);
                     panel.getAction(slot).click(event);
                 }
             }

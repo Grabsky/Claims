@@ -29,10 +29,10 @@ public class SettingsSection extends Section {
 
     @Override
     public void apply() {
+        // Changing panel texture
         NMS.updateTitle(player, "§f\u7000\u7002", Containers.GENERIC_9X6);
-        panel.setItem(12, StaticItems.FLAGS, event -> {
-            panel.applySection(new FlagsSection(panel, player, region));
-        });
+        // Setting menu items
+        panel.setItem(12, StaticItems.FLAGS, event -> panel.applySection(new FlagsSection(panel, player, region)));
         panel.setItem(14, this.UPGRADE, event -> {
             // panel.applySection(new UpgradeSection(panel, player, region));
         });

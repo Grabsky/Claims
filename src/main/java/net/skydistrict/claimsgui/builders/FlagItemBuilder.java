@@ -1,7 +1,7 @@
 package net.skydistrict.claimsgui.builders;
 
 import com.sk89q.worldguard.protection.flags.Flag;
-import net.skydistrict.claimsgui.interfaces.NextAction;
+import net.skydistrict.claimsgui.interfaces.ToggleAction;
 import net.skydistrict.claimsgui.utils.Flags;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +10,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.List;
 
+// TO-DO: NPE handling if flag is not set
+// TO-DO: Clean-up and comments
 public class FlagItemBuilder {
     private final ItemMeta meta;
     private final ItemStack item;
@@ -17,7 +19,8 @@ public class FlagItemBuilder {
     private final List<String> formattedOptions;
     private final int size;
     private int value;
-    private String desc;
+    private String prefix;
+    private String suffix;
 
     public FlagItemBuilder(Material material, Flag<?> flag, Object value) {
         // Item
@@ -28,6 +31,7 @@ public class FlagItemBuilder {
         this.formattedOptions = Flags.getFormattedOptions(flag);
         this.size = options.size();
         this.value = options.indexOf(value);
+
     }
 
     public FlagItemBuilder setName(String name) {
@@ -35,24 +39,33 @@ public class FlagItemBuilder {
         return this;
     }
 
-    public FlagItemBuilder setDescription(String desc) {
-        this.desc = desc;
+    public FlagItemBuilder setPrefix(String prefix) {
+        this.prefix = prefix;
+        return this;
+    }
+
+    public FlagItemBuilder setSuffix(String suffix) {
+        this.suffix = suffix;
         return this;
     }
 
     public FlagItemBuilder updateLore() {
         List<String> lore = new ArrayList<String>();
-        lore.add(desc);
+        lore.add(prefix);
         lore.add("");
         for (int i = 0; i < size; i++) {
             String color = (i == value) ? "§e" : "§7";
             lore.add("§8›§r " + color + formattedOptions.get(i));
         }
+        if (suffix != null) {
+            lore.add("");
+            lore.add(suffix);
+        }
         this.meta.setLore(lore);
         return this;
     }
 
-    public FlagItemBuilder next(NextAction action) {
+    public FlagItemBuilder toggle(ToggleAction action) {
         this.value = (value + 1 >= size) ? 0 : value + 1;
         this.updateLore();
         if (action != null) {

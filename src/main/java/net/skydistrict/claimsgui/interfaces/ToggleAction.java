@@ -1,5 +1,5 @@
 package net.skydistrict.claimsgui.interfaces;
 
-public interface NextAction {
+public interface ToggleAction {
     void run(Object value);
 }

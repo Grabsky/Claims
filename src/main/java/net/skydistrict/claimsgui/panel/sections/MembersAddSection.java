@@ -2,15 +2,16 @@ package net.skydistrict.claimsgui.panel.sections;
 
 import dev.espi.protectionstones.PSRegion;
 import net.minecraft.server.v1_16_R3.Containers;
+import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.config.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.utils.NMS;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.UUID;
 
 public class MembersAddSection extends Section {
     private final Panel panel;
@@ -34,6 +35,7 @@ public class MembersAddSection extends Section {
 
     @Override
     public void apply() {
+        // Changing panel texture
         NMS.updateTitle(player, "§f\u7000\u7003", Containers.GENERIC_9X6);
         // Display first page of online players
         this.generatePage(1, 21, players);
@@ -55,7 +57,9 @@ public class MembersAddSection extends Section {
             if (fixedIndex >= size) break;
             // Filtering players; Obviously not the best way to do that but at least it works ¯\_(ツ)_/¯
             if (players[fixedIndex] == player || members.contains(players[fixedIndex].getUniqueId())) {
-                slot--; index++; continue;
+                slot--;
+                index++;
+                continue;
             }
 		    Player guiPlayer = players[fixedIndex];
             UUID uuid = guiPlayer.getUniqueId();

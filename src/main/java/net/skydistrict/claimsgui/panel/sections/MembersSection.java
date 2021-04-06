@@ -7,7 +7,6 @@ import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.config.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
 import net.skydistrict.claimsgui.utils.NMS;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -28,12 +27,14 @@ public class MembersSection extends Section {
 
     @Override
     public void prepare() {
-
+        // Nothing to prepare for this section
     }
 
     @Override
     public void apply() {
+        // Changing panel texture
         NMS.updateTitle(player, "§f\u7000\u7004", Containers.GENERIC_9X6);
+        // Generating the view
         this.generateView();
     }
 
@@ -64,9 +65,7 @@ public class MembersSection extends Section {
             slot = (slot == 15) ? 20 : slot + 1;
         }
         if (slot != 25) {
-            panel.setItem(slot, StaticItems.ADD, event -> {
-                panel.applySection(new MembersAddSection(panel, player, region));
-            });
+            panel.setItem(slot, StaticItems.ADD, event -> panel.applySection(new MembersAddSection(panel, player, region)));
         }
         panel.setItem(40, StaticItems.RETURN, (event) -> panel.applySection(new MainSection(panel, player, region)));
     }
