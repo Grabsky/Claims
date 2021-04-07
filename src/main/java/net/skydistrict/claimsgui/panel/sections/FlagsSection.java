@@ -23,6 +23,9 @@ public class FlagsSection extends Section {
     private FlagItemBuilder TNT;
     private FlagItemBuilder ENTRY;
     private FlagItemBuilder MOB_SPAWNING;
+    private FlagItemBuilder CREEPER_EXPLOSION;
+    private FlagItemBuilder SNOW_MELT;
+    private FlagItemBuilder ICE_MELT;
     private FlagItemBuilder TIME_LOCK;
     private FlagItemBuilder WEATHER_LOCK;
 
@@ -38,8 +41,20 @@ public class FlagsSection extends Section {
     @Override
     public void prepare() {
         this.TNT = new FlagItemBuilder(Material.TNT, Flags.TNT, wgRegion.getFlag(Flags.TNT))
-                .setName("§f§lWybuch TNT")
-                .setPrefix("§7Przełącz wybuch TNT na terenie.")
+                .setName("§e§lWybuch TNT")
+                .setPrefix("§7Przełącz niszczenie terenu przez wybuch TNT.")
+                .updateLore();
+        this.CREEPER_EXPLOSION = new FlagItemBuilder(Material.CREEPER_HEAD, Flags.CREEPER_EXPLOSION, wgRegion.getFlag(Flags.CREEPER_EXPLOSION))
+                .setName("§e§lWybuch Creepera")
+                .setPrefix("§7Przełącz niszczenie terenu przez creepery.")
+                .updateLore();
+        this.SNOW_MELT = new FlagItemBuilder(Material.SNOWBALL, Flags.SNOW_MELT, wgRegion.getFlag(Flags.SNOW_MELT))
+                .setName("§e§lTopnienie Śniegu")
+                .setPrefix("§7Przełącz topnienie śniegu na terenie.")
+                .updateLore();
+        this.ICE_MELT = new FlagItemBuilder(Material.ICE, Flags.ICE_MELT, wgRegion.getFlag(Flags.ICE_MELT))
+                .setName("§e§lTopnienie Lodu")
+                .setPrefix("§7Przełącz topnienie lodu na terenie.")
                 .updateLore();
         this.ENTRY = new FlagItemBuilder(Material.DARK_OAK_DOOR, Flags.ENTRY, wgRegion.getFlag(Flags.ENTRY))
                 .setName("§e§lWejście")
@@ -68,13 +83,16 @@ public class FlagsSection extends Section {
         NMS.updateTitle(player, "§f\u7000\u7004", Containers.GENERIC_9X6);
         // Setting up flags
         this.panel.setItem(11, TNT.build(), event -> event.setCurrentItem(TNT.toggle(value -> wgRegion.setFlag(Flags.TNT, (StateFlag.State) value)).build()));
-        this.panel.setItem(12, ENTRY.build(), event -> event.setCurrentItem(ENTRY.toggle(value -> {
+        this.panel.setItem(12, CREEPER_EXPLOSION.build(), event -> event.setCurrentItem(CREEPER_EXPLOSION.toggle(value -> wgRegion.setFlag(Flags.CREEPER_EXPLOSION, (StateFlag.State) value)).build()));
+        this.panel.setItem(13, SNOW_MELT.build(), event -> event.setCurrentItem(SNOW_MELT.toggle(value -> wgRegion.setFlag(Flags.SNOW_MELT, (StateFlag.State) value)).build()));
+        this.panel.setItem(14, ICE_MELT.build(), event -> event.setCurrentItem(ICE_MELT.toggle(value -> wgRegion.setFlag(Flags.ICE_MELT, (StateFlag.State) value)).build()));
+        this.panel.setItem(15, ENTRY.build(), event -> event.setCurrentItem(ENTRY.toggle(value -> {
             wgRegion.setFlag(Flags.ENTRY, (StateFlag.State) value);
             wgRegion.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
         }).build()));
-        this.panel.setItem(11, MOB_SPAWNING.build(), event -> event.setCurrentItem(MOB_SPAWNING.toggle(value -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) value)).build()));
-        this.panel.setItem(13, TIME_LOCK.build(), event -> event.setCurrentItem(TIME_LOCK.toggle(value -> wgRegion.setFlag(Flags.TIME_LOCK, (String) value)).build()));
-        this.panel.setItem(14, WEATHER_LOCK.build(), event -> event.setCurrentItem(WEATHER_LOCK.toggle(value -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) value)).build()));
+        this.panel.setItem(20, MOB_SPAWNING.build(), event -> event.setCurrentItem(MOB_SPAWNING.toggle(value -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) value)).build()));
+        this.panel.setItem(21, TIME_LOCK.build(), event -> event.setCurrentItem(TIME_LOCK.toggle(value -> wgRegion.setFlag(Flags.TIME_LOCK, (String) value)).build()));
+        this.panel.setItem(22, WEATHER_LOCK.build(), event -> event.setCurrentItem(WEATHER_LOCK.toggle(value -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) value)).build()));
         // Return
         panel.setItem(40, StaticItems.RETURN, (event) -> panel.applySection(new SettingsSection(panel, player, region)));
     }
