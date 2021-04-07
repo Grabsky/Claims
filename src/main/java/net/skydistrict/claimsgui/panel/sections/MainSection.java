@@ -34,7 +34,6 @@ public class MainSection extends Section {
                 .setLore("§7Kliknij, aby zarządzać dodanymi do terenu.")
                 .setSkullOwner(player.getUniqueId())
                 .build();
-        this.INFO = StaticItems.INFO.setLore("", "§8§l› §7Dom: §e" + region.getHome().getBlockX() + ", " + region.getHome().getBlockY() + ", " + region.getHome().getBlockZ(), "§8§l› §7Liczba członków: §e" + region.getMembers().size()).build();
     }
 
     @Override
@@ -42,15 +41,14 @@ public class MainSection extends Section {
         // Changing panel texture
         NMS.updateTitle(player, "§f\u7000\u7001", Containers.GENERIC_9X6);
         // Setting menu items
-        panel.setItem(10, StaticItems.HOMES, event -> {
+        panel.setItem(11, StaticItems.HOMES, event -> {
             if (event.getAction() == InventoryAction.PICKUP_ALL) {
                 // LMB - teleport
             } else if (event.getAction() == InventoryAction.PICKUP_HALF);
                 // RMB - list of teleports
         });
-        panel.setItem(12, this.MEMBERS, event -> panel.applySection(new MembersSection(panel, player, region)));
-        panel.setItem(14, StaticItems.SETTINGS, event -> panel.applySection(new SettingsSection(panel, player, region)));
-        panel.setItem(16, this.INFO);
+        panel.setItem(13, this.MEMBERS, event -> panel.applySection(new MembersSection(panel, player, region)));
+        panel.setItem(15, StaticItems.SETTINGS, event -> panel.applySection(new SettingsSection(panel, player, region)));
         panel.setItem(40, StaticItems.RETURN, (event) -> player.closeInventory());
     }
 }

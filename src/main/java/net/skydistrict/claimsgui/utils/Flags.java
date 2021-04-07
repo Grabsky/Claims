@@ -12,7 +12,6 @@ public class Flags {
 
     /** Returns list of options (flag values) */
     public static List<Object> getOptions(Flag<?> flagType) {
-        System.out.println(flagType.getClass());
         if (flagType instanceof StateFlag) {
             return Arrays.asList(StateFlag.State.ALLOW, StateFlag.State.DENY);
         }
