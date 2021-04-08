@@ -14,6 +14,6 @@ public abstract class Section {
     /** Here, you can prepare your section before applying it */
     public abstract void prepare();
 
-    /** Here, you can make changes in the Panel*/
+    /** Here, you can make changes to the Panel */
     public abstract void apply();
 }

@@ -3,7 +3,7 @@ package net.skydistrict.claimsgui.panel.sections;
 import dev.espi.protectionstones.PSRegion;
 import net.minecraft.server.v1_16_R3.Containers;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
-import net.skydistrict.claimsgui.config.StaticItems;
+import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
 import net.skydistrict.claimsgui.utils.NMS;
 import org.bukkit.Material;
@@ -16,8 +16,7 @@ public class MainSection extends Section {
     private final Player player;
     private final PSRegion region;
 
-    private ItemStack MEMBERS;
-    private ItemStack INFO;
+    private ItemStack members;
 
     public MainSection(Panel panel, Player player, PSRegion region) {
         super(panel, player, region);
@@ -29,7 +28,7 @@ public class MainSection extends Section {
 
     @Override
     public void prepare() {
-        this.MEMBERS = new ItemBuilder(Material.PLAYER_HEAD)
+        this.members = new ItemBuilder(Material.PLAYER_HEAD)
                 .setName("§e§lCzłonkowie")
                 .setLore("§7Kliknij, aby zarządzać dodanymi do terenu.")
                 .setSkullOwner(player.getUniqueId())
@@ -47,7 +46,7 @@ public class MainSection extends Section {
             } else if (event.getAction() == InventoryAction.PICKUP_HALF);
                 // RMB - list of teleports
         });
-        panel.setItem(13, this.MEMBERS, event -> panel.applySection(new MembersSection(panel, player, region)));
+        panel.setItem(13, this.members, event -> panel.applySection(new MembersSection(panel, player, region)));
         panel.setItem(15, StaticItems.SETTINGS, event -> panel.applySection(new SettingsSection(panel, player, region)));
         panel.setItem(40, StaticItems.RETURN, (event) -> player.closeInventory());
     }

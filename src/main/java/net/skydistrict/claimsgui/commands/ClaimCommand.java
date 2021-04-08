@@ -25,10 +25,8 @@ public class ClaimCommand implements CommandExecutor {
                 panel.applySection(new MainSection(panel, player, region));
                 panel.open(player);
             } else {
-                System.out.println("asd");
                 // Open regions player is added to (upcoming section)
             }
-
         }
         return true;
     }

@@ -4,7 +4,7 @@ import dev.espi.protectionstones.PSRegion;
 import dev.espi.protectionstones.utils.UUIDCache;
 import net.minecraft.server.v1_16_R3.Containers;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
-import net.skydistrict.claimsgui.config.StaticItems;
+import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
 import net.skydistrict.claimsgui.utils.NMS;
 import org.bukkit.Material;

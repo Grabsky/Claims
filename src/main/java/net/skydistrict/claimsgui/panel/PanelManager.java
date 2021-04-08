@@ -1,7 +1,6 @@
 package net.skydistrict.claimsgui.panel;
 
 import net.skydistrict.claimsgui.ClaimsGUI;
-import net.skydistrict.claimsgui.config.Config;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -16,8 +15,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class PanelManager implements Listener {
-    private Map<Player, Panel> openInventories;
-    private Map<Player, Long> clickCooldowns;
+    private final Map<Player, Panel> openInventories;
+    private final Map<Player, Long> clickCooldowns;
 
     public PanelManager(ClaimsGUI instance) {
         this.openInventories = new HashMap<Player, Panel>();
@@ -41,7 +40,7 @@ public class PanelManager implements Listener {
             Inventory inventory = panel.getInventory();
             if (event.getClickedInventory() == inventory) {
                 // Return if player is on cooldown
-                if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < Config.GUI_COOLDOWN_MS) return;
+                if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < 250) return;
                 clickCooldowns.put(player, System.currentTimeMillis());
                 int slot = event.getSlot();
                 if (panel.getAction(slot) != null) {

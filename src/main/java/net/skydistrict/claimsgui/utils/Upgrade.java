@@ -10,19 +10,23 @@ import java.util.List;
 
 public class Upgrade {
 
-    public static List<String> ORDER = new ArrayList<String>(Arrays.asList("COAL_BLOCK", "IRON_BLOCK", "GOLD_BLOCK", "DIAMOND_BLOCK", "EMERALD_BLOCK"));
+    private static List<String> order = new ArrayList<String>(Arrays.asList("COAL", "IRON", "GOLD", "DIAMOND", "EMERALD"));
+
+    public static String getNextLevelAlias(String alias) {
+        return order.get(order.indexOf(alias) + 1);
+    }
 
     public static String translate(String type) {
         switch (type) {
-            case "COAL_BLOCK":
+            case "COAL":
                 return "Węgiel";
-            case "IRON_BLOCK":
+            case "IRON":
                 return "Żelazo";
-            case "GOLD_BLOCK":
+            case "GOLD":
                 return "Złoto";
-            case "DIAMOND_BLOCK":
+            case "DIAMOND":
                 return "Diament";
-            case "EMERALD_BLOCK":
+            case "EMERALD":
                 return "Szmaragd";
         }
         return "";
@@ -30,15 +34,15 @@ public class Upgrade {
 
     public static ChatColor color(String type) {
         switch (type) {
-            case "COAL_BLOCK":
+            case "COAL":
                 return ChatColor.DARK_GRAY;
-            case "IRON_BLOCK":
+            case "IRON":
                 return ChatColor.WHITE;
-            case "GOLD_BLOCK":
+            case "GOLD":
                 return ChatColor.GOLD;
-            case "DIAMOND_BLOCK":
+            case "DIAMOND":
                 return ChatColor.AQUA;
-            case "EMERALD_BLOCK":
+            case "EMERALD":
                 return ChatColor.GREEN;
         }
         return null;
@@ -47,15 +51,15 @@ public class Upgrade {
     /** Returns size of given region */
     public static int getSize(String type) {
         switch (type) {
-            case "COAL_BLOCK":
+            case "COAL":
                 return 15;
-            case "IRON_BLOCK":
+            case "IRON":
                 return 20;
-            case "GOLD_BLOCK":
+            case "GOLD":
                 return 25;
-            case "DIAMOND_BLOCK":
+            case "DIAMOND":
                 return 30;
-            case "EMERALD_BLOCK":
+            case "EMERALD":
                 return 35;
         }
         return 0;
@@ -64,13 +68,13 @@ public class Upgrade {
     /** Returns size of given region */
     public static ItemStack getUpgradePrice(String type) {
         switch (type) {
-            case "COAL_BLOCK":
+            case "IRON":
                 return new ItemStack(Material.IRON_INGOT, 64);
-            case "IRON_BLOCK":
+            case "GOLD":
                 return new ItemStack(Material.GOLD_INGOT, 64);
-            case "GOLD_BLOCK":
+            case "DIAMOND":
                 return new ItemStack(Material.DIAMOND, 64);
-            case "DIAMOND_BLOCK":
+            case "EMERALD":
                 return new ItemStack(Material.EMERALD, 64);
         }
         return null;

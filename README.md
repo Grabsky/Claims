@@ -11,9 +11,10 @@ To build, run `mvn install` or `mvn clean install`.
 Jar file named `ClaimsGUI-[VERSION].jar` will be placed in `../build/`
 
 ## TO-DO
-- [ ] Add configuration file and reload command
 - [ ] Teleport actions (with region browser)
+- [ ] Code cleanup and missing comments 
 - [ ] Test in search of bugs and exploits
+- [ ] (Optional) Add configuration file and reload command
 - [ ] (Optional) Add `/teren <player>` for administrators
 - [ ] (Optional) Add support for multiple regions
 - [x] Make GUIs work with sections (in OOP friendly way)
