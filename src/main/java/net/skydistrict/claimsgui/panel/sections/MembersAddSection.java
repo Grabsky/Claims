@@ -89,6 +89,6 @@ public class MembersAddSection extends Section {
         if (pageToDisplay + 1 <= pages) {
             panel.setItem(26, StaticItems.NEXT, (event) -> generatePage(pageToDisplay + 1, maxOnPage, players));
         }
-        panel.setItem(40, StaticItems.RETURN, (event) -> panel.applySection(new MembersSection(panel, player, region)));
+        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new MembersSection(panel, player, region)));
     }
 }

@@ -48,6 +48,6 @@ public class MainSection extends Section {
         });
         panel.setItem(13, this.members, event -> panel.applySection(new MembersSection(panel, player, region)));
         panel.setItem(15, StaticItems.SETTINGS, event -> panel.applySection(new SettingsSection(panel, player, region)));
-        panel.setItem(40, StaticItems.RETURN, (event) -> player.closeInventory());
+        panel.setItem(49, StaticItems.RETURN, (event) -> player.closeInventory());
     }
 }

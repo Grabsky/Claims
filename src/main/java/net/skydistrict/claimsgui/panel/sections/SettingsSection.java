@@ -116,7 +116,7 @@ public class SettingsSection extends Section {
                 }
             }
         });
-        panel.setItem(40, StaticItems.RETURN, (event) -> panel.applySection(new MainSection(panel, player, region)));
+        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new MainSection(panel, player, region)));
     }
 
     private void redefine(ProtectedRegion wgRegion) {

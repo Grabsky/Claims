@@ -67,6 +67,6 @@ public class MembersSection extends Section {
         if (slot != 25) {
             panel.setItem(slot, StaticItems.ADD, event -> panel.applySection(new MembersAddSection(panel, player, region)));
         }
-        panel.setItem(40, StaticItems.RETURN, (event) -> panel.applySection(new MainSection(panel, player, region)));
+        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new MainSection(panel, player, region)));
     }
 }

@@ -87,7 +87,7 @@ public class FlagsSection extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        NMS.updateTitle(player, "§f\u7000\u7004", Containers.GENERIC_9X6);
+        NMS.updateTitle(player, "§f\u7000\u7005", Containers.GENERIC_9X6);
         // Setting up flags
         this.panel.setItem(11, use.build(), event -> event.setCurrentItem(use.toggle(value -> wgRegion.setFlag(Flags.USE, (StateFlag.State) value)).build()));
         this.panel.setItem(12, tnt.build(), event -> event.setCurrentItem(tnt.toggle(value -> wgRegion.setFlag(Flags.TNT, (StateFlag.State) value)).build()));
@@ -102,6 +102,6 @@ public class FlagsSection extends Section {
         this.panel.setItem(22, time_lock.build(), event -> event.setCurrentItem(time_lock.toggle(value -> wgRegion.setFlag(Flags.TIME_LOCK, (String) value)).build()));
         this.panel.setItem(23, weather_lock.build(), event -> event.setCurrentItem(weather_lock.toggle(value -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) value)).build()));
         // Return
-        panel.setItem(40, StaticItems.RETURN, (event) -> panel.applySection(new SettingsSection(panel, player, region)));
+        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SettingsSection(panel, player, region)));
     }
 }
