@@ -3,9 +3,11 @@ package net.skydistrict.claimsgui.panel.sections;
 import dev.espi.protectionstones.PSRegion;
 import net.minecraft.server.v1_16_R3.Containers;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
+import net.skydistrict.claimsgui.configuration.Lang;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
 import net.skydistrict.claimsgui.utils.NMS;
+import net.skydistrict.claimsgui.utils.Teleport;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryAction;
@@ -42,9 +44,12 @@ public class MainSection extends Section {
         // Setting menu items
         panel.setItem(11, StaticItems.HOMES, event -> {
             if (event.getAction() == InventoryAction.PICKUP_ALL) {
-                // LMB - teleport
-            } else if (event.getAction() == InventoryAction.PICKUP_HALF);
-                // RMB - list of teleports
+                player.closeInventory();
+                player.sendMessage(Lang.TELEPORTING);
+                Teleport.teleport(player, region.getHome(), 5);
+            } else if (event.getAction() == InventoryAction.PICKUP_HALF) {
+                panel.applySection(new RegionsSection(panel, player, region));
+            }
         });
         panel.setItem(13, this.members, event -> panel.applySection(new MembersSection(panel, player, region)));
         panel.setItem(15, StaticItems.SETTINGS, event -> panel.applySection(new SettingsSection(panel, player, region)));

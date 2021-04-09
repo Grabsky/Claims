@@ -114,6 +114,13 @@
             <version>1.5.21</version>
             <scope>provided</scope>
         </dependency>
+        <!-- PaperLib -->
+        <dependency>
+            <groupId>io.papermc</groupId>
+            <artifactId>paperlib</artifactId>
+            <version>1.0.6</version>
+            <scope>compile</scope>
+        </dependency>
         <!-- Local server jar for NMS -->
         <dependency>
             <groupId>net.minecraft</groupId>
