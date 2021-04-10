@@ -27,7 +27,7 @@ public class ClaimCommand implements CommandExecutor {
             if (args.length == 0) {
                 owner = PSPlayer.fromPlayer(executor);
             } else {
-                if (executor.hasPermission("skydistrict.claims.admin")) {
+                if (executor.hasPermission("skydistrict.claims.others")) {
                     UUID uuid = UUIDCache.getUUIDFromName(args[0]);
                     if (uuid != null) {
                         owner = PSPlayer.fromUUID(uuid);

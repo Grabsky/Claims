@@ -1,14 +1,15 @@
 # ClaimsGUI
 Manage your ProtectionStone claim using in-game GUI.
 
-## Commands & Permissions
-- `/teren - skydistrict.teren`
-- `/teren <player> - skydistrict.teren.others`
-
 ## Building
-
 To build, run `mvn install` or `mvn clean install`.  
 Jar file named `ClaimsGUI-[VERSION].jar` will be placed in `../build/`
+
+## Commands
+- `/claim` - `skydistrict.claims`
+- `/teren <player>` - `skydistrict.claims.others`
+## Permissions
+- `skydistrict.claims.bypass.upgradecost`
 
 ## TO-DO
 - [ ] Test in search of bugs and exploits
