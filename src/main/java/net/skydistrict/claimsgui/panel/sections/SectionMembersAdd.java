@@ -62,12 +62,12 @@ public class SectionMembersAdd extends Section {
                     .setSkullOwner(uuid)
                     .build(), (event) -> {
                 // One more check just in case something changed while GUI was open
-                if (region.getMembers().size() < 8) {
+                if (region.getMembers().size() < 10) {
                     region.addMember(uuid);
                     panel.applySection(new SectionMembers(panel, executor, owner, region));
                 } else {
                     executor.closeInventory();
-                    executor.sendMessage("§6§lS§e§lD§8 » §cOsiągnąłeś limit (8) graczy dodanych do terenu.");
+                    executor.sendMessage("§6§lS§e§lD§8 » §cOsiągnąłeś limit (10) graczy dodanych do terenu.");
                 }
 
             });
