@@ -2,6 +2,7 @@ package net.skydistrict.claimsgui.panel.sections;
 
 import dev.espi.protectionstones.PSRegion;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
+import net.skydistrict.claimsgui.configuration.Lang;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
 import net.skydistrict.claimsgui.utils.InventoryH;
@@ -67,7 +68,7 @@ public class SectionMembersAdd extends Section {
                     panel.applySection(new SectionMembers(panel, executor, owner, region));
                 } else {
                     executor.closeInventory();
-                    executor.sendMessage("§6§lS§e§lD§8 » §cOsiągnąłeś limit (10) graczy dodanych do terenu.");
+                    executor.sendMessage(Lang.REACHED_MEMBERS_LIMIT);
                 }
 
             });

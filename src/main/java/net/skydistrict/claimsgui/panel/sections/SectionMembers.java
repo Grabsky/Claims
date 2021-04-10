@@ -3,6 +3,7 @@ package net.skydistrict.claimsgui.panel.sections;
 import dev.espi.protectionstones.PSRegion;
 import dev.espi.protectionstones.utils.UUIDCache;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
+import net.skydistrict.claimsgui.configuration.Lang;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
 import net.skydistrict.claimsgui.utils.InventoryH;
@@ -51,7 +52,7 @@ public class SectionMembers extends Section {
                     this.generateView();
                 } else {
                     executor.closeInventory();
-                    executor.sendMessage("§6§lS§e§lD§8 » §cTen gracz nie jest dodany do terenu.");
+                    executor.sendMessage(Lang.NOT_A_MEMBER);
                 }
 
             });
