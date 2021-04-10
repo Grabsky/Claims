@@ -25,7 +25,6 @@ public class SectionSettings extends Section {
     private String nextLevelAlias;
     private Material upgradeMaterial;
     private ItemStack upgrade;
-    private boolean canUpgrade;
     private String nextLevelSize;
 
     public SectionSettings(Panel panel, Player executor, UUID owner, PSRegion region) {
@@ -54,8 +53,7 @@ public class SectionSettings extends Section {
             // Upgrade price
             this.upgradeMaterial = UpgradeH.getUpgradeMaterial(nextLevelAlias);
             // Can you upgrade?
-            this.canUpgrade = executor.hasPermission("skydistrict.claims.bypass.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64);
-            String canUpgradeString = canUpgrade ? "§7Kliknij, aby ulepszyć." : "§cNie posiadasz wymaganych przedmiotów.";
+            String canUpgradeString = (executor.hasPermission("skydistrict.claims.bypass.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64)) ? "§7Kliknij, aby ulepszyć." : "§cNie posiadasz wymaganych przedmiotów.";
             // ItemStack
             this.upgrade = builder.setLore(
                     "",
