@@ -1,5 +1,7 @@
 package net.skydistrict.claimsgui.utils;
 
+import net.skydistrict.claimsgui.builders.ItemBuilder;
+import net.skydistrict.claimsgui.configuration.StaticItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -10,14 +12,17 @@ import java.util.List;
 
 public class Upgrade {
 
-    private static List<String> order = new ArrayList<String>(Arrays.asList("COAL", "IRON", "GOLD", "DIAMOND", "EMERALD"));
+    private static final List<String> order = new ArrayList<>(Arrays.asList("COAL", "IRON", "GOLD", "DIAMOND", "EMERALD"));
 
     public static String getNextLevelAlias(String alias) {
         return order.get(order.indexOf(alias) + 1);
     }
 
-    public static String translate(String type) {
-        switch (type) {
+    /**
+     * Returns translated name of specific region type
+     */
+    public static String translate(String alias) {
+        switch (alias) {
             case "COAL":
                 return "Węgiel";
             case "IRON":
@@ -32,8 +37,11 @@ public class Upgrade {
         return "";
     }
 
-    public static ChatColor color(String type) {
-        switch (type) {
+    /**
+     * Returns material color for specific region type
+     */
+    public static ChatColor color(String alias) {
+        switch (alias) {
             case "COAL":
                 return ChatColor.DARK_GRAY;
             case "IRON":
@@ -48,9 +56,11 @@ public class Upgrade {
         return null;
     }
 
-    /** Returns size of given region */
-    public static int getSize(String type) {
-        switch (type) {
+    /**
+     * Returns size of given region
+     */
+    public static int getSize(String alias) {
+        switch (alias) {
             case "COAL":
                 return 15;
             case "IRON":
@@ -65,9 +75,11 @@ public class Upgrade {
         return 0;
     }
 
-    /** Returns size of given region */
-    public static ItemStack getUpgradePrice(String type) {
-        switch (type) {
+    /**
+     * Returns size of given region
+     */
+    public static ItemStack getUpgradePrice(String alias) {
+        switch (alias) {
             case "IRON":
                 return new ItemStack(Material.IRON_INGOT, 64);
             case "GOLD":
@@ -78,5 +90,22 @@ public class Upgrade {
                 return new ItemStack(Material.EMERALD, 64);
         }
         return null;
+    }
+
+    public static ItemBuilder getBuilder(String alias) {
+        switch (alias) {
+            case "COAL":
+                return StaticItems.COAL_BLOCK;
+            case "IRON":
+                return StaticItems.IRON_BLOCK;
+            case "GOLD":
+                return StaticItems.GOLD_BLOCK;
+            case "DIAMOND":
+                return StaticItems.DIAMOND_BLOCK;
+            case "EMERALD":
+                return StaticItems.EMERALD_BLOCK;
+            default:
+                return null;
+        }
     }
 }

@@ -8,7 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class Teleport {
-    public static void teleport(Player player, Location location, int delay) {
+    public static void asyncTeleport(Player player, Location location, int delay) {
         Location initialLoc = player.getLocation();
         new BukkitRunnable() {
             int sec = 0;

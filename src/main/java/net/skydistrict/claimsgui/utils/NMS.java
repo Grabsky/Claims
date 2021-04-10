@@ -8,12 +8,14 @@ import org.bukkit.craftbukkit.v1_16_R3.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class NMS {
-    /** Updates title of inventory currently open by specified player */
-    public static void updateTitle(Player player, String title, Containers containers) {
+    /**
+     * Updates title of inventory currently open by specified player
+     */
+    public static void updateTitle(Player player, String title) {
         EntityPlayer handle = ((CraftPlayer) player).getHandle();
         PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(
                 handle.activeContainer.windowId,
-                containers,
+                Containers.GENERIC_9X6,
                 IChatBaseComponent.ChatSerializer.jsonToComponent("{\"text\": \"" + title + "\"}")
         );
         handle.playerConnection.sendPacket(packet);

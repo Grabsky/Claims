@@ -6,21 +6,25 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.PlayerSwapHandItemsEvent;
 import org.bukkit.inventory.Inventory;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class PanelManager implements Listener {
+    private final ClaimsGUI instance;
     private final Map<Player, Panel> openInventories;
     private final Map<Player, Long> clickCooldowns;
 
     public PanelManager(ClaimsGUI instance) {
-        this.openInventories = new HashMap<Player, Panel>();
-        this.clickCooldowns = new HashMap<Player, Long>();
+        this.openInventories = new HashMap<>();
+        this.clickCooldowns = new HashMap<>();
+        this.instance = instance;
         instance.getServer().getPluginManager().registerEvents(this, instance);
     }
 
@@ -34,18 +38,23 @@ public class PanelManager implements Listener {
         // System.out.println(this.openInventories);
         if (openInventories.containsKey(player)) {
             event.setCancelled(true);
-            // Return if clicked slot is outside the inventory or empty
-            if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) return;
-            Panel panel = openInventories.get(player);
-            Inventory inventory = panel.getInventory();
-            if (event.getClickedInventory() == inventory) {
-                // Return if player is on cooldown
-                if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < 250) return;
-                clickCooldowns.put(player, System.currentTimeMillis());
-                int slot = event.getSlot();
-                if (panel.getAction(slot) != null) {
-                    player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1F, 1.5F);
-                    panel.getAction(slot).click(event);
+            if (event.getAction() == InventoryAction.PICKUP_ALL) {
+                // Return if clicked slot is outside the inventory or empty
+                if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) return;
+                Panel panel = openInventories.get(player);
+                Inventory inventory = panel.getInventory();
+                if (event.getClickedInventory() == inventory) {
+                    // Return if player is on cooldown
+                    if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < 250)
+                        return;
+                    clickCooldowns.put(player, System.currentTimeMillis());
+                    int slot = event.getSlot();
+                    if (panel.getAction(slot) != null) {
+                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1F, 1.5F);
+                        if (event.getAction() == InventoryAction.PICKUP_ALL) {
+                            panel.getAction(slot).click(event);
+                        }
+                    }
                 }
             }
         }
@@ -54,6 +63,11 @@ public class PanelManager implements Listener {
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
         this.openInventories.remove((Player) event.getPlayer());
+    }
+
+    @EventHandler
+    public void onItemSwap(PlayerSwapHandItemsEvent event) {
+        if (openInventories.containsKey(event.getPlayer())) event.setCancelled(true);
     }
 
     @EventHandler

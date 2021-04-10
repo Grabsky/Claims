@@ -24,6 +24,13 @@ public class Panel {
         this.actions = new ClickAction[size];
     }
 
+    /** Construtor required to create Panel object */
+    public Panel(int size, @NotNull String title) {
+        this.size = size;
+        this.inventory = Bukkit.createInventory(null, size, Component.text(title));
+        this.actions = new ClickAction[size];
+    }
+
     /** Returns this inventory */
     public Inventory getInventory() {
         return this.inventory;
@@ -61,7 +68,7 @@ public class Panel {
 
     /** Opens panel to player */
     public void applySection(Section section) {
+        section.prepare();
         section.apply();
     }
-
 }

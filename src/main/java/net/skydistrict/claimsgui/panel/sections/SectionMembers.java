@@ -2,7 +2,6 @@ package net.skydistrict.claimsgui.panel.sections;
 
 import dev.espi.protectionstones.PSRegion;
 import dev.espi.protectionstones.utils.UUIDCache;
-import net.minecraft.server.v1_16_R3.Containers;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
@@ -13,32 +12,26 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.UUID;
 
-public class MembersSection extends Section {
-    private final Panel panel;
-    private final Player player;
-    private final PSRegion region;
+public class SectionMembers extends Section {
 
-    public MembersSection(Panel panel, Player player, PSRegion region) {
-        super(panel, player, region);
-        this.panel = panel;
-        this.player = player;
-        this.region = region;
+    public SectionMembers(Panel panel, Player executor, UUID owner, PSRegion region) {
+        super(panel, executor, owner, region);
     }
 
     @Override
     public void prepare() {
-        // Nothing to prepare for this section
+        // Nothing to prepare
     }
 
     @Override
     public void apply() {
         // Changing panel texture
-        NMS.updateTitle(player, "§f\u7000\u7004", Containers.GENERIC_9X6);
+        NMS.updateTitle(executor, "§f\u7000\u7004");
         // Generating the view
         this.generateView();
+        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, region)));
     }
 
-    // TO-DO: Players are shown two times - FIX THIS
     private void generateView() {
         panel.clear();
         // Getting list of members
@@ -57,16 +50,16 @@ public class MembersSection extends Section {
                     region.removeMember(uuid);
                     this.generateView();
                 } else {
-                    player.closeInventory();
-                    player.sendMessage("§6§lS§e§lD§8 » §cTen gracz nie jest dodany do terenu.");
+                    executor.closeInventory();
+                    executor.sendMessage("§6§lS§e§lD§8 » §cTen gracz nie jest dodany do terenu.");
                 }
 
             });
             slot = (slot == 15) ? 20 : slot + 1;
         }
         if (slot != 25) {
-            panel.setItem(slot, StaticItems.ADD, event -> panel.applySection(new MembersAddSection(panel, player, region)));
+            panel.setItem(slot, StaticItems.ADD, event -> panel.applySection(new SectionMembersAdd(panel, executor, owner, region)));
         }
-        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new MainSection(panel, player, region)));
+
     }
 }
