@@ -4,7 +4,7 @@ import dev.espi.protectionstones.PSRegion;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.utils.NMS;
+import net.skydistrict.claimsgui.utils.InventoryH;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -30,7 +30,7 @@ public class SectionMain extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        NMS.updateTitle(executor, "§f\u7000\u7001");
+        InventoryH.updateTitle(executor, "§f\u7000\u7001");
         // Setting menu items
         panel.setItem(11, StaticItems.HOMES, (event) -> panel.applySection(new SectionHomes(panel, executor, owner, region)));
         panel.setItem(13, this.members, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, region)));

@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 
 // TO-DO: Comments
-public class Flags {
+public class FlagsH {
 
     /** Returns list of options (flag values) */
     public static List<Object> getOptions(Flag<?> flagType) {

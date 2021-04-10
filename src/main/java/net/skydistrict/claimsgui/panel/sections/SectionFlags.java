@@ -9,7 +9,7 @@ import dev.espi.protectionstones.PSRegion;
 import net.skydistrict.claimsgui.builders.FlagItemBuilder;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.utils.NMS;
+import net.skydistrict.claimsgui.utils.InventoryH;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -80,7 +80,7 @@ public class SectionFlags extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        NMS.updateTitle(executor, "§f\u7000\u7005");
+        InventoryH.updateTitle(executor, "§f\u7000\u7005");
         // Setting up flags
         this.panel.setItem(11, use.build(), (event) -> event.setCurrentItem(use.toggle(value -> wgRegion.setFlag(Flags.USE, (StateFlag.State) value)).build()));
         this.panel.setItem(12, tnt.build(), (event) -> event.setCurrentItem(tnt.toggle(value -> wgRegion.setFlag(Flags.TNT, (StateFlag.State) value)).build()));

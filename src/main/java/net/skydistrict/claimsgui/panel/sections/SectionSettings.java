@@ -10,20 +10,23 @@ import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.configuration.Lang;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.utils.NMS;
-import net.skydistrict.claimsgui.utils.Upgrade;
+import net.skydistrict.claimsgui.utils.InventoryH;
+import net.skydistrict.claimsgui.utils.UpgradeH;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.text.MessageFormat;
 import java.util.UUID;
 
 public class SectionSettings extends Section {
     private String nextLevelAlias;
-    private ItemStack upgradePrice;
-    private ItemStack upgradeItem;
+    private Material upgradeMaterial;
+    private ItemStack upgrade;
     private boolean canUpgrade;
+    private String nextLevelSize;
 
     public SectionSettings(Panel panel, Player executor, UUID owner, PSRegion region) {
         super(panel, executor, owner, region);
@@ -33,44 +36,44 @@ public class SectionSettings extends Section {
     public void prepare() {
         // I'm not sure why it's marked as nullable...
         String currentLevelAlias = (region.getTypeOptions() != null) ? region.getTypeOptions().alias : "";
-        ChatColor currentLevelColor = Upgrade.color(currentLevelAlias);
+        ChatColor currentLevelColor = UpgradeH.color(currentLevelAlias);
         // Size of current level in readable format
-        int currentLevelSizeCalc = Upgrade.getSize(currentLevelAlias) * 2 + 1;
+        int currentLevelSizeCalc = UpgradeH.getSize(currentLevelAlias) * 2 + 1;
         String currentLevelSize = currentLevelSizeCalc + "x" + currentLevelSizeCalc;
         // Getting ItemBuilder for specific alias
-        ItemBuilder builder = Upgrade.getBuilder(currentLevelAlias);
+        ItemBuilder builder = UpgradeH.getBuilder(currentLevelAlias);
         // If current level is not the last
         if (!currentLevelAlias.equals("EMERALD")) {
             // What's the next level?
-            this.nextLevelAlias = Upgrade.getNextLevelAlias(currentLevelAlias);
+            this.nextLevelAlias = UpgradeH.getNextLevelAlias(currentLevelAlias);
             // Next level color
-            ChatColor nextLevelColor = Upgrade.color(nextLevelAlias);
+            ChatColor nextLevelColor = UpgradeH.color(nextLevelAlias);
             // Size of next level in readable format
-            int nextSizeCalc = Upgrade.getSize(nextLevelAlias) * 2 + 1;
-            String nextSize = nextSizeCalc + "x" + nextSizeCalc;
+            int nextLevelSizeCalc = UpgradeH.getSize(nextLevelAlias) * 2 + 1;
+            this.nextLevelSize = nextLevelSizeCalc + "x" + nextLevelSizeCalc;
             // Upgrade price
-            this.upgradePrice = Upgrade.getUpgradePrice(nextLevelAlias);
+            this.upgradeMaterial = UpgradeH.getUpgradeMaterial(nextLevelAlias);
             // Can you upgrade?
-            this.canUpgrade = executor.hasPermission("skydistrict.claims.bypass.upgradecost") || executor.getInventory().contains(upgradePrice);
+            this.canUpgrade = executor.hasPermission("skydistrict.claims.bypass.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64);
             String canUpgradeString = canUpgrade ? "§7Kliknij, aby ulepszyć." : "§cNie posiadasz wymaganych przedmiotów.";
             // ItemStack
-            this.upgradeItem = builder.setLore(
+            this.upgrade = builder.setLore(
                     "",
-                    "§7Obecny poziom: " + currentLevelColor + Upgrade.translate(currentLevelAlias),
+                    "§7Obecny poziom: " + currentLevelColor + UpgradeH.translate(currentLevelAlias),
                     "§8› §7Rozmiar: " + currentLevelColor + currentLevelSize,
                     "",
-                    "§7Następny poziom: " + nextLevelColor + Upgrade.translate(nextLevelAlias),
-                    "§8› §7Rozmiar: " + nextLevelColor + nextSize,
+                    "§7Następny poziom: " + nextLevelColor + UpgradeH.translate(nextLevelAlias),
+                    "§8› §7Rozmiar: " + nextLevelColor + nextLevelSize,
                     "",
-                    "§7Koszt ulepszenia: " + nextLevelColor + "64x " + Upgrade.translate(nextLevelAlias),
+                    "§7Koszt ulepszenia: " + nextLevelColor + "64x " + UpgradeH.translate(nextLevelAlias),
                     "",
                     canUpgradeString
             ).build();
             return;
         }
-        this.upgradeItem = builder.setLore(
+        this.upgrade = builder.setLore(
                 "",
-                "§7Obecny poziom: §e" + currentLevelColor + Upgrade.translate(currentLevelAlias),
+                "§7Obecny poziom: §e" + currentLevelColor + UpgradeH.translate(currentLevelAlias),
                 "§8› §7Rozmiar: §e" + currentLevelColor + currentLevelSize,
                 "",
                 "§7Osiągnąłeś najwyższy poziom terenu."
@@ -80,19 +83,19 @@ public class SectionSettings extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        NMS.updateTitle(executor, "§f\u7000\u7002");
+        InventoryH.updateTitle(executor, "§f\u7000\u7002");
         // Setting menu items
         panel.setItem(12, StaticItems.FLAGS, event -> panel.applySection(new SectionFlags(panel, executor, owner, region)));
-        panel.setItem(14, this.upgradeItem, event -> {
+        panel.setItem(14, this.upgrade, event -> {
             if (nextLevelAlias != null) {
-                if (executor.hasPermission("skydistrict.claims.bypass.upgradecost") || executor.getInventory().contains(upgradePrice)) {
+                if (executor.hasPermission("skydistrict.claims.bypass.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64)) {
                     executor.closeInventory();
                     if (!executor.hasPermission("skydistrict.claims.bypass.upgradecost")) {
-                        executor.getInventory().removeItem(upgradePrice);
+                        InventoryH.removeMaterial(executor, upgradeMaterial, 64);
                     }
                     region.setType(ProtectionStones.getProtectBlockFromAlias(nextLevelAlias));
                     this.redefine(region.getWGRegion());
-                    executor.sendMessage(Lang.UPGRADE_SUCCESS);
+                    executor.sendMessage(MessageFormat.format(Lang.UPGRADE_SUCCESS, nextLevelSize));
                     executor.playSound(executor.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                 }
             }

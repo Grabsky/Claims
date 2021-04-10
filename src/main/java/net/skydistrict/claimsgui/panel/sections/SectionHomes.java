@@ -7,8 +7,8 @@ import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.configuration.Lang;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.utils.NMS;
-import net.skydistrict.claimsgui.utils.Teleport;
+import net.skydistrict.claimsgui.utils.InventoryH;
+import net.skydistrict.claimsgui.utils.TeleportH;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -50,7 +50,7 @@ public class SectionHomes extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        NMS.updateTitle(executor, "§f\u7000\u7006");
+        InventoryH.updateTitle(executor, "§f\u7000\u7006");
         // Generating the view
         this.generateView(1, 5, PSPlayer.fromUUID(owner).getPSRegions(Bukkit.getWorlds().get(0), true));
     }
@@ -62,7 +62,7 @@ public class SectionHomes extends Section {
             if (hasRegion) {
                 executor.closeInventory();
                 executor.sendMessage(Lang.TELEPORTING);
-                Teleport.asyncTeleport(executor, region.getHome(), 5);
+                TeleportH.asyncTeleport(executor, region.getHome(), 5);
             }
         });
         // Displaying specific page
@@ -90,7 +90,7 @@ public class SectionHomes extends Section {
                     .build(), (event) -> {
                 executor.closeInventory();
                 executor.sendMessage(Lang.TELEPORTING);
-                Teleport.asyncTeleport(executor, reg.getHome(), 5);
+                TeleportH.asyncTeleport(executor, reg.getHome(), 5);
             });
             index++;
         }

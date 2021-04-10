@@ -4,7 +4,7 @@ import dev.espi.protectionstones.PSRegion;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.utils.NMS;
+import net.skydistrict.claimsgui.utils.InventoryH;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -28,7 +28,7 @@ public class SectionMembersAdd extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        NMS.updateTitle(executor, "§f\u7000\u7003");
+        InventoryH.updateTitle(executor, "§f\u7000\u7003");
         // Display first page of online players
         this.generateView(1, 21, players);
     }

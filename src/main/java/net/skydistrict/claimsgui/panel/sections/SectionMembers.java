@@ -5,7 +5,7 @@ import dev.espi.protectionstones.utils.UUIDCache;
 import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import net.skydistrict.claimsgui.panel.Panel;
-import net.skydistrict.claimsgui.utils.NMS;
+import net.skydistrict.claimsgui.utils.InventoryH;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -26,10 +26,10 @@ public class SectionMembers extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        NMS.updateTitle(executor, "§f\u7000\u7004");
+        InventoryH.updateTitle(executor, "§f\u7000\u7004");
         // Generating the view
         this.generateView();
-        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, region)));
+
     }
 
     private void generateView() {
@@ -60,6 +60,7 @@ public class SectionMembers extends Section {
         if (slot != 25) {
             panel.setItem(slot, StaticItems.ADD, event -> panel.applySection(new SectionMembersAdd(panel, executor, owner, region)));
         }
+        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, region)));
 
     }
 }

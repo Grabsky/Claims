@@ -5,7 +5,7 @@ import com.mojang.authlib.properties.Property;
 import com.mojang.authlib.properties.PropertyMap;
 import me.grabsky.indigo.api.SkullCache;
 import net.kyori.adventure.text.Component;
-import net.skydistrict.claimsgui.utils.Text;
+import net.skydistrict.claimsgui.utils.TextH;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -31,7 +31,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setName(String name) {
-        this.meta.setDisplayName(Text.color(name));
+        this.meta.setDisplayName(TextH.color(name));
         return this;
     }
 
@@ -43,7 +43,7 @@ public class ItemBuilder {
     public ItemBuilder setLore(String... lines) {
         ArrayList<String> lore = new ArrayList<>(lines.length);
         for (String line : lines) {
-            lore.add(Text.color(line));
+            lore.add(TextH.color(line));
         }
         this.meta.setLore(lore);
         return this;

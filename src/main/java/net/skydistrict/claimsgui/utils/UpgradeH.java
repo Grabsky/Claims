@@ -4,13 +4,12 @@ import net.skydistrict.claimsgui.builders.ItemBuilder;
 import net.skydistrict.claimsgui.configuration.StaticItems;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class Upgrade {
+public class UpgradeH {
 
     private static final List<String> order = new ArrayList<>(Arrays.asList("COAL", "IRON", "GOLD", "DIAMOND", "EMERALD"));
 
@@ -78,16 +77,16 @@ public class Upgrade {
     /**
      * Returns size of given region
      */
-    public static ItemStack getUpgradePrice(String alias) {
+    public static Material getUpgradeMaterial(String alias) {
         switch (alias) {
             case "IRON":
-                return new ItemStack(Material.IRON_INGOT, 64);
+                return Material.IRON_INGOT;
             case "GOLD":
-                return new ItemStack(Material.GOLD_INGOT, 64);
+                return Material.GOLD_INGOT;
             case "DIAMOND":
-                return new ItemStack(Material.DIAMOND, 64);
+                return Material.DIAMOND;
             case "EMERALD":
-                return new ItemStack(Material.EMERALD, 64);
+                return Material.EMERALD;
         }
         return null;
     }

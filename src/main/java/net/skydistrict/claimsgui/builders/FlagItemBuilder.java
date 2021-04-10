@@ -2,7 +2,7 @@ package net.skydistrict.claimsgui.builders;
 
 import com.sk89q.worldguard.protection.flags.Flag;
 import net.skydistrict.claimsgui.interfaces.ToggleAction;
-import net.skydistrict.claimsgui.utils.Flags;
+import net.skydistrict.claimsgui.utils.FlagsH;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -31,8 +31,8 @@ public class FlagItemBuilder {
         this.meta = item.getItemMeta();
         // Flag properties
         this.flag = flag;
-        this.options = Flags.getOptions(flag);
-        this.formattedOptions = Flags.getFormattedOptions(flag);
+        this.options = FlagsH.getOptions(flag);
+        this.formattedOptions = FlagsH.getFormattedOptions(flag);
         this.size = options.size();
         this.value = options.indexOf(value);
     }
@@ -57,7 +57,7 @@ public class FlagItemBuilder {
 
     /** Updates lore of the item to highlight current flag value */
     public FlagItemBuilder updateLore() {
-        List<String> lore = new ArrayList<String>(Arrays.asList(prefix));
+        List<String> lore = new ArrayList<>(Arrays.asList(prefix));
         for (int i = 0; i < size; i++) {
             ChatColor color = (i == value) ? ChatColor.YELLOW : ChatColor.GRAY;
             lore.add("§8› " + color + formattedOptions.get(i));
