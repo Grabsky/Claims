@@ -11,12 +11,14 @@ public abstract class Section {
     protected Player executor;
     protected UUID owner;
     protected PSRegion region;
+    protected boolean editMode = false;
 
     /** Constructor required to prepare and apply Section to a Panel */
     public Section(Panel panel, Player executor, UUID owner) {
         this.panel = panel;
         this.executor = executor;
         this.owner = owner;
+        if (executor.getUniqueId() != owner) editMode = true;
         this.panel.clear();
     }
 
@@ -26,6 +28,7 @@ public abstract class Section {
         this.executor = executor;
         this.owner = owner;
         this.region = region;
+        if (executor.getUniqueId() != owner) editMode = true;
         this.panel.clear();
     }
 

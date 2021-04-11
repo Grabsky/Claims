@@ -50,7 +50,7 @@ public class SectionHomes extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7006");
+        InventoryH.updateTitle(executor, "§f\u7000\u7106", editMode);
         // Generating the view
         this.generateView(1, 5, PSPlayer.fromUUID(owner).getPSRegions(Bukkit.getWorlds().get(0), true));
     }

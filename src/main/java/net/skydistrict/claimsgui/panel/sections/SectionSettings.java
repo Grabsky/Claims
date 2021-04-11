@@ -81,7 +81,7 @@ public class SectionSettings extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7002");
+        InventoryH.updateTitle(executor, "§f\u7000\u7102", editMode);
         // Setting menu items
         panel.setItem(12, StaticItems.FLAGS, event -> panel.applySection(new SectionFlags(panel, executor, owner, region)));
         panel.setItem(14, this.upgrade, event -> {

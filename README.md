@@ -14,7 +14,7 @@ Jar file named `ClaimsGUI-[VERSION].jar` will be placed in `../build/`
 ## TO-DO
 - [ ] Test in search of bugs and exploits
 - [ ] Add messages.yml
-- [ ] Add `*` character to the title when editing someone's claim
+- [x] Add `*` character to the title when editing someone's claim
 - [x] Code cleanup and missing comments
 - [x] Teleport actions (with region browser)
 - [x] Make GUIs work with sections (in OOP friendly way)

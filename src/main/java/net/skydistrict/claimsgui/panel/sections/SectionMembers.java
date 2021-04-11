@@ -27,7 +27,7 @@ public class SectionMembers extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7004");
+        InventoryH.updateTitle(executor, "§f\u7000\u7104", editMode);
         // Generating the view
         this.generateView();
 

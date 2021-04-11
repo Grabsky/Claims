@@ -29,7 +29,7 @@ public class SectionMembersAdd extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7003");
+        InventoryH.updateTitle(executor, "§f\u7000\u7103", editMode);
         // Display first page of online players
         this.generateView(1, 21, players);
     }

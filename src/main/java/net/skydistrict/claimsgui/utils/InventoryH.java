@@ -14,12 +14,13 @@ public class InventoryH {
     /**
      * Updates title of inventory currently open by specified player
      */
-    public static void updateTitle(Player player, String title) {
+    public static void updateTitle(Player player, String title, boolean editMode) {
+        String finTitle = (editMode) ? title + "\u7001§r*" : title;
         EntityPlayer handle = ((CraftPlayer) player).getHandle();
         PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(
                 handle.activeContainer.windowId,
                 Containers.GENERIC_9X6,
-                IChatBaseComponent.ChatSerializer.jsonToComponent("{\"text\": \"" + title + "\"}")
+                IChatBaseComponent.ChatSerializer.jsonToComponent("{\"text\": \"" + finTitle + "\"}")
         );
         handle.playerConnection.sendPacket(packet);
         handle.updateInventory(handle.activeContainer);

@@ -16,7 +16,7 @@ public final class ClaimsGUI extends JavaPlugin {
     public void onEnable() {
         instance = this;
         this.panelManager = new PanelManager(this);
-        this.getCommand("claim").setExecutor(new ClaimCommand());
+        this.getCommand("claim").setExecutor(new ClaimCommand(this));
     }
 
     @Override

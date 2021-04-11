@@ -3,6 +3,7 @@ package net.skydistrict.claimsgui.commands;
 import dev.espi.protectionstones.PSPlayer;
 import dev.espi.protectionstones.PSRegion;
 import dev.espi.protectionstones.utils.UUIDCache;
+import net.skydistrict.claimsgui.ClaimsGUI;
 import net.skydistrict.claimsgui.configuration.Lang;
 import net.skydistrict.claimsgui.panel.Panel;
 import net.skydistrict.claimsgui.panel.sections.SectionHomes;
@@ -18,6 +19,11 @@ import java.util.List;
 import java.util.UUID;
 
 public class ClaimCommand implements CommandExecutor {
+    private final ClaimsGUI instance;
+
+    public ClaimCommand(ClaimsGUI instance) {
+        this.instance = instance;
+    }
 
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command command, @NotNull String label, @NotNull String[] args) {
@@ -43,12 +49,12 @@ public class ClaimCommand implements CommandExecutor {
             List<PSRegion> regions = owner.getPSRegions(Bukkit.getWorlds().get(0), false);
             if (regions.size() > 0) {
                 PSRegion region = regions.get(0);
-                Panel panel = new Panel(54, "§f\u7000\u7001");
-                panel.applySection(new SectionMain(panel, executor, owner.getUuid(), region));
+                Panel panel = new Panel(54, "§f\u7000\u7100");
+                Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionMain(panel, executor, owner.getUuid(), region)), 1L);
                 panel.open(executor);
-            } else if (executor.getUniqueId() == owner.getUuid()) {
-                Panel panel = new Panel(54, "§f\u7000\u7006");
-                panel.applySection(new SectionHomes(panel, executor, owner.getUuid()));
+            } else if (executor.getUniqueId() != owner.getUuid()) {
+                Panel panel = new Panel(54, "§f\u7000\u7100");
+                Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionHomes(panel, executor, owner.getUuid())), 1L);
                 panel.open(executor);
             } else {
                 executor.sendMessage(Lang.NO_REGION);
