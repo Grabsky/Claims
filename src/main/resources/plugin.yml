@@ -1,11 +1,11 @@
-name: ClaimsGUI
+name: Provinces
 version: ${project.version}
-main: net.skydistrict.claimsgui.ClaimsGUI
+main: net.skydistrict.provinces.Provinces
 api-version: 1.16
 depend: [ Indigo, ProtectionStones, WorldGuard, WorldEdit ]
 authors: [ Grabsky ]
 commands:
-  claim:
-    aliases: ['teren', 'claims']
-    permission: 'skydistrict.claim'
+  province:
+    aliases: ['teren', 'claim']
+    permission: 'skydistrict.province'
     permission-message: 'Insufficient permissions.'
