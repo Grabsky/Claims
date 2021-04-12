@@ -1,10 +1,9 @@
 # Claims
-Manage your ProtectionStone claim using in-game GUI.
+Create protected region and manage it using in-game GUI.
 
 ## Building
 To build, run `mvn install` or `mvn clean install`.  
 Jar file named `Claims-[VERSION].jar` will be placed in `../build/`
-
 
 ## Permissions
 #### Safe to be given to players:
