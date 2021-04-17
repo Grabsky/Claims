@@ -16,6 +16,7 @@ public class StaticItems {
         return new ItemBuilder(material)
                 .setName(color + "§lTeren")
                 .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze " + color + claimLevel.getSize() + " §7bloków.")
+                .setCustomModelData(1337)
                 .build();
     }
 

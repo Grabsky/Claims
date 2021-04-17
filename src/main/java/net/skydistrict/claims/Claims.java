@@ -11,6 +11,7 @@ import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.listeners.PlayerListener;
 import net.skydistrict.claims.listeners.RegionListener;
 import net.skydistrict.claims.utils.UpgradeH;
+import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Claims extends JavaPlugin {
@@ -25,9 +26,15 @@ public final class Claims extends JavaPlugin {
     public ClaimManager getClaimManager() { return claim; }
 //    public PanelManager getPanelManager() { return panel; }
 
+    public static NamespacedKey isClaimBlock;
+    public static NamespacedKey claimBlockLevel;
+
     @Override
     public void onEnable() {
         instance = this;
+        // Creating namespaced keys
+        isClaimBlock = new NamespacedKey(this, "isClaimBlock");
+        claimBlockLevel = new NamespacedKey(this, "claimBlockLevel");
         // Creating instance of RegionManager
         World world = BukkitAdapter.adapt(Config.DEFAULT_WORLD);
         this.region = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);

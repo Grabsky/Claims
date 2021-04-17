@@ -12,7 +12,9 @@ import net.skydistrict.claims.ClaimFlags;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.utils.ClaimH;
+import net.skydistrict.claims.utils.UpgradeH;
 import org.bukkit.Location;
+import org.bukkit.Material;
 
 import java.util.UUID;
 
@@ -26,14 +28,15 @@ public class ClaimManager {
         this.regionManager = instance.getRegionManager();
     }
 
-    public boolean createRegionAt(Location loc, UUID owner) {
+    public boolean createRegionAt(Location loc, UUID owner, int level) {
         // Checking if there is no region at this selection
         if (!ClaimH.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MIN_DISTANCE_FROM_SPAWN) return false;
         // Points
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
-        BlockVector3 min = BlockVector3.at(x - 15, 0, z - 15);
-        BlockVector3 max = BlockVector3.at(x + 15, 255, z + 15);
+        int radius = 15 + (5 * level);
+        BlockVector3 min = BlockVector3.at(x - radius, 0, z - radius);
+        BlockVector3 max = BlockVector3.at(x + radius, 255, z + radius);
         // Creating region id
         String id = ClaimH.createId(loc);
         // Creating region at new points
@@ -72,10 +75,12 @@ public class ClaimManager {
         regionManager.removeRegion(region.getId());
     }
 
-    // TO-DO: TEST
-    private void upgrade(Claim land) {
-        ProtectedRegion wgRegion = land.getWGRegion();
-        String id = land.getId();
+    // TO-DO: Check if cached region has to be updated
+    private boolean upgrade(Claim claim) {
+        int level = claim.getLevel();
+        if (level >= 4) return false;
+        ProtectedRegion wgRegion = claim.getWGRegion();
+        String id = claim.getId();
         // Min point
         BlockVector3 min = wgRegion.getMinimumPoint();
         BlockVector3 newMin = BlockVector3.at(min.getBlockX() - 5, min.getBlockY(), min.getBlockZ() - 5);
@@ -87,7 +92,10 @@ public class ClaimManager {
         // Redefining region
         newRegion.copyFrom(wgRegion);
         regionManager.addRegion(newRegion);
-        // TO-DO: Cache newly created land
+        // Updating block type
+        Material type = UpgradeH.getClaimLevel(level).getMaterial();
+        claim.getCenter().getBlock().setType(type);
+        return true;
     }
 
     private void setDefaultFlags(ProtectedRegion region, Location loc) {
