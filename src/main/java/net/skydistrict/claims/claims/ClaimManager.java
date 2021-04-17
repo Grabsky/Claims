@@ -10,6 +10,7 @@ import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.skydistrict.claims.ClaimFlags;
 import net.skydistrict.claims.Claims;
+import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.Location;
 
@@ -27,7 +28,7 @@ public class ClaimManager {
 
     public boolean createRegionAt(Location loc, UUID owner) {
         // Checking if there is no region at this selection
-        if (!ClaimH.canPlaceAt(loc)) return false;
+        if (!ClaimH.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MIN_DISTANCE_FROM_SPAWN) return false;
         // Points
         int x = loc.getBlockX();
         int z = loc.getBlockZ();

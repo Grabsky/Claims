@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryH {
-
     /**
      * Updates title of inventory currently open by specified player
      */
@@ -25,7 +24,6 @@ public class InventoryH {
         handle.playerConnection.sendPacket(packet);
         handle.updateInventory(handle.activeContainer);
     }
-
 
     /**
      * Removes specific amount of items (compared by type) from player's inventory
