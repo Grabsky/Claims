@@ -26,11 +26,13 @@ public class ClaimManager {
     }
 
     public boolean createRegionAt(Location loc, UUID owner) {
+        // Checking if there is no region at this selection
+        if (!ClaimH.canPlaceAt(loc)) return false;
         // Points
-        BlockVector3 min = BlockVector3.at(loc.getBlockX() - 15, 0, loc.getBlockZ() - 15);
-        BlockVector3 max = BlockVector3.at(loc.getBlockX() + 15, 255, loc.getBlockZ() + 15);
-        // Checking if there is no region at the given points
-        if (regionManager.getApplicableRegions(min).size() != 0 || regionManager.getApplicableRegions(max).size() != 0) return false;
+        int x = loc.getBlockX();
+        int z = loc.getBlockZ();
+        BlockVector3 min = BlockVector3.at(x - 15, 0, z - 15);
+        BlockVector3 max = BlockVector3.at(x + 15, 255, z + 15);
         // Creating region id
         String id = ClaimH.createId(loc);
         // Creating region at new points
@@ -41,15 +43,35 @@ public class ClaimManager {
         region.getOwners().addPlayer(owner);
         // Registering region
         regionManager.addRegion(region);
-        // TO-DO: Cache newly created province
+        // Adding newly created claim to cache
+        Claim claim = new Claim(id, region, owner);
+        ClaimCache.addClaim(id, claim);
+        // Linking player with a newly created claim
+        if (ClaimCache.containsClaimPlayer(owner)) ClaimCache.addClaimPlayer(owner);
+        ClaimPlayer cp = ClaimCache.getClaimPlayer(owner);
+        cp.setClaim(claim);
         return true;
     }
 
     // Existence check is already in RegionHandler
-    public void removeRegionWithId(String id) {
-        regionManager.removeRegion(id);
+    public void removeRegionOf(UUID uuid) {
+        ClaimPlayer cp = ClaimCache.getClaimPlayer(uuid);
+        Claim claim = cp.getClaim();
+        String id = claim.getId();
+        // Removing relatives of all players added to that claim
+        for (UUID member : claim.getMembers()) {
+            ClaimCache.getClaimPlayer(member).removeRelative(id);
+        }
+        // Setting owner's claim to null (because it's going to be removed in a sec)
+        cp.setClaim(null);
+        // Removing claim from cache
+        ClaimCache.removeClaim(id);
+        // Removing claim from the world
+        ProtectedRegion region = claim.getWGRegion();
+        regionManager.removeRegion(region.getId());
     }
 
+    // TO-DO: TEST
     private void upgrade(Claim land) {
         ProtectedRegion wgRegion = land.getWGRegion();
         String id = land.getId();

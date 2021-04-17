@@ -14,7 +14,11 @@ public class Lang {
 
     public static String UPGRADE_SUCCESS = "§6§lS§e§lD§8 » §7Rozmiar terenu został zwiększony do {0}§7.";
 
+    public static String TOO_CLOSE_TO_SPAWN = "§6§lS§e§lD§8 » §cZa blisko innego spawnu.";
     public static String OVERLAPS_OTHER_REGION = "§6§lS§e§lD§8 » §cZa blisko innego terenu.";
     public static String REACHED_REGIONS_LIMIT = "§6§lS§e§lD§8 » §cJuż posiadasz swój teren.";
-    public static String PLACE_SUCCESS = "§6§lS§e§lD§8 » §7Teren został utworzony.";
+    public static String PLACE_SUCCESS = "§6§lS§e§lD§8 » §7Chroniony teren został utworzony.";
+
+    public static String NOT_AN_OWNER = "§6§lS§e§lD§8 » §cTylko właściciel terenu może go zniszczyć.";
+    public static String DESTROY_SUCCESS = "§6§lS§e§lD§8 » §7Chroniony teren został usunięty.";
 }

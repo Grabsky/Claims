@@ -3,12 +3,13 @@ package net.skydistrict.claims;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
-import com.sk89q.worldguard.protection.flags.IntegerFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import net.skydistrict.claims.claims.ClaimCache;
 import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.commands.ClaimCommand;
 import net.skydistrict.claims.configuration.Config;
-import net.skydistrict.claims.panel.PanelManager;
+import net.skydistrict.claims.listeners.PlayerListener;
+import net.skydistrict.claims.listeners.RegionListener;
 import net.skydistrict.claims.utils.UpgradeH;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,14 +18,12 @@ public final class Claims extends JavaPlugin {
     private static Claims instance;
     private RegionManager region;
     private ClaimManager claim;
-    private PanelManager panel;
+//    private PanelManager panel;
     // Getters
     public static Claims getInstance() { return instance; }
     public RegionManager getRegionManager() { return region; }
-    public ClaimManager getProvinceManager() { return claim; }
-    public PanelManager getPanelManager() { return panel; }
-    // Custom flags
-    public static IntegerFlag PROVINCE_LEVEL;
+    public ClaimManager getClaimManager() { return claim; }
+//    public PanelManager getPanelManager() { return panel; }
 
     @Override
     public void onEnable() {
@@ -34,9 +33,13 @@ public final class Claims extends JavaPlugin {
         this.region = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // Creating other instances
         this.claim = new ClaimManager(this);
-        this.panel = new PanelManager(this);
+        new ClaimCache(this);
+//        this.panel = new PanelManager(this);
         // Registering a command
-        this.getCommand("province").setExecutor(new ClaimCommand(this));
+        this.getCommand("claim").setExecutor(new ClaimCommand());
+        // Registering events
+        this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
         // Initializing available upgrades
         UpgradeH.initialize();
     }
