@@ -12,11 +12,11 @@ public class UpgradeH {
     private static final List<ClaimLevel> levels = new ArrayList<>(5);
 
     public static void initialize() {
-        levels.add(new ClaimLevel("Węgiel", ChatColor.DARK_GRAY, "31x31", Material.COAL, StaticItems.COAL_BLOCK));
-        levels.add(new ClaimLevel("Żelazo", ChatColor.WHITE, "41x41", Material.IRON_INGOT, StaticItems.IRON_BLOCK));
-        levels.add(new ClaimLevel("Złoto", ChatColor.GOLD, "51x51", Material.GOLD_INGOT, StaticItems.GOLD_BLOCK));
-        levels.add(new ClaimLevel("Diament", ChatColor.AQUA, "61x61", Material.DIAMOND, StaticItems.DIAMOND_BLOCK));
-        levels.add(new ClaimLevel("Szmaragd", ChatColor.GREEN, "71x71",  Material.EMERALD, StaticItems.EMERALD_BLOCK));
+        levels.add(new ClaimLevel("Węgiel", ChatColor.DARK_GRAY, "31x31", Material.COAL_BLOCK, Material.COAL, StaticItems.COAL_BLOCK));
+        levels.add(new ClaimLevel("Żelazo", ChatColor.WHITE, "41x41", Material.IRON_BLOCK, Material.IRON_INGOT, StaticItems.IRON_BLOCK));
+        levels.add(new ClaimLevel("Złoto", ChatColor.GOLD, "51x51", Material.GOLD_BLOCK, Material.GOLD_INGOT, StaticItems.GOLD_BLOCK));
+        levels.add(new ClaimLevel("Diament", ChatColor.AQUA, "61x61", Material.DIAMOND_BLOCK, Material.DIAMOND, StaticItems.DIAMOND_BLOCK));
+        levels.add(new ClaimLevel("Szmaragd", ChatColor.GREEN, "71x71", Material.EMERALD_BLOCK, Material.EMERALD, StaticItems.EMERALD_BLOCK));
     }
 
     public static ClaimLevel getClaimLevel(int level) {

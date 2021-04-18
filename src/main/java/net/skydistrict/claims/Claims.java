@@ -4,11 +4,9 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
-import net.skydistrict.claims.claims.ClaimCache;
 import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.commands.ClaimCommand;
 import net.skydistrict.claims.configuration.Config;
-import net.skydistrict.claims.listeners.PlayerListener;
 import net.skydistrict.claims.listeners.RegionListener;
 import net.skydistrict.claims.utils.UpgradeH;
 import org.bukkit.NamespacedKey;
@@ -26,26 +24,22 @@ public final class Claims extends JavaPlugin {
     public ClaimManager getClaimManager() { return claim; }
 //    public PanelManager getPanelManager() { return panel; }
 
-    public static NamespacedKey isClaimBlock;
     public static NamespacedKey claimBlockLevel;
 
     @Override
     public void onEnable() {
         instance = this;
-        // Creating namespaced keys
-        isClaimBlock = new NamespacedKey(this, "isClaimBlock");
+        // Creating NamespacedKey
         claimBlockLevel = new NamespacedKey(this, "claimBlockLevel");
         // Creating instance of RegionManager
         World world = BukkitAdapter.adapt(Config.DEFAULT_WORLD);
         this.region = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // Creating other instances
         this.claim = new ClaimManager(this);
-        new ClaimCache(this);
 //        this.panel = new PanelManager(this);
         // Registering a command
-        this.getCommand("claim").setExecutor(new ClaimCommand());
+        this.getCommand("claim").setExecutor(new ClaimCommand(this));
         // Registering events
-        this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
         // Initializing available upgrades
         UpgradeH.initialize();

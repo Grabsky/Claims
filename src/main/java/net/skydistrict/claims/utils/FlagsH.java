@@ -7,7 +7,6 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import java.util.Arrays;
 import java.util.List;
 
-// TO-DO: Comments
 public class FlagsH {
 
     /** Returns list of options (flag values) */

@@ -15,22 +15,99 @@ import net.skydistrict.claims.utils.ClaimH;
 import net.skydistrict.claims.utils.UpgradeH;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 // TO-DO: Make it work with ClaimCache or merge 'em together
 public class ClaimManager {
     private final Claims instance;
     private final RegionManager regionManager;
+    private final Map<String, Claim> regionIdToClaim = new HashMap<>();
+    private final Map<UUID, ClaimPlayer> uuidToClaimPlayer = new HashMap<>();
+    private final Map<String, Location> centers = new HashMap<>();
 
     public ClaimManager(Claims instance) {
         this.instance = instance;
         this.regionManager = instance.getRegionManager();
     }
 
+    // Should be ran only during the server startup
+    private void cacheClaims() {
+        for (Map.Entry<String, ProtectedRegion> en : regionManager.getRegions().entrySet()) {
+            ProtectedRegion region = en.getValue();
+            if (!region.getId().startsWith("claims_") || region.hasMembersOrOwners() || region.getOwners().size() == 1) continue;
+            UUID owner = region.getOwners().getUniqueIds().iterator().next();
+            ClaimPlayer cp = this.getClaimPlayer(owner);
+            Claim claim = new Claim(region.getId(), region, owner);
+            cp.setClaim(claim);
+            // Creating members' references
+            for (UUID memberUuid : region.getMembers().getUniqueIds()) {
+                ClaimPlayer cm = this.getClaimPlayer(memberUuid);
+                cm.addRelative(claim.getId());
+            }
+            // Adding claim to the cache
+            String id = region.getId();
+            this.addClaim(id, claim);
+            System.out.println("Loaded claim owned by " + owner);
+        }
+    }
+
+    // Returns true if Claim is in cache
+    public boolean containsClaim(String id) {
+        return this.regionIdToClaim.containsKey(id);
+    }
+
+    // Returns Claim from cache
+    public Claim getClaim(String id) {
+        return this.regionIdToClaim.get(id);
+    }
+
+    // Adds Claim to cache
+    public void addClaim(String id, Claim claim) {
+        this.regionIdToClaim.put(id, claim);
+        this.centers.put(id, claim.getCenter());
+    }
+
+    // Removes Claim from cache
+    public void removeClaim(String id) {
+        this.regionIdToClaim.remove(id);
+        this.centers.remove(id);
+    }
+
+    // Returns ClaimPlayer from his UUID (creates object if doesn't exist)
+    public ClaimPlayer getClaimPlayer(UUID uuid) {
+        if (!this.uuidToClaimPlayer.containsKey(uuid)) this.uuidToClaimPlayer.put(uuid, new ClaimPlayer(uuid));
+        return this.uuidToClaimPlayer.get(uuid);
+    }
+
+
+    // Returns center of claim closest to given location
+    @Nullable
+    public Location getClosestTo(Location location) {
+        Location closestLocation = null;
+        double dist = Double.MAX_VALUE;
+        for (Location loc : this.centers.values()) {
+            double d = loc.distance(location);
+            if (d < dist) {
+                closestLocation = loc;
+                dist = d;
+            }
+        }
+        return closestLocation;
+    }
+
+    public boolean canPlaceAt(Location location) {
+        Location center = this.getClosestTo(location);
+        if (center == null) return true;
+        return (Math.abs(location.getBlockX() - center.getBlockX()) > 70 || Math.abs(location.getBlockZ() - center.getBlockZ()) > 70);
+    }
+
     public boolean createRegionAt(Location loc, UUID owner, int level) {
         // Checking if there is no region at this selection
-        if (!ClaimH.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MIN_DISTANCE_FROM_SPAWN) return false;
+        if (!this.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MIN_DISTANCE_FROM_SPAWN) return false;
         // Points
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
@@ -42,6 +119,7 @@ public class ClaimManager {
         // Creating region at new points
         ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
+        region.setFlag(ClaimFlags.CLAIM_LEVEL, level);
         this.setDefaultFlags(region, loc);
         // Adding owner
         region.getOwners().addPlayer(owner);
@@ -49,27 +127,26 @@ public class ClaimManager {
         regionManager.addRegion(region);
         // Adding newly created claim to cache
         Claim claim = new Claim(id, region, owner);
-        ClaimCache.addClaim(id, claim);
-        // Linking player with a newly created claim
-        if (ClaimCache.containsClaimPlayer(owner)) ClaimCache.addClaimPlayer(owner);
-        ClaimPlayer cp = ClaimCache.getClaimPlayer(owner);
+        this.addClaim(id, claim);
+        // Making a connection between player and newly created claim
+        ClaimPlayer cp = this.getClaimPlayer(owner);
         cp.setClaim(claim);
         return true;
     }
 
     // Existence check is already in RegionHandler
     public void removeRegionOf(UUID uuid) {
-        ClaimPlayer cp = ClaimCache.getClaimPlayer(uuid);
+        ClaimPlayer cp = this.getClaimPlayer(uuid);
         Claim claim = cp.getClaim();
         String id = claim.getId();
         // Removing relatives of all players added to that claim
         for (UUID member : claim.getMembers()) {
-            ClaimCache.getClaimPlayer(member).removeRelative(id);
+            this.getClaimPlayer(member).removeRelative(id);
         }
         // Setting owner's claim to null (because it's going to be removed in a sec)
         cp.setClaim(null);
         // Removing claim from cache
-        ClaimCache.removeClaim(id);
+        this.removeClaim(id);
         // Removing claim from the world
         ProtectedRegion region = claim.getWGRegion();
         regionManager.removeRegion(region.getId());
@@ -93,7 +170,7 @@ public class ClaimManager {
         newRegion.copyFrom(wgRegion);
         regionManager.addRegion(newRegion);
         // Updating block type
-        Material type = UpgradeH.getClaimLevel(level).getMaterial();
+        Material type = UpgradeH.getClaimLevel(level).getUpgradeMaterial();
         claim.getCenter().getBlock().setType(type);
         return true;
     }
@@ -108,7 +185,6 @@ public class ClaimManager {
         region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
         region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.ALLOW);
         region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc));
-        region.setFlag(ClaimFlags.CLAIM_LEVEL, 0);
     }
 
 }

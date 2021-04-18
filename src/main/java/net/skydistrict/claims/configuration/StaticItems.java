@@ -1,23 +1,25 @@
 package net.skydistrict.claims.configuration;
 
+import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.ClaimLevel;
 import net.skydistrict.claims.utils.UpgradeH;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 
 public class StaticItems {
 
     public static ItemStack getClaimBlock(int level) {
         ClaimLevel claimLevel = UpgradeH.getClaimLevel(level);
-        Material material = claimLevel.getMaterial();
+        Material material = claimLevel.getBlockMaterial();
         ChatColor color = claimLevel.getColor();
-        return new ItemBuilder(material)
+        ItemBuilder builder = new ItemBuilder(material)
                 .setName(color + "§lTeren")
-                .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze " + color + claimLevel.getSize() + " §7bloków.")
-                .setCustomModelData(1337)
-                .build();
+                .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze " + color + claimLevel.getSize() + " §7bloków.");
+        builder.getPersistentDataContainer().set(Claims.claimBlockLevel, PersistentDataType.INTEGER, level);
+        return builder.build();
     }
 
     // Homes
