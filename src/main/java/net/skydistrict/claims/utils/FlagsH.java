@@ -11,9 +11,7 @@ public class FlagsH {
 
     /** Returns list of options (flag values) */
     public static List<Object> getOptions(Flag<?> flagType) {
-        if (flagType instanceof StateFlag) {
-            return Arrays.asList(StateFlag.State.ALLOW, StateFlag.State.DENY);
-        }
+        if (flagType instanceof StateFlag) return Arrays.asList(StateFlag.State.ALLOW, StateFlag.State.DENY);
         // Comparing instances is useless in some cases - let's check the name instead
         switch (flagType.getName()) {
             case "weather-lock":
@@ -26,10 +24,8 @@ public class FlagsH {
 
     /** Returns list of options (formatted flag values) displayed in GUI */
     public static List<String> getFormattedOptions(Flag<?> flagType) {
-        if (flagType instanceof StateFlag) {
-            return Arrays.asList("Włączone", "Wyłączone");
-        }
-        // Comparing instances is useless in some cases - let's check the name instead
+        if (flagType instanceof StateFlag) return Arrays.asList("Włączone", "Wyłączone");
+        // Comparing instances is pointless in some cases - let's check the name instead
         switch (flagType.getName()) {
             case "weather-lock":
                 return Arrays.asList("Wyłączone", "Słonecznie", "Deszcz", "Burza");

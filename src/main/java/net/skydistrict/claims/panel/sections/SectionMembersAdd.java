@@ -1,7 +1,7 @@
 package net.skydistrict.claims.panel.sections;
 
-import dev.espi.protectionstones.PSRegion;
 import net.skydistrict.claims.builders.ItemBuilder;
+import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.panel.Panel;
@@ -10,37 +10,29 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-// TO-DO: Vanish support (future task)
+// TO-DO: Replace Bukkit.getOnlinePlayers() with better method
 public class SectionMembersAdd extends Section {
-    private List<Player> players;
-    private int size;
+    private List<Player> onlinePlayers;
     private int maxOnPage;
+    private int usableSize;
     private int pages;
 
-    public SectionMembersAdd(Panel panel, Player executor, UUID owner, PSRegion region) {
-        super(panel, executor, owner, region);
+    public SectionMembersAdd(Panel panel, Player executor, UUID owner, Claim claim) {
+        super(panel, executor, owner, claim);
     }
 
     @Override
     public void prepare() {
-        ArrayList<UUID> members = region.getMembers();
-        ArrayList<Player> p = new ArrayList<>(60);
-        for (int i = 0; i < 60; i++) {
-            p.add(Bukkit.getPlayer("Grabsky"));
-        }
-        long s1 = System.nanoTime();
-        this.players = p.stream()
-                .filter(player -> (player != executor) && !region.isMember(player.getUniqueId()))
+        this.onlinePlayers = Bukkit.getOnlinePlayers().stream()
+                .filter(player -> (player != executor) && !claim.isMember(player.getUniqueId()))
                 .collect(Collectors.toList());
-        System.out.println((System.nanoTime() - s1) / 1000000D);
-        this.size = players.size();
         this.maxOnPage = 21;
-        this.pages = (size - 1) / maxOnPage + 1;
+        this.usableSize = onlinePlayers.size();
+        this.pages = (onlinePlayers.size() - 1) / maxOnPage + 1;
     }
 
     @Override
@@ -48,49 +40,39 @@ public class SectionMembersAdd extends Section {
         // Changing panel texture
         InventoryH.updateTitle(executor, "§f\u7000\u7103", editMode);
         // Display first page of online players
-        long s1 = System.nanoTime();
         this.generateView(1);
-        System.out.println((System.nanoTime() - s1) / 1000000D);
     }
 
     private void generateView(int pageToDisplay) {
         panel.clear();
-        // Updating list of members
-        final ArrayList<UUID> members = region.getMembers();
-        // Calculating number of pages and range
-        // For each "use-able" slot
-        for (int slot = 9, index = 0 ; index < this.maxOnPage; slot++) {
-            if ((slot + 1) % 9 == 0 || slot % 9 == 0) continue;
-            // Getting 'fixed' index
-		    int fixedIndex = ((pageToDisplay * this.maxOnPage) - this.maxOnPage) + index;
-            if (fixedIndex >= this.size) break;
-            Player player = this.players.get(fixedIndex);
-            UUID uuid = player.getUniqueId();
-            // Add skull to gui
+        // Calculating index
+        int index = (pageToDisplay * maxOnPage) - maxOnPage;
+        // For each 'use-able' slot (10 - first slot, 35 - last slot)
+        for (int slot = 10; slot < 35; slot++, index++) {
+            // Making sure we didn't ran out of index
+            if (index >= usableSize) break;
+            // Skipping border slots
+            if ((slot + 1) % 9 == 0) slot += 2;
+            final Player player = onlinePlayers.get(index);
+            // Adding skull to GUI
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§a§l" + player.getName())
                     .setLore("§7Kliknij, aby §adodać§7 do terenu.")
-                    .setSkullOwner(uuid)
+                    .setSkullOwner(player.getUniqueId())
                     .build(), (event) -> {
                 // One more check just in case something changed while GUI was open
-                if (region.getMembers().size() < 10) {
-                    region.addMember(uuid);
-                    panel.applySection(new SectionMembers(panel, executor, owner, region));
-                } else {
+                if (claim.addMember(player.getUniqueId())) panel.applySection(new SectionMembers(panel, executor, owner, claim));
+                else {
                     executor.closeInventory();
                     executor.sendMessage(Lang.REACHED_MEMBERS_LIMIT);
                 }
             });
-            index++;
         }
-        // If player is not on the first page, display PREVIOUS PAGE button
-        if (pageToDisplay > 1) {
-            panel.setItem(18, StaticItems.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
-        }
-        // If there is more pages, display NEXT PAGE button
-        if (pageToDisplay + 1 <= pages) {
-            panel.setItem(26, StaticItems.NEXT, (event) -> generateView(pageToDisplay + 1));
-        }
-        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, region)));
+        // If player is not on the first page - displaying PREVIOUS PAGE button
+        if (pageToDisplay > 1) panel.setItem(18, StaticItems.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
+        // If there is more pages - displaying NEXT PAGE button
+        if (pageToDisplay + 1 <= pages) panel.setItem(26, StaticItems.NEXT, (event) -> generateView(pageToDisplay + 1));
+        // As usually, displaying RETURN button
+        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
     }
 }

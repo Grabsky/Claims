@@ -8,11 +8,11 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import io.papermc.lib.PaperLib;
 import net.skydistrict.claims.ClaimFlags;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.utils.ClaimH;
-import net.skydistrict.claims.utils.UpgradeH;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.jetbrains.annotations.Nullable;
@@ -32,13 +32,15 @@ public class ClaimManager {
     public ClaimManager(Claims instance) {
         this.instance = instance;
         this.regionManager = instance.getRegionManager();
+        this.cacheClaims();
     }
 
     // Should be ran only during the server startup
+    // TO-DO: Fix region
     private void cacheClaims() {
         for (Map.Entry<String, ProtectedRegion> en : regionManager.getRegions().entrySet()) {
             ProtectedRegion region = en.getValue();
-            if (!region.getId().startsWith("claims_") || region.hasMembersOrOwners() || region.getOwners().size() == 1) continue;
+            if (!region.getId().startsWith("claims_") || !region.hasMembersOrOwners() || region.getOwners().size() != 1) continue;
             UUID owner = region.getOwners().getUniqueIds().iterator().next();
             ClaimPlayer cp = this.getClaimPlayer(owner);
             Claim claim = new Claim(region.getId(), region, owner);
@@ -153,25 +155,26 @@ public class ClaimManager {
     }
 
     // TO-DO: Check if cached region has to be updated
-    private boolean upgrade(Claim claim) {
-        int level = claim.getLevel();
-        if (level >= 4) return false;
+    public boolean upgrade(Claim claim) {
+        if (claim.getLevel() >= 4) return false;
+        int newLevel = claim.getLevel() + 1;
         ProtectedRegion wgRegion = claim.getWGRegion();
         String id = claim.getId();
-        // Min point
-        BlockVector3 min = wgRegion.getMinimumPoint();
-        BlockVector3 newMin = BlockVector3.at(min.getBlockX() - 5, min.getBlockY(), min.getBlockZ() - 5);
-        // Max point
-        BlockVector3 max = wgRegion.getMaximumPoint();
-        BlockVector3 newMax = BlockVector3.at(max.getBlockX() + 5, max.getBlockY(), max.getBlockZ() + 5);
+        Location center = claim.getCenter();
+        // Calculating new region size
+        int radius = 15 + (5 * newLevel);
+        BlockVector3 min = BlockVector3.at(center.getBlockX() - radius, 0, center.getBlockZ() - radius);
+        BlockVector3 max = BlockVector3.at(center.getBlockX() + radius, 255, center.getBlockZ() + radius);
         // Creating cuboid at new points
-        ProtectedRegion newRegion = new ProtectedCuboidRegion(id, newMin, newMax);
+        ProtectedRegion newRegion = new ProtectedCuboidRegion(id, min, max);
+        // Updating region flag
+        wgRegion.setFlag(ClaimFlags.CLAIM_LEVEL, newLevel);
         // Redefining region
         newRegion.copyFrom(wgRegion);
         regionManager.addRegion(newRegion);
         // Updating block type
-        Material type = UpgradeH.getClaimLevel(level).getUpgradeMaterial();
-        claim.getCenter().getBlock().setType(type);
+        Material type = ClaimH.getClaimLevel(newLevel).getBlockMaterial();
+        PaperLib.getChunkAtAsync(claim.getCenter()).thenAccept(chunk -> chunk.getBlock(center.getBlockX(), center.getBlockY(), center.getBlockZ()).setType(type));
         return true;
     }
 
@@ -184,7 +187,10 @@ public class ClaimManager {
         region.setFlag(Flags.ENTRY, StateFlag.State.ALLOW);
         region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
         region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.ALLOW);
-        region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc));
+        // Setting center location (not modifiable)
+        region.setFlag(ClaimFlags.CLAIM_CENTER, BukkitAdapter.adapt(loc));
+        // Setting default home location (modifiable)
+        region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc.clone().add(0, 1, 0)));
     }
 
 }

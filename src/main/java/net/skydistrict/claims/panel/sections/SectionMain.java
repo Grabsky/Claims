@@ -1,7 +1,7 @@
 package net.skydistrict.claims.panel.sections;
 
-import dev.espi.protectionstones.PSRegion;
 import net.skydistrict.claims.builders.ItemBuilder;
+import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
@@ -14,8 +14,8 @@ import java.util.UUID;
 public class SectionMain extends Section {
     private ItemStack members;
 
-    public SectionMain(Panel panel, Player executor, UUID owner, PSRegion region) {
-        super(panel, executor, owner, region);
+    public SectionMain(Panel panel, Player executor, UUID owner, Claim claim) {
+        super(panel, executor, owner, claim);
     }
 
     @Override
@@ -32,9 +32,9 @@ public class SectionMain extends Section {
         // Changing panel texture
         InventoryH.updateTitle(executor, "§f\u7000\u7101", editMode);
         // Setting menu items
-        panel.setItem(11, StaticItems.HOMES, (event) -> panel.applySection(new SectionHomes(panel, executor, owner, region)));
-        panel.setItem(13, this.members, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, region)));
-        panel.setItem(15, StaticItems.SETTINGS, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, region)));
+        panel.setItem(11, StaticItems.HOMES, (event) -> panel.applySection(new SectionHomes(panel, executor, owner, claim)));
+        panel.setItem(13, this.members, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
+        panel.setItem(15, StaticItems.SETTINGS, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
         panel.setItem(49, StaticItems.RETURN, (event) -> executor.closeInventory());
     }
 }

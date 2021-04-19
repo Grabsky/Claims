@@ -39,9 +39,7 @@ public class Panel {
     /** Sets item in panel inventory */
     public void setItem(int slot, @NotNull ItemStack item, @Nullable ClickAction action) {
         this.inventory.setItem(slot, item);
-        if (action != null) {
-            actions[slot] = action;
-        }
+        if (action != null) actions[slot] = action;
     }
 
     /** Sets item in panel inventory */

@@ -1,7 +1,5 @@
 package net.skydistrict.claims.claims;
 
-import org.jetbrains.annotations.Nullable;
-
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -11,20 +9,18 @@ public class ClaimPlayer {
     private Claim claim;
     private final Set<String> relatives;
 
-    public ClaimPlayer(UUID uuid, @Nullable Claim claim, Set<String> relatives) {
-        this.uuid = uuid;
-        this.claim = claim;
-        this.relatives = relatives;
-    }
-
     public ClaimPlayer(UUID uuid) {
         this.uuid = uuid;
         this.claim = null;
         this.relatives = new HashSet<>();
     }
 
+    public UUID getUniqueId() {
+        return uuid;
+    }
+
     public boolean hasClaim() {
-        return (claim != null);
+        return claim != null;
     }
 
     public Claim getClaim() {
@@ -36,7 +32,7 @@ public class ClaimPlayer {
     }
 
     public boolean hasRelatives() {
-        return this.relatives != null && !this.relatives.isEmpty();
+        return !relatives.isEmpty();
     }
 
     public Set<String> getRelatives() {

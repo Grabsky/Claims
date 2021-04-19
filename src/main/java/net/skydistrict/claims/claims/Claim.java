@@ -3,11 +3,10 @@ package net.skydistrict.claims.claims;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import io.papermc.lib.PaperLib;
 import net.skydistrict.claims.ClaimFlags;
+import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.configuration.Config;
 import org.bukkit.Location;
-import org.bukkit.Material;
 
 import java.util.Set;
 import java.util.UUID;
@@ -31,36 +30,44 @@ public class Claim {
         return wgRegion;
     }
 
-    // This shouldn't be null unless manually modified
-    public int getLevel() {
-        return this.wgRegion.getFlag(ClaimFlags.CLAIM_LEVEL);
-    }
-
-    // This shouldn't be null unless manually modified
-    public Location getCenter() {
-        return BukkitAdapter.adapt(this.wgRegion.getFlag(Flags.TELE_LOC));
-    }
-
-    public boolean setCenter(Location location) {
-        com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(location);
-        if (wgRegion.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
-            this.wgRegion.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(location));
-            return true;
-        }
-        return false;
-    }
-
     public UUID getOwner() {
         return owner;
     }
 
+    // This shouldn't be null unless manually deleted
+    public int getLevel() {
+        return wgRegion.getFlag(ClaimFlags.CLAIM_LEVEL);
+    }
+
+    // This shouldn't be null unless manually deleted
+    public Location getCenter() {
+        return BukkitAdapter.adapt(wgRegion.getFlag(ClaimFlags.CLAIM_CENTER));
+    }
+
+    // This shouldn't be null unless manually deleted
+    public Location getHome() {
+        return BukkitAdapter.adapt(wgRegion.getFlag(Flags.TELE_LOC));
+    }
+
+    public boolean setHome(Location location) {
+        com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(location);
+        if (!wgRegion.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) return false;
+        wgRegion.setFlag(Flags.TELE_LOC, loc);
+        return true;
+    }
+
     public Set<UUID> getMembers() {
-        return wgRegion.getMembers().getUniqueIds();
+        return this.wgRegion.getMembers().getUniqueIds();
+    }
+
+    public boolean isMember(UUID uuid) {
+        return this.wgRegion.getMembers().contains(uuid);
     }
 
     public boolean addMember(UUID uuid) {
         if (this.getMembers().size() < Config.MEMBERS_LIMIT) {
             this.wgRegion.getMembers().addPlayer(uuid);
+            ClaimsAPI.getClaimPlayer(uuid).addRelative(this.getId());
             return true;
         }
         return false;
@@ -69,19 +76,7 @@ public class Claim {
     public boolean removeMember(UUID uuid) {
         if (this.getMembers().contains(uuid)) {
             this.wgRegion.getMembers().removePlayer(uuid);
-            return true;
-        }
-        return false;
-    }
-
-    public boolean upgrade() {
-        int level = this.getLevel();
-        if (level < 4) {
-            Material type = Material.IRON_BLOCK; // TO-DO: Get level-specific type
-            Location center = this.getCenter();
-            this.wgRegion.setFlag(ClaimFlags.CLAIM_LEVEL, level + 1);
-            // Replace block
-            PaperLib.getChunkAtAsync(this.getCenter()).thenAccept(chunk -> chunk.getBlock(center.getBlockX(), center.getBlockY(), center.getBlockZ()).setType(type));
+            ClaimsAPI.getClaimPlayer(uuid).removeRelative(this.getId());
             return true;
         }
         return false;

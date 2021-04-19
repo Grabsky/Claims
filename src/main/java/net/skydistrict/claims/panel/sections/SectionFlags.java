@@ -5,16 +5,18 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import dev.espi.protectionstones.PSRegion;
 import net.skydistrict.claims.builders.FlagItemBuilder;
+import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
+// TO-DO: Re-design flag descriptions
 public class SectionFlags extends Section {
     private final ProtectedRegion wgRegion;
 
@@ -27,12 +29,12 @@ public class SectionFlags extends Section {
     private FlagItemBuilder ice_melt;
     private FlagItemBuilder time_lock;
     private FlagItemBuilder weather_lock;
+    private ItemStack teleport;
 
-    public SectionFlags(Panel panel, Player executor, UUID owner, PSRegion region) {
-        super(panel, executor, owner, region);
-        this.wgRegion = region.getWGRegion();
+    public SectionFlags(Panel panel, Player executor, UUID owner, Claim claim) {
+        super(panel, executor, owner, claim);
+        this.wgRegion = claim.getWGRegion();
     }
-
 
     @Override
     public void prepare() {
@@ -75,6 +77,7 @@ public class SectionFlags extends Section {
                 .setPrefix("§7Zmień pogodę na terenie.", "", "§7Zakres: §eWszyscy", "")
                 .setSuffix("", "§cZmiany widoczne po przelogowaniu.")
                 .updateLore();
+
     }
 
     @Override
@@ -95,6 +98,7 @@ public class SectionFlags extends Section {
         this.panel.setItem(22, time_lock.build(), (event) -> event.setCurrentItem(time_lock.toggle(value -> wgRegion.setFlag(Flags.TIME_LOCK, (String) value)).build()));
         this.panel.setItem(23, weather_lock.build(), (event) -> event.setCurrentItem(weather_lock.toggle(value -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) value)).build()));
         // Return button
-        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, region)));
+        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
     }
+
 }

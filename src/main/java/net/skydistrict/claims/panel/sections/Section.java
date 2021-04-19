@@ -1,6 +1,6 @@
 package net.skydistrict.claims.panel.sections;
 
-import dev.espi.protectionstones.PSRegion;
+import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.panel.Panel;
 import org.bukkit.entity.Player;
 
@@ -10,7 +10,7 @@ public abstract class Section {
     protected Panel panel;
     protected Player executor;
     protected UUID owner;
-    protected PSRegion region;
+    protected Claim claim;
     protected boolean editMode = false;
 
     /** Constructor required to prepare and apply Section to a Panel */
@@ -18,17 +18,17 @@ public abstract class Section {
         this.panel = panel;
         this.executor = executor;
         this.owner = owner;
-        if (executor.getUniqueId() != owner) editMode = true;
+        if (!executor.getUniqueId().equals(owner)) editMode = true;
         this.panel.clear();
     }
 
     /** Constructor required to prepare and apply Section to a Panel */
-    public Section(Panel panel, Player executor, UUID owner, PSRegion region) {
+    public Section(Panel panel, Player executor, UUID owner, Claim claim) {
         this.panel = panel;
         this.executor = executor;
         this.owner = owner;
-        this.region = region;
-        if (executor.getUniqueId() != owner) editMode = true;
+        this.claim = claim;
+        if (!executor.getUniqueId().equals(owner)) editMode = true;
         this.panel.clear();
     }
 

@@ -7,5 +7,5 @@ authors: [ Grabsky ]
 commands:
   claim:
     aliases: ['teren', 'claims']
-    permission: 'skydistrict.claims'
+    permission: 'skydistrict.claims.panel'
     permission-message: '§6§lS§e§lD§8 » §cBrak uprawnień.'

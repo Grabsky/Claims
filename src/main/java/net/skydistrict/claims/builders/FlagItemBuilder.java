@@ -62,9 +62,7 @@ public class FlagItemBuilder {
             ChatColor color = (i == value) ? ChatColor.YELLOW : ChatColor.GRAY;
             lore.add("§8› " + color + formattedOptions.get(i));
         }
-        if (suffix != null) {
-            lore.addAll(Arrays.asList(suffix));
-        }
+        if (suffix != null) lore.addAll(Arrays.asList(suffix));
         this.meta.setLore(lore);
         return this;
     }
@@ -73,9 +71,7 @@ public class FlagItemBuilder {
     public FlagItemBuilder toggle(ToggleAction action) {
         this.value = (value + 1 >= size) ? 0 : value + 1;
         this.updateLore();
-        if (action != null) {
-            action.run(this.options.get(this.value));
-        }
+        if (action != null) action.run(this.options.get(this.value));
         return this;
     }
 
@@ -85,7 +81,6 @@ public class FlagItemBuilder {
             System.out.println("§c[ClaimsGUI/DEBUG] Error trying to get value for '" + flag.getName() + "' flag.");
             System.out.println("§c[ClaimsGUI/DEBUG] Expected one of  " + String.join(", ", options + " but found '" + value + "'."));
             return null;
-
         }
         this.item.setItemMeta(this.meta);
         return item;

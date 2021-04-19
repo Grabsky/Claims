@@ -34,7 +34,6 @@ public class PanelManager implements Listener {
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
         Player player = (Player) event.getWhoClicked();
-        // System.out.println(this.openInventories);
         if (openInventories.containsKey(player)) {
             event.setCancelled(true);
             if (event.getAction() == InventoryAction.PICKUP_ALL) {
@@ -44,15 +43,13 @@ public class PanelManager implements Listener {
                 Inventory inventory = panel.getInventory();
                 if (event.getClickedInventory() == inventory) {
                     // Return if player is on cooldown
-                    if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < 350)
-                        return;
+                    if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < 350) return;
+                    // Updating cooldown
                     clickCooldowns.put(player, System.currentTimeMillis());
                     int slot = event.getSlot();
                     if (panel.getAction(slot) != null) {
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1F, 1.5F);
-                        if (event.getAction() == InventoryAction.PICKUP_ALL) {
-                            panel.getAction(slot).click(event);
-                        }
+                        if (event.getAction() == InventoryAction.PICKUP_ALL) panel.getAction(slot).click(event);
                     }
                 }
             }
