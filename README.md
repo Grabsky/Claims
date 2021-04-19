@@ -26,6 +26,12 @@ Permission | Description
 
 ## TO-DO
 - [ ] Test in search of bugs and exploits
+  - [ ] Cache (upgrading/adding/removing)
+  - [ ] Claim (creating/removing/upgrading/protection)
+  - [ ] Claim flags (including default flags)
+  - [ ] Command (functionality and permissions)
+  - [ ] Claim upgrades (block type)
+  - [ ] ... and everything I forgot to mention
 - [ ] (Optional) Add (basic) config.yml
 - [ ] (Optional) Add (chat) messages.yml
 - [x] Re-implement core features (creating/removing claims)
