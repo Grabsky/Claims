@@ -28,7 +28,7 @@ public class SectionMembersAdd extends Section {
     @Override
     public void prepare() {
         this.onlinePlayers = Bukkit.getOnlinePlayers().stream()
-                .filter(player -> (player != executor) && !claim.isMember(player.getUniqueId()))
+                .filter(player -> (!player.getUniqueId().equals(owner) && !claim.isMember(player.getUniqueId())))
                 .collect(Collectors.toList());
         this.maxOnPage = 21;
         this.usableSize = onlinePlayers.size();

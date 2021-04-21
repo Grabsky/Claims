@@ -21,4 +21,7 @@ public class Lang {
 
     public static String NOT_AN_OWNER = "§6§lS§e§lD§8 » §cTylko właściciel terenu może go zniszczyć.";
     public static String DESTROY_SUCCESS = "§6§lS§e§lD§8 » §7Chroniony teren został usunięty.";
+
+    public static String NOT_SNEAKING = "§6§lS§e§lD§8 » §cAby zniszczyć teren musisz kucać.";
+
 }

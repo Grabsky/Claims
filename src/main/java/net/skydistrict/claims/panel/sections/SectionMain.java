@@ -23,7 +23,7 @@ public class SectionMain extends Section {
         this.members = new ItemBuilder(Material.PLAYER_HEAD)
                 .setName("§e§lCzłonkowie")
                 .setLore("§7Kliknij, aby zarządzać dodanymi do terenu.")
-                .setSkullOwner(executor.getUniqueId())
+                .setSkullOwner(owner)
                 .build();
     }
 

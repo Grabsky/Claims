@@ -43,7 +43,7 @@ public class ClaimManager {
             if (!region.getId().startsWith("claims_") || !region.hasMembersOrOwners() || region.getOwners().size() != 1) continue;
             UUID owner = region.getOwners().getUniqueIds().iterator().next();
             ClaimPlayer cp = this.getClaimPlayer(owner);
-            Claim claim = new Claim(region.getId(), region, owner);
+            Claim claim = new Claim(region.getId(), owner, region);
             cp.setClaim(claim);
             // Creating members' references
             for (UUID memberUuid : region.getMembers().getUniqueIds()) {
@@ -128,7 +128,7 @@ public class ClaimManager {
         // Registering region
         regionManager.addRegion(region);
         // Adding newly created claim to cache
-        Claim claim = new Claim(id, region, owner);
+        Claim claim = new Claim(id, owner, region);
         this.addClaim(id, claim);
         // Making a connection between player and newly created claim
         ClaimPlayer cp = this.getClaimPlayer(owner);
@@ -172,9 +172,11 @@ public class ClaimManager {
         // Redefining region
         newRegion.copyFrom(wgRegion);
         regionManager.addRegion(newRegion);
-        // Updating block type
+        // Updating Claim with new WorldGuard region
+        claim.update(wgRegion);
+        // Updating block type ('& 0xF' thingy is doing some magic to get block's position in chunk)
         Material type = ClaimH.getClaimLevel(newLevel).getBlockMaterial();
-        PaperLib.getChunkAtAsync(claim.getCenter()).thenAccept(chunk -> chunk.getBlock(center.getBlockX(), center.getBlockY(), center.getBlockZ()).setType(type));
+        PaperLib.getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));
         return true;
     }
 

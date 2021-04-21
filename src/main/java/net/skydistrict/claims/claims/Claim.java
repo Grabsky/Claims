@@ -13,13 +13,17 @@ import java.util.UUID;
 
 public class Claim {
     private final String id;
-    private final ProtectedRegion wgRegion;
     private final UUID owner;
+    private ProtectedRegion wgRegion;
 
-    public Claim(String id, ProtectedRegion wgRegion, UUID owner) {
+    public Claim(String id, UUID owner, ProtectedRegion wgRegion) {
         this.id = id;
         this.wgRegion = wgRegion;
         this.owner = owner;
+    }
+
+    protected void update(ProtectedRegion wgRegion) {
+        this.wgRegion = wgRegion;
     }
 
     public String getId() {

@@ -64,6 +64,7 @@ public class RegionListener implements Listener {
                 }
                 event.setCancelled(true);
                 player.sendMessage(Lang.REACHED_REGIONS_LIMIT);
+                return;
             }
             event.setCancelled(true);
             player.sendMessage(Lang.MISSING_PERMISSIONS);
@@ -76,20 +77,26 @@ public class RegionListener implements Listener {
         if (event.isCancelled()) return;
         String id = ClaimH.createId(event.getBlock().getLocation());
         if (manager.containsClaim(id)) {
+
             Claim claim = manager.getClaim(id);
             Player player = event.getPlayer();
             UUID ownerUniqueId = claim.getOwner();
             if (player.hasPermission("skydistrict.claims.destroy")) {
                 if(player.getUniqueId().equals(ownerUniqueId) || player.hasPermission("skydistrict.claims.destroy.others")) {
-                    // Removing drops
-                    event.setExpToDrop(0);
-                    event.setDropItems(false);
-                    // Deleting region
-                    manager.removeRegionOf(ownerUniqueId);
-                    // Dropping the item
-                    if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), StaticItems.getClaimBlock(claim.getLevel()));
-                    System.out.println("Protection black (" + claim.getLevel() + ") has been destroyed and returned to player.");
-                    player.sendMessage(Lang.DESTROY_SUCCESS);
+                    if (event.getPlayer().isSneaking()) {
+                        // Removing drops
+                        event.setExpToDrop(0);
+                        event.setDropItems(false);
+                        // Deleting region
+                        manager.removeRegionOf(ownerUniqueId);
+                        // Dropping the item
+                        if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), StaticItems.getClaimBlock(claim.getLevel()));
+                        System.out.println("Protection black (" + claim.getLevel() + ") has been destroyed and returned to player.");
+                        player.sendMessage(Lang.DESTROY_SUCCESS);
+                        return;
+                    }
+                    event.setCancelled(true);
+                    player.sendMessage(Lang.NOT_AN_OWNER);
                     return;
                 }
                 event.setCancelled(true);
