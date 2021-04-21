@@ -1,5 +1,7 @@
 # Claims
-Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to 
+Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to intentional design.
+
+*You shouldn't modify claim regions manually unless you know what you're doing. Weird issues may appear.*
 
 ## Building
 To build, run `mvn install` or `mvn clean install`.  
@@ -23,6 +25,7 @@ Permission | Description
 `skydistrict.claims.destroy.others` | Removing protected region of other players.
 `skydistrict.claims.bypass.teleportdelay` | Bypass teleport delay.
 `skydistrict.claims.bypass.upgradecost` | Bypass upgrade cost.
+
 
 ## TO-DO
 - [ ] Test in search of bugs and exploits

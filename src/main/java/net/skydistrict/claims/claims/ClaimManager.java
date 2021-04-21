@@ -9,14 +9,17 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
-import net.skydistrict.claims.ClaimFlags;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.Config;
+import net.skydistrict.claims.configuration.Lang;
+import net.skydistrict.claims.flags.ClaimFlags;
 import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -107,10 +110,11 @@ public class ClaimManager {
         return (Math.abs(location.getBlockX() - center.getBlockX()) > 70 || Math.abs(location.getBlockZ() - center.getBlockZ()) > 70);
     }
 
-    public boolean createRegionAt(Location loc, UUID owner, int level) {
+    public boolean createRegionAt(Location loc, Player owner, int level) {
         // Checking if there is no region at this selection
         if (!this.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MIN_DISTANCE_FROM_SPAWN) return false;
         // Points
+        UUID ownerUniqueId = owner.getUniqueId();
         int x = loc.getBlockX();
         int z = loc.getBlockZ();
         int radius = 15 + (5 * level);
@@ -122,16 +126,16 @@ public class ClaimManager {
         ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
         region.setFlag(ClaimFlags.CLAIM_LEVEL, level);
-        this.setDefaultFlags(region, loc);
+        this.setDefaultFlags(region, loc, owner);
         // Adding owner
-        region.getOwners().addPlayer(owner);
+        region.getOwners().addPlayer(ownerUniqueId);
         // Registering region
         regionManager.addRegion(region);
         // Adding newly created claim to cache
-        Claim claim = new Claim(id, owner, region);
+        Claim claim = new Claim(id, ownerUniqueId, region);
         this.addClaim(id, claim);
         // Making a connection between player and newly created claim
-        ClaimPlayer cp = this.getClaimPlayer(owner);
+        ClaimPlayer cp = this.getClaimPlayer(ownerUniqueId);
         cp.setClaim(claim);
         return true;
     }
@@ -180,7 +184,16 @@ public class ClaimManager {
         return true;
     }
 
-    private void setDefaultFlags(ProtectedRegion region, Location loc) {
+    // TO-DO: greeting-actionbar and farewell-actionbar flags
+    private void setDefaultFlags(ProtectedRegion region, Location loc, Player owner) {
+        String name = owner.getName();
+        // Static flags (not changeable)
+        region.setFlag(Flags.PVP, StateFlag.State.DENY);
+        region.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
+        region.setFlag(Flags.GHAST_FIREBALL, StateFlag.State.DENY);
+        region.setFlag(ClaimFlags.GREETING_ACTIONBAR, MessageFormat.format(Lang.DEFAULT_GREETING, name));
+        region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, MessageFormat.format(Lang.DEFAULT_FAREWELL, name));
+        // Dynamic flags (changeable)
         region.setFlag(Flags.USE, StateFlag.State.DENY);
         region.setFlag(Flags.TNT, StateFlag.State.DENY);
         region.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);

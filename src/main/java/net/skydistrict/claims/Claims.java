@@ -7,6 +7,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.commands.ClaimCommand;
 import net.skydistrict.claims.configuration.Config;
+import net.skydistrict.claims.flags.ClaimFlags;
 import net.skydistrict.claims.listeners.RegionListener;
 import net.skydistrict.claims.panel.PanelManager;
 import net.skydistrict.claims.utils.ClaimH;
@@ -30,6 +31,8 @@ public final class Claims extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        // Registering flag handlers
+        ClaimFlags.registerHandlers();
         // Creating NamespacedKey
         claimBlockLevel = new NamespacedKey(this, "claimBlockLevel");
         // Creating instance of RegionManager
@@ -53,6 +56,6 @@ public final class Claims extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        ClaimFlags.register();
+        ClaimFlags.registerFlags();
     }
 }

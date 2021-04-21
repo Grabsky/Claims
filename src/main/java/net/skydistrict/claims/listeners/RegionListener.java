@@ -49,7 +49,7 @@ public class RegionListener implements Listener {
                     if (loc.distanceSquared(Config.DEFAULT_WORLD.getSpawnLocation()) > Config.MIN_DISTANCE_FROM_SPAWN) {
                         // This shouldn't be null
                         int level = data.get(Claims.claimBlockLevel, PersistentDataType.INTEGER);
-                        if (manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), uuid, level)) {
+                        if (manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level)) {
                             System.out.println("Protection black (" + level + ") has been placed down.");
                             player.sendMessage(Lang.PLACE_SUCCESS);
                             return;
@@ -77,7 +77,6 @@ public class RegionListener implements Listener {
         if (event.isCancelled()) return;
         String id = ClaimH.createId(event.getBlock().getLocation());
         if (manager.containsClaim(id)) {
-
             Claim claim = manager.getClaim(id);
             Player player = event.getPlayer();
             UUID ownerUniqueId = claim.getOwner();
@@ -96,7 +95,7 @@ public class RegionListener implements Listener {
                         return;
                     }
                     event.setCancelled(true);
-                    player.sendMessage(Lang.NOT_AN_OWNER);
+                    player.sendMessage(Lang.NOT_SNEAKING);
                     return;
                 }
                 event.setCancelled(true);

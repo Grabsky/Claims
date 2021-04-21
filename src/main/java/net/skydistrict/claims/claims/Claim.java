@@ -3,9 +3,9 @@ package net.skydistrict.claims.claims;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import net.skydistrict.claims.ClaimFlags;
 import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.configuration.Config;
+import net.skydistrict.claims.flags.ClaimFlags;
 import org.bukkit.Location;
 
 import java.util.Set;
