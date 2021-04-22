@@ -195,17 +195,18 @@ public class ClaimManager {
         region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, MessageFormat.format(Lang.DEFAULT_FAREWELL, name));
         // Dynamic flags (changeable)
         region.setFlag(Flags.USE, StateFlag.State.DENY);
+        region.setFlag(Flags.ENTRY, StateFlag.State.ALLOW);
+        region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
         region.setFlag(Flags.TNT, StateFlag.State.DENY);
         region.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
         region.setFlag(Flags.SNOW_MELT, StateFlag.State.ALLOW);
         region.setFlag(Flags.ICE_MELT, StateFlag.State.ALLOW);
-        region.setFlag(Flags.ENTRY, StateFlag.State.ALLOW);
-        region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+
         region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.ALLOW);
         // Setting center location (not modifiable)
         region.setFlag(ClaimFlags.CLAIM_CENTER, BukkitAdapter.adapt(loc));
         // Setting default home location (modifiable)
-        region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc.clone().add(0, 1, 0)));
+        region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc.clone().add(0, 0.5, 0)));
     }
 
 }

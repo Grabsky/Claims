@@ -8,8 +8,7 @@ import com.sk89q.worldguard.session.MoveType;
 import com.sk89q.worldguard.session.Session;
 import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
 import com.sk89q.worldguard.session.handler.Handler;
-import net.kyori.adventure.text.Component;
-import org.bukkit.ChatColor;
+import net.skydistrict.claims.utils.TextH;
 import org.bukkit.entity.Player;
 
 public class GreetingActionBarFlag extends FlagValueChangeHandler<String> {
@@ -27,16 +26,16 @@ public class GreetingActionBarFlag extends FlagValueChangeHandler<String> {
     }
 
     @Override
-    protected void onInitialValue(LocalPlayer lp, ApplicableRegionSet set, String value) {
+    protected void onInitialValue(LocalPlayer lp, ApplicableRegionSet regionSet, String value) {
         // Nothing
     }
 
     @Override
-    protected boolean onSetValue(LocalPlayer lp, Location from, Location to, ApplicableRegionSet toSet, String currentValue, String lastValue, MoveType moveType) {
+    protected boolean onSetValue(LocalPlayer lp, Location from, Location to, ApplicableRegionSet regionSet, String currentValue, String lastValue, MoveType moveType) {
         if (currentValue != null && !currentValue.equals(lastValue)) {
             Player player = BukkitAdapter.adapt(lp);
             if(player != null && player.isOnline()) {
-                player.sendActionBar(Component.text(ChatColor.translateAlternateColorCodes('&', currentValue)));
+                player.sendActionBar(TextH.color(currentValue));
             }
         }
         return true;

@@ -79,7 +79,7 @@ public class FlagItemBuilder {
     public ItemStack build() {
         if (value == -1) {
             System.out.println("§c[ClaimsGUI/DEBUG] Error trying to get value for '" + flag.getName() + "' flag.");
-            System.out.println("§c[ClaimsGUI/DEBUG] Expected one of  " + String.join(", ", options + " but found '" + value + "'."));
+            System.out.println("§c[ClaimsGUI/DEBUG] Expected one of " + String.join(", ", options + " but found '" + value + "'."));
             return null;
         }
         this.item.setItemMeta(this.meta);

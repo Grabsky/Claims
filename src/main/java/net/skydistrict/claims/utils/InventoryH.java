@@ -47,7 +47,9 @@ public class InventoryH {
         int found = 0;
         for (ItemStack item : player.getInventory().getStorageContents()) {
             if (found >= amount) return true;
-            if (item != null && item.getType() == material) found += item.getAmount();
+            if (item != null && item.getType() == material) {
+                found += item.getAmount();
+            }
         }
         return false;
     }

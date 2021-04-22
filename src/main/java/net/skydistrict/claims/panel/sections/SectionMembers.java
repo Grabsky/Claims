@@ -3,8 +3,8 @@ package net.skydistrict.claims.panel.sections;
 import me.grabsky.indigo.api.UUIDCache;
 import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
+import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
 import org.bukkit.Material;
@@ -53,7 +53,7 @@ public class SectionMembers extends Section {
             });
             slot = (slot == 15) ? 20 : slot + 1;
         }
-        if (slot != 25) panel.setItem(slot, StaticItems.ADD, event -> panel.applySection(new SectionMembersAdd(panel, executor, owner, claim)));
-        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));
+        if (slot != 25) panel.setItem(slot, Items.ADD, event -> panel.applySection(new SectionMembersAdd(panel, executor, owner, claim)));
+        panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));
     }
 }

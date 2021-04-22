@@ -2,8 +2,8 @@ package net.skydistrict.claims.panel.sections;
 
 import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
+import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
 import org.bukkit.Bukkit;
@@ -69,10 +69,10 @@ public class SectionMembersAdd extends Section {
             });
         }
         // If player is not on the first page - displaying PREVIOUS PAGE button
-        if (pageToDisplay > 1) panel.setItem(18, StaticItems.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
+        if (pageToDisplay > 1) panel.setItem(18, Items.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
         // If there is more pages - displaying NEXT PAGE button
-        if (pageToDisplay + 1 <= pages) panel.setItem(26, StaticItems.NEXT, (event) -> generateView(pageToDisplay + 1));
+        if (pageToDisplay + 1 <= pages) panel.setItem(26, Items.NEXT, (event) -> generateView(pageToDisplay + 1));
         // As usually, displaying RETURN button
-        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
+        panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
     }
 }

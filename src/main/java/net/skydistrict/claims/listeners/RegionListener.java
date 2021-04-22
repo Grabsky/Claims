@@ -5,8 +5,8 @@ import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.claims.ClaimPlayer;
 import net.skydistrict.claims.configuration.Config;
+import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -89,7 +89,7 @@ public class RegionListener implements Listener {
                         // Deleting region
                         manager.removeRegionOf(ownerUniqueId);
                         // Dropping the item
-                        if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), StaticItems.getClaimBlock(claim.getLevel()));
+                        if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
                         System.out.println("Protection black (" + claim.getLevel() + ") has been destroyed and returned to player.");
                         player.sendMessage(Lang.DESTROY_SUCCESS);
                         return;

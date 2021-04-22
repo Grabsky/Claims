@@ -51,4 +51,3 @@ Permission | Description
 - [x] Subsections: SETTINGS
 - [x] Rewrite of MEMBERS subsection (integration with REMOVE)
 - [x] (Optional) Add `/claim <player>` for administrators
-

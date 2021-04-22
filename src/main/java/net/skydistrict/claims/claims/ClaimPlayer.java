@@ -40,11 +40,11 @@ public class ClaimPlayer {
     }
 
     protected void addRelative(String id) {
-        this.relatives.add(id);
+        relatives.add(id);
     }
 
     protected void removeRelative(String id) {
-        this.relatives.remove(id);
+        relatives.remove(id);
     }
 
 }

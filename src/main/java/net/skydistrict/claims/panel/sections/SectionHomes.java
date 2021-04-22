@@ -4,8 +4,8 @@ import me.grabsky.indigo.api.UUIDCache;
 import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
+import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
 import net.skydistrict.claims.utils.TeleportH;
@@ -67,7 +67,7 @@ public class SectionHomes extends Section {
             if (hasRegion) {
                 executor.closeInventory();
                 executor.sendMessage(Lang.TELEPORTING);
-                TeleportH.asyncTeleport(executor, claim.getHome(), 5);
+                TeleportH.teleportAsync(executor, claim.getHome(), 5);
             }
         });
         // Displaying regions player have access to
@@ -87,17 +87,17 @@ public class SectionHomes extends Section {
                     .build(), (event) -> {
                 executor.closeInventory();
                 executor.sendMessage(Lang.TELEPORTING);
-                TeleportH.asyncTeleport(executor, claim.getHome(), 5);
+                TeleportH.teleportAsync(executor, claim.getHome(), 5);
             });
             startFrom++;
             lastIndex++;
         }
 
         // Navigation buttons
-        if (lastIndex > maxOnPage) panel.setItem(28, StaticItems.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
-        if (lastIndex < length) panel.setItem(34, StaticItems.NEXT, (event) -> generateView(pageToDisplay + 1));
+        if (lastIndex > maxOnPage) panel.setItem(28, Items.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
+        if (lastIndex < length) panel.setItem(34, Items.NEXT, (event) -> generateView(pageToDisplay + 1));
         // Return button
-        panel.setItem(49, StaticItems.RETURN, (event) -> {
+        panel.setItem(49, Items.RETURN, (event) -> {
             if (hasRegion) panel.applySection(new SectionMain(panel, executor, owner, claim));
             else executor.closeInventory();
         });

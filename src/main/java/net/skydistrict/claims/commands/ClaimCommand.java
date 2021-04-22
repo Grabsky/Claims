@@ -5,8 +5,8 @@ import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimPlayer;
+import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.panel.sections.SectionHomes;
 import net.skydistrict.claims.panel.sections.SectionMain;
@@ -34,11 +34,11 @@ public class ClaimCommand implements CommandExecutor {
             UUID ownerUniqueId = executor.getUniqueId();
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("get") && executor.hasPermission("skydistrict.claims.get")) {
-                    executor.getInventory().addItem(StaticItems.getClaimBlock(0));
-                    executor.getInventory().addItem(StaticItems.getClaimBlock(1));
-                    executor.getInventory().addItem(StaticItems.getClaimBlock(2));
-                    executor.getInventory().addItem(StaticItems.getClaimBlock(3));
-                    executor.getInventory().addItem(StaticItems.getClaimBlock(4));
+                    executor.getInventory().addItem(Items.getClaimBlock(0));
+                    executor.getInventory().addItem(Items.getClaimBlock(1));
+                    executor.getInventory().addItem(Items.getClaimBlock(2));
+                    executor.getInventory().addItem(Items.getClaimBlock(3));
+                    executor.getInventory().addItem(Items.getClaimBlock(4));
                     return true;
                 } else if (executor.hasPermission("skydistrict.claims.panel.others")) {
                     ownerUniqueId = UUIDCache.get(args[0]);

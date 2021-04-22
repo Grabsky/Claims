@@ -49,7 +49,9 @@ public class PanelManager implements Listener {
                     int slot = event.getSlot();
                     if (panel.getAction(slot) != null) {
                         player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1F, 1.5F);
-                        if (event.getAction() == InventoryAction.PICKUP_ALL) panel.getAction(slot).click(event);
+                        if (event.getAction() == InventoryAction.PICKUP_ALL) {
+                            panel.getAction(slot).click(event);
+                        }
                     }
                 }
             }

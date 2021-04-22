@@ -5,8 +5,8 @@ import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimLevel;
 import net.skydistrict.claims.claims.ClaimManager;
+import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.configuration.StaticItems;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.ClaimH;
 import net.skydistrict.claims.utils.InventoryH;
@@ -50,13 +50,12 @@ public class SectionSettings extends Section {
     private void generateView() {
         panel.clear();
         // Flags category
-        panel.setItem(11, StaticItems.FLAGS, event -> panel.applySection(new SectionFlags(panel, executor, owner, claim)));
+        panel.setItem(11, Items.FLAGS, event -> panel.applySection(new SectionFlags(panel, executor, owner, claim)));
         // Home
         this.panel.setItem(13, teleport, (event) -> {
             claim.setHome(executor.getLocation());
             event.getCurrentItem().setType(Material.RED_BED);
         });
-        // I'm not sure why it's marked as nullable...
         ClaimLevel currentLevel = ClaimH.getClaimLevel(claim.getLevel());
         // Getting ItemBuilder for specific alias
         ClaimLevel nextLevel = (claim.getLevel() < 4) ? ClaimH.getClaimLevel(claim.getLevel() + 1) : null;
@@ -72,7 +71,7 @@ public class SectionSettings extends Section {
                     "§7Następny poziom: " +  nextLevel.getAlias(),
                     "§8› §7Rozmiar: " + nextLevel.getSize(),
                     "",
-                    "§7Koszt ulepszenia: " + "§a64x " + nextLevel.getAlias(),
+                    "§7Koszt ulepszenia: " + nextLevel.getColor() + "64x " + nextLevel.getAlias(),
                     "",
                     canUpgradeString
             );
@@ -89,7 +88,9 @@ public class SectionSettings extends Section {
             if (nextLevel == null) return;
             if (!canUpgrade(executor, nextLevel.getUpgradeMaterial())) return;
             // Removing material if player doesn't have bypass permission
-            if (!executor.hasPermission("skydistrict.claims.bypass.upgradecost")) InventoryH.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 64);
+            if (!executor.hasPermission("skydistrict.claims.bypass.upgradecost")) {
+                InventoryH.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 64);
+            }
             // Upgrading claim
             manager.upgrade(claim);
             // Sending success message and play level up sound
@@ -99,6 +100,6 @@ public class SectionSettings extends Section {
             this.generateView();
         });
         // Return button
-        panel.setItem(49, StaticItems.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));
+        panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));
     }
 }

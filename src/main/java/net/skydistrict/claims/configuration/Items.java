@@ -8,13 +8,13 @@ import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
-public class StaticItems {
+public class Items {
 
     public static ItemStack getClaimBlock(int level) {
         ClaimLevel claimLevel = ClaimH.getClaimLevel(level);
         Material material = claimLevel.getBlockMaterial();
         ItemBuilder builder = new ItemBuilder(material)
-                .setName("§e§lTeren")
+                .setName(claimLevel.getColor() + "§lTeren")
                 .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze " + claimLevel.getSize() + " §7bloków.");
         builder.getPersistentDataContainer().set(Claims.claimBlockLevel, PersistentDataType.INTEGER, level);
         return builder.build();
