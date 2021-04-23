@@ -2,6 +2,7 @@ package net.skydistrict.claims.panel.sections;
 
 import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
+import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.panel.Panel;
@@ -64,7 +65,7 @@ public class SectionMembersAdd extends Section {
                 if (claim.addMember(player.getUniqueId())) panel.applySection(new SectionMembers(panel, executor, owner, claim));
                 else {
                     executor.closeInventory();
-                    executor.sendMessage(Lang.REACHED_MEMBERS_LIMIT);
+                    Lang.send(executor, Lang.REACHED_MEMBERS_LIMIT, Config.MEMBERS_LIMIT);
                 }
             });
         }

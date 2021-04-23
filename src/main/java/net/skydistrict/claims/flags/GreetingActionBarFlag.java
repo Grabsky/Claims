@@ -8,7 +8,6 @@ import com.sk89q.worldguard.session.MoveType;
 import com.sk89q.worldguard.session.Session;
 import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
 import com.sk89q.worldguard.session.handler.Handler;
-import net.skydistrict.claims.utils.TextH;
 import org.bukkit.entity.Player;
 
 public class GreetingActionBarFlag extends FlagValueChangeHandler<String> {
@@ -35,7 +34,7 @@ public class GreetingActionBarFlag extends FlagValueChangeHandler<String> {
         if (currentValue != null && !currentValue.equals(lastValue)) {
             Player player = BukkitAdapter.adapt(lp);
             if(player != null && player.isOnline()) {
-                player.sendActionBar(TextH.color(currentValue));
+                player.sendActionBar(currentValue);
             }
         }
         return true;

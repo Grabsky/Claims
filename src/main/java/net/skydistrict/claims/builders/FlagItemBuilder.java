@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-// TO-DO: Clean-up and comments
 public class FlagItemBuilder {
     private final ItemMeta meta;
     private final ItemStack item;
@@ -39,7 +38,7 @@ public class FlagItemBuilder {
 
     /** Name of the flag displayed in GUI */
     public FlagItemBuilder setName(String name) {
-        this.meta.setDisplayName(name);
+        meta.setDisplayName(name);
         return this;
     }
 
@@ -63,7 +62,7 @@ public class FlagItemBuilder {
             lore.add("§8› " + color + formattedOptions.get(i));
         }
         if (suffix != null) lore.addAll(Arrays.asList(suffix));
-        this.meta.setLore(lore);
+        meta.setLore(lore);
         return this;
     }
 
@@ -71,7 +70,9 @@ public class FlagItemBuilder {
     public FlagItemBuilder toggle(ToggleAction action) {
         this.value = (value + 1 >= size) ? 0 : value + 1;
         this.updateLore();
-        if (action != null) action.run(this.options.get(this.value));
+        if (action != null) {
+            action.run(options.get(value));
+        }
         return this;
     }
 
@@ -82,7 +83,7 @@ public class FlagItemBuilder {
             System.out.println("§c[ClaimsGUI/DEBUG] Expected one of " + String.join(", ", options + " but found '" + value + "'."));
             return null;
         }
-        this.item.setItemMeta(this.meta);
+        item.setItemMeta(this.meta);
         return item;
     }
 }

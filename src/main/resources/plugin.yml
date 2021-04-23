@@ -2,8 +2,8 @@ name: Claims
 version: ${project.version}
 main: net.skydistrict.claims.Claims
 api-version: 1.16
-depend: [ Indigo, WorldGuard, WorldEdit ]
-authors: [ Grabsky ]
+depend: [Indigo, WorldGuard, WorldEdit]
+authors: [Grabsky]
 commands:
   claim:
     aliases: ['teren', 'claims']

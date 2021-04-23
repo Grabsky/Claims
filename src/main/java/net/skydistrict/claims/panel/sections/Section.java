@@ -18,7 +18,9 @@ public abstract class Section {
         this.panel = panel;
         this.executor = executor;
         this.owner = owner;
-        if (!executor.getUniqueId().equals(owner)) editMode = true;
+        if (!executor.getUniqueId().equals(owner)) {
+            editMode = true;
+        }
         this.panel.clear();
     }
 
@@ -28,7 +30,9 @@ public abstract class Section {
         this.executor = executor;
         this.owner = owner;
         this.claim = claim;
-        if (!executor.getUniqueId().equals(owner)) editMode = true;
+        if (!executor.getUniqueId().equals(owner)) {
+            editMode = true;
+        }
         this.panel.clear();
     }
 

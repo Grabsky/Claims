@@ -15,7 +15,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.text.MessageFormat;
 import java.util.UUID;
 
 public class SectionSettings extends Section {
@@ -94,7 +93,7 @@ public class SectionSettings extends Section {
             // Upgrading claim
             manager.upgrade(claim);
             // Sending success message and play level up sound
-            executor.sendMessage(MessageFormat.format(Lang.UPGRADE_SUCCESS, nextLevel.getSize()));
+            Lang.send(executor, Lang.UPGRADE_SUCCESS, nextLevel.getSize());
             executor.playSound(executor.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
             // Refreshing the view
             this.generateView();

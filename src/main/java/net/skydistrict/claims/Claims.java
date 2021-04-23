@@ -7,16 +7,21 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.commands.ClaimCommand;
 import net.skydistrict.claims.configuration.Config;
+import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
 import net.skydistrict.claims.listeners.RegionListener;
 import net.skydistrict.claims.panel.PanelManager;
 import net.skydistrict.claims.utils.ClaimH;
+import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import java.util.logging.Logger;
 
 public final class Claims extends JavaPlugin {
     // Instances
     private static Claims instance;
+    private static Logger log;
     private RegionManager region;
     private ClaimManager claim;
     private PanelManager panel;
@@ -31,6 +36,9 @@ public final class Claims extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
+        log = this.getLogger();
+        // Reloading configs
+        reload();
         // Registering flag handlers
         ClaimFlags.registerHandlers();
         // Creating NamespacedKey
@@ -57,5 +65,13 @@ public final class Claims extends JavaPlugin {
     @Override
     public void onLoad() {
         ClaimFlags.registerFlags();
+    }
+
+    public static boolean reload() {
+        Config.reload();
+        log.info(ChatColor.GREEN + "Configuration file (config.yml) has been reloaded.");
+        Lang.reload();
+        log.info(ChatColor.GREEN + "Language file (lang.yml) has been reloaded.");
+        return true;
     }
 }

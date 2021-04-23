@@ -46,28 +46,27 @@ public class RegionListener implements Listener {
                 Location loc = event.getBlock().getLocation();
                 if (!cp.hasClaim()) {
                     // The reason why it's here and not in RegionManager is that I want the messages to be different
-                    if (loc.distanceSquared(Config.DEFAULT_WORLD.getSpawnLocation()) > Config.MIN_DISTANCE_FROM_SPAWN) {
+                    if (loc.distanceSquared(Config.DEFAULT_WORLD.getSpawnLocation()) > Config.MINIMUM_DISTANCE_FROM_SPAWN) {
                         // This shouldn't be null
                         int level = data.get(Claims.claimBlockLevel, PersistentDataType.INTEGER);
                         if (manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level)) {
-                            System.out.println("Protection black (" + level + ") has been placed down.");
-                            player.sendMessage(Lang.PLACE_SUCCESS);
+                            Lang.send(player, Lang.PLACE_SUCCESS);
                             return;
                         }
                         event.setCancelled(true);
-                        player.sendMessage(Lang.OVERLAPS_OTHER_REGION);
+                        Lang.send(player, Lang.OVERLAPS_OTHER_CLAIM);
                         return;
                     }
                     event.setCancelled(true);
-                    player.sendMessage(Lang.TOO_CLOSE_TO_SPAWN);
+                    Lang.send(player, Lang.TOO_CLOSE_TO_SPAWN);
                     return;
                 }
                 event.setCancelled(true);
-                player.sendMessage(Lang.REACHED_REGIONS_LIMIT);
+                Lang.send(player, Lang.REACHED_CLAIMS_LIMIT);
                 return;
             }
             event.setCancelled(true);
-            player.sendMessage(Lang.MISSING_PERMISSIONS);
+            Lang.send(player, Lang.MISSING_PERMISSIONS);
         }
     }
 
@@ -90,20 +89,19 @@ public class RegionListener implements Listener {
                         manager.removeRegionOf(ownerUniqueId);
                         // Dropping the item
                         if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
-                        System.out.println("Protection black (" + claim.getLevel() + ") has been destroyed and returned to player.");
-                        player.sendMessage(Lang.DESTROY_SUCCESS);
+                        Lang.send(player, Lang.DESTROY_SUCCESS);
                         return;
                     }
                     event.setCancelled(true);
-                    player.sendMessage(Lang.NOT_SNEAKING);
+                    Lang.send(player, Lang.NOT_SNEAKING);
                     return;
                 }
                 event.setCancelled(true);
-                player.sendMessage(Lang.NOT_AN_OWNER);
+                Lang.send(player, Lang.NOT_OWNER);
                 return;
             }
             event.setCancelled(true);
-            player.sendMessage(Lang.MISSING_PERMISSIONS);
+            Lang.send(player, Lang.MISSING_PERMISSIONS);
         }
     }
 

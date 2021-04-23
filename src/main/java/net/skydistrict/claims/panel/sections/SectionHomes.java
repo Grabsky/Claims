@@ -4,6 +4,7 @@ import me.grabsky.indigo.api.UUIDCache;
 import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
+import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.panel.Panel;
@@ -66,7 +67,7 @@ public class SectionHomes extends Section {
         panel.setItem(13, this.home, (event) -> {
             if (hasRegion) {
                 executor.closeInventory();
-                executor.sendMessage(Lang.TELEPORTING);
+                Lang.send(executor, Lang.TELEPORTING, Config.TELEPORT_DELAY);
                 TeleportH.teleportAsync(executor, claim.getHome(), 5);
             }
         });
@@ -86,7 +87,7 @@ public class SectionHomes extends Section {
                     .setSkullOwner(claim.getOwner())
                     .build(), (event) -> {
                 executor.closeInventory();
-                executor.sendMessage(Lang.TELEPORTING);
+                Lang.send(executor, Lang.TELEPORTING, Config.TELEPORT_DELAY);
                 TeleportH.teleportAsync(executor, claim.getHome(), 5);
             });
             startFrom++;

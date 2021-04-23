@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-// TO-DO: Make it work with ClaimCache or merge 'em together
 public class ClaimManager {
     private final Claims instance;
     private final RegionManager regionManager;
@@ -39,11 +38,10 @@ public class ClaimManager {
     }
 
     // Should be ran only during the server startup
-    // TO-DO: Fix region
     private void cacheClaims() {
         for (Map.Entry<String, ProtectedRegion> en : regionManager.getRegions().entrySet()) {
             ProtectedRegion region = en.getValue();
-            if (!region.getId().startsWith("claims_") || !region.hasMembersOrOwners() || region.getOwners().size() != 1) continue;
+            if (!region.getId().startsWith(Config.REGION_PREFIX) || !region.hasMembersOrOwners() || region.getOwners().size() != 1) continue;
             UUID owner = region.getOwners().getUniqueIds().iterator().next();
             ClaimPlayer cp = this.getClaimPlayer(owner);
             Claim claim = new Claim(region.getId(), owner, region);
@@ -112,7 +110,7 @@ public class ClaimManager {
 
     public boolean createRegionAt(Location loc, Player owner, int level) {
         // Checking if there is no region at this selection
-        if (!this.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MIN_DISTANCE_FROM_SPAWN) return false;
+        if (!this.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MINIMUM_DISTANCE_FROM_SPAWN) return false;
         // Points
         UUID ownerUniqueId = owner.getUniqueId();
         int x = loc.getBlockX();
@@ -201,7 +199,6 @@ public class ClaimManager {
         region.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
         region.setFlag(Flags.SNOW_MELT, StateFlag.State.ALLOW);
         region.setFlag(Flags.ICE_MELT, StateFlag.State.ALLOW);
-
         region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.ALLOW);
         // Setting center location (not modifiable)
         region.setFlag(ClaimFlags.CLAIM_CENTER, BukkitAdapter.adapt(loc));

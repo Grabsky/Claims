@@ -33,7 +33,7 @@ public class SectionMain extends Section {
         InventoryH.updateTitle(executor, "§f\u7000\u7101", editMode);
         // Setting menu items
         panel.setItem(11, Items.HOMES, (event) -> panel.applySection(new SectionHomes(panel, executor, owner, claim)));
-        panel.setItem(13, this.members, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
+        panel.setItem(13, members, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
         panel.setItem(15, Items.SETTINGS, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
         panel.setItem(49, Items.RETURN, (event) -> executor.closeInventory());
     }

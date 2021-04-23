@@ -8,7 +8,6 @@ import com.sk89q.worldguard.session.MoveType;
 import com.sk89q.worldguard.session.Session;
 import com.sk89q.worldguard.session.handler.FlagValueChangeHandler;
 import com.sk89q.worldguard.session.handler.Handler;
-import net.skydistrict.claims.utils.TextH;
 import org.bukkit.entity.Player;
 
 public class FarewellActionBarFlag extends FlagValueChangeHandler<String> {
@@ -36,7 +35,7 @@ public class FarewellActionBarFlag extends FlagValueChangeHandler<String> {
         if (lastValue != null && !lastValue.equals(currentValue)) {
             Player player = BukkitAdapter.adapt(lp);
             if(player != null && player.isOnline()) {
-                player.sendActionBar(TextH.color(lastValue));
+                player.sendActionBar(lastValue);
             }
         }
         return true;
@@ -46,7 +45,7 @@ public class FarewellActionBarFlag extends FlagValueChangeHandler<String> {
     protected boolean onAbsentValue(LocalPlayer lp, Location from, Location to, ApplicableRegionSet regionSet, String lastValue, MoveType moveType) {
         Player player = BukkitAdapter.adapt(lp);
         if (player != null && player.isOnline() && lastValue != null) {
-            player.sendActionBar(TextH.color(lastValue));
+            player.sendActionBar(lastValue);
         }
         return true;
     }

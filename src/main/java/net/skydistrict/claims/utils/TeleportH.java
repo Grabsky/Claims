@@ -14,8 +14,8 @@ public class TeleportH {
         Location initialLoc = player.getLocation();
         if (player.hasPermission("skydistrict.claims.bypass.teleportdelay")) {
             PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept(status -> {
-                if (status) player.sendMessage(Lang.TELEPORT_SUCCESS);
-                else player.sendMessage(Lang.TELEPORT_FAILED_UNKNOWN);
+                if (status) Lang.send(player, Lang.TELEPORT_SUCCESS);
+                else Lang.send(player, Lang.TELEPORT_FAIL_UNKNOWN);
             });
             return;
         }
@@ -25,15 +25,15 @@ public class TeleportH {
             public void run() {
                 sec++;
                 if (initialLoc.distanceSquared(player.getLocation()) > 1D) {
-                    player.sendMessage(Lang.TELEPORT_FAILED);
+                    Lang.send(player, Lang.TELEPORT_FAIL);
                     this.cancel();
                 }
                 if(sec == delay) {
                     PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept(status -> {
-                        if (status) player.sendMessage(Lang.TELEPORT_SUCCESS);
-                        else player.sendMessage(Lang.TELEPORT_FAILED_UNKNOWN);
-                        this.cancel();
+                        if (status) Lang.send(player, Lang.TELEPORT_SUCCESS);
+                        else Lang.send(player, Lang.TELEPORT_FAIL_UNKNOWN);
                     });
+                    this.cancel();
                 }
             }
         }.runTaskTimer(Claims.getInstance(), 0L, 20L);

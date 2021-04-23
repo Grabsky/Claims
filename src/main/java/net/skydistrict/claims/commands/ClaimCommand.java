@@ -19,7 +19,6 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-// TO-DO: Fix /claim <name> not working properly (for some reason)
 public class ClaimCommand implements CommandExecutor {
     private final Claims instance;
 
@@ -40,14 +39,21 @@ public class ClaimCommand implements CommandExecutor {
                     executor.getInventory().addItem(Items.getClaimBlock(3));
                     executor.getInventory().addItem(Items.getClaimBlock(4));
                     return true;
+                } else if (args[0].equalsIgnoreCase("reload") && executor.hasPermission("skydistrict.claims.reload")) {
+                    if (Claims.reload()) {
+                        Lang.send(sender, Lang.RELOAD_SUCCESS);
+                        return true;
+                    }
+                    Lang.send(sender, Lang.RELOAD_SUCCESS);
+                    return true;
                 } else if (executor.hasPermission("skydistrict.claims.panel.others")) {
                     ownerUniqueId = UUIDCache.get(args[0]);
                     if (ownerUniqueId == null) {
-                        executor.sendMessage(Lang.PLAYER_NOT_FOUND);
+                        Lang.send(executor, Lang.PLAYER_NOT_FOUND);
                         return true;
                     }
                 } else {
-                    executor.sendMessage(Lang.MISSING_PERMISSIONS);
+                    Lang.send(executor, Lang.MISSING_PERMISSIONS);
                     return true;
                 }
             }
@@ -63,7 +69,9 @@ public class ClaimCommand implements CommandExecutor {
                 Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionHomes(panel, executor, owner.getUniqueId())), 1L);
                 panel.open(executor);
             }
+            return true;
         }
+        Lang.send(sender, Lang.PLAYER_ONLY);
         return true;
     }
 }

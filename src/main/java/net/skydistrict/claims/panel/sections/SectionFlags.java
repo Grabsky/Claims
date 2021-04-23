@@ -81,18 +81,18 @@ public class SectionFlags extends Section {
         // Changing panel texture
         InventoryH.updateTitle(executor, "§f\u7000\u7105", editMode);
         // Setting up flags
-        this.panel.setItem(11, use.build(), (event) -> event.setCurrentItem(use.toggle(value -> wgRegion.setFlag(Flags.USE, (StateFlag.State) value)).build()));
-        this.panel.setItem(12, entry.build(), (event) -> event.setCurrentItem(entry.toggle(value -> {
+        panel.setItem(11, use.build(), (event) -> event.setCurrentItem(use.toggle(value -> wgRegion.setFlag(Flags.USE, (StateFlag.State) value)).build()));
+        panel.setItem(12, entry.build(), (event) -> event.setCurrentItem(entry.toggle(value -> {
             wgRegion.setFlag(Flags.ENTRY, (StateFlag.State) value);
             wgRegion.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
         }).build()));
-        this.panel.setItem(13, tnt.build(), (event) -> event.setCurrentItem(tnt.toggle(value -> wgRegion.setFlag(Flags.TNT, (StateFlag.State) value)).build()));
-        this.panel.setItem(14, creeper_explosion.build(), (event) -> event.setCurrentItem(creeper_explosion.toggle(value -> wgRegion.setFlag(Flags.CREEPER_EXPLOSION, (StateFlag.State) value)).build()));
-        this.panel.setItem(15, snow_melt.build(), (event) -> event.setCurrentItem(snow_melt.toggle(value -> wgRegion.setFlag(Flags.SNOW_MELT, (StateFlag.State) value)).build()));
-        this.panel.setItem(20, ice_melt.build(), (event) -> event.setCurrentItem(ice_melt.toggle(value -> wgRegion.setFlag(Flags.ICE_MELT, (StateFlag.State) value)).build()));
-        this.panel.setItem(21, mob_spawning.build(), (event) -> event.setCurrentItem(mob_spawning.toggle(value -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) value)).build()));
-        this.panel.setItem(22, time_lock.build(), (event) -> event.setCurrentItem(time_lock.toggle(value -> wgRegion.setFlag(Flags.TIME_LOCK, (String) value)).build()));
-        this.panel.setItem(23, weather_lock.build(), (event) -> event.setCurrentItem(weather_lock.toggle(value -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) value)).build()));
+        panel.setItem(13, tnt.build(), (event) -> event.setCurrentItem(tnt.toggle(value -> wgRegion.setFlag(Flags.TNT, (StateFlag.State) value)).build()));
+        panel.setItem(14, creeper_explosion.build(), (event) -> event.setCurrentItem(creeper_explosion.toggle(value -> wgRegion.setFlag(Flags.CREEPER_EXPLOSION, (StateFlag.State) value)).build()));
+        panel.setItem(15, snow_melt.build(), (event) -> event.setCurrentItem(snow_melt.toggle(value -> wgRegion.setFlag(Flags.SNOW_MELT, (StateFlag.State) value)).build()));
+        panel.setItem(20, ice_melt.build(), (event) -> event.setCurrentItem(ice_melt.toggle(value -> wgRegion.setFlag(Flags.ICE_MELT, (StateFlag.State) value)).build()));
+        panel.setItem(21, mob_spawning.build(), (event) -> event.setCurrentItem(mob_spawning.toggle(value -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) value)).build()));
+        panel.setItem(22, time_lock.build(), (event) -> event.setCurrentItem(time_lock.toggle(value -> wgRegion.setFlag(Flags.TIME_LOCK, (String) value)).build()));
+        panel.setItem(23, weather_lock.build(), (event) -> event.setCurrentItem(weather_lock.toggle(value -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) value)).build()));
         // Return button
         panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
     }

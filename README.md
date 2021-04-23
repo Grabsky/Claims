@@ -1,5 +1,7 @@
 # Claims
-Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to intentional design.
+Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to (intentional) plugin design.
+
+*Due to light-weight checks, by default players can override any region that is not a claim. Please increase priority of non-claim regions to protect them from griefing.*
 
 *You shouldn't modify claim regions manually unless you know what you're doing. Weird issues may appear.*
 
@@ -21,6 +23,7 @@ Permission | Description
 #### Recommended only for admins:
 Permission | Description
 --- | ---
+`skydistrict.claims.reload` | Using `/claim reload` command.
 `skydistrict.claims.panel.others` | Using `/claim <player>` command.
 `skydistrict.claims.destroy.others` | Removing protected region of other players.
 `skydistrict.claims.bypass.teleportdelay` | Bypass teleport delay.
@@ -35,8 +38,9 @@ Permission | Description
   - [ ] Command (functionality and permissions)
   - [ ] Claim upgrades (block type)
   - [ ] ... and everything I forgot to mention
-- [ ] (Optional) Add (basic) config.yml
-- [ ] (Optional) Add (chat) messages.yml
+- [ ] Add logs for important actions
+- [x] (Optional) Add (basic) config.yml
+- [x] (Optional) Add (chat) messages.yml
 - [x] Re-implement core features (creating/removing claims)
 - [x] Re-implement panel (using new API)
 - [x] Add `*` character to the title when editing someone's claim

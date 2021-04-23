@@ -2,10 +2,8 @@ package net.skydistrict.claims.builders;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import com.mojang.authlib.properties.PropertyMap;
 import me.grabsky.indigo.api.SkullCache;
 import net.kyori.adventure.text.Component;
-import net.skydistrict.claims.utils.TextH;
 import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
@@ -14,7 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.persistence.PersistentDataContainer;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class ItemBuilder {
@@ -27,49 +25,49 @@ public class ItemBuilder {
     }
 
     public ItemBuilder(Material material) {
-        this.item = new ItemStack(material);
+        item = new ItemStack(material);
         this.meta = item.getItemMeta();
     }
 
     public ItemBuilder setName(String name) {
-        this.meta.setDisplayName(TextH.color(name));
+        meta.setDisplayName(name);
         return this;
     }
 
     public ItemBuilder setName(Component name) {
-        this.meta.displayName(name);
+        meta.displayName(name);
         return this;
     }
 
     public ItemBuilder setLore(String... lines) {
-        ArrayList<String> lore = new ArrayList<>(lines.length);
-        for (String line : lines) {
-            lore.add(TextH.color(line));
-        }
-        this.meta.setLore(lore);
+        meta.setLore(Arrays.asList(lines));
+        return this;
+    }
+
+    public ItemBuilder setLore(Component... lines) {
+        meta.lore(Arrays.asList(lines));
         return this;
     }
 
     public ItemBuilder setCustomModelData(int value) {
-        this.meta.setCustomModelData(value);
+        meta.setCustomModelData(value);
         return this;
     }
 
     public ItemBuilder setItemFlags(ItemFlag... itemFlags) {
-        this.meta.addItemFlags(itemFlags);
+        meta.addItemFlags(itemFlags);
         return this;
     }
 
     public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
-        this.item.addUnsafeEnchantment(enchantment, level);
+        item.addUnsafeEnchantment(enchantment, level);
         return this;
     }
 
     public ItemBuilder setSkullValue(String value) {
-        if (this.item.getType() == Material.PLAYER_HEAD) {
+        if (item.getType() == Material.PLAYER_HEAD) {
             GameProfile profile = new GameProfile(UUID.randomUUID(), null);
-            PropertyMap map = profile.getProperties();
-            map.put("textures", new Property("textures", value));
+            profile.getProperties().put("textures", new Property("textures", value));
             try {
                 Field field = meta.getClass().getDeclaredField("profile");
                 field.setAccessible(true);
@@ -99,7 +97,7 @@ public class ItemBuilder {
     }
 
     public ItemStack build() {
-        this.item.setItemMeta(this.meta);
-        return this.item;
+        item.setItemMeta(meta);
+        return item;
     }
 }

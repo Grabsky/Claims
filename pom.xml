@@ -14,6 +14,7 @@
     <properties>
         <java.version>11</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <builds.local>C:/Users/admin/Development/local</builds.local>
     </properties>
 
     <build>
@@ -40,6 +41,26 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <outputFile>../git-builds/${project.artifactId}-${project.version}.jar</outputFile>
+                            <!-- Excluding anything from kyori besides the MiniMessage -->
+                            <filters>
+                                <filter>
+                                    <artifact>net.kyori:*</artifact>
+                                    <excludes>
+                                        <exclude>/**</exclude>
+                                    </excludes>
+                                    <includes>
+                                        <include>net/kyori/adventure/text/minimessage/**</include>
+                                    </includes>
+                                </filter>
+                            </filters>
+                            <!-- Excluding junk left by MiniMessage -->
+                            <artifactSet>
+                                <excludes>
+                                    <exclude>org.jetbrains:*</exclude>
+                                    <exclude>org.intellij.lang:*</exclude>
+                                    <exclude>org.checkerframework:*</exclude>
+                                </excludes>
+                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
@@ -54,6 +75,12 @@
     </build>
 
     <repositories>
+        <!-- MiniMessage -->
+        <repository>
+            <id>sonatype-oss-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </repository>
+        <!-- PaperMC -->
         <repository>
             <id>papermc-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
@@ -77,14 +104,6 @@
             <artifactId>paper-api</artifactId>
             <version>1.16.5-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
-        </dependency>
-        <!-- Indigo -->
-        <dependency>
-            <groupId>me.grabsky</groupId>
-            <artifactId>Indigo</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>system</scope>
-            <systemPath>C:/Users/admin/Development/LocalProjects/local-builds/Indigo.jar</systemPath>
         </dependency>
         <!-- WorldEdit API -->
         <dependency>
@@ -114,13 +133,28 @@
             <version>1.0.6</version>
             <scope>compile</scope>
         </dependency>
+        <!-- MiniMessage -->
+        <dependency>
+            <groupId>net.kyori</groupId>
+            <artifactId>adventure-text-minimessage</artifactId>
+            <version>4.1.0-SNAPSHOT</version>
+            <scope>compile</scope>
+        </dependency>
+        <!-- Indigo -->
+        <dependency>
+            <groupId>me.grabsky</groupId>
+            <artifactId>Indigo</artifactId>
+            <version>1.0-SNAPSHOT</version>
+            <scope>system</scope>
+            <systemPath>${builds.local}/Indigo.jar</systemPath>
+        </dependency>
         <!-- Local server jar for NMS -->
         <dependency>
             <groupId>net.minecraft</groupId>
             <artifactId>server</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>C:/Users/admin/Development/local/patched_1.16.5.jar</systemPath>
+            <systemPath>${builds.local}/patched_1.16.5.jar</systemPath>
         </dependency>
     </dependencies>
 </project>

@@ -48,7 +48,7 @@ public class SectionMembers extends Section {
                     this.generateView();
                 } else {
                     executor.closeInventory();
-                    executor.sendMessage(Lang.NOT_A_MEMBER);
+                    Lang.send(executor, Lang.NOT_MEMBER);
                 }
             });
             slot = (slot == 15) ? 20 : slot + 1;
