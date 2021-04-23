@@ -1,9 +1,9 @@
 # Claims
 Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to (intentional) plugin design.
 
-*Due to light-weight checks, by default players can override any region that is not a claim. Please increase priority of non-claim regions to protect them from griefing.*
+*Due to light-weight checks, by default players can override any region that is not a claim. Please increase priority of non-claim regions to protect them from being griefed.*
 
-*You shouldn't modify claim regions manually unless you know what you're doing. Weird issues may appear.*
+*You shouldn't modify claim regions manually unless you know what you're doing. Severe issues may appear.*
 
 ## Building
 To build, run `mvn install` or `mvn clean install`.  
