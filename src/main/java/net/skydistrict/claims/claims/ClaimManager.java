@@ -175,7 +175,7 @@ public class ClaimManager {
         newRegion.copyFrom(wgRegion);
         regionManager.addRegion(newRegion);
         // Updating Claim with new WorldGuard region
-        claim.update(wgRegion);
+        claim.update(newRegion);
         // Updating block type ('& 0xF' thingy is doing some magic to get block's position in chunk)
         Material type = ClaimH.getClaimLevel(newLevel).getBlockMaterial();
         PaperLib.getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));

@@ -43,8 +43,7 @@ public class SectionMembers extends Section {
                     .setSkullOwner(uuid)
                     .build(), event -> {
                 // One more check just in case something changed while GUI was open
-                if (claim.getMembers().contains(uuid)) {
-                    claim.removeMember(uuid);
+                if (claim.removeMember(uuid)) {
                     this.generateView();
                 } else {
                     executor.closeInventory();

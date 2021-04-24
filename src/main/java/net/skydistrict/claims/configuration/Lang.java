@@ -4,6 +4,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.components.Message;
+import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -16,7 +17,7 @@ import java.util.List;
 public class Lang {
     private static final Claims instance = Claims.getInstance();
     private static final Component EMPTY_COMPONENT = Component.empty();
-    private static final int LANG_VERSION = 2;
+    private static final int LANG_VERSION = 1;
 
     public static Message
             PLAYER_NOT_FOUND,
@@ -55,7 +56,7 @@ public class Lang {
         // Overriding...
         FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
         if (fc.getInt("version") != LANG_VERSION) {
-            instance.getLogger().warning("Your lang.yml file is outdated. Some messages may not display properly.");
+            instance.getLogger().warning(ChatColor.RED + "Your lang.yml file is outdated. Some messages may not display properly.");
         }
         // General
         PLAYER_NOT_FOUND = message(fc, "general.player-not-found", true);

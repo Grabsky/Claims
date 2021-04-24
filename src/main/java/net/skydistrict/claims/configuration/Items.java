@@ -41,7 +41,7 @@ public class Items {
 
     // Members
     public static ItemStack ADD = new ItemBuilder(Material.STRUCTURE_VOID)
-            .setName("§7&lDodaj")
+            .setName("§7§lDodaj")
             .setLore("§7Kliknij, aby przeglądać listę graczy.")
             .setCustomModelData(3)
             .build();

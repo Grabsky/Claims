@@ -40,8 +40,8 @@ public class Config {
         }
         DEFAULT_WORLD = Bukkit.getWorld(defaultWorldName);
         // Overriding other values...
-        TELEPORT_DELAY = fc.getInt("settings.claims.teleport-delay");
-        MEMBERS_LIMIT = fc.getInt("settings.claims.members-limit");
-        MINIMUM_DISTANCE_FROM_SPAWN = fc.getInt("settings.claims.minimum-distance-from-spawn");
+        TELEPORT_DELAY = fc.getInt("settings.claim.teleport-delay");
+        MEMBERS_LIMIT = fc.getInt("settings.claim.members-limit");
+        MINIMUM_DISTANCE_FROM_SPAWN = fc.getInt("settings.claim.minimum-distance-from-spawn");
     }
 }

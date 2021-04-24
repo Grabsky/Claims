@@ -1,4 +1,4 @@
-version: 2 # Do not modify this unless you know what you're doing
+version: 1 # Do not modify this unless you know what you're doing
 
 # Following section(s) supports MiniMessage components and classic color codes (§)
 general:
