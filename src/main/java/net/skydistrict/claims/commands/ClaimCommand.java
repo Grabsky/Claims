@@ -1,16 +1,25 @@
 package net.skydistrict.claims.commands;
 
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import io.papermc.lib.PaperLib;
 import me.grabsky.indigo.api.UUIDCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimPlayer;
+import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
+import net.skydistrict.claims.flags.ClaimFlags;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.panel.sections.SectionHomes;
 import net.skydistrict.claims.panel.sections.SectionMain;
+import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -29,7 +38,7 @@ public class ClaimCommand implements CommandExecutor {
     @Override
     public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, @NotNull String[] args) {
         if (sender instanceof Player) {
-            Player executor = (Player) sender;
+            final Player executor = (Player) sender;
             UUID ownerUniqueId = executor.getUniqueId();
             if (args.length == 1) {
                 if (args[0].equalsIgnoreCase("get") && executor.hasPermission("skydistrict.claims.get")) {
@@ -44,16 +53,32 @@ public class ClaimCommand implements CommandExecutor {
                         Lang.send(sender, Lang.RELOAD_SUCCESS);
                         return true;
                     }
-                    Lang.send(sender, Lang.RELOAD_SUCCESS);
+                    Lang.send(sender, Lang.RELOAD_FAIL);
+                    return true;
+                } else if (args[0].equalsIgnoreCase("fix") && executor.hasPermission("skydistrict.claims.fix")) {
+                    Location loc = executor.getLocation();
+                    for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
+                        if (region.getId().startsWith(Config.REGION_PREFIX)) {
+                            // Both variables shouldn't be null unless claim was manually modified
+                            Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
+                            Material type = ClaimH.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
+                            PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
+                                chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
+                                Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_SUCCESS);
+                            });
+                            return true;
+                        }
+                    }
+                    Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_FAIL);
                     return true;
                 } else if (executor.hasPermission("skydistrict.claims.panel.others")) {
                     ownerUniqueId = UUIDCache.get(args[0]);
                     if (ownerUniqueId == null) {
-                        Lang.send(executor, Lang.PLAYER_NOT_FOUND);
+                        Lang.send(sender, Lang.PLAYER_NOT_FOUND);
                         return true;
                     }
                 } else {
-                    Lang.send(executor, Lang.MISSING_PERMISSIONS);
+                    Lang.send(sender, Lang.MISSING_PERMISSIONS);
                     return true;
                 }
             }

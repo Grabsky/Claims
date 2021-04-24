@@ -16,7 +16,7 @@ import java.util.List;
 public class Lang {
     private static final Claims instance = Claims.getInstance();
     private static final Component EMPTY_COMPONENT = Component.empty();
-    private static final int LANG_VERSION = 1;
+    private static final int LANG_VERSION = 2;
 
     public static Message
             PLAYER_NOT_FOUND,
@@ -38,7 +38,9 @@ public class Lang {
             TELEPORTING,
             TELEPORT_SUCCESS,
             TELEPORT_FAIL,
-            TELEPORT_FAIL_UNKNOWN;
+            TELEPORT_FAIL_UNKNOWN,
+            RESTORE_CLAIM_BLOCK_SUCCESS,
+            RESTORE_CLAIM_BLOCK_FAIL;
 
     public static String
             DEFAULT_GREETING,
@@ -73,11 +75,13 @@ public class Lang {
         DESTROY_SUCCESS = message(fc, "claims.destroy-success", true);
         NOT_SNEAKING = message(fc, "claims.not-sneaking", true);
         UPGRADE_SUCCESS = message(fc, "claims.upgrade-success", false);
+        RESTORE_CLAIM_BLOCK_SUCCESS = message(fc, "claims.restore-claim-block-success", true);
+        RESTORE_CLAIM_BLOCK_FAIL = message(fc, "claims.restore-claim-block-fail", true);
         // Teleport
-        TELEPORTING = message(fc, "teleporting.teleporting", false);
-        TELEPORT_SUCCESS = message(fc, "teleporting.teleport-success", true);
-        TELEPORT_FAIL = message(fc, "teleporting.teleport-fail", true);
-        TELEPORT_FAIL_UNKNOWN = message(fc, "teleporting.teleport-fail-unknown", true);
+        TELEPORTING = message(fc, "teleport.teleporting", false);
+        TELEPORT_SUCCESS = message(fc, "teleport.teleport-success", true);
+        TELEPORT_FAIL = message(fc, "teleport.teleport-fail", true);
+        TELEPORT_FAIL_UNKNOWN = message(fc, "teleport.teleport-fail-unknown", true);
         // Flags
         DEFAULT_GREETING = string(fc, "flags.default-greeting");
         DEFAULT_FAREWELL = string(fc, "flags.default-farewell");

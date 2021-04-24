@@ -23,6 +23,7 @@ Permission | Description
 #### Recommended only for admins:
 Permission | Description
 --- | ---
+`skydistrict.claims.fix` | Using `/claim fix` command.
 `skydistrict.claims.reload` | Using `/claim reload` command.
 `skydistrict.claims.panel.others` | Using `/claim <player>` command.
 `skydistrict.claims.destroy.others` | Removing protected region of other players.
@@ -32,11 +33,12 @@ Permission | Description
 
 ## TO-DO
 - [ ] Test in search of bugs and exploits
+  - [x] Configuration files (config/lang/reloading)
   - [ ] Cache (upgrading/adding/removing)
   - [ ] Claim (creating/removing/upgrading/protection)
   - [ ] Claim flags (including default flags)
-  - [ ] Command (functionality and permissions)
-  - [ ] Claim upgrades (block type)
+  - [x] Command (functionality and permissions)
+  - [x] Claim upgrades (block type)
   - [ ] ... and everything I forgot to mention
 - [ ] Add logs for important actions
 - [x] (Optional) Add (basic) config.yml

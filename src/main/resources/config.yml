@@ -2,7 +2,7 @@ version: 1 # Do not modify this unless you know what you're doing
 
 settings:
   # Prefix used to distinguish Claims from regular WorldGuard region
-  region-prefix: "claims_"
+  region-prefix: 'claims_'
   # World used to fetch all regions from
   claims-world: 'world'
 

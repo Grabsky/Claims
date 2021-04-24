@@ -25,7 +25,6 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.util.UUID;
 
-// TO-DO: Code cleanup
 public class RegionListener implements Listener {
     private final ClaimManager manager;
 

@@ -1,4 +1,4 @@
-version: 1 # Do not modify this unless you know what you're doing
+version: 2 # Do not modify this unless you know what you're doing
 
 # Following section(s) supports MiniMessage components and classic color codes (§)
 general:
@@ -20,6 +20,8 @@ claims:
   destroy-success: '§6§lS§e§lD§8 » §7Chroniony teren został usunięty.'
   not-sneaking: '§6§lS§e§lD§8 » §cOchrona przed przypadkowym zniszczeniem. Aby usunąć teren, zniszcz jego blok kucając.'
   upgrade-success: '§6§lS§e§lD§8 » §7Rozmiar terenu został zwiększony do {0}§7.'
+  restore-claim-block-success: '§6§lS§e§lD§8 » §7Przywrócono blok terenu na swoje miejsce.'
+  restore-claim-block-fail: '§6§lS§e§lD§8 » §cNie znajdujesz się na żadnym terenie.'
 
 teleport:
   teleporting: '§6§lS§e§lD§8 » §7Zostaniesz przeteleportowany za §e{0} §7sekund.'
