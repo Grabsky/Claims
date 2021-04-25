@@ -32,25 +32,12 @@ public class SectionHomes extends Section {
         this.hasRegion = true;
     }
 
-    @Override
     public void prepare() {
-        if (hasRegion) {
-            this.home = new ItemBuilder(Material.PLAYER_HEAD)
-                    .setName("§e§lTeren")
-                    .setLore("§7Kliknij, aby się teleportować.")
-                    .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzk4MzQ2ZWY3ZjZhYmJhZmUxYjU0ZWQ0NmExNzc3OWNmODMyN2YzNTNjYzQxMDU1ZjFjNmNkYTA4OTQ1MzZmZSJ9fX0=")
-                    .build();
-        } else {
-            this.home =  new ItemBuilder(Material.PLAYER_HEAD)
-                    .setName("§7§lTeren")
-                    .setLore("§7Nie znaleziono terenu.")
-                    .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGE3M2U5YjIxNjE3OTBlNzFhMTg3ZDI1YjkyOGY2MmIyMmQ2YjM1N2MyMjYzN2Y5OGVhNjEwNDRjNjdjNjMwMCJ9fX0=")
-                    .build();
-        }
+        this.home = (hasRegion) ? Items.HOME : Items.HOME_DISABLED;
         // Some useful values
         this.relatives = ClaimsAPI.getClaimPlayer(owner).getRelatives().toArray(new String[0]);
         this.length = relatives.length;
-        this.maxOnPage = 5;
+        this.maxOnPage = 4;
     }
 
     @Override
@@ -63,44 +50,55 @@ public class SectionHomes extends Section {
 
     private void generateView(int pageToDisplay) {
         panel.clear();
-        // Teleport to owned claim button
-        panel.setItem(13, this.home, (event) -> {
+        // Displaying owned claim
+        panel.setItem(10, this.home, (event) -> {
             if (hasRegion) {
                 executor.closeInventory();
+                if (executor.hasPermission("skydistrict.claims.bypass.teleportdelay")) {
+                    TeleportH.teleportAsync(executor, claim.getHome(), 0);
+                    return;
+                }
                 Lang.send(executor, Lang.TELEPORTING, Config.TELEPORT_DELAY);
                 TeleportH.teleportAsync(executor, claim.getHome(), 5);
             }
         });
         // Displaying regions player have access to
         int startFrom = ((pageToDisplay * maxOnPage) - maxOnPage);
-        int slot = 29, lastIndex = 0;
+        int slot = 13, lastIndex = 0;
         for (int index = startFrom; index < length; index++) {
             if (slot == maxOnPage) {
                 lastIndex = index;
                 break;
             }
-            Claim claim = ClaimsAPI.getClaim(relatives[index]);
-            if (claim == null) continue;
+            Claim relativeClaim = ClaimsAPI.getClaim(relatives[index]);
+            if (relativeClaim == null) continue;
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
-                    .setName("§e§l" + UUIDCache.get(claim.getOwner()))
+                    .setName("§e§l" + UUIDCache.get(relativeClaim.getOwner()))
                     .setLore("§7Kliknij, aby teleportować się", "§7na teren tego gracza.")
-                    .setSkullOwner(claim.getOwner())
+                    .setSkullOwner(relativeClaim.getOwner())
                     .build(), (event) -> {
-                executor.closeInventory();
-                Lang.send(executor, Lang.TELEPORTING, Config.TELEPORT_DELAY);
-                TeleportH.teleportAsync(executor, claim.getHome(), 5);
+                        executor.closeInventory();
+                        if (executor.hasPermission("skydistrict.claims.bypass.teleportdelay")) {
+                            TeleportH.teleportAsync(executor, relativeClaim.getHome(), 0);
+                            return;
+                        }
+                        Lang.send(executor, Lang.TELEPORTING, Config.TELEPORT_DELAY);
+                        TeleportH.teleportAsync(executor, relativeClaim.getHome(), 5);
             });
             startFrom++;
             lastIndex++;
         }
 
         // Navigation buttons
-        if (lastIndex > maxOnPage) panel.setItem(28, Items.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
-        if (lastIndex < length) panel.setItem(34, Items.NEXT, (event) -> generateView(pageToDisplay + 1));
+        if (lastIndex > maxOnPage) panel.setItem(12, Items.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
+        if (lastIndex < length) panel.setItem(17, Items.NEXT, (event) -> generateView(pageToDisplay + 1));
         // Return button
         panel.setItem(49, Items.RETURN, (event) -> {
-            if (hasRegion) panel.applySection(new SectionMain(panel, executor, owner, claim));
-            else executor.closeInventory();
+            if (hasRegion) {
+                panel.applySection(new SectionMain(panel, executor, owner, claim));
+            } else {
+                executor.closeInventory();
+            }
         });
     }
 }

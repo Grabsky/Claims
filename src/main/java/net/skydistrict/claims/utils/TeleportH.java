@@ -9,29 +9,36 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class TeleportH {
+
     /** Teleport player to a location asynchronously */
     public static void teleportAsync(Player player, Location location, int delay) {
         Location initialLoc = player.getLocation();
-        if (player.hasPermission("skydistrict.claims.bypass.teleportdelay")) {
-            PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept(status -> {
-                if (status) Lang.send(player, Lang.TELEPORT_SUCCESS);
-                else Lang.send(player, Lang.TELEPORT_FAIL_UNKNOWN);
+        if (delay == 0) {
+            PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> {
+                if (status) {
+                    Lang.send(player, Lang.TELEPORT_SUCCESS);
+                } else {
+                    Lang.send(player, Lang.TELEPORT_FAIL_UNKNOWN);
+                }
             });
             return;
         }
         new BukkitRunnable() {
-            int sec = 0;
+            int secondsLeft = delay;
             @Override
             public void run() {
-                sec++;
+                secondsLeft--;
                 if (initialLoc.distanceSquared(player.getLocation()) > 1D) {
                     Lang.send(player, Lang.TELEPORT_FAIL);
                     this.cancel();
                 }
-                if(sec == delay) {
-                    PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.COMMAND).thenAccept(status -> {
-                        if (status) Lang.send(player, Lang.TELEPORT_SUCCESS);
-                        else Lang.send(player, Lang.TELEPORT_FAIL_UNKNOWN);
+                if(secondsLeft == 0) {
+                    PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> {
+                        if (status) {
+                            Lang.send(player, Lang.TELEPORT_SUCCESS);
+                        } else {
+                            Lang.send(player, Lang.TELEPORT_FAIL_UNKNOWN);
+                        }
                     });
                     this.cancel();
                 }

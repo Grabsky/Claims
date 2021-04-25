@@ -24,7 +24,7 @@ public class Items {
     public static ItemStack HOMES = new ItemBuilder(Material.PLAYER_HEAD)
             .setName("§e§lTeren")
             .setLore("§7Kliknij, aby teleportować się na teren", "§7lub aby przeglądać listę regionów.")
-            .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjg1NDA2MGFhNTc3NmI3MzY2OGM4OTg2NTkwOWQxMmQwNjIyNDgzZTYwMGI2NDZmOTBjMTg2YzY1Yjc1ZmY0NSJ9fX0=")
+            .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0=")
             .build();
 
     // Settings
@@ -58,6 +58,17 @@ public class Items {
     public static ItemStack RETURN = new ItemBuilder(Material.BARRIER)
             .setName("§cPowrót")
             .setCustomModelData(1)
+            .build();
+
+    // Icons
+    public static ItemStack HOME = new ItemBuilder(Material.PLAYER_HEAD)
+            .setName("§e§lTeren")
+            .setLore("§7Kliknij, aby teleportować się", "§7na swój teren.")
+            .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0=")
+            .build();
+    public static ItemStack HOME_DISABLED = new ItemBuilder(Material.PLAYER_HEAD)
+            .setName("§7Nie posiadasz terenu.")
+            .setSkullValue("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzU3ZTkzOWRiZTJhN2NkNjMwNzAwMzI4YWY0YzE4ZGZiOGZiY2I2NDJjOTEwM2E4NWUzOTRmOTgxNmI1OWExMCJ9fX0=")
             .build();
 
     // Upgrade blocks

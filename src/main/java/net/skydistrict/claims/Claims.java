@@ -10,6 +10,7 @@ import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
 import net.skydistrict.claims.listeners.RegionListener;
+import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.PanelManager;
 import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.ChatColor;
@@ -21,7 +22,7 @@ import java.util.logging.Logger;
 public final class Claims extends JavaPlugin {
     // Instances
     private static Claims instance;
-    private static Logger log;
+    private static Logger logger;
     private RegionManager region;
     private ClaimManager claim;
     private PanelManager panel;
@@ -36,7 +37,9 @@ public final class Claims extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        log = this.getLogger();
+        logger = this.getLogger();
+        // Setting-up FileLogger
+        FileLogger.setup();
         // Reloading configs
         reload();
         // Registering flag handlers
@@ -69,9 +72,9 @@ public final class Claims extends JavaPlugin {
 
     public static boolean reload() {
         Config.reload();
-        log.info(ChatColor.GREEN + "Configuration file (config.yml) has been reloaded.");
+        logger.info(ChatColor.GREEN + "Configuration file (config.yml) has been reloaded.");
         Lang.reload();
-        log.info(ChatColor.GREEN + "Language file (lang.yml) has been reloaded.");
+        logger.info(ChatColor.GREEN + "Language file (lang.yml) has been reloaded.");
         return true;
     }
 }

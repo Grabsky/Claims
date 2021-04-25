@@ -2,9 +2,10 @@ package net.skydistrict.claims.panel;
 
 import net.kyori.adventure.text.Component;
 import net.skydistrict.claims.Claims;
-import net.skydistrict.claims.interfaces.ClickAction;
+import net.skydistrict.claims.interfaces.ClickTrigger;
 import net.skydistrict.claims.panel.sections.Section;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -15,20 +16,20 @@ public class Panel {
     private static final PanelManager panelManager = Claims.getInstance().getPanelManager();
     private final Inventory inventory;
     private final int size;
-    private ClickAction[] actions;
+    private ClickTrigger[] triggers;
 
     /** Construtor required to create Panel object */
     public Panel(int size, @NotNull Component title) {
         this.size = size;
         this.inventory = Bukkit.createInventory(null, size, title);
-        this.actions = new ClickAction[size];
+        this.triggers = new ClickTrigger[size];
     }
 
     /** Construtor required to create Panel object */
     public Panel(int size, @NotNull String title) {
         this.size = size;
         this.inventory = Bukkit.createInventory(null, size, Component.text(title));
-        this.actions = new ClickAction[size];
+        this.triggers = new ClickTrigger[size];
     }
 
     /** Returns this inventory */
@@ -37,11 +38,9 @@ public class Panel {
     }
 
     /** Sets item in panel inventory */
-    public void setItem(int slot, @NotNull ItemStack item, @Nullable ClickAction action) {
+    public void setItem(int slot, @NotNull ItemStack item, @NotNull ClickTrigger action) {
         this.inventory.setItem(slot, item);
-        if (action != null) {
-            actions[slot] = action;
-        }
+        triggers[slot] = action;
     }
 
     /** Sets item in panel inventory */
@@ -50,14 +49,14 @@ public class Panel {
     }
 
     /** Returns ClickAction (callback) for specified slot */
-    @Nullable public ClickAction getAction(int slot) {
-        return actions[slot];
+    @Nullable public ClickTrigger getTrigger(int slot) {
+        return triggers[slot];
     }
 
     /** Clears contents of this panel (including callbacks) */
     public void clear() {
         this.inventory.clear();
-        this.actions = new ClickAction[size];
+        this.triggers = new ClickTrigger[size];
     }
 
     /** Opens panel to player */
@@ -70,5 +69,8 @@ public class Panel {
     public void applySection(Section section) {
         section.prepare();
         section.apply();
+        for (HumanEntity e : inventory.getViewers()) {
+            ((Player) e).updateInventory();
+        }
     }
 }

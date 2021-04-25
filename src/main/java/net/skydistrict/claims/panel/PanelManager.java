@@ -6,7 +6,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -36,23 +35,20 @@ public class PanelManager implements Listener {
         Player player = (Player) event.getWhoClicked();
         if (openInventories.containsKey(player)) {
             event.setCancelled(true);
-            if (event.getAction() == InventoryAction.PICKUP_ALL) {
-                // Return if clicked slot is outside the inventory or empty
-                if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) return;
-                Panel panel = openInventories.get(player);
-                Inventory inventory = panel.getInventory();
-                if (event.getClickedInventory() == inventory) {
-                    // Return if player is on cooldown
-                    if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < 350) return;
-                    // Updating cooldown
-                    clickCooldowns.put(player, System.currentTimeMillis());
-                    int slot = event.getSlot();
-                    if (panel.getAction(slot) != null) {
-                        player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1F, 1.5F);
-                        if (event.getAction() == InventoryAction.PICKUP_ALL) {
-                            panel.getAction(slot).click(event);
-                        }
-                    }
+            // Return if clicked slot is outside the inventory or empty
+            if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) return;
+            Panel panel = openInventories.get(player);
+            // Return if click type is not supported or player is not inside a section
+            Inventory inventory = panel.getInventory();
+            if (event.getClickedInventory() == inventory) {
+                // Return if player is on cooldown
+                if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < 350) return;
+                // Updating cooldown
+                clickCooldowns.put(player, System.currentTimeMillis());
+                int slot = event.getSlot();
+                player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1F, 1.5F);
+                if (panel.getTrigger(slot) != null) {
+                    panel.getTrigger(slot).click(event);
                 }
             }
         }
@@ -65,7 +61,9 @@ public class PanelManager implements Listener {
 
     @EventHandler
     public void onItemSwap(PlayerSwapHandItemsEvent event) {
-        if (openInventories.containsKey(event.getPlayer())) event.setCancelled(true);
+        if (openInventories.containsKey(event.getPlayer())) {
+            event.setCancelled(true);
+        }
     }
 
     @EventHandler
