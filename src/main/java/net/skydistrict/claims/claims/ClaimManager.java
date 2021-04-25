@@ -9,10 +9,12 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
+import me.grabsky.indigo.api.UUIDCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
+import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -58,36 +60,35 @@ public class ClaimManager {
         }
     }
 
-    // Returns true if Claim is in cache
+    /** Returns true if Claim is in cache */
     public boolean containsClaim(String id) {
         return this.regionIdToClaim.containsKey(id);
     }
 
-    // Returns Claim from cache
+    /** Returns Claim from cache */
     public Claim getClaim(String id) {
         return this.regionIdToClaim.get(id);
     }
 
-    // Adds Claim to cache
+    /** Adds Claim to cache */
     public void addClaim(String id, Claim claim) {
         this.regionIdToClaim.put(id, claim);
         this.centers.put(id, claim.getCenter());
     }
 
-    // Removes Claim from cache
+    /** Removes Claim from cache */
     public void removeClaim(String id) {
         this.regionIdToClaim.remove(id);
         this.centers.remove(id);
     }
 
-    // Returns ClaimPlayer from his UUID (creates object if doesn't exist)
+    /** Returns ClaimPlayer from his UUID (creates object if doesn't exist) */
     public ClaimPlayer getClaimPlayer(UUID uuid) {
         if (!this.uuidToClaimPlayer.containsKey(uuid)) this.uuidToClaimPlayer.put(uuid, new ClaimPlayer(uuid));
         return this.uuidToClaimPlayer.get(uuid);
     }
 
-
-    // Returns center of claim closest to given location
+    /** Returns center of claim closest to given location */
     @Nullable
     public Location getClosestTo(Location location) {
         Location closestLocation = null;
@@ -135,12 +136,17 @@ public class ClaimManager {
         // Making a connection between player and newly created claim
         ClaimPlayer cp = this.getClaimPlayer(ownerUniqueId);
         cp.setClaim(claim);
+        FileLogger.log(new StringBuilder()
+                .append("CLAIM_CREATED | ")
+                .append(id).append(" (").append(claim.getLevel()).append(") | ")
+                .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(" | ")
+                .append(owner.getName()).append(" (").append(owner.getUniqueId()).append(")").toString());
         return true;
     }
 
     // Existence check is already in RegionHandler
-    public void removeRegionOf(UUID uuid) {
-        ClaimPlayer cp = this.getClaimPlayer(uuid);
+    public void removeRegionOf(Player player, UUID ownerUniqueId) {
+        ClaimPlayer cp = this.getClaimPlayer(ownerUniqueId);
         Claim claim = cp.getClaim();
         String id = claim.getId();
         // Removing relatives of all players added to that claim
@@ -154,9 +160,16 @@ public class ClaimManager {
         // Removing claim from the world
         ProtectedRegion region = claim.getWGRegion();
         regionManager.removeRegion(region.getId());
+        Location loc = claim.getCenter();
+        FileLogger.log(new StringBuilder()
+                .append("CLAIM_DESTROYED | ")
+                .append(id).append(" (").append(claim.getLevel()).append(") | ")
+                .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(" | ")
+                .append(player.getName()).append(" (").append(player.getUniqueId()).append(") | ")
+                .append(UUIDCache.get(ownerUniqueId)).append(" (").append(ownerUniqueId).append(")")
+                .toString());
     }
 
-    // TO-DO: Check if cached region has to be updated
     public boolean upgrade(Claim claim) {
         if (claim.getLevel() >= 4) return false;
         int newLevel = claim.getLevel() + 1;
@@ -182,7 +195,6 @@ public class ClaimManager {
         return true;
     }
 
-    // TO-DO: greeting-actionbar and farewell-actionbar flags
     private void setDefaultFlags(ProtectedRegion region, Location loc, Player owner) {
         String name = owner.getName();
         // Static flags (not changeable)

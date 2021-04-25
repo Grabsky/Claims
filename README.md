@@ -40,7 +40,7 @@ Permission | Description
   - [x] Command (functionality and permissions)
   - [x] Claim upgrades (block type)
   - [ ] ... and everything I forgot to mention
-- [ ] Add logs for important actions
+- [x] Add logs for important actions
 - [x] (Optional) Add (basic) config.yml
 - [x] (Optional) Add (chat) messages.yml
 - [x] Re-implement core features (creating/removing claims)

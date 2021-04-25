@@ -5,6 +5,7 @@ import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
+import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
 import org.bukkit.Bukkit;
@@ -62,7 +63,13 @@ public class SectionMembersAdd extends Section {
                     .setSkullOwner(player.getUniqueId())
                     .build(), (event) -> {
                 // One more check just in case something changed while GUI was open
-                if (claim.addMember(player.getUniqueId())) panel.applySection(new SectionMembers(panel, executor, owner, claim));
+                if (claim.addMember(player.getUniqueId())) {
+                    panel.applySection(new SectionMembers(panel, executor, owner, claim));
+                    FileLogger.log(new StringBuilder().append("MEMBER_ADDED | ")
+                            .append(claim.getId()).append(" | ")
+                            .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
+                            .append(player.getName()).append(" (").append(player.getUniqueId()).append(")")
+                            .toString());                }
                 else {
                     executor.closeInventory();
                     Lang.send(executor, Lang.REACHED_MEMBERS_LIMIT, Config.MEMBERS_LIMIT);

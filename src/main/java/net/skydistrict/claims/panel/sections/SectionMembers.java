@@ -5,6 +5,7 @@ import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
+import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
 import org.bukkit.Material;
@@ -37,14 +38,21 @@ public class SectionMembers extends Section {
         int slot = 11;
         for (UUID uuid : claim.getMembers()) {
             // Add skull to gui
+            String name = UUIDCache.get(uuid);
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
-                    .setName("§c§l" + UUIDCache.get(uuid))
+                    .setName("§c§l" + name)
                     .setLore("§7Kliknij, aby §cwyrzucić§7 z terenu.")
                     .setSkullOwner(uuid)
                     .build(), event -> {
                 // One more check just in case something changed while GUI was open
                 if (claim.removeMember(uuid)) {
                     this.generateView();
+                    FileLogger.log(new StringBuilder()
+                            .append("MEMBER_REMOVED | ")
+                            .append(claim.getId()).append(" | ")
+                            .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
+                            .append(name).append(" (").append(uuid).append(")")
+                            .toString());
                 } else {
                     executor.closeInventory();
                     Lang.send(executor, Lang.NOT_MEMBER);

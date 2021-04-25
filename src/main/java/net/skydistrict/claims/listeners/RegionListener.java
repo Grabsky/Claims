@@ -85,7 +85,7 @@ public class RegionListener implements Listener {
                         event.setExpToDrop(0);
                         event.setDropItems(false);
                         // Deleting region
-                        manager.removeRegionOf(ownerUniqueId);
+                        manager.removeRegionOf(player, ownerUniqueId);
                         // Dropping the item
                         if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
                         Lang.send(player, Lang.DESTROY_SUCCESS);
