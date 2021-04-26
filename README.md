@@ -7,18 +7,13 @@ Create protected region and manage it using in-game GUI. Limited to 1 claim per 
 
 ## Building
 To build, run `mvn install` or `mvn clean install`.  
-Jar file named `Claims-[VERSION].jar` will be placed in `../build/`
+Jar file named `Claims-[VERSION].jar` will be placed in `../git-builds/`
 
 ## Permissions
 #### Safe to be given to players:
 Permission | Description
 --- | ---
 `skydistrict.claims.panel` | Using `/claim` command.
-`skydistrict.claims.place` | Creating a claim by placing claim block.
-`skydistrict.claims.destroy` | Removing (own) claim by removing claim block.
-`skydistrict.claims.flags` | Managing claim flags.
-`skydistrict.claims.members` | Managing claim members.
-`skydistrict.claims.upgrade` | Upgrading the claim.
 
 #### Recommended only for admins:
 Permission | Description
