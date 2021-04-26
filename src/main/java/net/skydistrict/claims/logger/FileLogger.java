@@ -11,12 +11,14 @@ import java.text.SimpleDateFormat;
 public class FileLogger {
     private static final Claims instance = Claims.getInstance();
     private static final SimpleDateFormat fileDateFormat = new SimpleDateFormat("MM-yyyy");
-    private static final SimpleDateFormat logDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm");
+    private static final SimpleDateFormat logDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     private static File file;
 
     public static void setup() {
         file = new File(instance.getDataFolder() + File.separator + "logs" + File.separator + fileDateFormat.format(System.currentTimeMillis()) + ".log");
-        createDefaultFile();
+        if (!file.exists()) {
+            createDefaultFile();
+        }
     }
 
     public static void log(String text) {
