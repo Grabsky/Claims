@@ -66,10 +66,10 @@ public class ItemBuilder {
 
     public ItemBuilder setSkullValue(String value) {
         if (item.getType() == Material.PLAYER_HEAD) {
-            GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+            final GameProfile profile = new GameProfile(UUID.randomUUID(), null);
             profile.getProperties().put("textures", new Property("textures", value));
             try {
-                Field field = meta.getClass().getDeclaredField("profile");
+                final Field field = meta.getClass().getDeclaredField("profile");
                 field.setAccessible(true);
                 field.set(meta, profile);
                 field.setAccessible(false);
@@ -81,7 +81,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder setSkullOwner(UUID uuid) {
-        String value = SkullCache.getHash(uuid);
+        final String value = SkullCache.getHash(uuid);
         if (value != null) {
             this.setSkullValue(value);
         }

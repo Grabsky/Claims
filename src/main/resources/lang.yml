@@ -23,6 +23,7 @@ claims:
   restore-claim-block-success: '§6§lS§e§lD§8 » §7Przywrócono blok terenu na swoje miejsce.'
   restore-claim-block-fail: '§6§lS§e§lD§8 » §cNie znajdujesz się na żadnym terenie.'
   claim-blocks-added: '§6§lS§e§lD§8 » §7Bloki terenu zostały dodane do Twojego ekwipunku.'
+  blacklisted-world: '§6§lS§e§lD§8 » §cNie możesz postawić terenu w tym świecie.'
 
 teleport:
   teleporting: '§6§lS§e§lD§8 » §7Zostaniesz przeteleportowany za §e{0} §7sekund.'

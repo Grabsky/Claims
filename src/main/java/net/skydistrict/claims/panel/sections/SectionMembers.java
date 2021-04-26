@@ -39,7 +39,7 @@ public class SectionMembers extends Section {
         int slot = 11;
         for (UUID uuid : claim.getMembers()) {
             // Add skull to gui
-            String name = UUIDCache.get(uuid);
+            final String name = UUIDCache.get(uuid);
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§c§l" + name)
                     .setLore("§7Kliknij, aby §cwyrzucić§7 z terenu.")

@@ -23,7 +23,7 @@ public class FileLogger {
     public static void log(String text) {
         if (file.exists()) {
             try {
-                PrintWriter wr = new PrintWriter(new FileWriter(file, true));
+                final PrintWriter wr = new PrintWriter(new FileWriter(file, true));
                 wr.write(logDateFormat.format(System.currentTimeMillis()) + " | " + text + System.lineSeparator());
                 wr.close();
             } catch (IOException e) {
@@ -41,11 +41,11 @@ public class FileLogger {
             file.getParentFile().mkdirs();
             file.createNewFile();
             // Adding header
-            PrintWriter wr = new PrintWriter(new FileWriter(file, true));
+            final PrintWriter wr = new PrintWriter(new FileWriter(file, true));
             wr.write("This file contains logs of plugin actions in following format:" + System.lineSeparator());
-            wr.write("  <DATE> | CLAIM_CREATED | <CLAIM_ID> (<CLAIM_LEVEL>) | <CLAIM_CENTER> | <PLAYER>" + System.lineSeparator());
-            wr.write("  <DATE> | CLAIM_DESTROYED | <CLAIM_ID> (<CLAIM_LEVEL>) | <CLAIM_CENTER> | <PLAYER> | <OWNER>" + System.lineSeparator());
-            wr.write("  <DATE> | CLAIM_UPGRADED | <CLAIM_ID> (<CLAIM_LEVEL>) | <PLAYER> | <OWNER>" + System.lineSeparator());
+            wr.write("  <DATE> | CLAIM_CREATED  | <CLAIM_PROPERTIES> | <PLAYER>" + System.lineSeparator());
+            wr.write("  <DATE> | CLAIM_DESTROYED | <CLAIM_PROPERTIES> | <PLAYER> | <OWNER>" + System.lineSeparator());
+            wr.write("  <DATE> | CLAIM_UPGRADED | <CLAIM_PROPERTIES> | <PLAYER> | <OWNER>" + System.lineSeparator());
             wr.write("  <DATE> | MEMBER_ADDED | <CLAIM_ID> | <PLAYER> | <ADDED_PLAYER>" + System.lineSeparator());
             wr.write("  <DATE> | MEMBER_REMOVED | <CLAIM_ID> | <PLAYER> | <REMOVED_PLAYER>" + System.lineSeparator() + System.lineSeparator());
             wr.close();

@@ -32,7 +32,7 @@ public class GreetingActionBarFlag extends FlagValueChangeHandler<String> {
     @Override
     protected boolean onSetValue(LocalPlayer lp, Location from, Location to, ApplicableRegionSet regionSet, String currentValue, String lastValue, MoveType moveType) {
         if (currentValue != null && !currentValue.equals(lastValue)) {
-            Player player = BukkitAdapter.adapt(lp);
+            final Player player = BukkitAdapter.adapt(lp);
             if(player != null && player.isOnline()) {
                 player.sendActionBar(currentValue);
             }

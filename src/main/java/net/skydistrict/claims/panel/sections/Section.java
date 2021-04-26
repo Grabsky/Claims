@@ -7,9 +7,9 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public abstract class Section {
-    protected Panel panel;
-    protected Player executor;
-    protected UUID owner;
+    protected final Panel panel;
+    protected final Player executor;
+    protected final UUID owner;
     protected Claim claim;
     protected boolean editMode = false;
 

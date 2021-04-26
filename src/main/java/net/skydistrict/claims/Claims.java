@@ -46,7 +46,7 @@ public final class Claims extends JavaPlugin {
         // Creating NamespacedKey
         claimBlockLevel = new NamespacedKey(this, "claimBlockLevel");
         // Creating instance of RegionManager
-        World world = BukkitAdapter.adapt(Config.DEFAULT_WORLD);
+        final World world = BukkitAdapter.adapt(Config.DEFAULT_WORLD);
         this.region = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // Creating other instances
         this.claim = new ClaimManager(this);

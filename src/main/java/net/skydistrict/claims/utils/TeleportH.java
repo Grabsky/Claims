@@ -12,7 +12,7 @@ public class TeleportH {
 
     /** Teleport player to a location asynchronously */
     public static void teleportAsync(Player player, Location location, int delay) {
-        Location initialLoc = player.getLocation();
+        final Location initialLoc = player.getLocation();
         if (delay == 0) {
             PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> {
                 if (status) {

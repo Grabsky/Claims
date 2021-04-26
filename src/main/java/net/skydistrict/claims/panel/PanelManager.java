@@ -32,20 +32,20 @@ public class PanelManager implements Listener {
 
     @EventHandler
     public void onInventoryClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked();
+        final Player player = (Player) event.getWhoClicked();
         if (openInventories.containsKey(player)) {
             event.setCancelled(true);
             // Return if clicked slot is outside the inventory or empty
             if (event.getCurrentItem() == null || event.getCurrentItem().getType() == Material.AIR) return;
-            Panel panel = openInventories.get(player);
+            final Panel panel = openInventories.get(player);
             // Return if click type is not supported or player is not inside a section
-            Inventory inventory = panel.getInventory();
+            final Inventory inventory = panel.getInventory();
             if (event.getClickedInventory() == inventory) {
                 // Return if player is on cooldown
                 if (clickCooldowns.containsKey(player) && (System.currentTimeMillis() - clickCooldowns.get(player)) < 350) return;
                 // Updating cooldown
                 clickCooldowns.put(player, System.currentTimeMillis());
-                int slot = event.getSlot();
+                final int slot = event.getSlot();
                 player.playSound(player.getLocation(), Sound.BLOCK_NOTE_BLOCK_HAT, 1F, 1.5F);
                 if (panel.getTrigger(slot) != null) {
                     panel.getTrigger(slot).click(event);
@@ -56,7 +56,12 @@ public class PanelManager implements Listener {
 
     @EventHandler
     public void onInventoryClose(InventoryCloseEvent event) {
-        this.openInventories.remove((Player) event.getPlayer());
+        openInventories.remove((Player) event.getPlayer());
+    }
+
+    @EventHandler
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        openInventories.remove(event.getPlayer());
     }
 
     @EventHandler
@@ -64,10 +69,5 @@ public class PanelManager implements Listener {
         if (openInventories.containsKey(event.getPlayer())) {
             event.setCancelled(true);
         }
-    }
-
-    @EventHandler
-    public void onPlayerQuit(PlayerQuitEvent event) {
-        this.openInventories.remove(event.getPlayer());
     }
 }

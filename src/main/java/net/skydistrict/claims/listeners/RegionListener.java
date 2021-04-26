@@ -36,36 +36,41 @@ public class RegionListener implements Listener {
     public void onClaimPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         if (!event.canBuild()) return;
-        PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
+
+        final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
         if (data.has(Claims.claimBlockLevel, PersistentDataType.INTEGER)) {
-            Player player = event.getPlayer();
-            if (player.hasPermission("skydistrict.claims.place")) {
-                UUID uuid = player.getUniqueId();
-                ClaimPlayer cp = manager.getClaimPlayer(uuid);
-                Location loc = event.getBlock().getLocation();
-                if (!cp.hasClaim()) {
-                    // The reason why it's here and not in RegionManager is that I want the messages to be different
-                    if (loc.distanceSquared(Config.DEFAULT_WORLD.getSpawnLocation()) > Config.MINIMUM_DISTANCE_FROM_SPAWN) {
-                        // This shouldn't be null
-                        int level = data.get(Claims.claimBlockLevel, PersistentDataType.INTEGER);
-                        if (manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level)) {
-                            Lang.send(player, Lang.PLACE_SUCCESS);
+            final Player player = event.getPlayer();
+            if (event.getBlock().getWorld() == Config.DEFAULT_WORLD) {
+                if (player.hasPermission("skydistrict.claims.place")) {
+                    final UUID uuid = player.getUniqueId();
+                    final ClaimPlayer cp = manager.getClaimPlayer(uuid);
+                    final Location loc = event.getBlock().getLocation();
+                    if (!cp.hasClaim()) {
+                        // The reason why it's here and not in RegionManager is that I want the messages to be different
+                        if (loc.distanceSquared(Config.DEFAULT_WORLD.getSpawnLocation()) > Config.MINIMUM_DISTANCE_FROM_SPAWN) {
+                            // This shouldn't be null
+                            final int level = data.get(Claims.claimBlockLevel, PersistentDataType.INTEGER);
+                            if (manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level)) {
+                                Lang.send(player, Lang.PLACE_SUCCESS);
+                                return;
+                            }
+                            event.setCancelled(true);
+                            Lang.send(player, Lang.OVERLAPS_OTHER_CLAIM);
                             return;
                         }
                         event.setCancelled(true);
-                        Lang.send(player, Lang.OVERLAPS_OTHER_CLAIM);
+                        Lang.send(player, Lang.TOO_CLOSE_TO_SPAWN);
                         return;
                     }
                     event.setCancelled(true);
-                    Lang.send(player, Lang.TOO_CLOSE_TO_SPAWN);
+                    Lang.send(player, Lang.REACHED_CLAIMS_LIMIT);
                     return;
                 }
                 event.setCancelled(true);
-                Lang.send(player, Lang.REACHED_CLAIMS_LIMIT);
-                return;
+                Lang.send(player, Lang.MISSING_PERMISSIONS);
             }
             event.setCancelled(true);
-            Lang.send(player, Lang.MISSING_PERMISSIONS);
+            Lang.send(player, Lang.BLACKLISTED_WORLD);
         }
     }
 
@@ -73,11 +78,12 @@ public class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onClaimBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
-        String id = ClaimH.createId(event.getBlock().getLocation());
+        if (event.getBlock().getWorld() != Config.DEFAULT_WORLD) return;
+        final String id = ClaimH.createId(event.getBlock().getLocation());
         if (manager.containsClaim(id)) {
-            Claim claim = manager.getClaim(id);
-            Player player = event.getPlayer();
-            UUID ownerUniqueId = claim.getOwner();
+            final Claim claim = manager.getClaim(id);
+            final Player player = event.getPlayer();
+            final UUID ownerUniqueId = claim.getOwner();
             if (player.hasPermission("skydistrict.claims.destroy")) {
                 if(player.getUniqueId().equals(ownerUniqueId) || player.hasPermission("skydistrict.claims.destroy.others")) {
                     if (event.getPlayer().isSneaking()) {

@@ -18,13 +18,13 @@ public class ClaimFlags {
     public static final Flag<String> FAREWELL_ACTIONBAR = new StringFlag("farewell-actionbar");
 
     public static void registerHandlers() {
-        SessionManager session = WorldGuard.getInstance().getPlatform().getSessionManager();
+        final SessionManager session = WorldGuard.getInstance().getPlatform().getSessionManager();
         session.registerHandler(GreetingActionBarFlag.FACTORY, ExitFlag.FACTORY);
         session.registerHandler(FarewellActionBarFlag.FACTORY, ExitFlag.FACTORY);
     }
 
     public static void registerFlags() {
-        FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
+        final FlagRegistry registry = WorldGuard.getInstance().getFlagRegistry();
         try {
             registry.register(CLAIM_LEVEL);
             registry.register(CLAIM_CENTER);

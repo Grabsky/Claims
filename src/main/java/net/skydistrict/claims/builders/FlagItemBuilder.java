@@ -1,6 +1,7 @@
 package net.skydistrict.claims.builders;
 
 import com.sk89q.worldguard.protection.flags.Flag;
+import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.interfaces.ToggleAction;
 import net.skydistrict.claims.utils.FlagsH;
 import org.bukkit.ChatColor;
@@ -11,6 +12,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class FlagItemBuilder {
     private final ItemMeta meta;
@@ -56,9 +58,9 @@ public class FlagItemBuilder {
 
     /** Updates lore of the item to highlight current flag value */
     public FlagItemBuilder updateLore() {
-        List<String> lore = new ArrayList<>(Arrays.asList(prefix));
+        final List<String> lore = new ArrayList<>(Arrays.asList(prefix));
         for (int i = 0; i < size; i++) {
-            ChatColor color = (i == value) ? ChatColor.YELLOW : ChatColor.GRAY;
+            final ChatColor color = (i == value) ? ChatColor.YELLOW : ChatColor.GRAY;
             lore.add("§8› " + color + formattedOptions.get(i));
         }
         if (suffix != null) lore.addAll(Arrays.asList(suffix));
@@ -79,8 +81,9 @@ public class FlagItemBuilder {
     /** Builds the ItemStack */
     public ItemStack build() {
         if (value == -1) {
-            System.out.println("§c[ClaimsGUI/DEBUG] Error trying to get value for '" + flag.getName() + "' flag.");
-            System.out.println("§c[ClaimsGUI/DEBUG] Expected one of " + String.join(", ", options + " but found '" + value + "'."));
+            final Logger log = Claims.getInstance().getLogger();
+            log.warning("§c[ClaimsGUI/DEBUG] Error trying to get value for '" + flag.getName() + "' flag.");
+            log.warning("§c[ClaimsGUI/DEBUG] Expected one of " + String.join(", ", options + " but found '" + value + "'."));
             return null;
         }
         item.setItemMeta(this.meta);

@@ -41,8 +41,8 @@ public class Lang {
             TELEPORT_FAIL_UNKNOWN,
             RESTORE_CLAIM_BLOCK_SUCCESS,
             RESTORE_CLAIM_BLOCK_FAIL,
-            CLAIM_BLOCKS_ADDED;
-
+            CLAIM_BLOCKS_ADDED,
+            BLACKLISTED_WORLD;
 
     public static String
             DEFAULT_GREETING,
@@ -50,12 +50,12 @@ public class Lang {
 
     public static void reload() {
         // Saving default plugin translation file
-        File file = new File(instance.getDataFolder() + "/lang.yml");
+        final File file = new File(instance.getDataFolder() + "/lang.yml");
         if(!file.exists()) {
             instance.saveResource("lang.yml", false);
         }
         // Overriding...
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
+        final FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
         if (fc.getInt("version") != LANG_VERSION) {
             instance.getLogger().warning("Your lang.yml file is outdated. Some messages may not display properly.");
         }
@@ -80,6 +80,7 @@ public class Lang {
         RESTORE_CLAIM_BLOCK_SUCCESS = message(fc, "claims.restore-claim-block-success", true);
         RESTORE_CLAIM_BLOCK_FAIL = message(fc, "claims.restore-claim-block-fail", true);
         CLAIM_BLOCKS_ADDED = message(fc, "claims.claim-blocks-added", true);
+        BLACKLISTED_WORLD = message(fc, "claims.blacklisted-world", true);
         // Teleport
         TELEPORTING = message(fc, "teleport.teleporting", false);
         TELEPORT_SUCCESS = message(fc, "teleport.teleport-success", true);

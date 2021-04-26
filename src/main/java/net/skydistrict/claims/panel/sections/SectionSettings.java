@@ -58,11 +58,11 @@ public class SectionSettings extends Section {
             claim.setHome(executor.getLocation());
             event.getCurrentItem().setType(Material.RED_BED);
         });
-        ClaimLevel currentLevel = ClaimH.getClaimLevel(claim.getLevel());
+        final ClaimLevel currentLevel = ClaimH.getClaimLevel(claim.getLevel());
         // Getting ItemBuilder for specific alias
-        ClaimLevel nextLevel = (claim.getLevel() < 4) ? ClaimH.getClaimLevel(claim.getLevel() + 1) : null;
+        final ClaimLevel nextLevel = (claim.getLevel() < 4) ? ClaimH.getClaimLevel(claim.getLevel() + 1) : null;
         // If current level is not the last
-        ItemBuilder inventoryItem = currentLevel.getIcon();
+        final ItemBuilder inventoryItem = currentLevel.getIcon();
         if (nextLevel != null) {
             String canUpgradeString = canUpgrade(executor, nextLevel.getUpgradeMaterial()) ? "§7Kliknij, aby ulepszyć." : "§cNie posiadasz wymaganych przedmiotów.";
             inventoryItem.setLore(

@@ -70,7 +70,7 @@ public class SectionHomes extends Section {
                 lastIndex = index;
                 break;
             }
-            Claim relativeClaim = ClaimsAPI.getClaim(relatives[index]);
+            final Claim relativeClaim = ClaimsAPI.getClaim(relatives[index]);
             if (relativeClaim == null) continue;
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§e§l" + UUIDCache.get(relativeClaim.getOwner()))

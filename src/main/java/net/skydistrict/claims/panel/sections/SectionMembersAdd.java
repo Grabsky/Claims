@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-// TO-DO: Replace Bukkit.getOnlinePlayers() with better method
+// TO-DO: Replace Bukkit.getOnlinePlayers() with something else
 public class SectionMembersAdd extends Section {
     private List<Player> onlinePlayers;
     private int maxOnPage;

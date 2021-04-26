@@ -33,7 +33,7 @@ public class FarewellActionBarFlag extends FlagValueChangeHandler<String> {
     protected boolean onSetValue(LocalPlayer lp, Location from, Location to, ApplicableRegionSet regionSet, String currentValue, String lastValue, MoveType moveType) {
         if (regionSet.size() > 0) return true;
         if (lastValue != null && !lastValue.equals(currentValue)) {
-            Player player = BukkitAdapter.adapt(lp);
+            final Player player = BukkitAdapter.adapt(lp);
             if(player != null && player.isOnline()) {
                 player.sendActionBar(lastValue);
             }
@@ -43,7 +43,7 @@ public class FarewellActionBarFlag extends FlagValueChangeHandler<String> {
 
     @Override
     protected boolean onAbsentValue(LocalPlayer lp, Location from, Location to, ApplicableRegionSet regionSet, String lastValue, MoveType moveType) {
-        Player player = BukkitAdapter.adapt(lp);
+        final Player player = BukkitAdapter.adapt(lp);
         if (player != null && player.isOnline() && lastValue != null) {
             player.sendActionBar(lastValue);
         }

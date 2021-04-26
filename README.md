@@ -32,14 +32,14 @@ Permission | Description
 
 
 ## TO-DO
-- [ ] Test in search of bugs and exploits
+- [x] Test in search of bugs and exploits
   - [x] Configuration files (config/lang/reloading)
-  - [ ] Cache (upgrading/adding/removing)
-  - [ ] Claim (creating/removing/upgrading/protection)
-  - [ ] Claim flags (including default flags)
+  - [x] Cache (upgrading/adding/removing)
+  - [x] Claim (creating/removing/upgrading/protection)
+  - [x] Claim flags (including default flags)
   - [x] Command (functionality and permissions)
   - [x] Claim upgrades (block type)
-  - [ ] ... and everything I forgot to mention
+  - [x] ... and everything I forgot to mention
 - [x] Add logs for important actions
 - [x] (Optional) Add (basic) config.yml
 - [x] (Optional) Add (chat) messages.yml

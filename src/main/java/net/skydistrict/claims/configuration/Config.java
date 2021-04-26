@@ -13,8 +13,9 @@ public class Config {
     private static final int CONFIG_VERSION = 1;
 
     public static boolean LOGS;
-    public static String REGION_PREFIX;
     public static World DEFAULT_WORLD;
+    public static String REGION_PREFIX;
+    public static int REGION_PRIORITY;
     public static int TELEPORT_DELAY;
     public static int MEMBERS_LIMIT;
     public static int MINIMUM_DISTANCE_FROM_SPAWN;
@@ -31,7 +32,6 @@ public class Config {
             instance.getLogger().warning("Your lang.yml file is outdated. Some messages may not display properly.");
         }
         LOGS = fc.getBoolean("settings.logs");
-        REGION_PREFIX = fc.getString("settings.region-prefix");
         // Getting the default world (or disabling plugin if value is not present)
         final String defaultWorldName = fc.getString("settings.claims-world");
         if (defaultWorldName == null || Bukkit.getWorld(defaultWorldName) == null) {
@@ -40,6 +40,8 @@ public class Config {
             return;
         }
         DEFAULT_WORLD = Bukkit.getWorld(defaultWorldName);
+        REGION_PREFIX = fc.getString("settings.region-prefix");
+        REGION_PRIORITY = fc.getInt("settings.region-priority");
         // Overriding other values...
         TELEPORT_DELAY = fc.getInt("settings.claim.teleport-delay");
         MEMBERS_LIMIT = fc.getInt("settings.claim.members-limit");
