@@ -13,7 +13,6 @@ import net.skydistrict.claims.listeners.RegionListener;
 import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.PanelManager;
 import net.skydistrict.claims.utils.ClaimH;
-import org.bukkit.ChatColor;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -72,9 +71,9 @@ public final class Claims extends JavaPlugin {
 
     public static boolean reload() {
         Config.reload();
-        logger.info(ChatColor.GREEN + "Configuration file (config.yml) has been reloaded.");
+        logger.info("Configuration file (config.yml) has been reloaded.");
         Lang.reload();
-        logger.info(ChatColor.GREEN + "Language file (lang.yml) has been reloaded.");
+        logger.info("Language file (lang.yml) has been reloaded.");
         return true;
     }
 }

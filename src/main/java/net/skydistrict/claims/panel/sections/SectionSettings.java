@@ -1,12 +1,15 @@
 package net.skydistrict.claims.panel.sections;
 
+import me.grabsky.indigo.api.UUIDCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimLevel;
 import net.skydistrict.claims.claims.ClaimManager;
+import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
+import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.ClaimH;
 import net.skydistrict.claims.utils.InventoryH;
@@ -97,6 +100,13 @@ public class SectionSettings extends Section {
             executor.playSound(executor.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
             // Refreshing the view
             this.generateView();
+            if (Config.LOGS) {
+                FileLogger.log(new StringBuilder().append("CLAIM_UPGRADED | ")
+                        .append(claim.getId()).append(" | ")
+                        .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
+                        .append(UUIDCache.get(owner)).append(" (").append(owner).append(")")
+                        .toString());
+            }
         });
         // Return button
         panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));

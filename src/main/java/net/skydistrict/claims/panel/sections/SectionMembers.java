@@ -3,6 +3,7 @@ package net.skydistrict.claims.panel.sections;
 import me.grabsky.indigo.api.UUIDCache;
 import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
+import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.logger.FileLogger;
@@ -47,12 +48,14 @@ public class SectionMembers extends Section {
                 // One more check just in case something changed while GUI was open
                 if (claim.removeMember(uuid)) {
                     this.generateView();
-                    FileLogger.log(new StringBuilder()
-                            .append("MEMBER_REMOVED | ")
-                            .append(claim.getId()).append(" | ")
-                            .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
-                            .append(name).append(" (").append(uuid).append(")")
-                            .toString());
+                    if (Config.LOGS) {
+                        FileLogger.log(new StringBuilder()
+                                .append("MEMBER_REMOVED | ")
+                                .append(claim.getId()).append(" | ")
+                                .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
+                                .append(name).append(" (").append(uuid).append(")")
+                                .toString());
+                    }
                 } else {
                     executor.closeInventory();
                     Lang.send(executor, Lang.NOT_MEMBER);

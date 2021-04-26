@@ -65,12 +65,14 @@ public class SectionMembersAdd extends Section {
                 // One more check just in case something changed while GUI was open
                 if (claim.addMember(player.getUniqueId())) {
                     panel.applySection(new SectionMembers(panel, executor, owner, claim));
-                    FileLogger.log(new StringBuilder().append("MEMBER_ADDED | ")
-                            .append(claim.getId()).append(" | ")
-                            .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
-                            .append(player.getName()).append(" (").append(player.getUniqueId()).append(")")
-                            .toString());                }
-                else {
+                    if (Config.LOGS) {
+                        FileLogger.log(new StringBuilder().append("MEMBER_ADDED | ")
+                                .append(claim.getId()).append(" | ")
+                                .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
+                                .append(player.getName()).append(" (").append(player.getUniqueId()).append(")")
+                                .toString());
+                    }
+                } else {
                     executor.closeInventory();
                     Lang.send(executor, Lang.REACHED_MEMBERS_LIMIT, Config.MEMBERS_LIMIT);
                 }

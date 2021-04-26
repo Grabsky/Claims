@@ -55,9 +55,11 @@ public class Claim {
 
     public boolean setHome(Location location) {
         com.sk89q.worldedit.util.Location loc = BukkitAdapter.adapt(location);
-        if (!wgRegion.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) return false;
-        wgRegion.setFlag(Flags.TELE_LOC, loc);
-        return true;
+        if (!wgRegion.contains(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())) {
+            wgRegion.setFlag(Flags.TELE_LOC, loc);
+            return true;
+        }
+        return false;
     }
 
     public Set<UUID> getMembers() {
@@ -85,5 +87,4 @@ public class Claim {
         }
         return false;
     }
-
 }

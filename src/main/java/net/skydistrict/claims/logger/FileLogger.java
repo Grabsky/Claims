@@ -10,12 +10,11 @@ import java.text.SimpleDateFormat;
 
 public class FileLogger {
     private static final Claims instance = Claims.getInstance();
-    private static final SimpleDateFormat fileDateFormat = new SimpleDateFormat("MM-yyyy");
     private static final SimpleDateFormat logDateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
     private static File file;
 
     public static void setup() {
-        file = new File(instance.getDataFolder() + File.separator + "logs" + File.separator + fileDateFormat.format(System.currentTimeMillis()) + ".log");
+        file = new File(instance.getDataFolder() + File.separator + "logs" + File.separator + new SimpleDateFormat("MM-yyyy").format(System.currentTimeMillis()) + ".log");
         if (!file.exists()) {
             createDefaultFile();
         }
@@ -44,8 +43,9 @@ public class FileLogger {
             // Adding header
             PrintWriter wr = new PrintWriter(new FileWriter(file, true));
             wr.write("This file contains logs of plugin actions in following format:" + System.lineSeparator());
-            wr.write("  <DATE> | CLAIM_CREATED | <CLAIM_ID>  <CLAIM_LEVEL> | <CLAIM_CENTER> | <PLAYER>" + System.lineSeparator());
-            wr.write("  <DATE> | CLAIM_DESTROYED | <CLAIM_ID>  <CLAIM_LEVEL> | <CLAIM_CENTER> | <PLAYER> | <OWNER>" + System.lineSeparator());
+            wr.write("  <DATE> | CLAIM_CREATED | <CLAIM_ID> (<CLAIM_LEVEL>) | <CLAIM_CENTER> | <PLAYER>" + System.lineSeparator());
+            wr.write("  <DATE> | CLAIM_DESTROYED | <CLAIM_ID> (<CLAIM_LEVEL>) | <CLAIM_CENTER> | <PLAYER> | <OWNER>" + System.lineSeparator());
+            wr.write("  <DATE> | CLAIM_UPGRADED | <CLAIM_ID> (<CLAIM_LEVEL>) | <PLAYER> | <OWNER>" + System.lineSeparator());
             wr.write("  <DATE> | MEMBER_ADDED | <CLAIM_ID> | <PLAYER> | <ADDED_PLAYER>" + System.lineSeparator());
             wr.write("  <DATE> | MEMBER_REMOVED | <CLAIM_ID> | <PLAYER> | <REMOVED_PLAYER>" + System.lineSeparator() + System.lineSeparator());
             wr.close();

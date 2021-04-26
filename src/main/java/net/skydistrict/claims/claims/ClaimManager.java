@@ -136,11 +136,13 @@ public class ClaimManager {
         // Making a connection between player and newly created claim
         ClaimPlayer cp = this.getClaimPlayer(ownerUniqueId);
         cp.setClaim(claim);
-        FileLogger.log(new StringBuilder()
-                .append("CLAIM_CREATED | ")
-                .append(id).append(" (").append(claim.getLevel()).append(") | ")
-                .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(" | ")
-                .append(owner.getName()).append(" (").append(owner.getUniqueId()).append(")").toString());
+        if (Config.LOGS) {
+            FileLogger.log(new StringBuilder()
+                    .append("CLAIM_CREATED | ")
+                    .append(id).append(" (").append(claim.getLevel()).append(") | ")
+                    .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(" | ")
+                    .append(owner.getName()).append(" (").append(owner.getUniqueId()).append(")").toString());
+        }
         return true;
     }
 
@@ -161,13 +163,15 @@ public class ClaimManager {
         ProtectedRegion region = claim.getWGRegion();
         regionManager.removeRegion(region.getId());
         Location loc = claim.getCenter();
-        FileLogger.log(new StringBuilder()
-                .append("CLAIM_DESTROYED | ")
-                .append(id).append(" (").append(claim.getLevel()).append(") | ")
-                .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(" | ")
-                .append(player.getName()).append(" (").append(player.getUniqueId()).append(") | ")
-                .append(UUIDCache.get(ownerUniqueId)).append(" (").append(ownerUniqueId).append(")")
-                .toString());
+        if (Config.LOGS) {
+            FileLogger.log(new StringBuilder()
+                    .append("CLAIM_DESTROYED | ")
+                    .append(id).append(" (").append(claim.getLevel()).append(") | ")
+                    .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(" | ")
+                    .append(player.getName()).append(" (").append(player.getUniqueId()).append(") | ")
+                    .append(UUIDCache.get(ownerUniqueId)).append(" (").append(ownerUniqueId).append(")")
+                    .toString());
+        }
     }
 
     public boolean upgrade(Claim claim) {
