@@ -4,7 +4,6 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.components.Message;
-import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -41,7 +40,9 @@ public class Lang {
             TELEPORT_FAIL,
             TELEPORT_FAIL_UNKNOWN,
             RESTORE_CLAIM_BLOCK_SUCCESS,
-            RESTORE_CLAIM_BLOCK_FAIL;
+            RESTORE_CLAIM_BLOCK_FAIL,
+            CLAIM_BLOCKS_ADDED;
+
 
     public static String
             DEFAULT_GREETING,
@@ -56,7 +57,7 @@ public class Lang {
         // Overriding...
         FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
         if (fc.getInt("version") != LANG_VERSION) {
-            instance.getLogger().warning(ChatColor.RED + "Your lang.yml file is outdated. Some messages may not display properly.");
+            instance.getLogger().warning("Your lang.yml file is outdated. Some messages may not display properly.");
         }
         // General
         PLAYER_NOT_FOUND = message(fc, "general.player-not-found", true);
@@ -78,6 +79,7 @@ public class Lang {
         UPGRADE_SUCCESS = message(fc, "claims.upgrade-success", false);
         RESTORE_CLAIM_BLOCK_SUCCESS = message(fc, "claims.restore-claim-block-success", true);
         RESTORE_CLAIM_BLOCK_FAIL = message(fc, "claims.restore-claim-block-fail", true);
+        CLAIM_BLOCKS_ADDED = message(fc, "claims.claim-blocks-added", true);
         // Teleport
         TELEPORTING = message(fc, "teleport.teleporting", false);
         TELEPORT_SUCCESS = message(fc, "teleport.teleport-success", true);
