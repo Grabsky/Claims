@@ -44,7 +44,7 @@
                             <!-- Relocating adventure to prevent weird issues -->
                             <relocations>
                                 <relocation>
-                                    <pattern>net.kyori.adventure.text</pattern>
+                                    <pattern>net.kyori.adventure.text.minimessage</pattern>
                                     <shadedPattern>net.skydistrict.claims.adventure</shadedPattern>
                                 </relocation>
                             </relocations>
