@@ -60,7 +60,7 @@ public class ItemBuilder {
     }
 
     public ItemBuilder addEnchantment(Enchantment enchantment, int level) {
-        item.addUnsafeEnchantment(enchantment, level);
+        meta.addEnchant(enchantment, level, true);
         return this;
     }
 
