@@ -22,6 +22,8 @@ public final class Claims extends JavaPlugin {
     // Instances
     private static Claims instance;
     private static Logger logger;
+    private static Config config;
+    private static Lang lang;
     private RegionManager region;
     private ClaimManager claim;
     private PanelManager panel;
@@ -37,10 +39,13 @@ public final class Claims extends JavaPlugin {
     public void onEnable() {
         instance = this;
         logger = this.getLogger();
+        // Initializing configuration
+        lang = new Lang(this);
+        config = new Config(this);
+        // Reloading configuration files
+        this.reload();
         // Setting-up FileLogger
         FileLogger.setup();
-        // Reloading configs
-        reload();
         // Registering flag handlers
         ClaimFlags.registerHandlers();
         // Creating NamespacedKey
@@ -69,10 +74,10 @@ public final class Claims extends JavaPlugin {
         ClaimFlags.registerFlags();
     }
 
-    public static boolean reload() {
-        Config.reload();
+    public boolean reload() {
+        config.reload();
         logger.info("Configuration file (config.yml) has been reloaded.");
-        Lang.reload();
+        lang.reload();
         logger.info("Language file (lang.yml) has been reloaded.");
         return true;
     }

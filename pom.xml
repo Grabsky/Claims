@@ -6,7 +6,7 @@
 
     <groupId>net.skydistrict</groupId>
     <artifactId>Claims</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.0-release</version>
     <packaging>jar</packaging>
 
     <name>Claims</name>
@@ -82,15 +82,15 @@
     </build>
 
     <repositories>
-        <!-- MiniMessage -->
-        <repository>
-            <id>sonatype-oss-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
         <!-- PaperMC -->
         <repository>
             <id>papermc-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
+        </repository>
+        <!-- MiniMessage -->
+        <repository>
+            <id>sonatype-oss-snapshots</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
         </repository>
         <!-- WorldEdit API + WorldGuard API -->
         <repository>

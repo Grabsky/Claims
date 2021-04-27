@@ -50,7 +50,7 @@ public class ClaimCommand implements CommandExecutor {
             // Command: /claim reload
             if (args[0].equalsIgnoreCase("reload")) {
                 if (sender.hasPermission("skydistrict.claims.reload")) {
-                    if (Claims.reload()) {
+                    if (instance.reload()) {
                         Lang.send(sender, Lang.RELOAD_SUCCESS);
                         return true;
                     }

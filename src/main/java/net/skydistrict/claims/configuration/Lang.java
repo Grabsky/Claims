@@ -14,7 +14,8 @@ import java.text.MessageFormat;
 import java.util.List;
 
 public class Lang {
-    private static final Claims instance = Claims.getInstance();
+    private final Claims instance;
+    private final File file;
     private static final Component EMPTY_COMPONENT = Component.empty();
     private static final int LANG_VERSION = 1;
 
@@ -48,9 +49,13 @@ public class Lang {
             DEFAULT_GREETING,
             DEFAULT_FAREWELL;
 
-    public static void reload() {
+    public Lang(Claims instance) {
+        this.instance = instance;
+        this.file = new File(instance.getDataFolder() + File.separator + "lang.yml");
+    }
+
+    public void reload() {
         // Saving default plugin translation file
-        final File file = new File(instance.getDataFolder() + "/lang.yml");
         if(!file.exists()) {
             instance.saveResource("lang.yml", false);
         }
@@ -91,9 +96,7 @@ public class Lang {
         DEFAULT_FAREWELL = string(fc, "flags.default-farewell");
     }
 
-    /**
-     * Returns Message value from given path
-     */
+    /**  Returns Message value from given path */
     public static Message message(FileConfiguration fc, String path, boolean compile) {
         final StringBuilder builder = new StringBuilder();
         if (fc.isList(path)) {
@@ -111,9 +114,7 @@ public class Lang {
         return new Message(builder.toString());
     }
 
-    /**
-     * Returns message as a String value from given path
-     */
+    /** Returns message as a String value from given path*/
     public static String string(FileConfiguration fc, String path) {
         // If value is single String...
         if (fc.isString(path)) return fc.getString(path);
@@ -129,9 +130,7 @@ public class Lang {
         return builder.toString();
     }
 
-    /**
-     * Sends message with placeholders (compiled just before sending)
-     */
+    /** Sends message with placeholders (compiled just before sending) */
     public static void send(CommandSender sender, @NotNull Message message, Object... replacements) {
         final String string = message.getString();
         if (string != null && !string.equals("")) {
@@ -139,9 +138,7 @@ public class Lang {
         }
     }
 
-    /**
-     * Sends compiled (static) message
-     */
+    /** Sends compiled (static) message */
     public static void send(CommandSender sender, Message message) {
         final Component component = message.getComponent();
         if (component != null && component != EMPTY_COMPONENT) {

@@ -9,7 +9,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 
 public class Config {
-    private static final Claims instance = Claims.getInstance();
+    private final Claims instance;
+    private final File file;
     private static final int CONFIG_VERSION = 1;
 
     public static boolean LOGS;
@@ -20,16 +21,20 @@ public class Config {
     public static int MEMBERS_LIMIT;
     public static int MINIMUM_DISTANCE_FROM_SPAWN;
 
-    public static void reload() {
+    public Config(Claims instance) {
+        this.instance = instance;
+        this.file = new File(instance.getDataFolder() + File.separator + "config.yml");
+    }
+
+    public void reload() {
         // Saving default config
-        File file = new File(instance.getDataFolder() + "/config.yml");
         if(!file.exists()) {
             instance.saveResource("config.yml", false);
         }
         // Overriding...
-        FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
+        final FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
         if (fc.getInt("version") != CONFIG_VERSION) {
-            instance.getLogger().warning("Your lang.yml file is outdated. Some messages may not display properly.");
+            instance.getLogger().warning("Your config.yml file is outdated. Plugin may not work properly.");
         }
         LOGS = fc.getBoolean("settings.logs");
         // Getting the default world (or disabling plugin if value is not present)
