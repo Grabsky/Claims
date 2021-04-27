@@ -5,7 +5,7 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import net.skydistrict.claims.claims.ClaimManager;
-import net.skydistrict.claims.commands.ClaimCommand;
+import net.skydistrict.claims.commands.ClaimsCommand;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
@@ -57,7 +57,7 @@ public final class Claims extends JavaPlugin {
         this.claim = new ClaimManager(this);
         this.panel = new PanelManager(this);
         // Registering a command
-        this.getCommand("claim").setExecutor(new ClaimCommand(this));
+        this.getCommand("claims").setExecutor(new ClaimsCommand(this));
         // Registering events
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
         // Initializing available upgrades

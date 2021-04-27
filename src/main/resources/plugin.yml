@@ -5,7 +5,7 @@ api-version: 1.16
 depend: [Indigo, WorldGuard, WorldEdit]
 authors: [Grabsky]
 commands:
-  claim:
-    aliases: ['teren', 'claims']
+  claims:
+    aliases: ['teren', 'claim']
     permission: 'skydistrict.claims.panel'
     permission-message: '§6§lS§e§lD§8 » §cBrak uprawnień.'

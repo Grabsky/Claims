@@ -28,10 +28,10 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ClaimCommand implements CommandExecutor {
+public class ClaimsCommand implements CommandExecutor {
     private final Claims instance;
 
-    public ClaimCommand(Claims instance) {
+    public ClaimsCommand(Claims instance) {
         this.instance = instance;
     }
 
