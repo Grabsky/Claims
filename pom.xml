@@ -41,6 +41,13 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <outputFile>../git-builds/${project.artifactId}-${project.version}.jar</outputFile>
+                            <!-- Relocating adventure to prevent weird issues -->
+                            <relocations>
+                                <relocation>
+                                    <pattern>net.kyori.adventure.text</pattern>
+                                    <shadedPattern>net.skydistrict.claims.adventure</shadedPattern>
+                                </relocation>
+                            </relocations>
                             <!-- Excluding anything from kyori besides the MiniMessage -->
                             <filters>
                                 <filter>
