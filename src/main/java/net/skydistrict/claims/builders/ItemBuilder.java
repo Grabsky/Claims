@@ -66,7 +66,8 @@ public class ItemBuilder {
 
     public ItemBuilder setSkullValue(String value) {
         if (item.getType() == Material.PLAYER_HEAD) {
-            final GameProfile profile = new GameProfile(UUID.randomUUID(), null);
+            // We're using pre-made UUID because otherwise heads won't stack after the server is restarted
+            final GameProfile profile = new GameProfile(UUID.fromString("75f358b3-15d2-4635-bdc8-149ab54098d1"), null);
             profile.getProperties().put("textures", new Property("textures", value));
             try {
                 final Field field = meta.getClass().getDeclaredField("profile");

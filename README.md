@@ -25,7 +25,6 @@ Permission | Description
 `skydistrict.claims.bypass.teleportdelay` | Bypass teleport delay.
 `skydistrict.claims.bypass.upgradecost` | Bypass upgrade cost.
 
-
 ## TO-DO
 - [x] Test in search of bugs and exploits
   - [x] Configuration files (config/lang/reloading)
