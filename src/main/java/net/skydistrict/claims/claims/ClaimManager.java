@@ -9,7 +9,7 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
-import me.grabsky.indigo.api.UUIDCache;
+import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Lang;
@@ -171,14 +171,14 @@ public class ClaimManager {
         // Removing claim from the world
         final ProtectedRegion region = claim.getWGRegion();
         regionManager.removeRegion(region.getId());
-        final  Location loc = claim.getCenter();
+        final Location loc = claim.getCenter();
         if (Config.LOGS) {
             FileLogger.log(new StringBuilder()
                     .append("CLAIM_DESTROYED | ")
                     .append(id).append(" (").append(claim.getLevel()).append(") (")
                     .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(") | ")
                     .append(player.getName()).append(" (").append(player.getUniqueId()).append(") | ")
-                    .append(UUIDCache.get(ownerUniqueId)).append(" (").append(ownerUniqueId).append(")")
+                    .append(UserCache.get(ownerUniqueId).getName()).append(" (").append(ownerUniqueId).append(")")
                     .toString());
         }
     }

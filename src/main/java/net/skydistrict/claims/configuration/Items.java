@@ -1,7 +1,7 @@
 package net.skydistrict.claims.configuration;
 
+import me.grabsky.indigo.builders.ItemBuilder;
 import net.skydistrict.claims.Claims;
-import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.ClaimLevel;
 import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.Material;

@@ -1,8 +1,8 @@
 package net.skydistrict.claims.panel.sections;
 
-import me.grabsky.indigo.api.UUIDCache;
+import me.grabsky.indigo.builders.ItemBuilder;
+import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
-import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimLevel;
 import net.skydistrict.claims.claims.ClaimManager;
@@ -104,7 +104,7 @@ public class SectionSettings extends Section {
                 FileLogger.log(new StringBuilder().append("CLAIM_UPGRADED | ")
                         .append(claim.getId()).append(" | ")
                         .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
-                        .append(UUIDCache.get(owner)).append(" (").append(owner).append(")")
+                        .append(UserCache.get(owner).getName()).append(" (").append(owner).append(")")
                         .toString());
             }
         });

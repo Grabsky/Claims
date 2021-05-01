@@ -1,6 +1,6 @@
 package net.skydistrict.claims.claims;
 
-import net.skydistrict.claims.builders.ItemBuilder;
+import me.grabsky.indigo.builders.ItemBuilder;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 

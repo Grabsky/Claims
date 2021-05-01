@@ -1,7 +1,8 @@
 package net.skydistrict.claims.panel.sections;
 
-import me.grabsky.indigo.api.UUIDCache;
-import net.skydistrict.claims.builders.ItemBuilder;
+import me.grabsky.indigo.builders.ItemBuilder;
+import me.grabsky.indigo.user.User;
+import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
@@ -39,11 +40,11 @@ public class SectionMembers extends Section {
         int slot = 11;
         for (UUID uuid : claim.getMembers()) {
             // Add skull to gui
-            final String name = UUIDCache.get(uuid);
+            final User user = UserCache.get(uuid);
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
-                    .setName("§c§l" + name)
+                    .setName("§c§l" + user.getName())
                     .setLore("§7Kliknij, aby §cwyrzucić§7 z terenu.")
-                    .setSkullOwner(uuid)
+                    .setSkullValue(user.getSkullValue())
                     .build(), event -> {
                 // One more check just in case something changed while GUI was open
                 if (claim.removeMember(uuid)) {
@@ -53,7 +54,7 @@ public class SectionMembers extends Section {
                                 .append("MEMBER_REMOVED | ")
                                 .append(claim.getId()).append(" | ")
                                 .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
-                                .append(name).append(" (").append(uuid).append(")")
+                                .append(user.getName()).append(" (").append(uuid).append(")")
                                 .toString());
                     }
                 } else {

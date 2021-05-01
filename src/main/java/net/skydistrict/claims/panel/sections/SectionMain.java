@@ -1,6 +1,7 @@
 package net.skydistrict.claims.panel.sections;
 
-import net.skydistrict.claims.builders.ItemBuilder;
+import me.grabsky.indigo.builders.ItemBuilder;
+import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.panel.Panel;
@@ -23,7 +24,7 @@ public class SectionMain extends Section {
         this.members = new ItemBuilder(Material.PLAYER_HEAD)
                 .setName("§e§lCzłonkowie")
                 .setLore("§7Kliknij, aby zarządzać dodanymi do terenu.")
-                .setSkullOwner(owner)
+                .setSkullValue(UserCache.get(owner).getSkullValue())
                 .build();
     }
 

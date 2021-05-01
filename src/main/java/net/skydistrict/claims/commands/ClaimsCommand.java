@@ -4,7 +4,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
-import me.grabsky.indigo.api.UUIDCache;
+import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.claims.Claim;
@@ -106,7 +106,7 @@ public class ClaimsCommand implements CommandExecutor {
             // Command: /claim <name>
             } else if (sender.hasPermission("skydistrict.claims.other")) {
                 final Player executor = (Player) sender;
-                final UUID ownerUniqueId = UUIDCache.get(args[0]);
+                final UUID ownerUniqueId = UserCache.get(args[0]).getUniqueId();
                 if (ownerUniqueId != null) {
                     this.openClaimMenu(executor, ownerUniqueId);
                     return true;

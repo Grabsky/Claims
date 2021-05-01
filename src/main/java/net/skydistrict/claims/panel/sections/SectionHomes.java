@@ -1,8 +1,9 @@
 package net.skydistrict.claims.panel.sections;
 
-import me.grabsky.indigo.api.UUIDCache;
+import me.grabsky.indigo.builders.ItemBuilder;
+import me.grabsky.indigo.user.User;
+import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.api.ClaimsAPI;
-import net.skydistrict.claims.builders.ItemBuilder;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
@@ -72,10 +73,11 @@ public class SectionHomes extends Section {
             }
             final Claim relativeClaim = ClaimsAPI.getClaim(relatives[index]);
             if (relativeClaim == null) continue;
+            final User user = UserCache.get(relativeClaim.getOwner());
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
-                    .setName("§e§l" + UUIDCache.get(relativeClaim.getOwner()))
+                    .setName("§e§l" + user.getName())
                     .setLore("§7Kliknij, aby teleportować się", "§7na teren tego gracza.")
-                    .setSkullOwner(relativeClaim.getOwner())
+                    .setSkullValue(user.getSkullValue())
                     .build(), (event) -> {
                         executor.closeInventory();
                         if (executor.hasPermission("skydistrict.claims.bypass.teleportdelay")) {

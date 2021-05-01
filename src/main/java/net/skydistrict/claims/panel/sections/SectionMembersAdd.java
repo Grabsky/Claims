@@ -1,6 +1,8 @@
 package net.skydistrict.claims.panel.sections;
 
-import net.skydistrict.claims.builders.ItemBuilder;
+import me.grabsky.indigo.builders.ItemBuilder;
+import me.grabsky.indigo.user.User;
+import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
@@ -8,7 +10,6 @@ import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
 
 // TO-DO: Replace Bukkit.getOnlinePlayers() with something else
 public class SectionMembersAdd extends Section {
-    private List<Player> onlinePlayers;
+    private List<User> onlineUsers;
     private int maxOnPage;
     private int usableSize;
     private int pages;
@@ -29,12 +30,12 @@ public class SectionMembersAdd extends Section {
 
     @Override
     public void prepare() {
-        this.onlinePlayers = Bukkit.getOnlinePlayers().stream()
-                .filter(player -> (!player.getUniqueId().equals(owner) && !claim.isMember(player.getUniqueId())))
+        this.onlineUsers = UserCache.getOnlineUsers().stream()
+                .filter(user -> (!user.getUniqueId().equals(owner) && !claim.isMember(user.getUniqueId())))
                 .collect(Collectors.toList());
         this.maxOnPage = 21;
-        this.usableSize = onlinePlayers.size();
-        this.pages = (onlinePlayers.size() - 1) / maxOnPage + 1;
+        this.usableSize = onlineUsers.size();
+        this.pages = (onlineUsers.size() - 1) / maxOnPage + 1;
     }
 
     @Override
@@ -55,21 +56,21 @@ public class SectionMembersAdd extends Section {
             if (index >= usableSize) break;
             // Skipping border slots
             if ((slot + 1) % 9 == 0) slot += 2;
-            final Player player = onlinePlayers.get(index);
+            final User user = onlineUsers.get(index);
             // Adding skull to GUI
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
-                    .setName("§a§l" + player.getName())
+                    .setName("§a§l" + user.getName())
                     .setLore("§7Kliknij, aby §adodać§7 do terenu.")
-                    .setSkullOwner(player.getUniqueId())
+                    .setSkullValue(user.getSkullValue())
                     .build(), (event) -> {
                 // One more check just in case something changed while GUI was open
-                if (claim.addMember(player.getUniqueId())) {
+                if (claim.addMember(user.getUniqueId())) {
                     panel.applySection(new SectionMembers(panel, executor, owner, claim));
                     if (Config.LOGS) {
                         FileLogger.log(new StringBuilder().append("MEMBER_ADDED | ")
                                 .append(claim.getId()).append(" | ")
                                 .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
-                                .append(player.getName()).append(" (").append(player.getUniqueId()).append(")")
+                                .append(user.getName()).append(" (").append(user.getUniqueId()).append(")")
                                 .toString());
                     }
                 } else {

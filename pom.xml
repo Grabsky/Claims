@@ -41,33 +41,6 @@
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
                             <outputFile>../git-builds/${project.artifactId}-${project.version}.jar</outputFile>
-                            <!-- Relocating adventure to prevent weird issues -->
-                            <relocations>
-                                <relocation>
-                                    <pattern>net.kyori.adventure.text.minimessage</pattern>
-                                    <shadedPattern>net.skydistrict.claims.adventure</shadedPattern>
-                                </relocation>
-                            </relocations>
-                            <!-- Excluding anything from kyori besides the MiniMessage -->
-                            <filters>
-                                <filter>
-                                    <artifact>net.kyori:*</artifact>
-                                    <excludes>
-                                        <exclude>/**</exclude>
-                                    </excludes>
-                                    <includes>
-                                        <include>net/kyori/adventure/text/minimessage/**</include>
-                                    </includes>
-                                </filter>
-                            </filters>
-                            <!-- Excluding junk left by MiniMessage -->
-                            <artifactSet>
-                                <excludes>
-                                    <exclude>org.jetbrains:*</exclude>
-                                    <exclude>org.intellij.lang:*</exclude>
-                                    <exclude>org.checkerframework:*</exclude>
-                                </excludes>
-                            </artifactSet>
                         </configuration>
                     </execution>
                 </executions>
@@ -87,20 +60,10 @@
             <id>papermc-repo</id>
             <url>https://papermc.io/repo/repository/maven-public/</url>
         </repository>
-        <!-- MiniMessage -->
-        <repository>
-            <id>sonatype-oss-snapshots</id>
-            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-        </repository>
         <!-- WorldEdit API + WorldGuard API -->
         <repository>
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
-        </repository>
-        <!-- Mojang AuthLib -->
-        <repository>
-            <id>mojang-repo</id>
-            <url>https://libraries.minecraft.net/</url>
         </repository>
     </repositories>
 
@@ -126,25 +89,11 @@
             <version>7.0.4</version>
             <scope>provided</scope>
         </dependency>
-        <!-- Mojang AuthLib -->
-        <dependency>
-            <groupId>com.mojang</groupId>
-            <artifactId>authlib</artifactId>
-            <version>1.5.21</version>
-            <scope>provided</scope>
-        </dependency>
         <!-- PaperLib -->
         <dependency>
             <groupId>io.papermc</groupId>
             <artifactId>paperlib</artifactId>
             <version>1.0.6</version>
-            <scope>compile</scope>
-        </dependency>
-        <!-- MiniMessage -->
-        <dependency>
-            <groupId>net.kyori</groupId>
-            <artifactId>adventure-text-minimessage</artifactId>
-            <version>4.1.0-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <!-- Indigo -->
@@ -153,7 +102,7 @@
             <artifactId>Indigo</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
-            <systemPath>${builds.local}/Indigo.jar</systemPath>
+            <systemPath>${builds.local}/Indigo-1.0.0-dev.jar</systemPath>
         </dependency>
         <!-- Local server jar for NMS -->
         <dependency>
