@@ -46,7 +46,7 @@ public class SectionSettings extends Section {
     }
 
     private boolean canUpgrade(Player player, Material upgradeMaterial) {
-        return (executor.hasPermission("skydistrict.claims.bypass.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64));
+        return executor.hasPermission("skydistrict.claims.bypass.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64);
     }
 
     private void generateView() {
@@ -54,7 +54,7 @@ public class SectionSettings extends Section {
         // Flags category
         panel.setItem(11, Items.FLAGS, event -> panel.applySection(new SectionFlags(panel, executor, owner, claim)));
         // Home
-        this.panel.setItem(13, teleport, (event) -> {
+        panel.setItem(13, teleport, (event) -> {
             claim.setHome(executor.getLocation());
             event.getCurrentItem().setType(Material.RED_BED);
         });

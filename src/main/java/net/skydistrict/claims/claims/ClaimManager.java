@@ -97,7 +97,7 @@ public class ClaimManager {
     public Location getClosestTo(Location location) {
         Location closestLocation = null;
         double dist = Double.MAX_VALUE;
-        for (Location loc : this.centers.values()) {
+        for (Location loc : centers.values()) {
             double d = loc.distance(location);
             if (d < dist) {
                 closestLocation = loc;
@@ -108,7 +108,7 @@ public class ClaimManager {
     }
 
     public boolean canPlaceAt(Location location) {
-        Location center = this.getClosestTo(location);
+        final Location center = this.getClosestTo(location);
         if (center != null) {
             return (Math.abs(location.getBlockX() - center.getBlockX()) > 70 || Math.abs(location.getBlockZ() - center.getBlockZ()) > 70);
         }

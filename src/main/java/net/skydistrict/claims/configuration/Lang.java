@@ -92,8 +92,8 @@ public class Lang {
         TELEPORT_FAIL = message(fc, "teleport.teleport-fail", true);
         TELEPORT_FAIL_UNKNOWN = message(fc, "teleport.teleport-fail-unknown", true);
         // Flags
-        DEFAULT_GREETING = string(fc, "flags.default-greeting");
-        DEFAULT_FAREWELL = string(fc, "flags.default-farewell");
+        DEFAULT_GREETING = fc.getString("flags.default-greeting", "");
+        DEFAULT_FAREWELL = fc.getString("flags.default-farewell", "");
     }
 
     /**  Returns Message value from given path */
@@ -112,22 +112,6 @@ public class Lang {
         }
         if (compile) return new Message(MiniMessage.get().parse(builder.toString()));
         return new Message(builder.toString());
-    }
-
-    /** Returns message as a String value from given path*/
-    public static String string(FileConfiguration fc, String path) {
-        // If value is single String...
-        if (fc.isString(path)) return fc.getString(path);
-        // If value is something else... (assuming it's a StringList)
-        final List<String> list = fc.getStringList(path);
-        final StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < list.size(); i++) {
-            builder.append(list.get(i));
-            if (i + 1 != list.size()) {
-                builder.append("\n");
-            }
-        }
-        return builder.toString();
     }
 
     /** Sends message with placeholders (compiled just before sending) */

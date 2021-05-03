@@ -34,18 +34,18 @@ public class Panel {
 
     /** Returns this inventory */
     public Inventory getInventory() {
-        return this.inventory;
+        return inventory;
     }
 
     /** Sets item in panel inventory */
     public void setItem(int slot, @NotNull ItemStack item, @NotNull ClickTrigger action) {
-        this.inventory.setItem(slot, item);
+        inventory.setItem(slot, item);
         triggers[slot] = action;
     }
 
     /** Sets item in panel inventory */
     public void setItem(int slot, @NotNull ItemStack item) {
-        this.inventory.setItem(slot, item);
+        inventory.setItem(slot, item);
     }
 
     /** Returns ClickAction (callback) for specified slot */
@@ -55,14 +55,14 @@ public class Panel {
 
     /** Clears contents of this panel (including callbacks) */
     public void clear() {
-        this.inventory.clear();
+        inventory.clear();
         this.triggers = new ClickTrigger[size];
     }
 
     /** Opens panel to player */
     public void open(Player player) {
         panelManager.add(player, this);
-        player.openInventory(this.inventory);
+        player.openInventory(inventory);
     }
 
     /** Opens panel to player */

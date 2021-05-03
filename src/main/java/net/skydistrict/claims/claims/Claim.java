@@ -63,16 +63,16 @@ public class Claim {
     }
 
     public Set<UUID> getMembers() {
-        return this.wgRegion.getMembers().getUniqueIds();
+        return wgRegion.getMembers().getUniqueIds();
     }
 
     public boolean isMember(UUID uuid) {
-        return this.wgRegion.getMembers().contains(uuid);
+        return wgRegion.getMembers().contains(uuid);
     }
 
     public boolean addMember(UUID uuid) {
         if (this.getMembers().size() < Config.MEMBERS_LIMIT) {
-            this.wgRegion.getMembers().addPlayer(uuid);
+            wgRegion.getMembers().addPlayer(uuid);
             ClaimsAPI.getClaimPlayer(uuid).addRelative(this.getId());
             return true;
         }
@@ -81,7 +81,7 @@ public class Claim {
 
     public boolean removeMember(UUID uuid) {
         if (this.getMembers().contains(uuid)) {
-            this.wgRegion.getMembers().removePlayer(uuid);
+            wgRegion.getMembers().removePlayer(uuid);
             ClaimsAPI.getClaimPlayer(uuid).removeRelative(this.getId());
             return true;
         }

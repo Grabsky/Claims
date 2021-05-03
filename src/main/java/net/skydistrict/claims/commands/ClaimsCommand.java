@@ -86,8 +86,8 @@ public class ClaimsCommand implements CommandExecutor {
                         for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
                             if (region.getId().startsWith(Config.REGION_PREFIX)) {
                                 // Both variables shouldn't be null unless claim was manually modified
-                                Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
-                                Material type = ClaimH.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
+                                final Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
+                                final Material type = ClaimH.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
                                 PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
                                     chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
                                     Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_SUCCESS);
