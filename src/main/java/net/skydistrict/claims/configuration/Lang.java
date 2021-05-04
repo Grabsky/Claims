@@ -11,7 +11,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.text.MessageFormat;
 import java.util.List;
 
 public class Lang {
@@ -121,7 +120,7 @@ public class Lang {
     public static void send(CommandSender sender, @NotNull Message message, Object... replacements) {
         final String string = message.getString();
         if (string != null && !string.equals("")) {
-            sender.sendMessage(MiniMessage.get().parse(MessageFormat.format(string, replacements)));
+            sender.sendMessage(MiniMessage.get().parse(String.format(string, replacements)));
         }
     }
 

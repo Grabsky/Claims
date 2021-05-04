@@ -22,7 +22,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Nullable;
 
-import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -218,8 +217,8 @@ public class ClaimManager {
         region.setFlag(Flags.FIRE_SPREAD, StateFlag.State.DENY);
         region.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
         region.setFlag(Flags.GHAST_FIREBALL, StateFlag.State.DENY);
-        region.setFlag(ClaimFlags.GREETING_ACTIONBAR, MessageFormat.format(Lang.DEFAULT_GREETING, name));
-        region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, MessageFormat.format(Lang.DEFAULT_FAREWELL, name));
+        region.setFlag(ClaimFlags.GREETING_ACTIONBAR, String.format(Lang.DEFAULT_GREETING, name));
+        region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, String.format(Lang.DEFAULT_FAREWELL, name));
         // Dynamic flags (changeable)
         region.setFlag(Flags.USE, StateFlag.State.DENY);
         region.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
