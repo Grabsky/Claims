@@ -9,12 +9,13 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
+import me.grabsky.indigo.logger.ConsoleLogger;
+import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
-import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,15 +28,17 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ClaimManager {
-    private final Claims instance;
     private final RegionManager regionManager;
+    private final ConsoleLogger consoleLogger;
+    private final FileLogger fileLogger;
     private final Map<String, Claim> regionIdToClaim = new HashMap<>();
     private final Map<UUID, ClaimPlayer> uuidToClaimPlayer = new HashMap<>();
     private final Map<String, Location> centers = new HashMap<>();
 
     public ClaimManager(Claims instance) {
-        this.instance = instance;
         this.regionManager = instance.getRegionManager();
+        this.consoleLogger = instance.getConsoleLogger();
+        this.fileLogger = instance.getFileLogger();
         this.cacheClaims();
     }
 
@@ -59,7 +62,7 @@ public class ClaimManager {
             this.addClaim(id, claim);
             loadedClaims++;
         }
-        Claims.getInstance().getLogger().info("Loaded " + loadedClaims + " claims.");
+        consoleLogger.success("Loaded " + loadedClaims + " claims.");
     }
 
     /** Returns true if Claim is in cache */
@@ -145,7 +148,7 @@ public class ClaimManager {
         final ClaimPlayer cp = this.getClaimPlayer(ownerUniqueId);
         cp.setClaim(claim);
         if (Config.LOGS) {
-            FileLogger.log(new StringBuilder()
+            fileLogger.log(new StringBuilder()
                     .append("CLAIM_CREATED | ")
                     .append(id).append(" (").append(claim.getLevel()).append(") (")
                     .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(") | ")
@@ -173,7 +176,7 @@ public class ClaimManager {
         regionManager.removeRegion(region.getId());
         final Location loc = claim.getCenter();
         if (Config.LOGS) {
-            FileLogger.log(new StringBuilder()
+            fileLogger.log(new StringBuilder()
                     .append("CLAIM_DESTROYED | ")
                     .append(id).append(" (").append(claim.getLevel()).append(") (")
                     .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(") | ")

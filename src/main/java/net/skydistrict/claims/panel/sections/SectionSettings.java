@@ -1,6 +1,7 @@
 package net.skydistrict.claims.panel.sections;
 
 import me.grabsky.indigo.builders.ItemBuilder;
+import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
@@ -9,7 +10,6 @@ import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.ClaimH;
 import net.skydistrict.claims.utils.InventoryH;
@@ -22,6 +22,7 @@ import java.util.UUID;
 
 public class SectionSettings extends Section {
     private final ClaimManager manager = Claims.getInstance().getClaimManager();
+    private final FileLogger fileLogger = Claims.getInstance().getFileLogger();
 
     private ItemStack teleport;
 
@@ -101,7 +102,7 @@ public class SectionSettings extends Section {
             // Refreshing the view
             this.generateView();
             if (Config.LOGS) {
-                FileLogger.log(new StringBuilder().append("CLAIM_UPGRADED | ")
+                fileLogger.log(new StringBuilder().append("CLAIM_UPGRADED | ")
                         .append(claim.getId()).append(" | ")
                         .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
                         .append(UserCache.get(owner).getName()).append(" (").append(owner).append(")")

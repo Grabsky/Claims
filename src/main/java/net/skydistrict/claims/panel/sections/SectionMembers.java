@@ -1,13 +1,14 @@
 package net.skydistrict.claims.panel.sections;
 
 import me.grabsky.indigo.builders.ItemBuilder;
+import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.User;
 import me.grabsky.indigo.user.UserCache;
+import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
 import org.bukkit.Material;
@@ -16,6 +17,7 @@ import org.bukkit.entity.Player;
 import java.util.UUID;
 
 public class SectionMembers extends Section {
+    private final FileLogger fileLogger = Claims.getInstance().getFileLogger();
 
     public SectionMembers(Panel panel, Player executor, UUID owner, Claim claim) {
         super(panel, executor, owner, claim);
@@ -50,7 +52,7 @@ public class SectionMembers extends Section {
                 if (claim.removeMember(uuid)) {
                     this.generateView();
                     if (Config.LOGS) {
-                        FileLogger.log(new StringBuilder()
+                        fileLogger.log(new StringBuilder()
                                 .append("MEMBER_REMOVED | ")
                                 .append(claim.getId()).append(" | ")
                                 .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")

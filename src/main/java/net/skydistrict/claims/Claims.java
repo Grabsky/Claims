@@ -4,31 +4,35 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import me.grabsky.indigo.logger.ConsoleLogger;
+import me.grabsky.indigo.logger.FileLogger;
 import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.commands.ClaimsCommand;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
 import net.skydistrict.claims.listeners.RegionListener;
-import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.PanelManager;
 import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import java.util.logging.Logger;
+import java.text.SimpleDateFormat;
 
 public final class Claims extends JavaPlugin {
     // Instances
     private static Claims instance;
-    private static Logger logger;
-    private static Config config;
-    private static Lang lang;
+    private ConsoleLogger consoleLogger;
+    private FileLogger fileLogger;
+    private Config config;
+    private Lang lang;
     private RegionManager region;
     private ClaimManager claim;
     private PanelManager panel;
     // Getters
     public static Claims getInstance() { return instance; }
+    public ConsoleLogger getConsoleLogger() { return consoleLogger; }
+    public FileLogger getFileLogger() { return fileLogger; }
     public RegionManager getRegionManager() { return region; }
     public ClaimManager getClaimManager() { return claim; }
     public PanelManager getPanelManager() { return panel; }
@@ -38,14 +42,13 @@ public final class Claims extends JavaPlugin {
     @Override
     public void onEnable() {
         instance = this;
-        logger = this.getLogger();
+        this.consoleLogger = new ConsoleLogger(this);
+        this.fileLogger = new FileLogger(this, consoleLogger, new SimpleDateFormat("MM-yyyy").format(System.currentTimeMillis()), new SimpleDateFormat("dd-MM-yyyy HH:mm:ss"));
         // Initializing configuration
-        lang = new Lang(this);
-        config = new Config(this);
+        this.lang = new Lang(this);
+        this.config = new Config(this);
         // Reloading configuration files
         this.reload();
-        // Setting-up FileLogger
-        FileLogger.setup();
         // Registering flag handlers
         ClaimFlags.registerHandlers();
         // Creating NamespacedKey
@@ -76,9 +79,7 @@ public final class Claims extends JavaPlugin {
 
     public boolean reload() {
         config.reload();
-        logger.info("Configuration file (config.yml) has been reloaded.");
         lang.reload();
-        logger.info("Language file (lang.yml) has been reloaded.");
         return true;
     }
 }

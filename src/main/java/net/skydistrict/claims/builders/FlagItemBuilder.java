@@ -1,6 +1,7 @@
 package net.skydistrict.claims.builders;
 
 import com.sk89q.worldguard.protection.flags.Flag;
+import me.grabsky.indigo.logger.ConsoleLogger;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.interfaces.ToggleAction;
 import net.skydistrict.claims.utils.FlagsH;
@@ -12,7 +13,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
 
 public class FlagItemBuilder {
     private final ItemMeta meta;
@@ -81,9 +81,9 @@ public class FlagItemBuilder {
     /** Builds the ItemStack */
     public ItemStack build() {
         if (value == -1) {
-            final Logger log = Claims.getInstance().getLogger();
-            log.warning("§c[ClaimsGUI/DEBUG] Error trying to get value for '" + flag.getName() + "' flag.");
-            log.warning("§c[ClaimsGUI/DEBUG] Expected one of " + String.join(", ", options + " but found '" + value + "'."));
+            final ConsoleLogger consoleLogger = Claims.getInstance().getConsoleLogger();
+            consoleLogger.error("§c[ClaimsGUI/DEBUG] Error trying to get value for '" + flag.getName() + "' flag.");
+            consoleLogger.error("§c[ClaimsGUI/DEBUG] Expected one of " + String.join(", ", options + " but found '" + value + "'."));
             return null;
         }
         item.setItemMeta(this.meta);

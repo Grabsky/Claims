@@ -1,13 +1,14 @@
 package net.skydistrict.claims.panel.sections;
 
 import me.grabsky.indigo.builders.ItemBuilder;
+import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.User;
 import me.grabsky.indigo.user.UserCache;
+import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.logger.FileLogger;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
 import org.bukkit.Material;
@@ -19,6 +20,7 @@ import java.util.stream.Collectors;
 
 // TO-DO: Replace Bukkit.getOnlinePlayers() with something else
 public class SectionMembersAdd extends Section {
+    private final FileLogger fileLogger = Claims.getInstance().getFileLogger();
     private List<User> onlineUsers;
     private int maxOnPage;
     private int usableSize;
@@ -67,7 +69,7 @@ public class SectionMembersAdd extends Section {
                 if (claim.addMember(user.getUniqueId())) {
                     panel.applySection(new SectionMembers(panel, executor, owner, claim));
                     if (Config.LOGS) {
-                        FileLogger.log(new StringBuilder().append("MEMBER_ADDED | ")
+                        fileLogger.log(new StringBuilder().append("MEMBER_ADDED | ")
                                 .append(claim.getId()).append(" | ")
                                 .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
                                 .append(user.getName()).append(" (").append(user.getUniqueId()).append(")")
