@@ -81,7 +81,10 @@ public class SectionFlags extends Section {
         // Changing panel texture
         InventoryH.updateTitle(executor, "§f\u7000\u7105", editMode);
         // Setting up flags
-        panel.setItem(11, use.build(), (event) -> event.setCurrentItem(use.toggle(value -> wgRegion.setFlag(Flags.USE, (StateFlag.State) value)).build()));
+        panel.setItem(11, use.build(), (event) -> event.setCurrentItem(use.toggle(value -> {
+            wgRegion.setFlag(Flags.USE, (StateFlag.State) value);
+            wgRegion.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+        }).build()));
         panel.setItem(12, entry.build(), (event) -> event.setCurrentItem(entry.toggle(value -> {
             wgRegion.setFlag(Flags.ENTRY, (StateFlag.State) value);
             wgRegion.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);

@@ -222,6 +222,7 @@ public class ClaimManager {
         region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, MessageFormat.format(Lang.DEFAULT_FAREWELL, name));
         // Dynamic flags (changeable)
         region.setFlag(Flags.USE, StateFlag.State.DENY);
+        region.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
         region.setFlag(Flags.ENTRY, StateFlag.State.ALLOW);
         region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
         region.setFlag(Flags.TNT, StateFlag.State.DENY);
