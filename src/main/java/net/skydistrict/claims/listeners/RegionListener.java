@@ -41,7 +41,7 @@ public class RegionListener implements Listener {
         if (data.has(Claims.claimBlockLevel, PersistentDataType.INTEGER)) {
             final Player player = event.getPlayer();
             if (event.getBlock().getWorld() == Config.DEFAULT_WORLD) {
-                if (player.hasPermission("skydistrict.claims.place")) {
+                if (player.hasPermission("skydistrict.plugin.claims.place")) {
                     final UUID uuid = player.getUniqueId();
                     final ClaimPlayer cp = manager.getClaimPlayer(uuid);
                     final Location loc = event.getBlock().getLocation();
@@ -84,8 +84,8 @@ public class RegionListener implements Listener {
             final Claim claim = manager.getClaim(id);
             final Player player = event.getPlayer();
             final UUID ownerUniqueId = claim.getOwner();
-            if (player.hasPermission("skydistrict.claims.destroy")) {
-                if(player.getUniqueId().equals(ownerUniqueId) || player.hasPermission("skydistrict.claims.destroy.others")) {
+            if (player.hasPermission("skydistrict.plugin.claims.destroy")) {
+                if (player.getUniqueId().equals(ownerUniqueId) || player.hasPermission("skydistrict.bypass.claims.ownercheck")) {
                     if (event.getPlayer().isSneaking()) {
                         // Removing drops
                         event.setExpToDrop(0);

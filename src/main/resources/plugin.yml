@@ -4,8 +4,22 @@ main: net.skydistrict.claims.Claims
 api-version: 1.16
 depend: [Indigo, WorldGuard, WorldEdit]
 authors: [Grabsky]
+permissions:
+  skydistrict.command.claims.*:
+    description: 'Access all claims commands'
+    childern:
+      skydistrict.command.claims: true
+      skydistrict.command.claims.fix: false
+      skydistrict.command.claims.others: false
+      skydistrict.command.claims.reload: false
+  skydistrict.bypass.claims.*:
+    description: 'Bypass certain claims actions'
+    childern:
+      skydistrict.bypass.claims.ownercheck: false
+      skydistrict.bypass.claims.teleportdelay: false
+      skydistrict.bypass.claims.upgradecost: false
 commands:
   claims:
     aliases: ['teren', 'claim']
-    permission: 'skydistrict.claims.panel'
+    permission: 'skydistrict.command.claims'
     permission-message: '§6§lS§e§lD§8 » §cBrak uprawnień.'

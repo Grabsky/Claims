@@ -55,11 +55,11 @@ public class SectionHomes extends Section {
         panel.setItem(10, this.home, (event) -> {
             if (hasRegion) {
                 executor.closeInventory();
-                if (executor.hasPermission("skydistrict.claims.bypass.teleportdelay")) {
+                if (executor.hasPermission("skydistrict.bypass.claims.teleportdelay")) {
                     TeleportH.teleportAsync(executor, claim.getHome(), 0);
                     return;
                 }
-                Lang.send(executor, Lang.TELEPORTING, Config.TELEPORT_DELAY);
+                Lang.send(executor, Lang.TELEPORTING.replace("%cooldown%", String.valueOf(Config.TELEPORT_DELAY)));
                 TeleportH.teleportAsync(executor, claim.getHome(), 5);
             }
         });
@@ -77,14 +77,14 @@ public class SectionHomes extends Section {
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§e§l" + user.getName())
                     .setLore("§7Kliknij, aby teleportować się", "§7na teren tego gracza.")
-                    .setSkullValue(user.getSkullValue())
+                    .setSkullTexture(user.getTexture())
                     .build(), (event) -> {
                         executor.closeInventory();
-                        if (executor.hasPermission("skydistrict.claims.bypass.teleportdelay")) {
+                        if (executor.hasPermission("skydistrict.bypass.claims.teleportdelay")) {
                             TeleportH.teleportAsync(executor, relativeClaim.getHome(), 0);
                             return;
                         }
-                        Lang.send(executor, Lang.TELEPORTING, Config.TELEPORT_DELAY);
+                        Lang.send(executor, Lang.TELEPORTING.replace("%cooldown%", String.valueOf(Config.TELEPORT_DELAY)));
                         TeleportH.teleportAsync(executor, relativeClaim.getHome(), 5);
             });
             startFrom++;

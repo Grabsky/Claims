@@ -47,7 +47,7 @@ public class SectionSettings extends Section {
     }
 
     private boolean canUpgrade(Player player, Material upgradeMaterial) {
-        return executor.hasPermission("skydistrict.claims.bypass.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64);
+        return executor.hasPermission("skydistrict.bypass.claims.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64);
     }
 
     private void generateView() {
@@ -56,8 +56,12 @@ public class SectionSettings extends Section {
         panel.setItem(11, Items.FLAGS, event -> panel.applySection(new SectionFlags(panel, executor, owner, claim)));
         // Home
         panel.setItem(13, teleport, (event) -> {
-            claim.setHome(executor.getLocation());
-            event.getCurrentItem().setType(Material.RED_BED);
+            if (claim.setHome(executor.getLocation())) {
+                Lang.send(executor, Lang.SET_HOME_SUCCESS);
+            } else {
+                Lang.send(executor, Lang.SET_HOME_FAIL);
+            }
+            executor.closeInventory();
         });
         final ClaimLevel currentLevel = ClaimH.getClaimLevel(claim.getLevel());
         // Getting ItemBuilder for specific alias
@@ -91,13 +95,13 @@ public class SectionSettings extends Section {
             if (nextLevel == null) return;
             if (!canUpgrade(executor, nextLevel.getUpgradeMaterial())) return;
             // Removing material if player doesn't have bypass permission
-            if (!executor.hasPermission("skydistrict.claims.bypass.upgradecost")) {
+            if (!executor.hasPermission("skydistrict.bypass.claims.upgradecost")) {
                 InventoryH.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 64);
             }
             // Upgrading claim
             manager.upgrade(claim);
             // Sending success message and play level up sound
-            Lang.send(executor, Lang.UPGRADE_SUCCESS, nextLevel.getSize());
+            Lang.send(executor, Lang.UPGRADE_SUCCESS.replace("%size%", nextLevel.getSize()));
             executor.playSound(executor.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
             // Refreshing the view
             this.generateView();

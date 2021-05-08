@@ -49,7 +49,7 @@ public class ClaimsCommand implements CommandExecutor {
         } else {
             // Command: /claim reload
             if (args[0].equalsIgnoreCase("reload")) {
-                if (sender.hasPermission("skydistrict.claims.reload")) {
+                if (sender.hasPermission("skydistrict.command.claims.reload")) {
                     if (instance.reload()) {
                         Lang.send(sender, Lang.RELOAD_SUCCESS);
                         return true;
@@ -61,7 +61,7 @@ public class ClaimsCommand implements CommandExecutor {
                 return true;
             // Command: /claim get
             } else if (args[0].equalsIgnoreCase("get")) {
-                if (sender.hasPermission("skydistrict.claims.get")) {
+                if (sender.hasPermission("skydistrict.command.claims.get")) {
                     if (sender instanceof Player) {
                         final Player executor = (Player) sender;
                         executor.getInventory().addItem(Items.getClaimBlock(0));
@@ -79,7 +79,7 @@ public class ClaimsCommand implements CommandExecutor {
                 return true;
             // Command: /claim fix
             } else if (args[0].equalsIgnoreCase("fix")) {
-                if (sender.hasPermission("skydistrict.claims.fix")) {
+                if (sender.hasPermission("skydistrict.command.claims.fix")) {
                     if (sender instanceof Player) {
                         final Player executor = (Player) sender;
                         final Location loc = executor.getLocation();
@@ -104,7 +104,7 @@ public class ClaimsCommand implements CommandExecutor {
                 Lang.send(sender, Lang.MISSING_PERMISSIONS);
                 return true;
             // Command: /claim <name>
-            } else if (sender.hasPermission("skydistrict.claims.other")) {
+            } else if (sender.hasPermission("skydistrict.command.claims.others")) {
                 final Player executor = (Player) sender;
                 final UUID ownerUniqueId = UserCache.get(args[0]).getUniqueId();
                 if (ownerUniqueId != null) {

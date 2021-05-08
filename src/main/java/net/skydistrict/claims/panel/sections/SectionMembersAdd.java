@@ -63,7 +63,7 @@ public class SectionMembersAdd extends Section {
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§a§l" + user.getName())
                     .setLore("§7Kliknij, aby §adodać§7 do terenu.")
-                    .setSkullValue(user.getSkullValue())
+                    .setSkullTexture(user.getTexture())
                     .build(), (event) -> {
                 // One more check just in case something changed while GUI was open
                 if (claim.addMember(user.getUniqueId())) {
@@ -77,7 +77,7 @@ public class SectionMembersAdd extends Section {
                     }
                 } else {
                     executor.closeInventory();
-                    Lang.send(executor, Lang.REACHED_MEMBERS_LIMIT, Config.MEMBERS_LIMIT);
+                    Lang.send(executor, Lang.REACHED_MEMBERS_LIMIT.replace("%limit%", String.valueOf(Config.MEMBERS_LIMIT)));
                 }
             });
         }

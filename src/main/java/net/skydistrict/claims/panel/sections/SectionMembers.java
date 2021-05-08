@@ -46,7 +46,7 @@ public class SectionMembers extends Section {
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§c§l" + user.getName())
                     .setLore("§7Kliknij, aby §cwyrzucić§7 z terenu.")
-                    .setSkullValue(user.getSkullValue())
+                    .setSkullTexture(user.getTexture())
                     .build(), event -> {
                 // One more check just in case something changed while GUI was open
                 if (claim.removeMember(uuid)) {

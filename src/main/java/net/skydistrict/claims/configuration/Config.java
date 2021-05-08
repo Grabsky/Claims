@@ -13,7 +13,7 @@ public class Config {
     private final Claims instance;
     private final ConsoleLogger consoleLogger;
     private final File file;
-    private static final int CONFIG_VERSION = 1;
+    private final int currentVersion = 1;
 
     public static boolean LOGS;
     public static World DEFAULT_WORLD;
@@ -36,7 +36,7 @@ public class Config {
         }
         // Overriding...
         final FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
-        if (fc.getInt("version") != CONFIG_VERSION) {
+        if (fc.getInt("version") != currentVersion) {
             consoleLogger.error("Your config.yml file is outdated. Plugin may not work properly.");
         }
         LOGS = fc.getBoolean("settings.logs");

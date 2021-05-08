@@ -1,10 +1,9 @@
 package net.skydistrict.claims.configuration;
 
-import me.grabsky.indigo.adventure.MiniMessage;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.skydistrict.claims.Claims;
-import net.skydistrict.claims.configuration.components.Message;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,38 +16,39 @@ public class Lang {
     private final Claims instance;
     private final ConsoleLogger consoleLogger;
     private final File file;
-    private static final Component EMPTY_COMPONENT = Component.empty();
-    private static final int LANG_VERSION = 1;
+    private final int currentVersion = 2;
+    private FileConfiguration fileConfiguration;
 
-    public static Message
-            PLAYER_NOT_FOUND,
-            MISSING_PERMISSIONS,
-            PLAYER_ONLY,
-            RELOAD_SUCCESS,
-            RELOAD_FAIL,
-            NO_CLAIM,
-            TOO_CLOSE_TO_SPAWN,
-            OVERLAPS_OTHER_CLAIM,
-            NOT_MEMBER,
-            NOT_OWNER,
-            REACHED_MEMBERS_LIMIT,
-            REACHED_CLAIMS_LIMIT,
-            PLACE_SUCCESS,
-            DESTROY_SUCCESS,
-            NOT_SNEAKING,
-            UPGRADE_SUCCESS,
-            TELEPORTING,
-            TELEPORT_SUCCESS,
-            TELEPORT_FAIL,
-            TELEPORT_FAIL_UNKNOWN,
-            RESTORE_CLAIM_BLOCK_SUCCESS,
-            RESTORE_CLAIM_BLOCK_FAIL,
-            CLAIM_BLOCKS_ADDED,
-            BLACKLISTED_WORLD;
+    public static Component PLAYER_NOT_FOUND;
+    public static Component MISSING_PERMISSIONS;
+    public static Component PLAYER_ONLY;
+    public static Component RELOAD_SUCCESS;
+    public static Component RELOAD_FAIL;
+    public static Component NO_CLAIM;
+    public static Component TOO_CLOSE_TO_SPAWN;
+    public static Component OVERLAPS_OTHER_CLAIM;
+    public static Component NOT_MEMBER;
+    public static Component NOT_OWNER;
+    public static Component REACHED_CLAIMS_LIMIT;
+    public static Component PLACE_SUCCESS;
+    public static Component DESTROY_SUCCESS;
+    public static Component NOT_SNEAKING;
+    public static Component TELEPORT_SUCCESS;
+    public static Component TELEPORT_FAIL;
+    public static Component TELEPORT_FAIL_UNKNOWN;
+    public static Component RESTORE_CLAIM_BLOCK_SUCCESS;
+    public static Component RESTORE_CLAIM_BLOCK_FAIL;
+    public static Component CLAIM_BLOCKS_ADDED;
+    public static Component BLACKLISTED_WORLD;
+    public static Component SET_HOME_SUCCESS;
+    public static Component SET_HOME_FAIL;
 
-    public static String
-            DEFAULT_GREETING,
-            DEFAULT_FAREWELL;
+    public static String REACHED_MEMBERS_LIMIT;
+    public static String UPGRADE_SUCCESS;
+    public static String TELEPORTING;
+
+    public static String DEFAULT_GREETING;
+    public static String DEFAULT_FAREWELL;
 
     public Lang(Claims instance) {
         this.instance = instance;
@@ -62,72 +62,75 @@ public class Lang {
             instance.saveResource("lang.yml", false);
         }
         // Overriding...
-        final FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
-        if (fc.getInt("version") != LANG_VERSION) {
+        this.fileConfiguration = YamlConfiguration.loadConfiguration(file);
+        if (fileConfiguration.getInt("version") != currentVersion) {
             consoleLogger.error("Your lang.yml file is outdated. Some messages may not display properly.");
         }
         // General
-        PLAYER_NOT_FOUND = message(fc, "general.player-not-found", true);
-        MISSING_PERMISSIONS = message(fc, "general.missing-permissions", true);
-        PLAYER_ONLY = message(fc, "general.player-only", true);
-        RELOAD_SUCCESS = message(fc, "general.reload-success", true);
-        RELOAD_FAIL = message(fc, "general.reload-fail", true);
+        PLAYER_NOT_FOUND = component("general.player-not-found");
+        MISSING_PERMISSIONS = component("general.missing-permissions");
+        PLAYER_ONLY = component("general.player-only");
+        RELOAD_SUCCESS = component("general.reload-success");
+        RELOAD_FAIL = component("general.reload-fail");
         // Claims
-        NO_CLAIM = message(fc, "claims.no-claim", true);
-        TOO_CLOSE_TO_SPAWN = message(fc, "claims.too-close-to-spawn", true);
-        OVERLAPS_OTHER_CLAIM = message(fc, "claims.overlaps-other-claim", true);
-        NOT_MEMBER = message(fc, "claims.not-member", true);
-        NOT_OWNER = message(fc, "claims.not-owner", true);
-        REACHED_CLAIMS_LIMIT = message(fc, "claims.reached-claims-limit", true);
-        REACHED_MEMBERS_LIMIT = message(fc, "claims.reached-members-limit", false);
-        PLACE_SUCCESS = message(fc, "claims.place-success", true);
-        DESTROY_SUCCESS = message(fc, "claims.destroy-success", true);
-        NOT_SNEAKING = message(fc, "claims.not-sneaking", true);
-        UPGRADE_SUCCESS = message(fc, "claims.upgrade-success", false);
-        RESTORE_CLAIM_BLOCK_SUCCESS = message(fc, "claims.restore-claim-block-success", true);
-        RESTORE_CLAIM_BLOCK_FAIL = message(fc, "claims.restore-claim-block-fail", true);
-        CLAIM_BLOCKS_ADDED = message(fc, "claims.claim-blocks-added", true);
-        BLACKLISTED_WORLD = message(fc, "claims.blacklisted-world", true);
+        NO_CLAIM = component("claims.no-claim");
+        TOO_CLOSE_TO_SPAWN = component("claims.too-close-to-spawn");
+        OVERLAPS_OTHER_CLAIM = component("claims.overlaps-other-claim");
+        NOT_MEMBER = component("claims.not-member");
+        NOT_OWNER = component("claims.not-owner");
+        REACHED_CLAIMS_LIMIT = component("claims.reached-claims-limit");
+        REACHED_MEMBERS_LIMIT = string("claims.reached-members-limit");
+        PLACE_SUCCESS = component("claims.place-success");
+        DESTROY_SUCCESS = component("claims.destroy-success");
+        NOT_SNEAKING = component("claims.not-sneaking");
+        UPGRADE_SUCCESS = string("claims.upgrade-success");
+        RESTORE_CLAIM_BLOCK_SUCCESS = component("claims.restore-claim-block-success");
+        RESTORE_CLAIM_BLOCK_FAIL = component("claims.restore-claim-block-fail");
+        CLAIM_BLOCKS_ADDED = component("claims.claim-blocks-added");
+        BLACKLISTED_WORLD = component("claims.blacklisted-world");
+        SET_HOME_SUCCESS = component("claims.set-home-success");
+        SET_HOME_FAIL = component("claims.set-home-fail");
         // Teleport
-        TELEPORTING = message(fc, "teleport.teleporting", false);
-        TELEPORT_SUCCESS = message(fc, "teleport.teleport-success", true);
-        TELEPORT_FAIL = message(fc, "teleport.teleport-fail", true);
-        TELEPORT_FAIL_UNKNOWN = message(fc, "teleport.teleport-fail-unknown", true);
+        TELEPORTING = string("teleport.teleporting");
+        TELEPORT_SUCCESS = component("teleport.teleport-success");
+        TELEPORT_FAIL = component("teleport.teleport-fail");
+        TELEPORT_FAIL_UNKNOWN = component("teleport.teleport-fail-unknown");
         // Flags
-        DEFAULT_GREETING = fc.getString("flags.default-greeting", "");
-        DEFAULT_FAREWELL = fc.getString("flags.default-farewell", "");
+        DEFAULT_GREETING = fileConfiguration.getString("flags.default-greeting", "");
+        DEFAULT_FAREWELL = fileConfiguration.getString("flags.default-farewell", "");
     }
 
-    /**  Returns Message value from given path */
-    public static Message message(FileConfiguration fc, String path, boolean compile) {
-        final StringBuilder builder = new StringBuilder();
-        if (fc.isList(path)) {
-            final List<String> list = fc.getStringList(path);
+    private String string(String path) {
+        final StringBuilder sb = new StringBuilder();
+        if (fileConfiguration.isList(path)) {
+            final List<String> list = fileConfiguration.getStringList(path);
             for (int i = 0; i < list.size(); i++) {
-                builder.append(list.get(i));
+                sb.append(list.get(i));
                 if (i + 1 != list.size()) {
-                    builder.append("\n");
+                    sb.append(System.lineSeparator());
                 }
             }
         } else {
-            builder.append(fc.getString(path));
+            sb.append(fileConfiguration.getString(path));
         }
-        if (compile) return new Message(MiniMessage.get().parse(builder.toString()));
-        return new Message(builder.toString());
+        return sb.toString();
     }
 
-    /** Sends message with placeholders (compiled just before sending) */
-    public static void send(CommandSender sender, @NotNull Message message, Object... replacements) {
-        final String string = message.getString();
-        if (string != null && !string.equals("")) {
-            sender.sendMessage(MiniMessage.get().parse(String.format(string, replacements)));
+    private Component component(String path) {
+        return LegacyComponentSerializer.legacySection().deserialize(this.string(path));
+    }
+
+    /** Sends parsed component */
+    public static void send(@NotNull CommandSender sender, @NotNull Component component) {
+        if (component != Component.empty()) {
+            sender.sendMessage(component);
         }
     }
 
-    /** Sends compiled (static) message */
-    public static void send(CommandSender sender, Message message) {
-        final Component component = message.getComponent();
-        if (component != null && component != EMPTY_COMPONENT) {
+    /** Parses and sends component */
+    public static void send(@NotNull CommandSender sender, @NotNull String text) {
+        final Component component = LegacyComponentSerializer.legacySection().deserialize(text);
+        if (component != Component.empty()) {
             sender.sendMessage(component);
         }
     }

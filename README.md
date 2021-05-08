@@ -6,48 +6,22 @@ Create protected region and manage it using in-game GUI. Limited to 1 claim per 
 *You shouldn't modify claim regions manually unless you know what you're doing. Severe issues may appear.*
 
 ## Building
-To build, run `mvn install` or `mvn clean install`.  
-Jar file named `Claims-[VERSION].jar` will be placed in `../git-builds/`
+To build, run `mvn install` or `mvn clean install`.
 
 ## Permissions
 #### Safe to be given to players:
 Permission | Description
 --- | ---
-`skydistrict.claims.panel` | Using `/claim` command.
+`skydistrict.command.claims` | Use `/claim` command to manage own claim.
+`skydistrict.plugin.claims.place` | Create a protected claim.
+`skydistrict.plugin.claims.destroy` | Destroy (own) claim.
 
 #### Recommended only for admins:
 Permission | Description
 --- | ---
-`skydistrict.claims.fix` | Using `/claim fix` command.
-`skydistrict.claims.reload` | Using `/claim reload` command.
-`skydistrict.claims.panel.others` | Using `/claim <player>` command.
-`skydistrict.claims.destroy.others` | Removing protected region of other players.
-`skydistrict.claims.bypass.teleportdelay` | Bypass teleport delay.
-`skydistrict.claims.bypass.upgradecost` | Bypass upgrade cost.
-
-## TO-DO
-- [x] Test in search of bugs and exploits
-  - [x] Configuration files (config/lang/reloading)
-  - [x] Cache (upgrading/adding/removing)
-  - [x] Claim (creating/removing/upgrading/protection)
-  - [x] Claim flags (including default flags)
-  - [x] Command (functionality and permissions)
-  - [x] Claim upgrades (block type)
-  - [x] ... and everything I forgot to mention
-- [x] Add logs for important actions
-- [x] (Optional) Add (basic) config.yml
-- [x] (Optional) Add (chat) messages.yml
-- [x] Re-implement core features (creating/removing claims)
-- [x] Re-implement panel (using new API)
-- [x] Add `*` character to the title when editing someone's claim
-- [x] Code cleanup and missing comments
-- [x] Teleport actions (with region browser)
-- [x] Make GUIs work with sections (in OOP friendly way)
-- [x] Section: MAIN
-- [x] Section: ADD (paginated)
-- [x] Section: REMOVE
-- [x] Section: FLAGS (with working click-to-next feature)
-- [x] Section: UPGRADE
-- [x] Subsections: SETTINGS
-- [x] Rewrite of MEMBERS subsection (integration with REMOVE)
-- [x] (Optional) Add `/claim <player>` for administrators
+`skydistrict.command.claims.others` | Use `/claim <player>` command to manage their claims.
+`skydistrict.command.claims.fix` | Use `/claim fix` command to place hidden claim block.
+`skydistrict.command.claims.reload` | Use `/claim reload` command to reload plugin configuration.
+`skydistrict.bypass.claims.ownercheck` | Bypass owner check. (eg. when destroying not owned region)
+`skydistrict.bypass.claims.teleportdelay` | Bypass teleport delay.
+`skydistrict.bypass.claims.upgradecost` | Bypass upgrade cost.

@@ -24,7 +24,7 @@ public class SectionMain extends Section {
         this.members = new ItemBuilder(Material.PLAYER_HEAD)
                 .setName("§e§lCzłonkowie")
                 .setLore("§7Kliknij, aby zarządzać dodanymi do terenu.")
-                .setSkullValue(UserCache.get(owner).getSkullValue())
+                .setSkullTexture(UserCache.get(owner).getTexture())
                 .build();
     }
 
