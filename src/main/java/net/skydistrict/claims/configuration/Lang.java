@@ -107,7 +107,7 @@ public class Lang {
             for (int i = 0; i < list.size(); i++) {
                 sb.append(list.get(i));
                 if (i + 1 != list.size()) {
-                    sb.append(System.lineSeparator());
+                    sb.append("\n");
                 }
             }
         } else {
