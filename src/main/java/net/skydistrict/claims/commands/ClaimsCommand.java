@@ -114,9 +114,9 @@ public class ClaimsCommand implements CommandExecutor {
                 Lang.send(sender, Lang.PLAYER_NOT_FOUND);
                 return true;
             }
+            Lang.send(sender, Lang.MISSING_PERMISSIONS);
+            return true;
         }
-        Lang.send(sender, Lang.MISSING_PERMISSIONS);
-        return true;
     }
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {

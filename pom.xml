@@ -40,7 +40,7 @@
                         </goals>
                         <configuration>
                             <createDependencyReducedPom>false</createDependencyReducedPom>
-                            <outputFile>${builds.local}/${project.artifactId}-${project.version}.jar</outputFile>
+                            <outputFile>${builds.local}/${project.artifactId}.jar</outputFile>
                         </configuration>
                     </execution>
                 </executions>
@@ -103,6 +103,14 @@
             <version>latest</version>
             <scope>system</scope>
             <systemPath>${builds.local}/Indigo.jar</systemPath>
+        </dependency>
+        <!-- Indigo -->
+        <dependency>
+            <groupId>net.skydistrict</groupId>
+            <artifactId>Vanish</artifactId>
+            <version>latest</version>
+            <scope>system</scope>
+            <systemPath>${builds.local}/Vanish.jar</systemPath>
         </dependency>
         <!-- Local server jar for NMS -->
         <dependency>

@@ -11,6 +11,8 @@ import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.utils.InventoryH;
+import net.skydistrict.vanish.Vanish;
+import net.skydistrict.vanish.api.VanishAPI;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -18,8 +20,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-// TO-DO: Replace Bukkit.getOnlinePlayers() with something else
 public class SectionMembersAdd extends Section {
+    private final VanishAPI vanish = Vanish.getInstance().getAPI();
     private final FileLogger fileLogger = Claims.getInstance().getFileLogger();
     private List<User> onlineUsers;
     private int maxOnPage;
@@ -33,7 +35,7 @@ public class SectionMembersAdd extends Section {
     @Override
     public void prepare() {
         this.onlineUsers = UserCache.getOnlineUsers().stream()
-                .filter(user -> (!user.getUniqueId().equals(owner) && !claim.isMember(user.getUniqueId())))
+                .filter(user -> (!user.getUniqueId().equals(owner) && !claim.isMember(user.getUniqueId()) && !vanish.isVanished(user.getUniqueId())))
                 .collect(Collectors.toList());
         this.maxOnPage = 21;
         this.usableSize = onlineUsers.size();
