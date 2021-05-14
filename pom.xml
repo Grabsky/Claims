@@ -6,13 +6,13 @@
 
     <groupId>net.skydistrict</groupId>
     <artifactId>Claims</artifactId>
-    <version>1.0.1-release</version>
+    <version>1.0.2-release</version>
     <packaging>jar</packaging>
 
     <name>Claims</name>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <builds.local>C:/Users/admin/Development/builds</builds.local>
     </properties>
@@ -104,7 +104,7 @@
             <scope>system</scope>
             <systemPath>${builds.local}/Indigo.jar</systemPath>
         </dependency>
-        <!-- Indigo -->
+        <!-- Vanish -->
         <dependency>
             <groupId>net.skydistrict</groupId>
             <artifactId>Vanish</artifactId>
