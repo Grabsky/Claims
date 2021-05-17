@@ -10,7 +10,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 public class TeleportH {
 
-    /** Teleport player to a location asynchronously */
+    // Teleport player to a location asynchronously
     public static void teleportAsync(Player player, Location location, int delay) {
         final Location initialLoc = player.getLocation();
         if (delay == 0) {

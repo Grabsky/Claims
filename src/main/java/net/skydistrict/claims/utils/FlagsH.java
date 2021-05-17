@@ -9,7 +9,7 @@ import java.util.List;
 
 public class FlagsH {
 
-    /** Returns list of options (flag values) */
+    // Returns list of options (flag values)
     public static List<Object> getOptions(Flag<?> flagType) {
         if (flagType instanceof StateFlag) return Arrays.asList(StateFlag.State.ALLOW, StateFlag.State.DENY);
         // Comparing instances is useless in some cases - let's check the name instead
@@ -22,7 +22,7 @@ public class FlagsH {
         return null;
     }
 
-    /** Returns list of options (formatted flag values) displayed in GUI */
+    // Returns list of options (formatted flag values) displayed in GUI
     public static List<String> getFormattedOptions(Flag<?> flagType) {
         if (flagType instanceof StateFlag) return Arrays.asList("Włączone", "Wyłączone");
         // Comparing instances is pointless in some cases - let's check the name instead

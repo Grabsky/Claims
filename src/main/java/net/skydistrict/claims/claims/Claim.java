@@ -3,7 +3,7 @@ package net.skydistrict.claims.claims;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import net.skydistrict.claims.api.ClaimsAPI;
+import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.flags.ClaimFlags;
 import org.bukkit.Location;
@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 public class Claim {
+    private final ClaimManager manager = Claims.getInstance().getClaimManager();
     private final String id;
     private final UUID owner;
     private ProtectedRegion wgRegion;
@@ -73,7 +74,7 @@ public class Claim {
     public boolean addMember(UUID uuid) {
         if (this.getMembers().size() < Config.MEMBERS_LIMIT) {
             wgRegion.getMembers().addPlayer(uuid);
-            ClaimsAPI.getClaimPlayer(uuid).addRelative(this.getId());
+            manager.getClaimPlayer(uuid).addRelative(this.getId());
             return true;
         }
         return false;
@@ -82,7 +83,7 @@ public class Claim {
     public boolean removeMember(UUID uuid) {
         if (this.getMembers().contains(uuid)) {
             wgRegion.getMembers().removePlayer(uuid);
-            ClaimsAPI.getClaimPlayer(uuid).removeRelative(this.getId());
+            manager.getClaimPlayer(uuid).removeRelative(this.getId());
             return true;
         }
         return false;

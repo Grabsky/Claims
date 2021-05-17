@@ -6,8 +6,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
 import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
-import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.claims.Claim;
+import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.claims.ClaimPlayer;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
@@ -30,9 +30,11 @@ import java.util.UUID;
 
 public class ClaimsCommand implements CommandExecutor {
     private final Claims instance;
+    private final ClaimManager manager;
 
     public ClaimsCommand(Claims instance) {
         this.instance = instance;
+        this.manager = instance.getClaimManager();
     }
 
     @Override
@@ -120,7 +122,7 @@ public class ClaimsCommand implements CommandExecutor {
     }
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {
-        final ClaimPlayer owner = ClaimsAPI.getClaimPlayer(ownerUniqueId);
+        final ClaimPlayer owner = manager.getClaimPlayer(ownerUniqueId);
         final Panel panel = new Panel(54, "§f\u7000\u7100");
         if (owner.hasClaim()) {
             final Claim claim = owner.getClaim();

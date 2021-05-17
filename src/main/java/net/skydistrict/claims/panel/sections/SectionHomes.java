@@ -3,8 +3,9 @@ package net.skydistrict.claims.panel.sections;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.user.User;
 import me.grabsky.indigo.user.UserCache;
-import net.skydistrict.claims.api.ClaimsAPI;
+import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
+import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.ItemStack;
 import java.util.UUID;
 
 public class SectionHomes extends Section {
+    private final ClaimManager manager = Claims.getInstance().getClaimManager();
     private boolean hasRegion = false;
     private ItemStack home;
     private String[] relatives;
@@ -36,7 +38,7 @@ public class SectionHomes extends Section {
     public void prepare() {
         this.home = (hasRegion) ? Items.HOME : Items.HOME_DISABLED;
         // Some useful values
-        this.relatives = ClaimsAPI.getClaimPlayer(owner).getRelatives().toArray(new String[0]);
+        this.relatives = manager.getClaimPlayer(owner).getRelatives().toArray(new String[0]);
         this.length = relatives.length;
         this.maxOnPage = 4;
     }
@@ -71,7 +73,7 @@ public class SectionHomes extends Section {
                 lastIndex = index;
                 break;
             }
-            final Claim relativeClaim = ClaimsAPI.getClaim(relatives[index]);
+            final Claim relativeClaim = manager.getClaim(relatives[index]);
             if (relativeClaim == null) continue;
             final User user = UserCache.get(relativeClaim.getOwner());
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)

@@ -13,6 +13,7 @@ import me.grabsky.indigo.logger.ConsoleLogger;
 import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
+import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
@@ -20,13 +21,14 @@ import net.skydistrict.claims.utils.ClaimH;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-public class ClaimManager {
+public class ClaimManager implements ClaimsAPI {
     private final RegionManager regionManager;
     private final ConsoleLogger consoleLogger;
     private final FileLogger fileLogger;
@@ -64,37 +66,24 @@ public class ClaimManager {
         consoleLogger.success("Loaded " + loadedClaims + " claims.");
     }
 
-    /** Returns true if Claim is in cache */
+    // Returns true if Claim is in cache
     public boolean containsClaim(String id) {
-        return this.regionIdToClaim.containsKey(id);
+        return regionIdToClaim.containsKey(id);
     }
 
-    /** Returns Claim from cache */
-    public Claim getClaim(String id) {
-        return this.regionIdToClaim.get(id);
-    }
-
-    /** Adds Claim to cache */
+    // Adds Claim to cache
     public void addClaim(String id, Claim claim) {
-        this.regionIdToClaim.put(id, claim);
-        this.centers.put(id, claim.getCenter());
+        regionIdToClaim.put(id, claim);
+        centers.put(id, claim.getCenter());
     }
 
-    /** Removes Claim from cache */
+    // Removes Claim from cache
     public void removeClaim(String id) {
-        this.regionIdToClaim.remove(id);
-        this.centers.remove(id);
+        regionIdToClaim.remove(id);
+        centers.remove(id);
     }
 
-    /** Returns ClaimPlayer from his UUID (creates object if doesn't exist) */
-    public ClaimPlayer getClaimPlayer(UUID uuid) {
-        if (!this.uuidToClaimPlayer.containsKey(uuid)) {
-            this.uuidToClaimPlayer.put(uuid, new ClaimPlayer(uuid));
-        }
-        return this.uuidToClaimPlayer.get(uuid);
-    }
-
-    /** Returns center of claim closest to given location */
+    // Returns center of claim closest to given location
     @Nullable
     public Location getClosestTo(Location location) {
         Location closestLocation = null;
@@ -128,9 +117,9 @@ public class ClaimManager {
         final BlockVector3 min = BlockVector3.at(x - radius, 0, z - radius);
         final BlockVector3 max = BlockVector3.at(x + radius, 255, z + radius);
         // Creating region id
-        final  String id = ClaimH.createId(loc);
+        final String id = ClaimH.createId(loc);
         // Creating region at new points
-        final  ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
+        final ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
         this.setDefaultFlags(region, loc, owner);
         region.setFlag(ClaimFlags.CLAIM_LEVEL, level);
@@ -185,6 +174,31 @@ public class ClaimManager {
         }
     }
 
+    private void setDefaultFlags(ProtectedRegion region, Location loc, Player owner) {
+        final String name = owner.getName();
+        // Static flags (not changeable)
+        region.setFlag(Flags.PVP, StateFlag.State.DENY);
+        region.setFlag(Flags.FIRE_SPREAD, StateFlag.State.DENY);
+        region.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
+        region.setFlag(Flags.GHAST_FIREBALL, StateFlag.State.DENY);
+        region.setFlag(ClaimFlags.GREETING_ACTIONBAR, Lang.DEFAULT_GREETING.replace("%player%", name));
+        region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, Lang.DEFAULT_FAREWELL.replace("%player%", name));
+        // Dynamic flags (changeable)
+        region.setFlag(Flags.USE, StateFlag.State.DENY);
+        region.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+        region.setFlag(Flags.ENTRY, StateFlag.State.ALLOW);
+        region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+        region.setFlag(Flags.TNT, StateFlag.State.DENY);
+        region.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
+        region.setFlag(Flags.SNOW_MELT, StateFlag.State.ALLOW);
+        region.setFlag(Flags.ICE_MELT, StateFlag.State.ALLOW);
+        region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.ALLOW);
+        // Setting center location (not modifiable)
+        region.setFlag(ClaimFlags.CLAIM_CENTER, BukkitAdapter.adapt(loc));
+        // Setting default home location (modifiable)
+        region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc.clone().add(0, 0.5, 0)));
+    }
+
     public boolean upgrade(Claim claim) {
         if (claim.getLevel() >= 4) return false;
         int newLevel = claim.getLevel() + 1;
@@ -210,29 +224,27 @@ public class ClaimManager {
         return true;
     }
 
-    private void setDefaultFlags(ProtectedRegion region, Location loc, Player owner) {
-        final String name = owner.getName();
-        // Static flags (not changeable)
-        region.setFlag(Flags.PVP, StateFlag.State.DENY);
-        region.setFlag(Flags.FIRE_SPREAD, StateFlag.State.DENY);
-        region.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
-        region.setFlag(Flags.GHAST_FIREBALL, StateFlag.State.DENY);
-        region.setFlag(ClaimFlags.GREETING_ACTIONBAR, Lang.DEFAULT_GREETING.replace("%player%", name));
-        region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, Lang.DEFAULT_FAREWELL.replace("%player%", name));
-        // Dynamic flags (changeable)
-        region.setFlag(Flags.USE, StateFlag.State.DENY);
-        region.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
-        region.setFlag(Flags.ENTRY, StateFlag.State.ALLOW);
-        region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
-        region.setFlag(Flags.TNT, StateFlag.State.DENY);
-        region.setFlag(Flags.CREEPER_EXPLOSION, StateFlag.State.DENY);
-        region.setFlag(Flags.SNOW_MELT, StateFlag.State.ALLOW);
-        region.setFlag(Flags.ICE_MELT, StateFlag.State.ALLOW);
-        region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.ALLOW);
-        // Setting center location (not modifiable)
-        region.setFlag(ClaimFlags.CLAIM_CENTER, BukkitAdapter.adapt(loc));
-        // Setting default home location (modifiable)
-        region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc.clone().add(0, 0.5, 0)));
+    @Override
+    public boolean hasClaim(UUID uuid) {
+        return this.getClaimPlayer(uuid).getClaim() != null;
+    }
+
+    @Override
+    public @Nullable Claim getClaim(UUID uuid) {
+        return this.getClaimPlayer(uuid).getClaim();
+    }
+
+    @Override
+    public @Nullable Claim getClaim(String id) {
+        return regionIdToClaim.get(id);
+    }
+
+    @Override
+    public @NotNull ClaimPlayer getClaimPlayer(UUID uuid) {
+        if (!uuidToClaimPlayer.containsKey(uuid)) {
+            uuidToClaimPlayer.put(uuid, new ClaimPlayer(uuid));
+        }
+        return uuidToClaimPlayer.get(uuid);
     }
 
 }

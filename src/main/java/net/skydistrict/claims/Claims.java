@@ -6,6 +6,7 @@ import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import me.grabsky.indigo.logger.FileLogger;
+import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.commands.ClaimsCommand;
 import net.skydistrict.claims.configuration.Config;
@@ -35,6 +36,7 @@ public final class Claims extends JavaPlugin {
     public FileLogger getFileLogger() { return fileLogger; }
     public RegionManager getRegionManager() { return region; }
     public ClaimManager getClaimManager() { return claim; }
+    public ClaimsAPI getAPI() { return claim; }
     public PanelManager getPanelManager() { return panel; }
 
     public static NamespacedKey claimBlockLevel;

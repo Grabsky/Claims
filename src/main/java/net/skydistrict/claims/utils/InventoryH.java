@@ -10,9 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryH {
-    /**
-     * Updates title of inventory currently open by specified player
-     */
+
+    // Updates title of inventory currently open by specified player
     public static void updateTitle(Player player, String title, boolean editMode) {
         final String finalTitle = (editMode) ? title + "\u7001§r*" : title;
         final EntityPlayer handle = ((CraftPlayer) player).getHandle();
@@ -25,9 +24,7 @@ public class InventoryH {
         handle.updateInventory(handle.activeContainer);
     }
 
-    /**
-     * Removes specific amount of items (compared by type) from player's inventory
-     */
+    // Removes specific amount of items (compared by type) from player's inventory
     public static void removeMaterial(final Player player, final Material material, final int amount) {
         int leftToRemove = amount;
         for (ItemStack item : player.getInventory().getStorageContents()) {
@@ -40,9 +37,7 @@ public class InventoryH {
         }
     }
 
-    /**
-     * Returns true if player has given amount of specific material in his inventory
-     */
+    // Returns true if player has given amount of specific material in his inventory
     public static boolean hasMaterial(final Player player, final Material material, final int amount) {
         int found = 0;
         for (ItemStack item : player.getInventory().getStorageContents()) {

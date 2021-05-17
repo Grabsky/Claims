@@ -17,16 +17,12 @@ public class ClaimH {
         levels[4] = new ClaimLevel("Szmaragd", "71x71", ChatColor.GREEN, Material.EMERALD_BLOCK, Material.EMERALD, Items.EMERALD_BLOCK);
     }
 
-    /**
-     * Returns ClaimLevel for given level (numeric)
-     */
+    // Returns ClaimLevel for given level (numeric)
     public static ClaimLevel getClaimLevel(int level) {
         return levels[level];
     }
 
-    /**
-     * Creates region ID from org.bukkit.Location
-     */
+    // Creates region ID from org.bukkit.Location
     public static String createId(org.bukkit.Location location) {
         return new StringBuilder().append(Config.REGION_PREFIX).append("x").append(location.getBlockX()).append("y").append(location.getBlockY()).append("z").append(location.getBlockZ()).toString();
     }

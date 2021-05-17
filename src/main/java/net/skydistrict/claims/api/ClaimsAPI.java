@@ -1,33 +1,38 @@
 package net.skydistrict.claims.api;
 
-import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
-import net.skydistrict.claims.claims.ClaimManager;
 import net.skydistrict.claims.claims.ClaimPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-public class ClaimsAPI {
-    private static final ClaimManager manager = Claims.getInstance().getClaimManager();
+public interface ClaimsAPI {
 
-    public static boolean hasClaim(UUID uuid) {
-        return manager.getClaimPlayer(uuid).hasClaim();
-    }
+    /**
+     * @param uuid Player's UUID
+     * @return Returns true if player has claim
+     */
+    boolean hasClaim(UUID uuid);
 
+    /**
+     * @param uuid Player's UUID
+     * @return Returns Claim if player owns one
+     */
     @Nullable
-    public static Claim getClaim(UUID uuid) {
-        return manager.getClaimPlayer(uuid).getClaim();
-    }
+    Claim getClaim(UUID uuid);
 
+    /**
+     * @param id Claim ID
+     * @return Returns Claim if exists
+     */
     @Nullable
-    public static Claim getClaim(String id) {
-        return manager.getClaim(id);
-    }
+    Claim getClaim(String id);
 
+    /**
+     * @param uuid Player's UUID
+     * @return Returns ClaimPlayer
+     */
     @NotNull
-    public static ClaimPlayer getClaimPlayer(UUID uuid) {
-        return manager.getClaimPlayer(uuid);
-    }
+    ClaimPlayer getClaimPlayer(UUID uuid);
 }
