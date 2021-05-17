@@ -65,6 +65,11 @@
             <id>sk89q-repo</id>
             <url>https://maven.enginehub.org/repo/</url>
         </repository>
+        <!-- CommandAPI -->
+        <repository>
+            <id>commandapi</id>
+            <url>https://raw.githubusercontent.com/JorelAli/CommandAPI/mvn-repo/</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -112,7 +117,14 @@
             <scope>system</scope>
             <systemPath>${builds.local}/Vanish.jar</systemPath>
         </dependency>
-        <!-- Local server jar for NMS -->
+        <!-- CommandAPI Core -->
+        <dependency>
+            <groupId>dev.jorel</groupId>
+            <artifactId>commandapi-core</artifactId>
+            <version>5.11</version>
+            <scope>provided</scope>
+        </dependency>
+        <!-- NMS -->
         <dependency>
             <groupId>net.minecraft</groupId>
             <artifactId>server</artifactId>
