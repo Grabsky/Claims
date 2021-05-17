@@ -2,7 +2,7 @@ name: Claims
 version: ${project.version}
 main: net.skydistrict.claims.Claims
 api-version: 1.16
-depend: [Indigo, WorldGuard, WorldEdit]
+depend: [Indigo, CommandAPI, WorldEdit, WorldGuard]
 softdepend: [Vanish]
 authors: [Grabsky]
 permissions:
@@ -19,8 +19,3 @@ permissions:
       skydistrict.bypass.claims.ownercheck: false
       skydistrict.bypass.claims.teleportdelay: false
       skydistrict.bypass.claims.upgradecost: false
-commands:
-  claims:
-    aliases: ['teren', 'claim']
-    permission: 'skydistrict.command.claims'
-    permission-message: '§6§lS§e§lD§8 » §cBrak uprawnień.'

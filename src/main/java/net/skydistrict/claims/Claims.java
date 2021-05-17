@@ -61,10 +61,10 @@ public final class Claims extends JavaPlugin {
         // Creating other instances
         this.claim = new ClaimManager(this);
         this.panel = new PanelManager(this);
-        // Registering a command
-        this.getCommand("claims").setExecutor(new ClaimsCommand(this));
         // Registering events
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
+        // Registering commands
+        new ClaimsCommand(this).register();
         // Initializing available upgrades
         ClaimH.initialize();
     }
