@@ -6,7 +6,7 @@
 
     <groupId>net.skydistrict</groupId>
     <artifactId>Claims</artifactId>
-    <version>1.0.3-release</version>
+    <version>1.0.4-release</version>
     <packaging>jar</packaging>
 
     <name>Claims</name>
