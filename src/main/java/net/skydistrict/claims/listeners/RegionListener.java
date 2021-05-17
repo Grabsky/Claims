@@ -36,12 +36,11 @@ public class RegionListener implements Listener {
     public void onClaimPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
         if (!event.canBuild()) return;
-
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
         if (data.has(Claims.claimBlockLevel, PersistentDataType.INTEGER)) {
             final Player player = event.getPlayer();
-            if (event.getBlock().getWorld() == Config.DEFAULT_WORLD) {
-                if (player.hasPermission("skydistrict.plugin.claims.place")) {
+            if (player.hasPermission("skydistrict.plugin.claims.place")) {
+                if (event.getBlock().getWorld() == Config.DEFAULT_WORLD) {
                     final UUID uuid = player.getUniqueId();
                     final ClaimPlayer cp = manager.getClaimPlayer(uuid);
                     final Location loc = event.getBlock().getLocation();
@@ -67,10 +66,11 @@ public class RegionListener implements Listener {
                     return;
                 }
                 event.setCancelled(true);
-                Lang.send(player, Lang.MISSING_PERMISSIONS);
+                Lang.send(player, Lang.BLACKLISTED_WORLD);
+                return;
             }
             event.setCancelled(true);
-            Lang.send(player, Lang.BLACKLISTED_WORLD);
+            Lang.send(player, Lang.MISSING_PERMISSIONS);
         }
     }
 
