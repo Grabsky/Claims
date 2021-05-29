@@ -5,7 +5,7 @@ import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.panel.Panel;
-import net.skydistrict.claims.utils.InventoryH;
+import net.skydistrict.claims.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -31,7 +31,7 @@ public class SectionMain extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7101", editMode);
+        InventoryUtils.updateTitle(executor, "§f\u7000\u7101", editMode);
         // Setting menu items
         panel.setItem(11, Items.HOMES, (event) -> panel.applySection(new SectionHomes(panel, executor, owner, claim)));
         panel.setItem(13, members, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));

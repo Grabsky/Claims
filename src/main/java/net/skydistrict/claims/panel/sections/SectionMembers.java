@@ -10,7 +10,7 @@ import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.panel.Panel;
-import net.skydistrict.claims.utils.InventoryH;
+import net.skydistrict.claims.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -31,7 +31,7 @@ public class SectionMembers extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7104", editMode);
+        InventoryUtils.updateTitle(executor, "§f\u7000\u7104", editMode);
         // Generating the view
         this.generateView();
     }
@@ -52,12 +52,13 @@ public class SectionMembers extends Section {
                 if (claim.removeMember(uuid)) {
                     this.generateView();
                     if (Config.LOGS) {
-                        fileLogger.log(new StringBuilder()
-                                .append("MEMBER_REMOVED | ")
-                                .append(claim.getId()).append(" | ")
-                                .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
-                                .append(user.getName()).append(" (").append(uuid).append(")")
-                                .toString());
+                        fileLogger.log(Config.LOG_FORMAT_MEMBER_REMOVED
+                                .replace("{member-name}", user.getName())
+                                .replace("{member-uuid}", user.getUniqueId().toString())
+                                .replace("{claim-id}", claim.getId())
+                                .replace("{claim-level}", String.valueOf(claim.getLevel()))
+                                .replace("{issuer-name}", executor.getName())
+                                .replace("{issuer-uuid}", executor.getUniqueId().toString()));
                     }
                 } else {
                     executor.closeInventory();

@@ -3,15 +3,17 @@ package net.skydistrict.claims.configuration;
 import me.grabsky.indigo.builders.ItemBuilder;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.ClaimLevel;
-import net.skydistrict.claims.utils.ClaimH;
+import net.skydistrict.claims.utils.ClaimsUtils;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+// INFO: Even though it's inside 'configuration' package, items can't be modified by end-user yet.
+// This is something I can consider changing in the future, but currently there is no good reason to do so.
 public class Items {
 
     public static ItemStack getClaimBlock(int level) {
-        final ClaimLevel claimLevel = ClaimH.getClaimLevel(level);
+        final ClaimLevel claimLevel = ClaimsUtils.getClaimLevel(level);
         final Material material = claimLevel.getBlockMaterial();
         final ItemBuilder builder = new ItemBuilder(material)
                 .setName(claimLevel.getColor() + "§lTeren")

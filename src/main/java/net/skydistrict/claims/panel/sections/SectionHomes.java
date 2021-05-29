@@ -6,18 +6,19 @@ import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimManager;
-import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
-import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.panel.Panel;
-import net.skydistrict.claims.utils.InventoryH;
-import net.skydistrict.claims.utils.TeleportH;
+import net.skydistrict.claims.utils.InventoryUtils;
+import net.skydistrict.claims.utils.TeleportUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
+// I feel like this is still something that have to be worked on.
+// Current way of displaying claims to player is very unclear and not intuitive at all.
+// Still thinking what the most user-friendly approach would look like.
 public class SectionHomes extends Section {
     private final ClaimManager manager = Claims.getInstance().getClaimManager();
     private boolean hasRegion = false;
@@ -46,7 +47,7 @@ public class SectionHomes extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7106", editMode);
+        InventoryUtils.updateTitle(executor, "§f\u7000\u7106", editMode);
         // Generating the view
         this.generateView(1);
     }
@@ -57,12 +58,7 @@ public class SectionHomes extends Section {
         panel.setItem(10, this.home, (event) -> {
             if (hasRegion) {
                 executor.closeInventory();
-                if (executor.hasPermission("skydistrict.bypass.claims.teleportdelay")) {
-                    TeleportH.teleportAsync(executor, claim.getHome(), 0);
-                    return;
-                }
-                Lang.send(executor, Lang.TELEPORTING.replace("%cooldown%", String.valueOf(Config.TELEPORT_DELAY)));
-                TeleportH.teleportAsync(executor, claim.getHome(), 5);
+                TeleportUtils.teleportAsync(executor, claim.getHome(), 5);
             }
         });
         // Displaying regions player have access to
@@ -82,12 +78,7 @@ public class SectionHomes extends Section {
                     .setSkullTexture(user.getTexture())
                     .build(), (event) -> {
                         executor.closeInventory();
-                        if (executor.hasPermission("skydistrict.bypass.claims.teleportdelay")) {
-                            TeleportH.teleportAsync(executor, relativeClaim.getHome(), 0);
-                            return;
-                        }
-                        Lang.send(executor, Lang.TELEPORTING.replace("%cooldown%", String.valueOf(Config.TELEPORT_DELAY)));
-                        TeleportH.teleportAsync(executor, relativeClaim.getHome(), 5);
+                        TeleportUtils.teleportAsync(executor, relativeClaim.getHome(), 5);
             });
             startFrom++;
             lastIndex++;

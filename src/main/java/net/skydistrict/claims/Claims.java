@@ -4,6 +4,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
+import me.grabsky.indigo.acf.PaperCommandManager;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import me.grabsky.indigo.logger.FileLogger;
 import net.skydistrict.claims.api.ClaimsAPI;
@@ -14,7 +15,7 @@ import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
 import net.skydistrict.claims.listeners.RegionListener;
 import net.skydistrict.claims.panel.PanelManager;
-import net.skydistrict.claims.utils.ClaimH;
+import net.skydistrict.claims.utils.ClaimsUtils;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -63,10 +64,11 @@ public final class Claims extends JavaPlugin {
         this.panel = new PanelManager(this);
         // Registering events
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
-        // Registering commands
-        new ClaimsCommand(this).register();
+        // Registering command(s)
+        final PaperCommandManager commandManager = new PaperCommandManager(this);
+        commandManager.registerCommand(new ClaimsCommand(this));
         // Initializing available upgrades
-        ClaimH.initialize();
+        ClaimsUtils.initialize();
     }
 
     @Override

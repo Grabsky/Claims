@@ -9,7 +9,7 @@ import net.skydistrict.claims.builders.FlagItemBuilder;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.panel.Panel;
-import net.skydistrict.claims.utils.InventoryH;
+import net.skydistrict.claims.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
@@ -79,7 +79,7 @@ public class SectionFlags extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7105", editMode);
+        InventoryUtils.updateTitle(executor, "§f\u7000\u7105", editMode);
         // Setting up flags
         panel.setItem(11, use.build(), (event) -> event.setCurrentItem(use.toggle(value -> {
             wgRegion.setFlag(Flags.USE, (StateFlag.State) value);

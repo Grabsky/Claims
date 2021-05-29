@@ -2,7 +2,7 @@ name: Claims
 version: ${project.version}
 main: net.skydistrict.claims.Claims
 api-version: 1.16
-depend: [Indigo, CommandAPI, WorldEdit, WorldGuard]
+depend: [Indigo, WorldEdit, WorldGuard]
 softdepend: [Vanish]
 authors: [Grabsky]
 permissions:

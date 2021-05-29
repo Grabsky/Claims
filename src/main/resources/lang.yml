@@ -10,7 +10,7 @@ general:
 
 claims:
   no-claim: '§6§lS§e§lD§8 » §cTen gracz nie ma terenu.'
-  too-close-to-spawn: '§6§lS§e§lD§8 » §cZa blisko innego spawnu.'
+  too-close-to-spawn: '§6§lS§e§lD§8 » §cMinimalna odległość od spawnu to 300 kratek.'
   overlaps-other-claim: '§6§lS§e§lD§8 » §cZa blisko innego terenu.'
   not-member: '§6§lS§e§lD§8 » §cTen gracz nie jest dodany do terenu.'
   not-owner: '§6§lS§e§lD§8 » §cTylko właściciel terenu ma do tego uprawnienia.'
@@ -29,9 +29,9 @@ claims:
 
 teleport:
   teleporting: '§6§lS§e§lD§8 » §7Zostaniesz przeteleportowany za §e%cooldown% §7sekund.'
-  teleport-success: '§6§lS§e§lD§8 » §7Zostałeś przeteleportowany na teren.'
-  teleport-fail: '§6§lS§e§lD§8 » §cTeleportacja anulowana. Ruszyłeś się.'
-  teleport-fail-unknown: '§6§lS§e§lD§8 » §cCoś poszło nie tak, spróbuj ponownie.'
+  teleport-succeed: '§6§lS§e§lD§8 » §7Zostałeś przeteleportowany na teren.'
+  teleport-cancelled: '§6§lS§e§lD§8 » §cTeleportacja anulowana. Ruszyłeś się.'
+  teleport-failed: '§6§lS§e§lD§8 » §cCoś poszło nie tak, spróbuj ponownie.'
 
 # Following section(s) supports only classic color codes (§)
 # WARNING: Changing this value WON'T update greeting/farewell flags in existing regions.

@@ -4,7 +4,7 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.interfaces.ToggleAction;
-import net.skydistrict.claims.utils.FlagsH;
+import net.skydistrict.claims.utils.ClaimsUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -32,8 +32,8 @@ public class FlagItemBuilder {
         this.meta = item.getItemMeta();
         // Flag properties
         this.flag = flag;
-        this.options = FlagsH.getOptions(flag);
-        this.formattedOptions = FlagsH.getFormattedOptions(flag);
+        this.options = ClaimsUtils.getFlagOptions(flag);
+        this.formattedOptions = ClaimsUtils.getFormattedFlagOptions(flag);
         this.size = options.size();
         this.value = options.indexOf(value);
     }

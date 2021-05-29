@@ -10,7 +10,7 @@ import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.panel.Panel;
-import net.skydistrict.claims.utils.InventoryH;
+import net.skydistrict.claims.utils.InventoryUtils;
 import net.skydistrict.vanish.Vanish;
 import net.skydistrict.vanish.api.VanishAPI;
 import org.bukkit.Bukkit;
@@ -47,7 +47,7 @@ public class SectionMembersAdd extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7103", editMode);
+        InventoryUtils.updateTitle(executor, "§f\u7000\u7103", editMode);
         // Display first page of online players
         this.generateView(1);
     }
@@ -73,11 +73,13 @@ public class SectionMembersAdd extends Section {
                 if (claim.addMember(user.getUniqueId())) {
                     panel.applySection(new SectionMembers(panel, executor, owner, claim));
                     if (Config.LOGS) {
-                        fileLogger.log(new StringBuilder().append("MEMBER_ADDED | ")
-                                .append(claim.getId()).append(" | ")
-                                .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
-                                .append(user.getName()).append(" (").append(user.getUniqueId()).append(")")
-                                .toString());
+                        fileLogger.log(Config.LOG_FORMAT_MEMBER_ADDED
+                                .replace("{member-name}", user.getName())
+                                .replace("{member-uuid}", user.getUniqueId().toString())
+                                .replace("{claim-id}", claim.getId())
+                                .replace("{claim-level}", String.valueOf(claim.getLevel()))
+                                .replace("{issuer-name}", executor.getName())
+                                .replace("{issuer-uuid}", executor.getUniqueId().toString()));
                     }
                 } else {
                     executor.closeInventory();

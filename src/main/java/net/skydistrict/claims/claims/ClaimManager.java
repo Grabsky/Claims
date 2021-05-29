@@ -11,13 +11,12 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import me.grabsky.indigo.logger.FileLogger;
-import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.api.ClaimsAPI;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.flags.ClaimFlags;
-import net.skydistrict.claims.utils.ClaimH;
+import net.skydistrict.claims.utils.ClaimsUtils;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -106,9 +105,9 @@ public class ClaimManager implements ClaimsAPI {
         return true;
     }
 
-    public boolean createRegionAt(Location loc, Player owner, int level) {
+    public Claim createRegionAt(Location loc, Player owner, int level) {
         // Checking if there is no region at this selection
-        if (!this.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MINIMUM_DISTANCE_FROM_SPAWN) return false;
+        if (!this.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MINIMUM_DISTANCE_FROM_SPAWN) return null;
         // Points
         final UUID ownerUniqueId = owner.getUniqueId();
         final int x = loc.getBlockX();
@@ -117,7 +116,7 @@ public class ClaimManager implements ClaimsAPI {
         final BlockVector3 min = BlockVector3.at(x - radius, 0, z - radius);
         final BlockVector3 max = BlockVector3.at(x + radius, 255, z + radius);
         // Creating region id
-        final String id = ClaimH.createId(loc);
+        final String id = ClaimsUtils.createId(loc);
         // Creating region at new points
         final ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
@@ -135,19 +134,11 @@ public class ClaimManager implements ClaimsAPI {
         // Making a connection between player and newly created claim
         final ClaimPlayer cp = this.getClaimPlayer(ownerUniqueId);
         cp.setClaim(claim);
-        if (Config.LOGS) {
-            fileLogger.log(new StringBuilder()
-                    .append("CLAIM_CREATED | ")
-                    .append(id).append(" (").append(claim.getLevel()).append(") (")
-                    .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(") | ")
-                    .append(owner.getName()).append(" (").append(owner.getUniqueId()).append(")")
-                    .toString());
-        }
-        return true;
+        return claim;
     }
 
     // Existence check is already in RegionHandler
-    public void removeRegionOf(Player player, UUID ownerUniqueId) {
+    public void removeRegionOf(UUID ownerUniqueId) {
         final ClaimPlayer cp = this.getClaimPlayer(ownerUniqueId);
         final Claim claim = cp.getClaim();
         final String id = claim.getId();
@@ -162,16 +153,6 @@ public class ClaimManager implements ClaimsAPI {
         // Removing claim from the world
         final ProtectedRegion region = claim.getWGRegion();
         regionManager.removeRegion(region.getId());
-        final Location loc = claim.getCenter();
-        if (Config.LOGS) {
-            fileLogger.log(new StringBuilder()
-                    .append("CLAIM_DESTROYED | ")
-                    .append(id).append(" (").append(claim.getLevel()).append(") (")
-                    .append(loc.getBlockX()).append(", ").append(loc.getBlockY()).append(", ").append(loc.getBlockZ()).append(") | ")
-                    .append(player.getName()).append(" (").append(player.getUniqueId()).append(") | ")
-                    .append(UserCache.get(ownerUniqueId).getName()).append(" (").append(ownerUniqueId).append(")")
-                    .toString());
-        }
     }
 
     private void setDefaultFlags(ProtectedRegion region, Location loc, Player owner) {
@@ -219,7 +200,7 @@ public class ClaimManager implements ClaimsAPI {
         // Updating Claim with new WorldGuard region
         claim.update(newRegion);
         // Updating block type ('& 0xF' thingy is doing some magic to get block's position in chunk)
-        final Material type = ClaimH.getClaimLevel(newLevel).getBlockMaterial();
+        final Material type = ClaimsUtils.getClaimLevel(newLevel).getBlockMaterial();
         PaperLib.getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));
         return true;
     }

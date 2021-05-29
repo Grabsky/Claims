@@ -3,10 +3,9 @@ package net.skydistrict.claims.commands;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import dev.jorel.commandapi.CommandAPICommand;
-import dev.jorel.commandapi.arguments.EntitySelectorArgument;
-import dev.jorel.commandapi.arguments.StringArgument;
 import io.papermc.lib.PaperLib;
+import me.grabsky.indigo.acf.BaseCommand;
+import me.grabsky.indigo.acf.annotation.*;
 import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
@@ -19,15 +18,18 @@ import net.skydistrict.claims.flags.ClaimFlags;
 import net.skydistrict.claims.panel.Panel;
 import net.skydistrict.claims.panel.sections.SectionHomes;
 import net.skydistrict.claims.panel.sections.SectionMain;
-import net.skydistrict.claims.utils.ClaimH;
+import net.skydistrict.claims.utils.ClaimsUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 
 import java.util.UUID;
 
-public class ClaimsCommand {
+@CommandAlias("claims|claim|teren")
+@CommandPermission("skydistrict.command.claims")
+public class ClaimsCommand extends BaseCommand {
     private final Claims instance;
     private final ClaimManager manager;
 
@@ -36,76 +38,50 @@ public class ClaimsCommand {
         this.manager = instance.getClaimManager();
     }
 
-    public void register() {
-        this.onClaimsCommand().register();
-        this.onClaimsCommandFromName().register();
-        this.onClaimsCommandFromPlayer().register();
+    @Default
+    @CatchUnknown
+    public void onClaimsDefault(Player executor) {
+        this.openClaimMenu(executor, executor.getUniqueId());
     }
 
-    public CommandAPICommand onClaimsCommand() {
-        return new CommandAPICommand("claims")
-                .withAliases("claim", "teren")
-                .withPermission("skydistrict.command.claims")
-                .withSubcommand(new CommandAPICommand("reload")
-                        .withPermission("skydistrict.command.claims.reload")
-                        .executes((sender, args) -> {
-                            if (instance.reload()) {
-                                Lang.send(sender, Lang.RELOAD_SUCCESS);
-                                return;
-                            }
-                            Lang.send(sender, Lang.RELOAD_FAIL);
-                        })
-                ).withSubcommand(new CommandAPICommand("get")
-                        .withPermission("skydistrict.command.claims.get")
-                        .executesPlayer((sender, args) -> {
-                            sender.getInventory().addItem(Items.getClaimBlock(0));
-                            sender.getInventory().addItem(Items.getClaimBlock(1));
-                            sender.getInventory().addItem(Items.getClaimBlock(2));
-                            sender.getInventory().addItem(Items.getClaimBlock(3));
-                            sender.getInventory().addItem(Items.getClaimBlock(4));
-                            Lang.send(sender, Lang.CLAIM_BLOCKS_ADDED);
-                        })
-                ).withSubcommand(new CommandAPICommand("fix")
-                        .withPermission("skydistrict.command.claims.fix")
-                        .executesPlayer((sender, args) -> {
-                            final Location loc = sender.getLocation();
-                            for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
-                                if (region.getId().startsWith(Config.REGION_PREFIX)) {
-                                    // Both variables shouldn't be null unless claim was manually modified
-                                    final Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
-                                    final Material type = ClaimH.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
-                                    PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
-                                        chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
-                                        Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_SUCCESS);
-                                    });
-                                    return;
-                                }
-                            }
-                            Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_FAIL);
-                        })
-                ).executesPlayer((sender, args) -> {
-                    this.openClaimMenu(sender, sender.getUniqueId());
-                });
+    @Default
+    @CommandPermission("skydistrict.command.claims.others")
+    @CommandCompletion("@players")
+    public void onClaimsOthers(Player executor, String owner) {
+        this.openClaimMenu(executor, UserCache.get(owner).getUniqueId());
     }
 
-    public CommandAPICommand onClaimsCommandFromName() {
-        return new CommandAPICommand("claims")
-                .withAliases("claim", "teren")
-                .withPermission("skydistrict.command.claims.others")
-                .withArguments(new StringArgument("name"))
-                .executesPlayer((sender, args) -> {
-                    this.openClaimMenu(sender, UserCache.get(String.valueOf(args[0])).getUniqueId());
+    @Default
+    @Subcommand("fix")
+    @CommandPermission("skydistrict.command.claims.fix")
+    public void onClaimsFix(Player player) {
+        final Location loc = player.getLocation();
+        for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
+            if (region.getId().startsWith(Config.REGION_PREFIX)) {
+                // Both variables shouldn't be null unless claim was manually modified
+                final Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
+                final Material type = ClaimsUtils.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
+                PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
+                    chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
+                    Lang.send(player, Lang.RESTORE_CLAIM_BLOCK_SUCCESS);
                 });
+                return;
+            }
+        }
+        Lang.send(player, Lang.RESTORE_CLAIM_BLOCK_FAIL);
     }
 
-    public CommandAPICommand onClaimsCommandFromPlayer() {
-        return new CommandAPICommand("claims")
-                .withAliases("claim", "teren")
-                .withPermission("skydistrict.command.claims.others")
-                .withArguments(new EntitySelectorArgument("player", EntitySelectorArgument.EntitySelector.ONE_PLAYER))
-                .executesPlayer((sender, args) -> {
-                    this.openClaimMenu(sender, ((Player) args[0]).getUniqueId());
-                });
+    @Default
+    @Subcommand("get")
+    @CommandPermission("skydistrict.command.claims.get")
+    public void onClaimsGet(Player player) {
+        final Inventory inventory = player.getInventory();
+        inventory.addItem(Items.getClaimBlock(0)); // COAL
+        inventory.addItem(Items.getClaimBlock(1)); // IRON
+        inventory.addItem(Items.getClaimBlock(2)); // GOLD
+        inventory.addItem(Items.getClaimBlock(3)); // DIAMOND
+        inventory.addItem(Items.getClaimBlock(4)); // EMERALD
+        Lang.send(player, Lang.CLAIM_BLOCKS_ADDED);
     }
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {

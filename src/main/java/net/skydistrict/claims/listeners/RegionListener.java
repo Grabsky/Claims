@@ -1,5 +1,7 @@
 package net.skydistrict.claims.listeners;
 
+import me.grabsky.indigo.logger.FileLogger;
+import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimManager;
@@ -7,7 +9,7 @@ import net.skydistrict.claims.claims.ClaimPlayer;
 import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
-import net.skydistrict.claims.utils.ClaimH;
+import net.skydistrict.claims.utils.ClaimsUtils;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,9 +28,12 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.UUID;
 
 public class RegionListener implements Listener {
+    private final FileLogger fileLogger;
     private final ClaimManager manager;
 
+
     public RegionListener(Claims instance) {
+        this.fileLogger = instance.getFileLogger();
         this.manager = instance.getClaimManager();
     }
 
@@ -49,8 +54,18 @@ public class RegionListener implements Listener {
                         if (loc.distanceSquared(Config.DEFAULT_WORLD.getSpawnLocation()) > Config.MINIMUM_DISTANCE_FROM_SPAWN) {
                             // This shouldn't be null
                             final int level = data.get(Claims.claimBlockLevel, PersistentDataType.INTEGER);
-                            if (manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level)) {
+                            final Claim claim = manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level);
+                            if (claim != null) {
                                 Lang.send(player, Lang.PLACE_SUCCESS);
+                                // Log action if enabled
+                                if (Config.LOGS) {
+                                    fileLogger.log(Config.LOG_FORMAT_PLACED
+                                            .replace("{claim-id}", claim.getId())
+                                            .replace("{claim-level}", String.valueOf(claim.getLevel()))
+                                            .replace("{issuer-name}", player.getName())
+                                            .replace("{issuer-uuid}", player.getUniqueId().toString())
+                                            .replace("{location}", loc.getBlockX() + ", " + loc.getBlockY() + ", " + loc.getBlockZ()));
+                                }
                                 return;
                             }
                             event.setCancelled(true);
@@ -79,7 +94,7 @@ public class RegionListener implements Listener {
     public void onClaimBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         if (event.getBlock().getWorld() != Config.DEFAULT_WORLD) return;
-        final String id = ClaimH.createId(event.getBlock().getLocation());
+        final String id = ClaimsUtils.createId(event.getBlock().getLocation());
         if (manager.containsClaim(id)) {
             final Claim claim = manager.getClaim(id);
             final Player player = event.getPlayer();
@@ -90,8 +105,18 @@ public class RegionListener implements Listener {
                         // Removing drops
                         event.setExpToDrop(0);
                         event.setDropItems(false);
+                        // Log action if enabled
+                        if (Config.LOGS) {
+                            fileLogger.log(Config.LOG_FORMAT_DESTROYED
+                                    .replace("{claim-id}", id)
+                                    .replace("{claim-level}", String.valueOf(claim.getLevel()))
+                                    .replace("{owner-name}", UserCache.get(ownerUniqueId).getName())
+                                    .replace("{owner-uuid}", ownerUniqueId.toString())
+                                    .replace("{issuer-name}", player.getName())
+                                    .replace("{issuer-uuid}", player.getUniqueId().toString()));
+                        }
                         // Deleting region
-                        manager.removeRegionOf(player, ownerUniqueId);
+                        manager.removeRegionOf(ownerUniqueId);
                         // Dropping the item
                         if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
                         Lang.send(player, Lang.DESTROY_SUCCESS);
@@ -113,25 +138,25 @@ public class RegionListener implements Listener {
     // Prevents block from being pushed by piston
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        for (Block block : event.getBlocks()) if (manager.containsClaim(ClaimH.createId(block.getLocation()))) event.setCancelled(true);
+        for (Block block : event.getBlocks()) if (manager.containsClaim(ClaimsUtils.createId(block.getLocation()))) event.setCancelled(true);
     }
 
     // Prevents block from being pulled by piston
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent event) {
-        for (Block block : event.getBlocks()) if (manager.containsClaim(ClaimH.createId(block.getLocation()))) event.setCancelled(true);
+        for (Block block : event.getBlocks()) if (manager.containsClaim(ClaimsUtils.createId(block.getLocation()))) event.setCancelled(true);
     }
 
     // Prevents block from being destroyed because of block explosion (TNT)
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockExplode(BlockExplodeEvent event) {
-        event.blockList().removeIf(block -> manager.containsClaim(ClaimH.createId(block.getLocation())));
+        event.blockList().removeIf(block -> manager.containsClaim(ClaimsUtils.createId(block.getLocation())));
     }
 
     // Prevents block from being destroyed because of entity explosion
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event) {
-        event.blockList().removeIf(block -> manager.containsClaim(ClaimH.createId(block.getLocation())));
+        event.blockList().removeIf(block -> manager.containsClaim(ClaimsUtils.createId(block.getLocation())));
     }
 
     // Prevents item from being a crafting ingredient

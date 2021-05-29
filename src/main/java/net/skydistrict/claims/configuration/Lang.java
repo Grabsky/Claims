@@ -32,9 +32,9 @@ public class Lang {
     public static Component PLACE_SUCCESS;
     public static Component DESTROY_SUCCESS;
     public static Component NOT_SNEAKING;
-    public static Component TELEPORT_SUCCESS;
-    public static Component TELEPORT_FAIL;
-    public static Component TELEPORT_FAIL_UNKNOWN;
+    public static Component TELEPORT_SUCCEED;
+    public static Component TELEPORT_CANCELLED;
+    public static Component TELEPORT_FAILED;
     public static Component RESTORE_CLAIM_BLOCK_SUCCESS;
     public static Component RESTORE_CLAIM_BLOCK_FAIL;
     public static Component CLAIM_BLOCKS_ADDED;
@@ -91,9 +91,9 @@ public class Lang {
         SET_HOME_FAIL = component("claims.set-home-fail");
         // Teleport
         TELEPORTING = string("teleport.teleporting");
-        TELEPORT_SUCCESS = component("teleport.teleport-success");
-        TELEPORT_FAIL = component("teleport.teleport-fail");
-        TELEPORT_FAIL_UNKNOWN = component("teleport.teleport-fail-unknown");
+        TELEPORT_SUCCEED = component("teleport.teleport-succeed");
+        TELEPORT_CANCELLED = component("teleport.teleport-cancelled");
+        TELEPORT_FAILED = component("teleport.teleport-failed");
         // Flags
         DEFAULT_GREETING = fileConfiguration.getString("flags.default-greeting", "");
         DEFAULT_FAREWELL = fileConfiguration.getString("flags.default-farewell", "");

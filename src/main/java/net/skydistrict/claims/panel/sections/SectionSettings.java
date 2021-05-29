@@ -2,7 +2,6 @@ package net.skydistrict.claims.panel.sections;
 
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.logger.FileLogger;
-import me.grabsky.indigo.user.UserCache;
 import net.skydistrict.claims.Claims;
 import net.skydistrict.claims.claims.Claim;
 import net.skydistrict.claims.claims.ClaimLevel;
@@ -11,8 +10,8 @@ import net.skydistrict.claims.configuration.Config;
 import net.skydistrict.claims.configuration.Items;
 import net.skydistrict.claims.configuration.Lang;
 import net.skydistrict.claims.panel.Panel;
-import net.skydistrict.claims.utils.ClaimH;
-import net.skydistrict.claims.utils.InventoryH;
+import net.skydistrict.claims.utils.ClaimsUtils;
+import net.skydistrict.claims.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -41,13 +40,13 @@ public class SectionSettings extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryH.updateTitle(executor, "§f\u7000\u7101", editMode);
+        InventoryUtils.updateTitle(executor, "§f\u7000\u7101", editMode);
         // Setting menu items
         this.generateView();
     }
 
     private boolean canUpgrade(Player player, Material upgradeMaterial) {
-        return executor.hasPermission("skydistrict.bypass.claims.upgradecost") || InventoryH.hasMaterial(executor, upgradeMaterial, 64);
+        return executor.hasPermission("skydistrict.bypass.claims.upgradecost") || InventoryUtils.hasMaterial(executor, upgradeMaterial, 64);
     }
 
     private void generateView() {
@@ -63,9 +62,9 @@ public class SectionSettings extends Section {
             }
             executor.closeInventory();
         });
-        final ClaimLevel currentLevel = ClaimH.getClaimLevel(claim.getLevel());
+        final ClaimLevel currentLevel = ClaimsUtils.getClaimLevel(claim.getLevel());
         // Getting ItemBuilder for specific alias
-        final ClaimLevel nextLevel = (claim.getLevel() < 4) ? ClaimH.getClaimLevel(claim.getLevel() + 1) : null;
+        final ClaimLevel nextLevel = (claim.getLevel() < 4) ? ClaimsUtils.getClaimLevel(claim.getLevel() + 1) : null;
         // If current level is not the last
         final ItemBuilder inventoryItem = currentLevel.getIcon();
         if (nextLevel != null) {
@@ -96,7 +95,7 @@ public class SectionSettings extends Section {
             if (!canUpgrade(executor, nextLevel.getUpgradeMaterial())) return;
             // Removing material if player doesn't have bypass permission
             if (!executor.hasPermission("skydistrict.bypass.claims.upgradecost")) {
-                InventoryH.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 64);
+                InventoryUtils.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 64);
             }
             // Upgrading claim
             manager.upgrade(claim);
@@ -106,11 +105,11 @@ public class SectionSettings extends Section {
             // Refreshing the view
             this.generateView();
             if (Config.LOGS) {
-                fileLogger.log(new StringBuilder().append("CLAIM_UPGRADED | ")
-                        .append(claim.getId()).append(" | ")
-                        .append(executor.getName()).append(" (").append(executor.getUniqueId()).append(") | ")
-                        .append(UserCache.get(owner).getName()).append(" (").append(owner).append(")")
-                        .toString());
+                fileLogger.log(Config.LOG_FORMAT_UPGRADED
+                        .replace("{claim-id}", claim.getId())
+                        .replace("{claim-level}", String.valueOf(claim.getLevel()))
+                        .replace("{issuer-name}", executor.getName())
+                        .replace("{issuer-uuid}", executor.getUniqueId().toString()));
             }
         });
         // Return button

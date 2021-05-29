@@ -18,3 +18,10 @@ settings:
     # Minimum distance from spawn required to create a protected claim (in blocks)
     minimum-distance-from-spawn: 300
 
+  logging-format:
+    # All strings are prefixed with date: "DD-MM-YYYY HH:MM:SS | [...]"
+    claim-placed: 'Claim ({claim-id}:{claim-level}) has been PLACED by {issuer-name} ({issuer-uuid}) at {location}'
+    claim-destroyed: 'Claim ({claim-id}:{claim-level}) owned by {owner-name} ({owner-uuid}) has been DESTROYED by {issuer-name} ({issuer-uuid})'
+    claim-upgraded: 'Claim ({claim-id}:{claim-level}) has been UPGRADED by {issuer-name} ({issuer-uuid})'
+    claim-member-added: 'Player {member-name} ({member-uuid}) has been ADDED to claim ({claim-id}:{claim-level}) by {issuer-name} ({issuer-uuid})'
+    claim-member-removed: 'Player {member-name} ({member-uuid}) has been REMOVED from claim ({claim-id}:{claim-level}) by {issuer-name} ({issuer-uuid})'

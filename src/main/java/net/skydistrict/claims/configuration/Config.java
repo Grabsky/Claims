@@ -22,6 +22,12 @@ public class Config {
     public static int MEMBERS_LIMIT;
     public static int MINIMUM_DISTANCE_FROM_SPAWN;
 
+    public static String LOG_FORMAT_PLACED;
+    public static String LOG_FORMAT_DESTROYED;
+    public static String LOG_FORMAT_UPGRADED;
+    public static String LOG_FORMAT_MEMBER_ADDED;
+    public static String LOG_FORMAT_MEMBER_REMOVED;
+
     public Config(Claims instance) {
         this.instance = instance;
         this.consoleLogger = instance.getConsoleLogger();
@@ -53,5 +59,11 @@ public class Config {
         TELEPORT_DELAY = fc.getInt("settings.claim.teleport-delay");
         MEMBERS_LIMIT = fc.getInt("settings.claim.members-limit");
         MINIMUM_DISTANCE_FROM_SPAWN = fc.getInt("settings.claim.minimum-distance-from-spawn");
+        // Logging formats
+        LOG_FORMAT_PLACED = fc.getString("settings.logging-format.claim-placed");
+        LOG_FORMAT_DESTROYED = fc.getString("settings.logging-format.claim-destroyed");
+        LOG_FORMAT_UPGRADED = fc.getString("settings.logging-format.claim-upgraded");
+        LOG_FORMAT_MEMBER_ADDED = fc.getString("settings.logging-format.claim-member-added");
+        LOG_FORMAT_MEMBER_REMOVED = fc.getString("settings.logging-format.claim-member-removed");
     }
 }
