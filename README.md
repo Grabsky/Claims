@@ -1,3 +1,5 @@
+#### DISCLAIMER: Resource has been archived due to lack of interest in Minecraft-related development.
+
 # Claims
 Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to (intentional) plugin design.
 
