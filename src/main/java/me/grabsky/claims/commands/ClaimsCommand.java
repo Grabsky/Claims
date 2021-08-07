@@ -18,6 +18,8 @@ import me.grabsky.claims.panel.sections.SectionMain;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.framework.BaseCommand;
 import me.grabsky.indigo.framework.ExecutorType;
+import me.grabsky.indigo.framework.annotations.DefaultCommand;
+import me.grabsky.indigo.framework.annotations.SubCommand;
 import me.grabsky.indigo.user.UserCache;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,14 +28,12 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public class ClaimsCommand extends BaseCommand {
     private final Claims instance;
     private final ClaimManager manager;
+    private final List<String> completions = Arrays.asList("get", "fix", "reload");
 
     public ClaimsCommand(Claims instance) {
         super("claims", Arrays.asList("claim", "teren"), "skydistrict.command.claims", ExecutorType.ALL);
@@ -42,67 +42,107 @@ public class ClaimsCommand extends BaseCommand {
     }
 
     @Override
+    public void execute(CommandSender sender, String[] args) {
+        if (args.length == 0) {
+            this.onClaims(sender);
+        } else {
+            switch (args[0]) {
+                case "reload" -> this.onClaimsReload(sender);
+                case "get" -> this.onClaimsGet(sender);
+                case "fix" -> this.onClaimsFix(sender);
+                default -> this.onClaimsPlayer(sender, args[0]);
+            }
+        }
+    }
+
+    @Override
     public List<String> tabComplete(CommandSender sender, int index) {
         if (index == 0) {
-            final List<String> list = UserCache.getNamesOfOnlineUsers();
-            list.add("get");
-            list.add("fix");
+            final List<String> list = new ArrayList<>(UserCache.getNamesOfOnlineUsers());
+            list.addAll(completions);
             return list;
         }
         return Collections.emptyList();
     }
 
-    @Override
-    public void execute(CommandSender sender, String[] args) {
-        if (args.length == 0) {
-            if (sender instanceof Player executor) {
+    @DefaultCommand
+    private void onClaims(final CommandSender sender) {
+        if (sender instanceof Player executor) {
+            this.openClaimMenu(executor, executor.getUniqueId());
+            return;
+        }
+        Lang.send(sender, Lang.PLAYER_ONLY);
+    }
 
-                this.openClaimMenu(executor, executor.getUniqueId());
-            }
-        } else if (args.length == 1) {
-            if (args[0].equalsIgnoreCase("get")) {
-                if (sender instanceof Player player) {
-                    if (sender.hasPermission("skydistrict.command.claims.get")) {
-                        final Inventory inventory = player.getInventory();
-                        inventory.addItem(Items.getClaimBlock(0)); // COAL
-                        inventory.addItem(Items.getClaimBlock(1)); // IRON
-                        inventory.addItem(Items.getClaimBlock(2)); // GOLD
-                        inventory.addItem(Items.getClaimBlock(3)); // DIAMOND
-                        inventory.addItem(Items.getClaimBlock(4)); // EMERALD
-                        Lang.send(player, Lang.CLAIM_BLOCKS_ADDED);
-                    }
-                }
-            } else if (args[0].equalsIgnoreCase("fix")) {
-                if (sender instanceof Player player) {
-                    if (sender.hasPermission("skydistrict.command.claims.fix")) {
-                        final Location loc = player.getLocation();
-                        for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
-                            if (region.getId().startsWith(Config.REGION_PREFIX)) {
-                                // Both variables shouldn't be null unless claim was manually modified
-                                final Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
-                                final Material type = ClaimsUtils.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
-                                PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
-                                    chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
-                                    Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_SUCCESS);
-                                });
-                                return;
-                            }
-                        }
-                        Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_FAIL);
-                        return;
-                    }
-                    Lang.send(sender, Lang.PLAYER_ONLY);
-                }
-            } else if (sender instanceof Player executor) {
-                if (UserCache.contains(args[0])) {
-                    this.openClaimMenu(executor, UserCache.get(args[0]).getUniqueId());
-                    return;
-                }
-                Lang.send(sender, Lang.PLAYER_NOT_FOUND);
+    @SubCommand
+    private void onClaimsReload(final CommandSender sender) {
+        if (sender.hasPermission("skydistrict.command.claims.reload")) {
+            if (instance.reload()) {
+                Lang.send(sender, Lang.RELOAD_SUCCESS);
                 return;
             }
-            Lang.send(sender, Lang.PLAYER_ONLY);
+            Lang.send(sender, Lang.RELOAD_FAIL);
+            return;
         }
+        Lang.send(sender, Lang.MISSING_PERMISSIONS);
+    }
+
+    @SubCommand
+    private void onClaimsFix(final CommandSender sender) {
+        if (sender instanceof Player executor) {
+            if (executor.hasPermission("skydistrict.command.claims.fix")) {
+                final Location loc = executor.getLocation();
+                for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
+                    if (region.getId().startsWith(Config.REGION_PREFIX)) {
+                        // Both variables shouldn't be null unless claim was manually modified
+                        final Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
+                        final Material type = ClaimsUtils.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
+                        PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
+                            chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
+                            Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_SUCCESS);
+                        });
+                        return;
+                    }
+                }
+                Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_FAIL);
+                return;
+            }
+            Lang.send(sender, Lang.MISSING_PERMISSIONS);
+            return;
+        }
+        Lang.send(sender, Lang.PLAYER_ONLY);
+    }
+
+    @SubCommand
+    private void onClaimsGet(final CommandSender sender) {
+        if (sender instanceof Player executor) {
+            if (sender.hasPermission("skydistrict.command.claims.get")) {
+                final Inventory inventory = executor.getInventory();
+                inventory.addItem(Items.getClaimBlock(0)); // COAL
+                inventory.addItem(Items.getClaimBlock(1)); // IRON
+                inventory.addItem(Items.getClaimBlock(2)); // GOLD
+                inventory.addItem(Items.getClaimBlock(3)); // DIAMOND
+                inventory.addItem(Items.getClaimBlock(4)); // EMERALD
+                Lang.send(sender, Lang.CLAIM_BLOCKS_ADDED);
+                return;
+            }
+            Lang.send(sender, Lang.MISSING_PERMISSIONS);
+            return;
+        }
+        Lang.send(sender, Lang.PLAYER_ONLY);
+    }
+
+    @SubCommand
+    private void onClaimsPlayer(final CommandSender sender, final String name) {
+        if (sender instanceof Player executor) {
+            if (UserCache.contains(name)) {
+                this.openClaimMenu(executor, UserCache.get(name).getUniqueId());
+                return;
+            }
+            Lang.send(sender, Lang.PLAYER_NOT_FOUND);
+            return;
+        }
+        Lang.send(sender, Lang.PLAYER_ONLY);
     }
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {
@@ -116,6 +156,4 @@ public class ClaimsCommand extends BaseCommand {
         }
         panel.open(executor);
     }
-
-
 }

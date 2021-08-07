@@ -9,7 +9,7 @@ permissions:
   skydistrict.command.claims.*:
     description: 'Access all claims commands'
     childern:
-      skydistrict.command.claims: true
+      skydistrict.command.claims: false
       skydistrict.command.claims.fix: false
       skydistrict.command.claims.others: false
       skydistrict.command.claims.reload: false
