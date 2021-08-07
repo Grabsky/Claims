@@ -1,5 +1,3 @@
-#### DISCLAIMER: Resource is no longer maintained due to lack of interest in Minecraft-related development.
-
 # Claims
 Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to (intentional) plugin design. Requires WorldEdit and WorldGuard to work properly.
 
