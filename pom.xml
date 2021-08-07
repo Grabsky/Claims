@@ -14,7 +14,7 @@
     <properties>
         <java.version>16</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <builds.local>C:/Users/admin/Development/builds</builds.local>
+        <builds.local>D:/java/builds</builds.local>
     </properties>
 
     <build>
@@ -84,23 +84,23 @@
     <dependencies>
         <!-- Paper API -->
         <dependency>
-            <groupId>com.destroystokyo.paper</groupId>
+            <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.16.5-R0.1-SNAPSHOT</version>
+            <version>1.17.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <!-- WorldEdit API -->
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.4</version>
+            <version>7.2.5</version>
             <scope>provided</scope>
         </dependency>
         <!-- WorldGuard API -->
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.4</version>
+            <version>7.0.5</version>
             <scope>provided</scope>
         </dependency>
         <!-- PaperLib -->
@@ -120,7 +120,7 @@
         </dependency>
         <!-- Vanish -->
         <dependency>
-            <groupId>net.skydistrict</groupId>
+            <groupId>me.grabsky</groupId>
             <artifactId>Vanish</artifactId>
             <version>latest</version>
             <scope>system</scope>
@@ -132,7 +132,7 @@
             <artifactId>server</artifactId>
             <version>latest</version>
             <scope>system</scope>
-            <systemPath>${builds.local}/purpur-1.16.5.jar</systemPath>
+            <systemPath>${builds.local}/purpur-1.17.1.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
