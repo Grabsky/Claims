@@ -35,4 +35,10 @@ public interface ClaimsAPI {
      */
     @NotNull
     ClaimPlayer getClaimPlayer(UUID uuid);
+
+    /**
+     * @return Returns list of claims
+     */
+    @NotNull
+    String[] getClaimIds();
 }
