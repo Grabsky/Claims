@@ -188,8 +188,8 @@ public class ClaimManager implements ClaimsAPI {
         final Location center = claim.getCenter();
         // Calculating new region size
         int radius = 15 + (5 * newLevel);
-        final BlockVector3 min = BlockVector3.at(center.getBlockX() - radius, 0, center.getBlockZ() - radius);
-        final BlockVector3 max = BlockVector3.at(center.getBlockX() + radius, 255, center.getBlockZ() + radius);
+        final BlockVector3 min = BlockVector3.at(center.getBlockX() - radius, center.getWorld().getMinHeight(), center.getBlockZ() - radius);
+        final BlockVector3 max = BlockVector3.at(center.getBlockX() + radius, center.getWorld().getMaxHeight(), center.getBlockZ() + radius);
         // Creating cuboid at new points
         final ProtectedRegion newRegion = new ProtectedCuboidRegion(id, min, max);
         // Updating region flag
@@ -228,4 +228,8 @@ public class ClaimManager implements ClaimsAPI {
         return uuidToClaimPlayer.get(uuid);
     }
 
+    @Override
+    public @NotNull String[] getClaimIds() {
+        return regionIdToClaim.keySet().toArray(new String[0]);
+    }
 }
