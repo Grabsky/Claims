@@ -7,9 +7,11 @@ import me.grabsky.claims.claims.ClaimPlayer;
 import me.grabsky.claims.configuration.Config;
 import me.grabsky.claims.configuration.Items;
 import me.grabsky.claims.configuration.Lang;
+import me.grabsky.claims.panel.PanelManager;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.UserCache;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -20,6 +22,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -30,11 +33,12 @@ import java.util.UUID;
 public class RegionListener implements Listener {
     private final FileLogger fileLogger;
     private final ClaimManager manager;
-
+    private final PanelManager panelManager;
 
     public RegionListener(Claims instance) {
         this.fileLogger = instance.getFileLogger();
         this.manager = instance.getClaimManager();
+        this.panelManager = instance.getPanelManager();
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -120,6 +124,12 @@ public class RegionListener implements Listener {
                         // Dropping the item
                         if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
                         Lang.send(player, Lang.DESTROY_SUCCESS);
+                        final Player owner = Bukkit.getPlayer(ownerUniqueId);
+                        if (owner != null && owner.isOnline()) {
+                            if (panelManager.isInventoryOpen(owner)) {
+                                owner.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+                            }
+                        }
                         return;
                     }
                     event.setCancelled(true);
