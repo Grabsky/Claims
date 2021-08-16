@@ -95,17 +95,16 @@ public class ClaimManager implements ClaimsAPI {
         return closestLocation;
     }
 
-    public boolean canPlaceAt(Location location) {
-        final Location center = this.getClosestTo(location);
-        if (center != null) {
-            return (Math.abs(location.getBlockX() - center.getBlockX()) > 70 || Math.abs(location.getBlockZ() - center.getBlockZ()) > 70);
+    public boolean isInSquare(Location location, @Nullable Location squareCenter, int squareRadius) {
+        if (squareCenter != null) {
+            return !(Math.abs(location.getBlockX() - squareCenter.getBlockX()) > squareRadius || Math.abs(location.getBlockZ() - squareCenter.getBlockZ()) > squareRadius);
         }
-        return true;
+        return false;
     }
 
     public Claim createRegionAt(Location loc, Player owner, int level) {
-        // Checking if there is no region at this selection
-        if (!this.canPlaceAt(loc) || loc.distance(Config.DEFAULT_WORLD.getSpawnLocation()) < Config.MINIMUM_DISTANCE_FROM_SPAWN) return null;
+        // Returning if location is too close to spawn or other claim
+        if (this.isInSquare(loc, this.getClosestTo(loc), 70) || this.isInSquare(loc, Config.DEFAULT_WORLD.getSpawnLocation(), Config.MINIMUM_DISTANCE_FROM_SPAWN)) return null;
         // Points
         final UUID ownerUniqueId = owner.getUniqueId();
         final int x = loc.getBlockX();

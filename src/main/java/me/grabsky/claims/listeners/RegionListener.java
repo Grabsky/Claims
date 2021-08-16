@@ -51,7 +51,7 @@ public class RegionListener implements Listener {
                     final Location loc = event.getBlock().getLocation();
                     if (!cp.hasClaim()) {
                         // The reason why it's here and not in RegionManager is that I want the messages to be different
-                        if (loc.distanceSquared(Config.DEFAULT_WORLD.getSpawnLocation()) > Config.MINIMUM_DISTANCE_FROM_SPAWN) {
+                        if (!manager.isInSquare(loc, Config.DEFAULT_WORLD.getSpawnLocation(), Config.MINIMUM_DISTANCE_FROM_SPAWN)) {
                             // This shouldn't be null
                             final int level = data.get(Claims.claimBlockLevel, PersistentDataType.INTEGER);
                             final Claim claim = manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level);
