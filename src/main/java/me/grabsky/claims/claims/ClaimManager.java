@@ -14,12 +14,14 @@ import me.grabsky.claims.api.ClaimsAPI;
 import me.grabsky.claims.configuration.Config;
 import me.grabsky.claims.configuration.Lang;
 import me.grabsky.claims.flags.ClaimFlags;
+import me.grabsky.claims.panel.PanelManager;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.logger.ConsoleLogger;
-import me.grabsky.indigo.logger.FileLogger;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -27,16 +29,16 @@ import java.util.*;
 
 public class ClaimManager implements ClaimsAPI {
     private final RegionManager regionManager;
+    private final PanelManager panelManager;
     private final ConsoleLogger consoleLogger;
-    private final FileLogger fileLogger;
     private final Map<String, Claim> regionIdToClaim = new HashMap<>();
     private final Map<UUID, ClaimPlayer> uuidToClaimPlayer = new HashMap<>();
     private final Map<String, Location> centers = new HashMap<>();
 
     public ClaimManager(Claims instance) {
         this.regionManager = instance.getRegionManager();
+        this.panelManager = instance.getPanelManager();
         this.consoleLogger = instance.getConsoleLogger();
-        this.fileLogger = instance.getFileLogger();
         this.cacheClaims();
     }
 
@@ -150,6 +152,13 @@ public class ClaimManager implements ClaimsAPI {
         // Removing claim from the world
         final ProtectedRegion region = claim.getWGRegion();
         regionManager.removeRegion(region.getId());
+        // Closing claim management GUI if open
+        final Player owner = Bukkit.getPlayer(ownerUniqueId);
+        if (owner != null && owner.isOnline()) {
+            if (panelManager.isInventoryOpen(owner)) {
+                owner.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
+            }
+        }
     }
 
     private void setDefaultFlags(ProtectedRegion region, Location loc, Player owner) {
