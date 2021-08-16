@@ -5,6 +5,7 @@ import me.grabsky.claims.claims.ClaimPlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface ClaimsAPI {
@@ -40,5 +41,5 @@ public interface ClaimsAPI {
      * @return Returns list of claims
      */
     @NotNull
-    String[] getClaimIds();
+    List<String> getClaimIds();
 }
