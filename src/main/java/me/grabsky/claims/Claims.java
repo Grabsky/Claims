@@ -60,8 +60,8 @@ public final class Claims extends JavaPlugin {
         final World world = BukkitAdapter.adapt(Config.DEFAULT_WORLD);
         this.region = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // Creating other instances
-        this.panel = new PanelManager(this);
         this.claim = new ClaimManager(this);
+        this.panel = new PanelManager(this);
         // Registering events
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
         // Registering command(s)
