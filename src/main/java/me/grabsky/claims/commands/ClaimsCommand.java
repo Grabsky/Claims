@@ -135,11 +135,15 @@ public class ClaimsCommand extends BaseCommand {
     @SubCommand
     private void onClaimsPlayer(final CommandSender sender, final String name) {
         if (sender instanceof Player executor) {
-            if (UserCache.contains(name)) {
-                this.openClaimMenu(executor, UserCache.get(name).getUniqueId());
+            if (sender.hasPermission("skydistrict.command.claims.others")) {
+                if (UserCache.contains(name)) {
+                    this.openClaimMenu(executor, UserCache.get(name).getUniqueId());
+                    return;
+                }
+                Lang.send(sender, Lang.PLAYER_NOT_FOUND);
                 return;
             }
-            Lang.send(sender, Lang.PLAYER_NOT_FOUND);
+            Lang.send(sender, Lang.MISSING_PERMISSIONS);
             return;
         }
         Lang.send(sender, Lang.PLAYER_ONLY);

@@ -23,9 +23,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 public class ClaimManager implements ClaimsAPI {
     private final RegionManager regionManager;
@@ -229,7 +227,7 @@ public class ClaimManager implements ClaimsAPI {
     }
 
     @Override
-    public @NotNull String[] getClaimIds() {
-        return regionIdToClaim.keySet().toArray(new String[0]);
+    public @NotNull List<String> getClaimIds() {
+        return new ArrayList<>(regionIdToClaim.keySet());
     }
 }
