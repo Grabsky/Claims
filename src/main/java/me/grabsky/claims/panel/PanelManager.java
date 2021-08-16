@@ -26,6 +26,10 @@ public class PanelManager implements Listener {
         instance.getServer().getPluginManager().registerEvents(this, instance);
     }
 
+    public boolean isInventoryOpen(Player player) {
+        return openInventories.containsKey(player);
+    }
+
     public void add(Player player, Panel panel) {
         this.openInventories.put(player, panel);
     }
