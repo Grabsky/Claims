@@ -23,7 +23,8 @@ public class Lang {
     public static Component PLAYER_ONLY;
     public static Component RELOAD_SUCCESS;
     public static Component RELOAD_FAIL;
-    public static Component NO_CLAIM;
+    public static Component PLAYER_HAS_NO_CLAIM;
+    public static Component YOU_DONT_HAVE_A_CLAIM;
     public static Component TOO_CLOSE_TO_SPAWN;
     public static Component OVERLAPS_OTHER_CLAIM;
     public static Component NOT_MEMBER;
@@ -62,7 +63,7 @@ public class Lang {
         }
         // Overriding...
         this.fileConfiguration = YamlConfiguration.loadConfiguration(file);
-        if (fileConfiguration.getInt("version") != 2) {
+        if (fileConfiguration.getInt("version") != 3) {
             consoleLogger.error("Your lang.yml file is outdated. Some messages may not display properly.");
         }
         // General
@@ -72,7 +73,8 @@ public class Lang {
         RELOAD_SUCCESS = component("general.reload-success");
         RELOAD_FAIL = component("general.reload-fail");
         // Claims
-        NO_CLAIM = component("claims.no-claim");
+        PLAYER_HAS_NO_CLAIM = component("claims.player-has-no-claim");
+        YOU_DONT_HAVE_A_CLAIM = component ("claims.you-dont-have-a-claim");
         TOO_CLOSE_TO_SPAWN = component("claims.too-close-to-spawn");
         OVERLAPS_OTHER_CLAIM = component("claims.overlaps-other-claim");
         NOT_MEMBER = component("claims.not-member");

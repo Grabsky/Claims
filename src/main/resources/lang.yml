@@ -1,4 +1,4 @@
-version: 2 # Do not modify this unless you know what you're doing
+version: 3 # Do not modify this unless you know what you're doing
 
 # Following section(s) supports classic color codes (§) and hex colors (§#)
 general:
@@ -9,7 +9,8 @@ general:
   reload-fail: '§6§lS§e§lD§8 » §cWystąpił błąd podczas ładowania konfiguracji.'
 
 claims:
-  no-claim: '§6§lS§e§lD§8 » §cTen gracz nie ma terenu.'
+  player-has-no-claim: '§6§lS§e§lD§8 » §cTen gracz nie ma terenu.'
+  you-dont-have-a-claim: '§6§lS§e§lD§8 » §cNie posiadasz swojego terenu.'
   too-close-to-spawn: '§6§lS§e§lD§8 » §cMinimalna odległość od spawnu to 300 kratek.'
   overlaps-other-claim: '§6§lS§e§lD§8 » §cZa blisko innego terenu.'
   not-member: '§6§lS§e§lD§8 » §cTen gracz nie jest dodany do terenu.'
