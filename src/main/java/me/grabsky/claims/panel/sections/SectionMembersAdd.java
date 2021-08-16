@@ -58,7 +58,7 @@ public class SectionMembersAdd extends Section {
         int index = (pageToDisplay * maxOnPage) - maxOnPage;
         // For each 'use-able' slot (10 - first slot, 35 - last slot)
         for (int slot = 10; slot < 35; slot++, index++) {
-            // Making sure we didn't ran out of index
+            // Making sure we didn't run out of index
             if (index >= usableSize) break;
             // Skipping border slots
             if ((slot + 1) % 9 == 0) slot += 2;
