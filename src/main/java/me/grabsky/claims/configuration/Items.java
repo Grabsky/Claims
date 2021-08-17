@@ -25,7 +25,7 @@ public class Items {
     // Homes
     public static final ItemStack HOMES = new ItemBuilder(Material.PLAYER_HEAD)
             .setName("§e§lTeren")
-            .setLore("§7Kliknij, aby teleportować się na teren", "§7lub aby przeglądać listę regionów.")
+            .setLore("§7Kliknij §eLPM§7, aby teleportować się na teren.", "§7Kliknij §ePPM§7, aby przeglądać listę dostępnych regionów.")
             .setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0=")
             .build();
 

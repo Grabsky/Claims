@@ -156,8 +156,7 @@ public class ClaimsCommand extends BaseCommand {
             final Claim claim = owner.getClaim();
             Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionMain(panel, executor, owner.getUniqueId(), claim)), 1L);
         } else if (owner.hasRelatives()) {
-            Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionHomes(panel, executor, owner.getUniqueId())), 1L);
-            return;
+            Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionHomes(panel, executor, owner.getUniqueId(), null)), 1L);
         } else {
             Lang.send(executor, (executor.getUniqueId().equals(ownerUniqueId)) ? Lang.YOU_DONT_HAVE_A_CLAIM : Lang.PLAYER_HAS_NO_CLAIM);
             return;

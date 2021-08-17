@@ -3,6 +3,7 @@ package me.grabsky.claims.panel.sections;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.panel.Panel;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
@@ -14,18 +15,7 @@ public abstract class Section {
     protected boolean editMode = false;
 
     /** Constructor required to prepare and apply Section to a Panel */
-    public Section(Panel panel, Player executor, UUID owner) {
-        this.panel = panel;
-        this.executor = executor;
-        this.owner = owner;
-        if (!executor.getUniqueId().equals(owner)) {
-            editMode = true;
-        }
-        this.panel.clear();
-    }
-
-    /** Constructor required to prepare and apply Section to a Panel */
-    public Section(Panel panel, Player executor, UUID owner, Claim claim) {
+    public Section(Panel panel, Player executor, UUID owner, @Nullable Claim claim) {
         this.panel = panel;
         this.executor = executor;
         this.owner = owner;

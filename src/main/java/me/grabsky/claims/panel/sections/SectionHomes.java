@@ -12,66 +12,55 @@ import me.grabsky.indigo.user.User;
 import me.grabsky.indigo.user.UserCache;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
-// I feel like this is still something that have to be worked on.
-// Current way of displaying claims to player is very unclear and not intuitive at all.
-// Still thinking what the most user-friendly approach would look like.
 public class SectionHomes extends Section {
     private final ClaimManager manager = Claims.getInstance().getClaimManager();
-    private boolean hasRegion = false;
-    private ItemStack home;
-    private String[] relatives;
-    private int length;
+    private List<String> relatives;
     private int maxOnPage;
-
-    public SectionHomes(Panel panel, Player executor, UUID owner) {
-        super(panel, executor, owner);
-    }
+    private int usableSize;
+    private int pages;
 
     public SectionHomes(Panel panel, Player executor, UUID owner, Claim claim) {
         super(panel, executor, owner, claim);
-        this.hasRegion = true;
     }
 
     public void prepare() {
-        this.home = (hasRegion) ? Items.HOME : Items.HOME_DISABLED;
         // Some useful values
-        this.relatives = manager.getClaimPlayer(owner).getRelatives().toArray(new String[0]);
-        this.length = relatives.length;
-        this.maxOnPage = 4;
+        this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("skydistrict.plugin.claims.showall")) ? manager.getClaimIds() : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
+        this.maxOnPage = 21;
+        this.usableSize = relatives.size();
+        this.pages = (relatives.size() - 1) / maxOnPage + 1;
     }
 
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(executor, "§f\u7000\u7106", editMode);
+        InventoryUtils.updateTitle(executor, "§f\u7000\u7103", editMode);
         // Generating the view
         this.generateView(1);
     }
 
     private void generateView(int pageToDisplay) {
         panel.clear();
-        // Displaying owned claim
-        panel.setItem(10, this.home, (event) -> {
-            if (hasRegion) {
-                executor.closeInventory();
-                TeleportUtils.teleportAsync(executor, claim.getHome(), 5);
-            }
-        });
-        // Displaying regions player have access to
-        int startFrom = ((pageToDisplay * maxOnPage) - maxOnPage);
-        int slot = 13, lastIndex = 0;
-        for (int index = startFrom; index < length; index++) {
-            if (slot == maxOnPage) {
-                lastIndex = index;
-                break;
-            }
-            final Claim relativeClaim = manager.getClaim(relatives[index]);
+        // Calculating index
+        int index = (pageToDisplay * maxOnPage) - maxOnPage;
+        // For each 'use-able' slot (10 - first slot, 35 - last slot)
+        for (int slot = 10; slot < 35; slot++, index++) {
+            // Making sure we didn't run out of index
+            if (index >= usableSize) break;
+            // Skipping border slots
+            if ((slot + 1) % 9 == 0) slot += 2;
+            // Getting claim for current index
+            final Claim relativeClaim = manager.getClaim(relatives.get(index));
+            // Returning if claim with given id is not found
             if (relativeClaim == null) continue;
+            // Getting owner of claim
             final User user = UserCache.get(relativeClaim.getOwner());
+            // Setting teleport item
             panel.setItem(slot, new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§e§l" + user.getName())
                     .setLore("§7Kliknij, aby teleportować się", "§7na teren tego gracza.")
@@ -80,16 +69,14 @@ public class SectionHomes extends Section {
                         executor.closeInventory();
                         TeleportUtils.teleportAsync(executor, relativeClaim.getHome(), 5);
             });
-            startFrom++;
-            lastIndex++;
         }
-
-        // Navigation buttons
-        if (lastIndex > maxOnPage) panel.setItem(12, Items.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
-        if (lastIndex < length) panel.setItem(17, Items.NEXT, (event) -> generateView(pageToDisplay + 1));
+        // If player is not on the first page - displaying PREVIOUS PAGE button
+        if (pageToDisplay > 1) panel.setItem(18, Items.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
+        // If there is more pages - displaying NEXT PAGE button
+        if (pageToDisplay + 1 <= pages) panel.setItem(26, Items.NEXT, (event) -> generateView(pageToDisplay + 1));
         // Return button
         panel.setItem(49, Items.RETURN, (event) -> {
-            if (hasRegion) {
+            if (claim != null) {
                 panel.applySection(new SectionMain(panel, executor, owner, claim));
             } else {
                 executor.closeInventory();
