@@ -6,6 +6,12 @@ depend: [Indigo, WorldEdit, WorldGuard]
 softdepend: [Vanish]
 authors: [Grabsky]
 permissions:
+  skydistrict.plugin.claims.*:
+    description: 'Difficult to describe; related to plugin behaviour'
+    children:
+      skydistrict.plugin.claims.place: false
+      skydistrict.plugin.claims.destroy: false
+      skydistrict.plugin.claims.showall: false
   skydistrict.command.claims.*:
     description: 'Access all claims commands'
     childern:

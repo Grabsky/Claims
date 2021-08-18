@@ -19,6 +19,7 @@ Permission | Description
 #### Recommended only for admins:
 Permission | Description
 --- | ---
+`skydistrict.command.claims.showall` | Plugin will show all claims in "accessible claim list" view.
 `skydistrict.command.claims.others` | Use `/claim <player>` command to manage their claims.
 `skydistrict.command.claims.fix` | Use `/claim fix` command to place hidden claim block.
 `skydistrict.command.claims.reload` | Use `/claim reload` command to reload plugin configuration.
