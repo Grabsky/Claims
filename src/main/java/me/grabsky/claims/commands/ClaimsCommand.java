@@ -16,10 +16,11 @@ import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.panel.sections.SectionHomes;
 import me.grabsky.claims.panel.sections.SectionMain;
 import me.grabsky.claims.utils.ClaimsUtils;
-import me.grabsky.indigo.framework.BaseCommand;
-import me.grabsky.indigo.framework.ExecutorType;
-import me.grabsky.indigo.framework.annotations.DefaultCommand;
-import me.grabsky.indigo.framework.annotations.SubCommand;
+import me.grabsky.indigo.configuration.Global;
+import me.grabsky.indigo.framework.commands.BaseCommand;
+import me.grabsky.indigo.framework.commands.ExecutorType;
+import me.grabsky.indigo.framework.commands.annotations.DefaultCommand;
+import me.grabsky.indigo.framework.commands.annotations.SubCommand;
 import me.grabsky.indigo.user.UserCache;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -56,7 +57,7 @@ public class ClaimsCommand extends BaseCommand {
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, int index) {
+    public List<String> tabComplete(CommandSender sender, String arg, int index) {
         if (index == 0) {
             final List<String> list = new ArrayList<>(UserCache.getNamesOfOnlineUsers());
             list.addAll(completions);
@@ -71,20 +72,20 @@ public class ClaimsCommand extends BaseCommand {
             this.openClaimMenu(executor, executor.getUniqueId());
             return;
         }
-        Lang.send(sender, Lang.PLAYER_ONLY);
+        Lang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     @SubCommand
     private void onClaimsReload(final CommandSender sender) {
         if (sender.hasPermission("skydistrict.command.claims.reload")) {
             if (instance.reload()) {
-                Lang.send(sender, Lang.RELOAD_SUCCESS);
+                Lang.send(sender, Global.RELOAD_SUCCESS);
                 return;
             }
-            Lang.send(sender, Lang.RELOAD_FAIL);
+            Lang.send(sender, Global.RELOAD_FAIL);
             return;
         }
-        Lang.send(sender, Lang.MISSING_PERMISSIONS);
+        Lang.send(sender, Global.MISSING_PERMISSIONS);
     }
 
     @SubCommand
@@ -107,10 +108,10 @@ public class ClaimsCommand extends BaseCommand {
                 Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_FAIL);
                 return;
             }
-            Lang.send(sender, Lang.MISSING_PERMISSIONS);
+            Lang.send(sender, Global.MISSING_PERMISSIONS);
             return;
         }
-        Lang.send(sender, Lang.PLAYER_ONLY);
+        Lang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     @SubCommand
@@ -126,10 +127,10 @@ public class ClaimsCommand extends BaseCommand {
                 Lang.send(sender, Lang.CLAIM_BLOCKS_ADDED);
                 return;
             }
-            Lang.send(sender, Lang.MISSING_PERMISSIONS);
+            Lang.send(sender, Global.MISSING_PERMISSIONS);
             return;
         }
-        Lang.send(sender, Lang.PLAYER_ONLY);
+        Lang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     @SubCommand
@@ -140,13 +141,13 @@ public class ClaimsCommand extends BaseCommand {
                     this.openClaimMenu(executor, UserCache.get(name).getUniqueId());
                     return;
                 }
-                Lang.send(sender, Lang.PLAYER_NOT_FOUND);
+                Lang.send(sender, Global.PLAYER_NOT_FOUND);
                 return;
             }
-            Lang.send(sender, Lang.MISSING_PERMISSIONS);
+            Lang.send(sender, Global.MISSING_PERMISSIONS);
             return;
         }
-        Lang.send(sender, Lang.PLAYER_ONLY);
+        Lang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {

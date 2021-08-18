@@ -13,7 +13,7 @@ import me.grabsky.claims.flags.ClaimFlags;
 import me.grabsky.claims.listeners.RegionListener;
 import me.grabsky.claims.panel.PanelManager;
 import me.grabsky.claims.utils.ClaimsUtils;
-import me.grabsky.indigo.framework.CommandManager;
+import me.grabsky.indigo.framework.commands.CommandManager;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import me.grabsky.indigo.logger.FileLogger;
 import org.bukkit.NamespacedKey;

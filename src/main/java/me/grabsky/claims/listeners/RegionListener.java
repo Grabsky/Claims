@@ -9,6 +9,7 @@ import me.grabsky.claims.configuration.Items;
 import me.grabsky.claims.configuration.Lang;
 import me.grabsky.claims.panel.PanelManager;
 import me.grabsky.claims.utils.ClaimsUtils;
+import me.grabsky.indigo.configuration.Global;
 import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.UserCache;
 import org.bukkit.Bukkit;
@@ -89,7 +90,7 @@ public class RegionListener implements Listener {
                 return;
             }
             event.setCancelled(true);
-            Lang.send(player, Lang.MISSING_PERMISSIONS);
+            Lang.send(player, Global.MISSING_PERMISSIONS);
         }
     }
 
@@ -141,7 +142,7 @@ public class RegionListener implements Listener {
                 return;
             }
             event.setCancelled(true);
-            Lang.send(player, Lang.MISSING_PERMISSIONS);
+            Lang.send(player, Global.MISSING_PERMISSIONS);
         }
     }
 

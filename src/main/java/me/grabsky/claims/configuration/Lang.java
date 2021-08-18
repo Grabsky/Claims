@@ -1,28 +1,18 @@
 package me.grabsky.claims.configuration;
 
 import me.grabsky.claims.Claims;
+import me.grabsky.indigo.framework.lang.AbstractLang;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.List;
 
-public class Lang {
+public class Lang extends AbstractLang {
     private final Claims instance;
     private final ConsoleLogger consoleLogger;
     private final File file;
-    private FileConfiguration fileConfiguration;
 
-    public static Component PLAYER_NOT_FOUND;
-    public static Component MISSING_PERMISSIONS;
-    public static Component PLAYER_ONLY;
-    public static Component RELOAD_SUCCESS;
-    public static Component RELOAD_FAIL;
     public static Component PLAYER_HAS_NO_CLAIM;
     public static Component YOU_DONT_HAVE_A_CLAIM;
     public static Component TOO_CLOSE_TO_SPAWN;
@@ -51,11 +41,13 @@ public class Lang {
     public static String DEFAULT_FAREWELL;
 
     public Lang(Claims instance) {
+        super(instance);
         this.instance = instance;
         this.consoleLogger = instance.getConsoleLogger();
         this.file = new File(instance.getDataFolder() + File.separator + "lang.yml");
     }
 
+    @Override
     public void reload() {
         // Saving default plugin translation file
         if(!file.exists()) {
@@ -66,12 +58,6 @@ public class Lang {
         if (fileConfiguration.getInt("version") != 3) {
             consoleLogger.error("Your lang.yml file is outdated. Some messages may not display properly.");
         }
-        // General
-        PLAYER_NOT_FOUND = component("general.player-not-found");
-        MISSING_PERMISSIONS = component("general.missing-permissions");
-        PLAYER_ONLY = component("general.player-only");
-        RELOAD_SUCCESS = component("general.reload-success");
-        RELOAD_FAIL = component("general.reload-fail");
         // Claims
         PLAYER_HAS_NO_CLAIM = component("claims.player-has-no-claim");
         YOU_DONT_HAVE_A_CLAIM = component ("claims.you-dont-have-a-claim");
@@ -99,41 +85,6 @@ public class Lang {
         // Flags
         DEFAULT_GREETING = fileConfiguration.getString("flags.default-greeting", "");
         DEFAULT_FAREWELL = fileConfiguration.getString("flags.default-farewell", "");
-    }
-
-    private String string(String path) {
-        final StringBuilder sb = new StringBuilder();
-        if (fileConfiguration.isList(path)) {
-            final List<String> list = fileConfiguration.getStringList(path);
-            for (int i = 0; i < list.size(); i++) {
-                sb.append(list.get(i));
-                if (i + 1 != list.size()) {
-                    sb.append("\n");
-                }
-            }
-        } else {
-            sb.append(fileConfiguration.getString(path));
-        }
-        return sb.toString();
-    }
-
-    private Component component(String path) {
-        return LegacyComponentSerializer.legacySection().deserialize(this.string(path));
-    }
-
-    /** Sends parsed component */
-    public static void send(@NotNull CommandSender sender, @NotNull Component component) {
-        if (component != Component.empty()) {
-            sender.sendMessage(component);
-        }
-    }
-
-    /** Parses and sends component */
-    public static void send(@NotNull CommandSender sender, @NotNull String text) {
-        final Component component = LegacyComponentSerializer.legacySection().deserialize(text);
-        if (component != Component.empty()) {
-            sender.sendMessage(component);
-        }
     }
 }
 

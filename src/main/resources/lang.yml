@@ -1,13 +1,6 @@
 version: 3 # Do not modify this unless you know what you're doing
 
 # Following section(s) supports classic color codes (§) and hex colors (§#)
-general:
-  player-not-found: '§6§lS§e§lD§8 » §cNie odnaleziono takiego gracza.'
-  missing-permissions: '§6§lS§e§lD§8 » §cBrak uprawnień.'
-  player-only: '§6§lS§e§lD§8 » §cMożesz to zrobić tylko jako gracz.'
-  reload-success: '§6§lS§e§lD§8 » §7Konfiguracja została pomyślnie przeładowana.'
-  reload-fail: '§6§lS§e§lD§8 » §cWystąpił błąd podczas ładowania konfiguracji.'
-
 claims:
   player-has-no-claim: '§6§lS§e§lD§8 » §cTen gracz nie ma terenu.'
   you-dont-have-a-claim: '§6§lS§e§lD§8 » §cNie posiadasz swojego terenu.'
