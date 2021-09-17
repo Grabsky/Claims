@@ -7,20 +7,19 @@ softdepend: [Vanish]
 authors: [Grabsky]
 permissions:
   claims.plugin.claims.*:
-    description: 'Difficult to describe; related to plugin behaviour'
     children:
       claims.plugin.claims.place: false
       claims.plugin.claims.destroy: false
       claims.plugin.claims.showall: false
+
   claims.command.claims.*:
-    description: 'Access all claims commands'
     childern:
       claims.command.claims: false
       claims.command.claims.fix: false
       claims.command.claims.others: false
       claims.command.claims.reload: false
+
   claims.bypass.claims.*:
-    description: 'Bypass certain claims actions'
     childern:
       claims.bypass.claims.ownercheck: false
       claims.bypass.claims.teleportdelay: false
