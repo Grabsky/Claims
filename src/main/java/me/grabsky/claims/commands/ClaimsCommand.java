@@ -37,7 +37,7 @@ public class ClaimsCommand extends BaseCommand {
     private final List<String> completions = Arrays.asList("get", "fix", "reload");
 
     public ClaimsCommand(Claims instance) {
-        super("claims", Arrays.asList("claim", "teren"), "skydistrict.command.claims", ExecutorType.ALL);
+        super("claims", Arrays.asList("claim", "teren"), "claims.command.claims", ExecutorType.ALL);
         this.instance = instance;
         this.manager = instance.getClaimManager();
     }
@@ -77,7 +77,7 @@ public class ClaimsCommand extends BaseCommand {
 
     @SubCommand
     private void onClaimsReload(final CommandSender sender) {
-        if (sender.hasPermission("skydistrict.command.claims.reload")) {
+        if (sender.hasPermission("claims.command.claims.reload")) {
             if (instance.reload()) {
                 ClaimsLang.send(sender, Global.RELOAD_SUCCESS);
                 return;
@@ -91,7 +91,7 @@ public class ClaimsCommand extends BaseCommand {
     @SubCommand
     private void onClaimsFix(final CommandSender sender) {
         if (sender instanceof Player executor) {
-            if (executor.hasPermission("skydistrict.command.claims.fix")) {
+            if (executor.hasPermission("claims.command.claims.fix")) {
                 final Location loc = executor.getLocation();
                 for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
                     if (region.getId().startsWith(ClaimsConfig.REGION_PREFIX)) {
@@ -117,7 +117,7 @@ public class ClaimsCommand extends BaseCommand {
     @SubCommand
     private void onClaimsGet(final CommandSender sender) {
         if (sender instanceof Player executor) {
-            if (sender.hasPermission("skydistrict.command.claims.get")) {
+            if (sender.hasPermission("claims.command.claims.get")) {
                 final Inventory inventory = executor.getInventory();
                 inventory.addItem(Items.getClaimBlock(0)); // COAL
                 inventory.addItem(Items.getClaimBlock(1)); // IRON
@@ -136,7 +136,7 @@ public class ClaimsCommand extends BaseCommand {
     @SubCommand
     private void onClaimsPlayer(final CommandSender sender, final String name) {
         if (sender instanceof Player executor) {
-            if (sender.hasPermission("skydistrict.command.claims.others")) {
+            if (sender.hasPermission("claims.command.claims.others")) {
                 if (UserCache.contains(name)) {
                     this.openClaimMenu(executor, UserCache.get(name).getUniqueId());
                     return;

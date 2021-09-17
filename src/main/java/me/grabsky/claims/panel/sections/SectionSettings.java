@@ -46,7 +46,7 @@ public class SectionSettings extends Section {
     }
 
     private boolean canUpgrade(Player player, Material upgradeMaterial) {
-        return executor.hasPermission("skydistrict.bypass.claims.upgradecost") || InventoryUtils.hasMaterial(executor, upgradeMaterial, 64);
+        return executor.hasPermission("claims.bypass.claims.upgradecost") || InventoryUtils.hasMaterial(executor, upgradeMaterial, 64);
     }
 
     private void generateView() {
@@ -94,7 +94,7 @@ public class SectionSettings extends Section {
             if (nextLevel == null) return;
             if (!canUpgrade(executor, nextLevel.getUpgradeMaterial())) return;
             // Removing material if player doesn't have bypass permission
-            if (!executor.hasPermission("skydistrict.bypass.claims.upgradecost")) {
+            if (!executor.hasPermission("claims.bypass.claims.upgradecost")) {
                 InventoryUtils.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 64);
             }
             // Upgrading claim

@@ -6,22 +6,22 @@ depend: [Indigo, WorldEdit, WorldGuard]
 softdepend: [Vanish]
 authors: [Grabsky]
 permissions:
-  skydistrict.plugin.claims.*:
+  claims.plugin.claims.*:
     description: 'Difficult to describe; related to plugin behaviour'
     children:
-      skydistrict.plugin.claims.place: false
-      skydistrict.plugin.claims.destroy: false
-      skydistrict.plugin.claims.showall: false
-  skydistrict.command.claims.*:
+      claims.plugin.claims.place: false
+      claims.plugin.claims.destroy: false
+      claims.plugin.claims.showall: false
+  claims.command.claims.*:
     description: 'Access all claims commands'
     childern:
-      skydistrict.command.claims: false
-      skydistrict.command.claims.fix: false
-      skydistrict.command.claims.others: false
-      skydistrict.command.claims.reload: false
-  skydistrict.bypass.claims.*:
+      claims.command.claims: false
+      claims.command.claims.fix: false
+      claims.command.claims.others: false
+      claims.command.claims.reload: false
+  claims.bypass.claims.*:
     description: 'Bypass certain claims actions'
     childern:
-      skydistrict.bypass.claims.ownercheck: false
-      skydistrict.bypass.claims.teleportdelay: false
-      skydistrict.bypass.claims.upgradecost: false
+      claims.bypass.claims.ownercheck: false
+      claims.bypass.claims.teleportdelay: false
+      claims.bypass.claims.upgradecost: false
