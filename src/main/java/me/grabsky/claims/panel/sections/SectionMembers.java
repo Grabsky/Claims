@@ -2,9 +2,9 @@ package me.grabsky.claims.panel.sections;
 
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
-import me.grabsky.claims.configuration.Config;
+import me.grabsky.claims.configuration.ClaimsConfig;
+import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.configuration.Items;
-import me.grabsky.claims.configuration.Lang;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
@@ -51,8 +51,8 @@ public class SectionMembers extends Section {
                 // One more check just in case something changed while GUI was open
                 if (claim.removeMember(uuid)) {
                     this.generateView();
-                    if (Config.LOGS) {
-                        fileLogger.log(Config.LOG_FORMAT_MEMBER_REMOVED
+                    if (ClaimsConfig.LOGS) {
+                        fileLogger.log(ClaimsConfig.LOG_FORMAT_MEMBER_REMOVED
                                 .replace("{member-name}", user.getName())
                                 .replace("{member-uuid}", user.getUniqueId().toString())
                                 .replace("{claim-id}", claim.getId())
@@ -62,7 +62,7 @@ public class SectionMembers extends Section {
                     }
                 } else {
                     executor.closeInventory();
-                    Lang.send(executor, Lang.NOT_MEMBER);
+                    ClaimsLang.send(executor, ClaimsLang.NOT_MEMBER);
                 }
             });
             slot = (slot == 15) ? 20 : slot + 1;

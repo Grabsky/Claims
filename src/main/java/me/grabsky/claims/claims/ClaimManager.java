@@ -11,8 +11,8 @@ import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.api.ClaimsAPI;
-import me.grabsky.claims.configuration.Config;
-import me.grabsky.claims.configuration.Lang;
+import me.grabsky.claims.configuration.ClaimsConfig;
+import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.flags.ClaimFlags;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.logger.ConsoleLogger;
@@ -42,7 +42,7 @@ public class ClaimManager implements ClaimsAPI {
         int loadedClaims = 0;
         for (Map.Entry<String, ProtectedRegion> en : regionManager.getRegions().entrySet()) {
             final ProtectedRegion region = en.getValue();
-            if (!region.getId().startsWith(Config.REGION_PREFIX) || !region.hasMembersOrOwners() || region.getOwners().size() != 1) continue;
+            if (!region.getId().startsWith(ClaimsConfig.REGION_PREFIX) || !region.hasMembersOrOwners() || region.getOwners().size() != 1) continue;
             final UUID owner = region.getOwners().getUniqueIds().iterator().next();
             final ClaimPlayer cp = this.getClaimPlayer(owner);
             final Claim claim = new Claim(region.getId(), owner, region);
@@ -101,7 +101,7 @@ public class ClaimManager implements ClaimsAPI {
 
     public Claim createRegionAt(Location loc, Player owner, int level) {
         // Returning if location is too close to spawn or other claim
-        if (this.isInSquare(loc, this.getClosestTo(loc), 70) || this.isInSquare(loc, Config.DEFAULT_WORLD.getSpawnLocation(), Config.MINIMUM_DISTANCE_FROM_SPAWN)) return null;
+        if (this.isInSquare(loc, this.getClosestTo(loc), 70) || this.isInSquare(loc, ClaimsConfig.DEFAULT_WORLD.getSpawnLocation(), ClaimsConfig.MINIMUM_DISTANCE_FROM_SPAWN)) return null;
         // Points
         final UUID ownerUniqueId = owner.getUniqueId();
         final int x = loc.getBlockX();
@@ -117,7 +117,7 @@ public class ClaimManager implements ClaimsAPI {
         this.setDefaultFlags(region, loc, owner);
         region.setFlag(ClaimFlags.CLAIM_LEVEL, level);
         // Setting region priority
-        region.setPriority(Config.REGION_PRIORITY);
+        region.setPriority(ClaimsConfig.REGION_PRIORITY);
         // Adding owner
         region.getOwners().addPlayer(ownerUniqueId);
         // Registering region
@@ -156,8 +156,8 @@ public class ClaimManager implements ClaimsAPI {
         region.setFlag(Flags.FIRE_SPREAD, StateFlag.State.DENY);
         region.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
         region.setFlag(Flags.GHAST_FIREBALL, StateFlag.State.DENY);
-        region.setFlag(ClaimFlags.GREETING_ACTIONBAR, Lang.DEFAULT_GREETING.replace("%player%", name));
-        region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, Lang.DEFAULT_FAREWELL.replace("%player%", name));
+        region.setFlag(ClaimFlags.GREETING_ACTIONBAR, ClaimsLang.DEFAULT_GREETING.replace("{player}", name));
+        region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, ClaimsLang.DEFAULT_FAREWELL.replace("{player}", name));
         // Dynamic flags (changeable)
         region.setFlag(Flags.USE, StateFlag.State.DENY);
         region.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);

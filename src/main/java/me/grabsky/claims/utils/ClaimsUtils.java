@@ -4,7 +4,7 @@ import com.sk89q.worldedit.world.weather.WeatherTypes;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import me.grabsky.claims.claims.ClaimLevel;
-import me.grabsky.claims.configuration.Config;
+import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.Items;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -30,7 +30,7 @@ public class ClaimsUtils {
 
     // Creates region ID from org.bukkit.Location
     public static String createId(org.bukkit.Location location) {
-        return new StringBuilder().append(Config.REGION_PREFIX).append("x").append(location.getBlockX()).append("y").append(location.getBlockY()).append("z").append(location.getBlockZ()).toString();
+        return new StringBuilder().append(ClaimsConfig.REGION_PREFIX).append("x").append(location.getBlockX()).append("y").append(location.getBlockY()).append("z").append(location.getBlockZ()).toString();
     }
 
     // Returns list of options (flag values)

@@ -4,9 +4,9 @@ import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.claims.ClaimLevel;
 import me.grabsky.claims.claims.ClaimManager;
-import me.grabsky.claims.configuration.Config;
+import me.grabsky.claims.configuration.ClaimsConfig;
+import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.configuration.Items;
-import me.grabsky.claims.configuration.Lang;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.claims.utils.InventoryUtils;
@@ -56,9 +56,9 @@ public class SectionSettings extends Section {
         // Home
         panel.setItem(13, teleport, (event) -> {
             if (claim.setHome(executor.getLocation())) {
-                Lang.send(executor, Lang.SET_HOME_SUCCESS);
+                ClaimsLang.send(executor, ClaimsLang.SET_HOME_SUCCESS);
             } else {
-                Lang.send(executor, Lang.SET_HOME_FAIL);
+                ClaimsLang.send(executor, ClaimsLang.SET_HOME_FAIL);
             }
             executor.closeInventory();
         });
@@ -100,12 +100,12 @@ public class SectionSettings extends Section {
             // Upgrading claim
             manager.upgrade(claim);
             // Sending success message and play level up sound
-            Lang.send(executor, Lang.UPGRADE_SUCCESS.replace("%size%", nextLevel.getSize()));
+            ClaimsLang.send(executor, ClaimsLang.UPGRADE_SUCCESS.replace("{size}", nextLevel.getSize()));
             executor.playSound(executor.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
             // Refreshing the view
             this.generateView();
-            if (Config.LOGS) {
-                fileLogger.log(Config.LOG_FORMAT_UPGRADED
+            if (ClaimsConfig.LOGS) {
+                fileLogger.log(ClaimsConfig.LOG_FORMAT_UPGRADED
                         .replace("{claim-id}", claim.getId())
                         .replace("{claim-level}", String.valueOf(claim.getLevel()))
                         .replace("{issuer-name}", executor.getName())

@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 public class InventoryUtils {
-
     // Updates title of inventory currently open by specified player
     public static void updateTitle(Player player, String title, boolean editMode) {
         final String finalTitle = (editMode) ? title + "\u7001§r*" : title;

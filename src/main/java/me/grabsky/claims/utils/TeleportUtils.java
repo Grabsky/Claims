@@ -2,8 +2,8 @@ package me.grabsky.claims.utils;
 
 import io.papermc.lib.PaperLib;
 import me.grabsky.claims.Claims;
-import me.grabsky.claims.configuration.Config;
-import me.grabsky.claims.configuration.Lang;
+import me.grabsky.claims.configuration.ClaimsConfig;
+import me.grabsky.claims.configuration.ClaimsLang;
 import net.kyori.adventure.text.Component;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -17,22 +17,22 @@ public class TeleportUtils {
         final Location initialLoc = player.getLocation();
         // Skipping teleport delay if requirements are met
         if (player.hasPermission("skydisitrict.bypass.claims.teleportdelay") || delay == 0) {
-            PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> Lang.send(player, getStatusMessage(status)));
+            PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> ClaimsLang.send(player, getStatusMessage(status)));
             return;
         }
         // Sending TELEPORTING message to player and running triggering delay mechanic
-        Lang.send(player, Lang.TELEPORTING.replace("%cooldown%", String.valueOf(Config.TELEPORT_DELAY)));
+        ClaimsLang.send(player, ClaimsLang.TELEPORTING.replace("%cooldown%", String.valueOf(ClaimsConfig.TELEPORT_DELAY)));
         new BukkitRunnable() {
             int secondsLeft = delay;
             @Override
             public void run() {
                 secondsLeft--;
                 if (initialLoc.distanceSquared(player.getLocation()) > 1D) {
-                    Lang.send(player, Lang.TELEPORT_CANCELLED);
+                    ClaimsLang.send(player, ClaimsLang.TELEPORT_CANCELLED);
                     this.cancel();
                 }
                 if(secondsLeft == 0) {
-                    PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> Lang.send(player, getStatusMessage(status)));
+                    PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> ClaimsLang.send(player, getStatusMessage(status)));
                     this.cancel();
                 }
             }
@@ -41,8 +41,8 @@ public class TeleportUtils {
 
     private static Component getStatusMessage(boolean status) {
         if (status) {
-            return Lang.TELEPORT_SUCCEED;
+            return ClaimsLang.TELEPORT_SUCCEED;
         }
-        return Lang.TELEPORT_FAILED;
+        return ClaimsLang.TELEPORT_FAILED;
     }
 }

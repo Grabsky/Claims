@@ -4,7 +4,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.grabsky.claims.Claims;
-import me.grabsky.claims.configuration.Config;
+import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.flags.ClaimFlags;
 import org.bukkit.Location;
 
@@ -72,7 +72,7 @@ public class Claim {
     }
 
     public boolean addMember(UUID uuid) {
-        if (this.getMembers().size() < Config.MEMBERS_LIMIT) {
+        if (this.getMembers().size() < ClaimsConfig.MEMBERS_LIMIT) {
             wgRegion.getMembers().addPlayer(uuid);
             manager.getClaimPlayer(uuid).addRelative(this.getId());
             return true;

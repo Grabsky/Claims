@@ -1,6 +1,7 @@
 package me.grabsky.claims.configuration;
 
 import me.grabsky.claims.Claims;
+import me.grabsky.indigo.configuration.Global;
 import me.grabsky.indigo.framework.lang.AbstractLang;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import net.kyori.adventure.text.Component;
@@ -8,7 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
-public class Lang extends AbstractLang {
+public class ClaimsLang extends AbstractLang {
     private final Claims instance;
     private final ConsoleLogger consoleLogger;
     private final File file;
@@ -40,7 +41,7 @@ public class Lang extends AbstractLang {
     public static String DEFAULT_GREETING;
     public static String DEFAULT_FAREWELL;
 
-    public Lang(Claims instance) {
+    public ClaimsLang(Claims instance) {
         super(instance);
         this.instance = instance;
         this.consoleLogger = instance.getConsoleLogger();
@@ -56,7 +57,7 @@ public class Lang extends AbstractLang {
         // Overriding...
         this.fileConfiguration = YamlConfiguration.loadConfiguration(file);
         if (fileConfiguration.getInt("version") != 3) {
-            consoleLogger.error("Your lang.yml file is outdated. Some messages may not display properly.");
+            consoleLogger.error(Global.OUTDATED_LANG);
         }
         // Claims
         PLAYER_HAS_NO_CLAIM = component("claims.player-has-no-claim");

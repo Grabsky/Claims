@@ -1,6 +1,7 @@
 package me.grabsky.claims.configuration;
 
 import me.grabsky.claims.Claims;
+import me.grabsky.indigo.configuration.Global;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -9,7 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 
-public class Config {
+public class ClaimsConfig {
     private final Claims instance;
     private final ConsoleLogger consoleLogger;
     private final File file;
@@ -28,7 +29,7 @@ public class Config {
     public static String LOG_FORMAT_MEMBER_ADDED;
     public static String LOG_FORMAT_MEMBER_REMOVED;
 
-    public Config(Claims instance) {
+    public ClaimsConfig(Claims instance) {
         this.instance = instance;
         this.consoleLogger = instance.getConsoleLogger();
         this.file = new File(instance.getDataFolder() + File.separator + "config.yml");
@@ -42,7 +43,7 @@ public class Config {
         // Overriding...
         final FileConfiguration fc = YamlConfiguration.loadConfiguration(file);
         if (fc.getInt("version") != 1) {
-            consoleLogger.error("Your config.yml file is outdated. Plugin may not work properly.");
+            consoleLogger.error(Global.OUTDATED_CONFIG);
         }
         LOGS = fc.getBoolean("settings.logs");
         // Getting the default world (or disabling plugin if value is not present)

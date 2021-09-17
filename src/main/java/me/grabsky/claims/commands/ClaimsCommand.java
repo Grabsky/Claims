@@ -8,9 +8,9 @@ import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.claims.ClaimPlayer;
-import me.grabsky.claims.configuration.Config;
+import me.grabsky.claims.configuration.ClaimsConfig;
+import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.configuration.Items;
-import me.grabsky.claims.configuration.Lang;
 import me.grabsky.claims.flags.ClaimFlags;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.panel.sections.SectionHomes;
@@ -72,20 +72,20 @@ public class ClaimsCommand extends BaseCommand {
             this.openClaimMenu(executor, executor.getUniqueId());
             return;
         }
-        Lang.send(sender, Global.PLAYER_ONLY_COMMAND);
+        ClaimsLang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     @SubCommand
     private void onClaimsReload(final CommandSender sender) {
         if (sender.hasPermission("skydistrict.command.claims.reload")) {
             if (instance.reload()) {
-                Lang.send(sender, Global.RELOAD_SUCCESS);
+                ClaimsLang.send(sender, Global.RELOAD_SUCCESS);
                 return;
             }
-            Lang.send(sender, Global.RELOAD_FAIL);
+            ClaimsLang.send(sender, Global.RELOAD_FAIL);
             return;
         }
-        Lang.send(sender, Global.MISSING_PERMISSIONS);
+        ClaimsLang.send(sender, Global.MISSING_PERMISSIONS);
     }
 
     @SubCommand
@@ -94,24 +94,24 @@ public class ClaimsCommand extends BaseCommand {
             if (executor.hasPermission("skydistrict.command.claims.fix")) {
                 final Location loc = executor.getLocation();
                 for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
-                    if (region.getId().startsWith(Config.REGION_PREFIX)) {
+                    if (region.getId().startsWith(ClaimsConfig.REGION_PREFIX)) {
                         // Both variables shouldn't be null unless claim was manually modified
                         final Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
                         final Material type = ClaimsUtils.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
                         PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
                             chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
-                            Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_SUCCESS);
+                            ClaimsLang.send(sender, ClaimsLang.RESTORE_CLAIM_BLOCK_SUCCESS);
                         });
                         return;
                     }
                 }
-                Lang.send(sender, Lang.RESTORE_CLAIM_BLOCK_FAIL);
+                ClaimsLang.send(sender, ClaimsLang.RESTORE_CLAIM_BLOCK_FAIL);
                 return;
             }
-            Lang.send(sender, Global.MISSING_PERMISSIONS);
+            ClaimsLang.send(sender, Global.MISSING_PERMISSIONS);
             return;
         }
-        Lang.send(sender, Global.PLAYER_ONLY_COMMAND);
+        ClaimsLang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     @SubCommand
@@ -124,13 +124,13 @@ public class ClaimsCommand extends BaseCommand {
                 inventory.addItem(Items.getClaimBlock(2)); // GOLD
                 inventory.addItem(Items.getClaimBlock(3)); // DIAMOND
                 inventory.addItem(Items.getClaimBlock(4)); // EMERALD
-                Lang.send(sender, Lang.CLAIM_BLOCKS_ADDED);
+                ClaimsLang.send(sender, ClaimsLang.CLAIM_BLOCKS_ADDED);
                 return;
             }
-            Lang.send(sender, Global.MISSING_PERMISSIONS);
+            ClaimsLang.send(sender, Global.MISSING_PERMISSIONS);
             return;
         }
-        Lang.send(sender, Global.PLAYER_ONLY_COMMAND);
+        ClaimsLang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     @SubCommand
@@ -141,13 +141,13 @@ public class ClaimsCommand extends BaseCommand {
                     this.openClaimMenu(executor, UserCache.get(name).getUniqueId());
                     return;
                 }
-                Lang.send(sender, Global.PLAYER_NOT_FOUND);
+                ClaimsLang.send(sender, Global.PLAYER_NOT_FOUND);
                 return;
             }
-            Lang.send(sender, Global.MISSING_PERMISSIONS);
+            ClaimsLang.send(sender, Global.MISSING_PERMISSIONS);
             return;
         }
-        Lang.send(sender, Global.PLAYER_ONLY_COMMAND);
+        ClaimsLang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {
@@ -159,7 +159,7 @@ public class ClaimsCommand extends BaseCommand {
         } else if (owner.hasRelatives()) {
             Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionHomes(panel, executor, owner.getUniqueId(), null)), 1L);
         } else {
-            Lang.send(executor, (executor.getUniqueId().equals(ownerUniqueId)) ? Lang.YOU_DONT_HAVE_A_CLAIM : Lang.PLAYER_HAS_NO_CLAIM);
+            ClaimsLang.send(executor, (executor.getUniqueId().equals(ownerUniqueId)) ? ClaimsLang.YOU_DONT_HAVE_A_CLAIM : ClaimsLang.PLAYER_HAS_NO_CLAIM);
             return;
         }
         panel.open(executor);

@@ -4,9 +4,9 @@ import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.claims.ClaimPlayer;
-import me.grabsky.claims.configuration.Config;
+import me.grabsky.claims.configuration.ClaimsConfig;
+import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.configuration.Items;
-import me.grabsky.claims.configuration.Lang;
 import me.grabsky.claims.panel.PanelManager;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.configuration.Global;
@@ -50,21 +50,21 @@ public class RegionListener implements Listener {
         if (data.has(Claims.claimBlockLevel, PersistentDataType.INTEGER)) {
             final Player player = event.getPlayer();
             if (player.hasPermission("skydistrict.plugin.claims.place")) {
-                if (event.getBlock().getWorld() == Config.DEFAULT_WORLD) {
+                if (event.getBlock().getWorld() == ClaimsConfig.DEFAULT_WORLD) {
                     final UUID uuid = player.getUniqueId();
                     final ClaimPlayer cp = manager.getClaimPlayer(uuid);
                     final Location loc = event.getBlock().getLocation();
                     if (!cp.hasClaim()) {
                         // The reason why it's here and not in RegionManager is that I want the messages to be different
-                        if (!manager.isInSquare(loc, Config.DEFAULT_WORLD.getSpawnLocation(), Config.MINIMUM_DISTANCE_FROM_SPAWN)) {
+                        if (!manager.isInSquare(loc, ClaimsConfig.DEFAULT_WORLD.getSpawnLocation(), ClaimsConfig.MINIMUM_DISTANCE_FROM_SPAWN)) {
                             // This shouldn't be null
                             final int level = data.get(Claims.claimBlockLevel, PersistentDataType.INTEGER);
                             final Claim claim = manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level);
                             if (claim != null) {
-                                Lang.send(player, Lang.PLACE_SUCCESS);
+                                ClaimsLang.send(player, ClaimsLang.PLACE_SUCCESS);
                                 // Log action if enabled
-                                if (Config.LOGS) {
-                                    fileLogger.log(Config.LOG_FORMAT_PLACED
+                                if (ClaimsConfig.LOGS) {
+                                    fileLogger.log(ClaimsConfig.LOG_FORMAT_PLACED
                                             .replace("{claim-id}", claim.getId())
                                             .replace("{claim-level}", String.valueOf(claim.getLevel()))
                                             .replace("{issuer-name}", player.getName())
@@ -74,23 +74,23 @@ public class RegionListener implements Listener {
                                 return;
                             }
                             event.setCancelled(true);
-                            Lang.send(player, Lang.OVERLAPS_OTHER_CLAIM);
+                            ClaimsLang.send(player, ClaimsLang.OVERLAPS_OTHER_CLAIM);
                             return;
                         }
                         event.setCancelled(true);
-                        Lang.send(player, Lang.TOO_CLOSE_TO_SPAWN);
+                        ClaimsLang.send(player, ClaimsLang.TOO_CLOSE_TO_SPAWN);
                         return;
                     }
                     event.setCancelled(true);
-                    Lang.send(player, Lang.REACHED_CLAIMS_LIMIT);
+                    ClaimsLang.send(player, ClaimsLang.REACHED_CLAIMS_LIMIT);
                     return;
                 }
                 event.setCancelled(true);
-                Lang.send(player, Lang.BLACKLISTED_WORLD);
+                ClaimsLang.send(player, ClaimsLang.BLACKLISTED_WORLD);
                 return;
             }
             event.setCancelled(true);
-            Lang.send(player, Global.MISSING_PERMISSIONS);
+            ClaimsLang.send(player, Global.MISSING_PERMISSIONS);
         }
     }
 
@@ -98,7 +98,7 @@ public class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onClaimBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
-        if (event.getBlock().getWorld() != Config.DEFAULT_WORLD) return;
+        if (event.getBlock().getWorld() != ClaimsConfig.DEFAULT_WORLD) return;
         final String id = ClaimsUtils.createId(event.getBlock().getLocation());
         if (manager.containsClaim(id)) {
             final Claim claim = manager.getClaim(id);
@@ -111,8 +111,8 @@ public class RegionListener implements Listener {
                         event.setExpToDrop(0);
                         event.setDropItems(false);
                         // Log action if enabled
-                        if (Config.LOGS) {
-                            fileLogger.log(Config.LOG_FORMAT_DESTROYED
+                        if (ClaimsConfig.LOGS) {
+                            fileLogger.log(ClaimsConfig.LOG_FORMAT_DESTROYED
                                     .replace("{claim-id}", id)
                                     .replace("{claim-level}", String.valueOf(claim.getLevel()))
                                     .replace("{owner-name}", UserCache.get(ownerUniqueId).getName())
@@ -124,7 +124,7 @@ public class RegionListener implements Listener {
                         manager.removeRegionOf(ownerUniqueId);
                         // Dropping the item
                         if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
-                        Lang.send(player, Lang.DESTROY_SUCCESS);
+                        ClaimsLang.send(player, ClaimsLang.DESTROY_SUCCESS);
                         final Player owner = Bukkit.getPlayer(ownerUniqueId);
                         if (owner != null && owner.isOnline()) {
                             if (panelManager.isInventoryOpen(owner)) {
@@ -134,15 +134,15 @@ public class RegionListener implements Listener {
                         return;
                     }
                     event.setCancelled(true);
-                    Lang.send(player, Lang.NOT_SNEAKING);
+                    ClaimsLang.send(player, ClaimsLang.NOT_SNEAKING);
                     return;
                 }
                 event.setCancelled(true);
-                Lang.send(player, Lang.NOT_OWNER);
+                ClaimsLang.send(player, ClaimsLang.NOT_OWNER);
                 return;
             }
             event.setCancelled(true);
-            Lang.send(player, Global.MISSING_PERMISSIONS);
+            ClaimsLang.send(player, Global.MISSING_PERMISSIONS);
         }
     }
 
