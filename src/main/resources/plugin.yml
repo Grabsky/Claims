@@ -8,9 +8,9 @@ authors: [Grabsky]
 permissions:
   claims.plugin.claims.*:
     children:
-      claims.plugin.claims.place: false
-      claims.plugin.claims.destroy: false
-      claims.plugin.claims.showall: false
+      claims.plugin.place: false
+      claims.plugin.destroy: false
+      claims.plugin.showall: false
 
   claims.command.claims.*:
     childern:
@@ -21,6 +21,6 @@ permissions:
 
   claims.bypass.claims.*:
     childern:
-      claims.bypass.claims.ownercheck: false
-      claims.bypass.claims.teleportdelay: false
-      claims.bypass.claims.upgradecost: false
+      claims.bypass.ownercheck: false
+      claims.bypass.teleportdelay: false
+      claims.bypass.upgradecost: false

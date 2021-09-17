@@ -30,7 +30,7 @@ public class SectionHomes extends Section {
 
     public void prepare() {
         // Some useful values
-        this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("claims.plugin.claims.showall")) ? manager.getClaimIds() : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
+        this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("claims.plugin.showall")) ? manager.getClaimIds() : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
         this.maxOnPage = 21;
         this.usableSize = relatives.size();
         this.pages = (relatives.size() - 1) / maxOnPage + 1;

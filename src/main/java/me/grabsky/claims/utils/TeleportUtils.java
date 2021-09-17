@@ -16,12 +16,12 @@ public class TeleportUtils {
     public static void teleportAsync(Player player, Location location, int delay) {
         final Location initialLoc = player.getLocation();
         // Skipping teleport delay if requirements are met
-        if (player.hasPermission("skydisitrict.bypass.claims.teleportdelay") || delay == 0) {
+        if (player.hasPermission("skydisitrict.bypass.teleportdelay") || delay == 0) {
             PaperLib.teleportAsync(player, location, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(status -> ClaimsLang.send(player, getStatusMessage(status)));
             return;
         }
         // Sending TELEPORTING message to player and running triggering delay mechanic
-        ClaimsLang.send(player, ClaimsLang.TELEPORTING.replace("%cooldown%", String.valueOf(ClaimsConfig.TELEPORT_DELAY)));
+        ClaimsLang.send(player, ClaimsLang.TELEPORTING.replace("{cooldown}", String.valueOf(ClaimsConfig.TELEPORT_DELAY)));
         new BukkitRunnable() {
             int secondsLeft = delay;
             @Override
