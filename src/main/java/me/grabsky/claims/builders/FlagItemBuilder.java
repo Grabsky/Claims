@@ -82,8 +82,10 @@ public class FlagItemBuilder {
     public ItemStack build() {
         if (value == -1) {
             final ConsoleLogger consoleLogger = Claims.getInstance().getConsoleLogger();
-            consoleLogger.error("§c[ClaimsGUI/DEBUG] Error trying to get value for '" + flag.getName() + "' flag.");
-            consoleLogger.error("§c[ClaimsGUI/DEBUG] Expected one of " + String.join(", ", options + " but found '" + value + "'."));
+            final List<String> opt = new ArrayList<>();
+            options.forEach((o) -> opt.add(o + ""));
+            consoleLogger.error("§cError trying to get value for '" + flag.getName() + "' flag.");
+            consoleLogger.error("§cExpected one of " + String.join(", ", opt) + " but found '" + value + "'.");
             return null;
         }
         item.setItemMeta(this.meta);
