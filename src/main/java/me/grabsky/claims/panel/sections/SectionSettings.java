@@ -46,7 +46,7 @@ public class SectionSettings extends Section {
     }
 
     private boolean canUpgrade(Player player, Material upgradeMaterial) {
-        return executor.hasPermission("claims.bypass.upgradecost") || InventoryUtils.hasMaterial(executor, upgradeMaterial, 64);
+        return executor.hasPermission("claims.bypass.upgradecost") || (InventoryUtils.hasItem(executor, Items.UPGRADE_CRYSTAL, 1) && InventoryUtils.hasMaterial(executor, upgradeMaterial, 16));
     }
 
     private void generateView() {
@@ -77,7 +77,9 @@ public class SectionSettings extends Section {
                     "§7Następny poziom: " +  nextLevel.getAlias(),
                     "§8› §7Rozmiar: " + nextLevel.getSize(),
                     "",
-                    "§7Koszt ulepszenia: " + nextLevel.getColor() + "64x " + nextLevel.getAlias(),
+                    "§7Koszt ulepszenia: ",
+                    "§8› §d1x Kryształ Ulepszenia",
+                    "§8› " + nextLevel.getColor() + "16x " + nextLevel.getAlias(),
                     "",
                     canUpgradeString
             );
@@ -95,7 +97,8 @@ public class SectionSettings extends Section {
             if (!canUpgrade(executor, nextLevel.getUpgradeMaterial())) return;
             // Removing material if player doesn't have bypass permission
             if (!executor.hasPermission("claims.bypass.upgradecost")) {
-                InventoryUtils.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 64);
+                InventoryUtils.removeItem(executor, Items.UPGRADE_CRYSTAL, 1);
+                InventoryUtils.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 16);
             }
             // Upgrading claim
             manager.upgrade(claim);

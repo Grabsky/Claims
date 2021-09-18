@@ -5,6 +5,8 @@ import me.grabsky.claims.claims.ClaimLevel;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import org.bukkit.Material;
+import org.bukkit.enchantments.Enchantment;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
@@ -97,4 +99,11 @@ public class Items {
     public static final ItemBuilder EMERALD_BLOCK = new ItemBuilder(Material.PLAYER_HEAD)
             .setName("§a§lUlepsz")
             .setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTk2MGQ2ZmZhZjQ0ZThhZmNiZGY4YjI5YTc3ZDg0Y2UyMmM3MWQwMGM2NGJmZDk5YWYzNDBhNjk1MzViZmQ3In19fQ==");
+
+    public static final ItemStack UPGRADE_CRYSTAL = new ItemBuilder(Material.AMETHYST_SHARD)
+            .setName("§d§lKryształ Ulepszenia")
+            .setLore("§7Potrzebny do ulepszenia terenu.")
+            .addEnchantment(Enchantment.ARROW_INFINITE, 1)
+            .setItemFlags(ItemFlag.HIDE_ENCHANTS)
+            .build();
 }

@@ -124,6 +124,7 @@ public class ClaimsCommand extends BaseCommand {
                 inventory.addItem(Items.getClaimBlock(2)); // GOLD
                 inventory.addItem(Items.getClaimBlock(3)); // DIAMOND
                 inventory.addItem(Items.getClaimBlock(4)); // EMERALD
+                inventory.addItem(Items.UPGRADE_CRYSTAL); // UPGRADE_CRYSTAL
                 ClaimsLang.send(sender, ClaimsLang.CLAIM_BLOCKS_ADDED);
                 return;
             }

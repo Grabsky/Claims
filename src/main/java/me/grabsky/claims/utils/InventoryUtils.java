@@ -36,12 +36,37 @@ public class InventoryUtils {
         }
     }
 
+    // Removes specific amount of items (compared by meta) from player's inventory
+    public static void removeItem(final Player player, final ItemStack itemToRemove, final int amount) {
+        int leftToRemove = amount;
+        for (ItemStack item : player.getInventory().getStorageContents()) {
+            if (leftToRemove == 0) break;
+            if (item != null && item.isSimilar(itemToRemove)) {
+                int a = Math.min(item.getAmount(), leftToRemove);
+                leftToRemove -= a;
+                item.setAmount(item.getAmount() - a);
+            }
+        }
+    }
+
     // Returns true if player has given amount of specific material in his inventory
     public static boolean hasMaterial(final Player player, final Material material, final int amount) {
         int found = 0;
         for (ItemStack item : player.getInventory().getStorageContents()) {
             if (found >= amount) return true;
             if (item != null && item.getType() == material) {
+                found += item.getAmount();
+            }
+        }
+        return false;
+    }
+
+    // Returns true if player has given amount of specific material in his inventory
+    public static boolean hasItem(final Player player, final ItemStack itemToCheck, final int amount) {
+        int found = 0;
+        for (ItemStack item : player.getInventory().getStorageContents()) {
+            if (found >= amount) return true;
+            if (item != null && item.isSimilar(itemToCheck)) {
                 found += item.getAmount();
             }
         }

@@ -12,6 +12,7 @@ import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.configuration.Global;
 import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.UserCache;
+import me.grabsky.indigo.utils.Numbers;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -143,6 +144,15 @@ public class RegionListener implements Listener {
             }
             event.setCancelled(true);
             ClaimsLang.send(player, Global.MISSING_PERMISSIONS);
+        }
+    }
+
+    @EventHandler
+    public void onAmethystBreak(BlockBreakEvent event) {
+        if (!event.isCancelled() && event.getPlayer().getGameMode() != GameMode.CREATIVE && event.getBlock().getType() == Material.AMETHYST_CLUSTER) {
+            if (Numbers.chanceOf(0.02F)) {
+                event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.UPGRADE_CRYSTAL);
+            }
         }
     }
 
