@@ -10,13 +10,14 @@ permissions:
     children:
       claims.plugin.place: false
       claims.plugin.destroy: false
-      claims.plugin.showall: false
+      claims.plugin.displayallclaims: false
 
   claims.command.claims.*:
     childern:
       claims.command.claims: false
+      claims.command.claims.edit: false
       claims.command.claims.fix: false
-      claims.command.claims.others: false
+      claims.command.claims.get: false
       claims.command.claims.reload: false
 
   claims.bypass.claims.*:

@@ -18,6 +18,7 @@ import me.grabsky.claims.panel.sections.SectionMain;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.configuration.Global;
 import me.grabsky.indigo.framework.commands.BaseCommand;
+import me.grabsky.indigo.framework.commands.Context;
 import me.grabsky.indigo.framework.commands.ExecutorType;
 import me.grabsky.indigo.framework.commands.annotations.DefaultCommand;
 import me.grabsky.indigo.framework.commands.annotations.SubCommand;
@@ -29,12 +30,14 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 public class ClaimsCommand extends BaseCommand {
     private final Claims instance;
     private final ClaimManager manager;
-    private final List<String> completions = Arrays.asList("get", "fix", "reload");
 
     public ClaimsCommand(Claims instance) {
         super("claims", Arrays.asList("claim", "teren"), "claims.command.claims", ExecutorType.ALL);
@@ -43,26 +46,24 @@ public class ClaimsCommand extends BaseCommand {
     }
 
     @Override
-    public List<String> tabComplete(CommandSender sender, String arg, int index) {
-        if (index == 0) {
-            final List<String> list = new ArrayList<>(UserCache.getNamesOfOnlineUsers());
-            list.addAll(completions);
-            return list;
-        }
-        return Collections.emptyList();
+    public List<String> tabComplete(CommandSender sender, Context context, int index) {
+        if (index == 0) return List.of("edit", "fix", "get", "reload");
+        else return switch (context.get(0)) {
+            case "edit" -> null;
+            default -> Collections.emptyList();
+        };
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (args.length == 0) {
             this.onClaims(sender);
-        } else {
-            switch (args[0]) {
-                case "reload" -> this.onClaimsReload(sender);
-                case "get" -> this.onClaimsGet(sender);
-                case "fix" -> this.onClaimsFix(sender);
-                default -> this.onClaimsPlayer(sender, args[0]);
-            }
+        } else switch (args[0]) {
+            case "edit" -> this.onClaimsEdit(sender, args[1]);
+            case "fix" -> this.onClaimsFix(sender);
+            case "get" -> this.onClaimsGet(sender);
+            case "reload" -> this.onClaimsReload(sender);
+
         }
     }
 
@@ -76,16 +77,20 @@ public class ClaimsCommand extends BaseCommand {
     }
 
     @SubCommand
-    private void onClaimsReload(final CommandSender sender) {
-        if (sender.hasPermission("claims.command.claims.reload")) {
-            if (instance.reload()) {
-                ClaimsLang.send(sender, Global.RELOAD_SUCCESS);
+    public void onClaimsEdit(final CommandSender sender, final String ownerName) {
+        if (sender instanceof Player executor) {
+            if (sender.hasPermission("claims.command.claims.edit")) {
+                if (UserCache.contains(ownerName)) {
+                    this.openClaimMenu(executor, UserCache.get(ownerName).getUniqueId());
+                    return;
+                }
+                ClaimsLang.send(sender, Global.PLAYER_NOT_FOUND);
                 return;
             }
-            ClaimsLang.send(sender, Global.RELOAD_FAIL);
+            ClaimsLang.send(sender, Global.MISSING_PERMISSIONS);
             return;
         }
-        ClaimsLang.send(sender, Global.MISSING_PERMISSIONS);
+        ClaimsLang.send(sender, Global.PLAYER_ONLY_COMMAND);
     }
 
     @SubCommand
@@ -135,20 +140,16 @@ public class ClaimsCommand extends BaseCommand {
     }
 
     @SubCommand
-    private void onClaimsPlayer(final CommandSender sender, final String name) {
-        if (sender instanceof Player executor) {
-            if (sender.hasPermission("claims.command.claims.others")) {
-                if (UserCache.contains(name)) {
-                    this.openClaimMenu(executor, UserCache.get(name).getUniqueId());
-                    return;
-                }
-                ClaimsLang.send(sender, Global.PLAYER_NOT_FOUND);
+    private void onClaimsReload(final CommandSender sender) {
+        if (sender.hasPermission("claims.command.claims.reload")) {
+            if (instance.reload()) {
+                ClaimsLang.send(sender, Global.RELOAD_SUCCESS);
                 return;
             }
-            ClaimsLang.send(sender, Global.MISSING_PERMISSIONS);
+            ClaimsLang.send(sender, Global.RELOAD_FAIL);
             return;
         }
-        ClaimsLang.send(sender, Global.PLAYER_ONLY_COMMAND);
+        ClaimsLang.send(sender, Global.MISSING_PERMISSIONS);
     }
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {

@@ -19,10 +19,11 @@ Permission | Description
 #### Recommended only for admins:
 Permission | Description
 --- | ---
-`claims.command.claims.showall` | Plugin will show all claims in "accessible claim list" view.
-`claims.command.claims.others` | Use `/claims <player>` command to manage their claims.
+`claims.command.claims.edit` | Use `/claims edit <player>` command to manage their claims.
+`claims.command.claims.get` | Use `/claims get` command to get claim blocks and upgrade crystal.
 `claims.command.claims.fix` | Use `/claims fix` command to place hidden claim block.
 `claims.command.claims.reload` | Use `/claims reload` command to reload plugin configuration.
 `claims.bypass.ownercheck` | Bypass owner check. (eg. when destroying not owned region)
 `claims.bypass.teleportdelay` | Bypass teleport delay.
 `claims.bypass.upgradecost` | Bypass upgrade cost.
+`claims.plugin.displayallclaims` | Plugin will show all claims in "accessible claim list" view.
