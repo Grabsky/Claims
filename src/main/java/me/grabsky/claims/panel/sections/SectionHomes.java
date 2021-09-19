@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class SectionHomes extends Section {
     private final ClaimManager manager = Claims.getInstance().getClaimManager();
@@ -30,7 +31,9 @@ public class SectionHomes extends Section {
 
     public void prepare() {
         // Some useful values
-        this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("claims.plugin.displayallclaims")) ? manager.getClaimIds() : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
+        this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("claims.plugin.displayallclaims"))
+                ? new ArrayList<>(manager.getClaimIds()).stream().filter((id) -> !id.equals(claim.getId())).collect(Collectors.toList())
+                : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
         this.maxOnPage = 21;
         this.usableSize = relatives.size();
         this.pages = (relatives.size() - 1) / maxOnPage + 1;
