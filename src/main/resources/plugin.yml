@@ -1,7 +1,7 @@
 name: Claims
 version: ${project.version}
 main: me.grabsky.claims.Claims
-api-version: 1.16
+api-version: 1.17
 depend: [Indigo, WorldEdit, WorldGuard]
 softdepend: [Vanish]
 authors: [Grabsky]
