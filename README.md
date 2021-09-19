@@ -1,5 +1,5 @@
 # Claims
-Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to (intentional) plugin design. Requires WorldEdit and WorldGuard to work properly.
+Create protected region and manage it using in-game GUI. Limited to 1 claim per user with no exceptions due to (intentional) plugin design. Requires [WorldEdit](https://github.com/EngineHub/WorldEdit) and [WorldGuard](https://github.com/EngineHub/WorldGuard) to work properly.
 
 *Due to light-weight checks, by default players can override any region that is not a claim. Please increase priority of non-claim regions to protect them from being griefed.*
 
