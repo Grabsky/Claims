@@ -12,7 +12,7 @@ To build, run `mvn install` or `mvn clean install`.
 #### Safe to be given to players:
 Permission | Description
 --- | ---
-`claims.command.claims` | Use `/claim` command to manage own claim.
+`claims.command.claims` | Use `/claims` command to manage own claim.
 `claims.plugin.place` | Create a protected claim.
 `claims.plugin.destroy` | Destroy (own) claim.
 
@@ -20,9 +20,9 @@ Permission | Description
 Permission | Description
 --- | ---
 `claims.command.claims.showall` | Plugin will show all claims in "accessible claim list" view.
-`claims.command.claims.others` | Use `/claim <player>` command to manage their claims.
-`claims.command.claims.fix` | Use `/claim fix` command to place hidden claim block.
-`claims.command.claims.reload` | Use `/claim reload` command to reload plugin configuration.
+`claims.command.claims.others` | Use `/claims <player>` command to manage their claims.
+`claims.command.claims.fix` | Use `/claims fix` command to place hidden claim block.
+`claims.command.claims.reload` | Use `/claims reload` command to reload plugin configuration.
 `claims.bypass.ownercheck` | Bypass owner check. (eg. when destroying not owned region)
 `claims.bypass.teleportdelay` | Bypass teleport delay.
 `claims.bypass.upgradecost` | Bypass upgrade cost.

@@ -43,6 +43,16 @@ public class ClaimsCommand extends BaseCommand {
     }
 
     @Override
+    public List<String> tabComplete(CommandSender sender, String arg, int index) {
+        if (index == 0) {
+            final List<String> list = new ArrayList<>(UserCache.getNamesOfOnlineUsers());
+            list.addAll(completions);
+            return list;
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
     public void execute(CommandSender sender, String[] args) {
         if (args.length == 0) {
             this.onClaims(sender);
@@ -54,16 +64,6 @@ public class ClaimsCommand extends BaseCommand {
                 default -> this.onClaimsPlayer(sender, args[0]);
             }
         }
-    }
-
-    @Override
-    public List<String> tabComplete(CommandSender sender, String arg, int index) {
-        if (index == 0) {
-            final List<String> list = new ArrayList<>(UserCache.getNamesOfOnlineUsers());
-            list.addAll(completions);
-            return list;
-        }
-        return Collections.emptyList();
     }
 
     @DefaultCommand
