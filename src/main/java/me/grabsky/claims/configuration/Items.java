@@ -1,7 +1,7 @@
 package me.grabsky.claims.configuration;
 
 import me.grabsky.claims.Claims;
-import me.grabsky.claims.claims.ClaimLevel;
+import me.grabsky.claims.claims.upgrades.ClaimLevel;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import org.bukkit.Material;
@@ -18,7 +18,7 @@ public class Items {
         final ClaimLevel claimLevel = ClaimsUtils.getClaimLevel(level);
         final Material material = claimLevel.getBlockMaterial();
         final ItemBuilder builder = new ItemBuilder(material)
-                .setName(claimLevel.getColor() + "§lTeren")
+                .setName(claimLevel.getColorCode() + "§lTeren")
                 .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze " + claimLevel.getSize() + " §7bloków.");
         builder.getPersistentDataContainer().set(Claims.claimBlockLevel, PersistentDataType.INTEGER, level);
         return builder.build();
@@ -78,27 +78,6 @@ public class Items {
             .setName("§7Nie posiadasz terenu.")
             .setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzU3ZTkzOWRiZTJhN2NkNjMwNzAwMzI4YWY0YzE4ZGZiOGZiY2I2NDJjOTEwM2E4NWUzOTRmOTgxNmI1OWExMCJ9fX0=")
             .build();
-
-    // Upgrade blocks
-    public static final ItemBuilder COAL_BLOCK = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§8§lUlepsz")
-            .setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWNkZmRlMDI5YWZhNDczYWM2NGIyZjE3ZGU3ZWQ5NDBlMzk5NjZlZDQ5MmJmM2Y0MTg1MjU5YjgwMjliNmIxMyJ9fX0=");
-
-    public static final ItemBuilder IRON_BLOCK = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§f§lUlepsz")
-            .setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjU2MjljMWM3N2FlYTJiMGNlYmNmMzMzNjU1ZTY4ZGIxMzRmNDg0MWMwOGQ5ZTg3NWMzMDc0YWMzMGUyYTZkZSJ9fX0=");
-
-    public static final ItemBuilder GOLD_BLOCK = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§6§lUlepsz")
-            .setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTdmNTdlN2FhOGRlODY1OTFiYjBiYzUyY2JhMzBhNDlkOTMxYmZhYmJkNDdiYmM4MGJkZDY2MjI1MTM5MjE2MSJ9fX0=");
-
-    public static final ItemBuilder DIAMOND_BLOCK = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§b§lUlepsz")
-            .setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWY3NGE5NjQ0ZWMzY2NiZTkzNmNhNjI5NDI5N2MwZWVjZTQ3MTZkMjUxMjdiYjFiMTI1MjFmM2Y1OGRmOTZkYSJ9fX0=");
-
-    public static final ItemBuilder EMERALD_BLOCK = new ItemBuilder(Material.PLAYER_HEAD)
-            .setName("§a§lUlepsz")
-            .setSkullTexture("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTk2MGQ2ZmZhZjQ0ZThhZmNiZGY4YjI5YTc3ZDg0Y2UyMmM3MWQwMGM2NGJmZDk5YWYzNDBhNjk1MzViZmQ3In19fQ==");
 
     public static final ItemStack UPGRADE_CRYSTAL = new ItemBuilder(Material.AMETHYST_SHARD)
             .setName("§d§lKryształ Ulepszenia")

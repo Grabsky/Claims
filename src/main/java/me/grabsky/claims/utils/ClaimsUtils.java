@@ -3,24 +3,44 @@ package me.grabsky.claims.utils;
 import com.sk89q.worldedit.world.weather.WeatherTypes;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.StateFlag;
-import me.grabsky.claims.claims.ClaimLevel;
+import me.grabsky.claims.claims.upgrades.ClaimLevel;
+import me.grabsky.claims.claims.upgrades.LevelIcons;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.Items;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.Arrays;
 import java.util.List;
 
 public class ClaimsUtils {
-    private static final ClaimLevel[] levels = new ClaimLevel[5];
+    private static final ClaimLevel[] levels = new ClaimLevel[6];
 
     public static void initialize() {
-        levels[0] = new ClaimLevel("Węgiel", "31x31", ChatColor.DARK_GRAY, Material.COAL_BLOCK, Material.COAL, Items.COAL_BLOCK);
-        levels[1] = new ClaimLevel("Żelazo", "41x41", ChatColor.WHITE,  Material.IRON_BLOCK, Material.IRON_INGOT, Items.IRON_BLOCK);
-        levels[2] = new ClaimLevel("Złoto", "51x51", ChatColor.GOLD,  Material.GOLD_BLOCK, Material.GOLD_INGOT, Items.GOLD_BLOCK);
-        levels[3] = new ClaimLevel("Diament", "61x61", ChatColor.AQUA, Material.DIAMOND_BLOCK, Material.DIAMOND, Items.DIAMOND_BLOCK);
-        levels[4] = new ClaimLevel("Szmaragd", "71x71", ChatColor.GREEN, Material.EMERALD_BLOCK, Material.EMERALD, Items.EMERALD_BLOCK);
+        levels[0] = new ClaimLevel("Węgiel", "31x31", "§7", Material.COAL_BLOCK)
+                .addUpgradeItems(Items.UPGRADE_CRYSTAL, new ItemStack(Material.COAL, 64))
+                .setIconBuilder(LevelIcons.COAL);
+
+        levels[1] = new ClaimLevel("Żelazo", "41x41", "§f", Material.IRON_BLOCK)
+                .addUpgradeItems(Items.UPGRADE_CRYSTAL, new ItemStack(Material.IRON_INGOT, 64))
+                .setIconBuilder(LevelIcons.IRON);
+
+        levels[2] = new ClaimLevel("Złoto", "51x51", "§e", Material.GOLD_BLOCK)
+                .addUpgradeItems(Items.UPGRADE_CRYSTAL, new ItemStack(Material.GOLD_INGOT, 48))
+                .setIconBuilder(LevelIcons.GOLD);
+
+        levels[3] = new ClaimLevel("Diament", "61x61", "§b", Material.DIAMOND_BLOCK)
+                .addUpgradeItems(Items.UPGRADE_CRYSTAL, new ItemStack(Material.DIAMOND, 32))
+                .setIconBuilder(LevelIcons.DIAMOND);
+
+        levels[4] = new ClaimLevel("Szmaragd", "71x71", "§a", Material.EMERALD_BLOCK)
+                .addUpgradeItems(Items.UPGRADE_CRYSTAL, new ItemStack(Material.EMERALD, 16))
+                .setIconBuilder(LevelIcons.EMERALD);
+
+        levels[5] = new ClaimLevel("Netheryt", "81x81", "§8", Material.NETHERITE_BLOCK)
+                .addUpgradeItems(Items.UPGRADE_CRYSTAL, new ItemStack(Material.NETHERITE_INGOT, 8))
+                .setIconBuilder(LevelIcons.NETHERITE);
+
     }
 
     // Returns ClaimLevel for given level (numeric)

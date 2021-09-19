@@ -2,8 +2,8 @@ package me.grabsky.claims.panel.sections;
 
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
-import me.grabsky.claims.claims.ClaimLevel;
 import me.grabsky.claims.claims.ClaimManager;
+import me.grabsky.claims.claims.upgrades.ClaimLevel;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.configuration.Items;
@@ -12,6 +12,7 @@ import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.logger.FileLogger;
+import me.grabsky.indigo.utils.Inventories;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -33,7 +34,7 @@ public class SectionSettings extends Section {
     public void prepare() {
         this.teleport = new ItemBuilder(Material.WHITE_BED)
                 .setName("§e§lTeleport")
-                .setLore("§7Ustaw teleport na teren", "§7na miejsce, w którym stoisz")
+                .setLore("§7Ustaw teleport na teren", "§7na miejsce, w którym stoisz.")
                 .build();
     }
 
@@ -45,8 +46,8 @@ public class SectionSettings extends Section {
         this.generateView();
     }
 
-    private boolean canUpgrade(Player player, Material upgradeMaterial) {
-        return executor.hasPermission("claims.bypass.upgradecost") || (InventoryUtils.hasItem(executor, Items.UPGRADE_CRYSTAL, 1) && InventoryUtils.hasMaterial(executor, upgradeMaterial, 16));
+    private boolean canUpgrade(Player player, ClaimLevel level) {
+        return executor.hasPermission("claims.bypass.upgradecost") || Inventories.hasItems(player, level.getUpgradeCost().toArray(new ItemStack[0]));
     }
 
     private void generateView() {
@@ -64,56 +65,37 @@ public class SectionSettings extends Section {
         });
         final ClaimLevel currentLevel = ClaimsUtils.getClaimLevel(claim.getLevel());
         // Getting ItemBuilder for specific alias
-        final ClaimLevel nextLevel = (claim.getLevel() < 4) ? ClaimsUtils.getClaimLevel(claim.getLevel() + 1) : null;
+        final ClaimLevel nextLevel = (claim.getLevel() < 5) ? ClaimsUtils.getClaimLevel(claim.getLevel() + 1) : null;
         // If current level is not the last
-        final ItemBuilder inventoryItem = currentLevel.getIcon();
+        final ItemBuilder icon = currentLevel.getIconBuilder();
         if (nextLevel != null) {
-            String canUpgradeString = canUpgrade(executor, nextLevel.getUpgradeMaterial()) ? "§7Kliknij, aby ulepszyć." : "§cNie posiadasz wymaganych przedmiotów.";
-            inventoryItem.setLore(
-                    "",
-                    "§7Obecny poziom: " + currentLevel.getAlias(),
-                    "§8› §7Rozmiar: " + currentLevel.getSize(),
-                    "",
-                    "§7Następny poziom: " +  nextLevel.getAlias(),
-                    "§8› §7Rozmiar: " + nextLevel.getSize(),
-                    "",
-                    "§7Koszt ulepszenia: ",
-                    "§8› §d1x Kryształ Ulepszenia",
-                    "§8› " + nextLevel.getColor() + "16x " + nextLevel.getAlias(),
-                    "",
-                    canUpgradeString
-            );
-        } else {
-            inventoryItem.setLore(
-                    "",
-                    "§7Obecny poziom: " + currentLevel.getAlias(),
-                    "§8› §7Rozmiar: " + currentLevel.getSize(),
-                    "",
-                    "§7Osiągnąłeś najwyższy poziom terenu."
-            );
+            icon.addLore(this.canUpgrade(executor, nextLevel) ? "§7Kliknij, aby ulepszyć." : "§cNie posiadasz wymaganych przedmiotów.");
         }
-        panel.setItem(15, inventoryItem.build(), event -> {
+        // Upgrade button
+        panel.setItem(15, icon.build(), event -> {
             if (nextLevel == null) return;
-            if (!canUpgrade(executor, nextLevel.getUpgradeMaterial())) return;
             // Removing material if player doesn't have bypass permission
-            if (!executor.hasPermission("claims.bypass.upgradecost")) {
-                InventoryUtils.removeItem(executor, Items.UPGRADE_CRYSTAL, 1);
-                InventoryUtils.removeMaterial(executor, nextLevel.getUpgradeMaterial(), 16);
+            if (this.canUpgrade(executor, nextLevel)) {
+                if (!executor.hasPermission("claims.bypass.upgradecost")) {
+                    Inventories.removeItems(executor, nextLevel.getUpgradeCost().toArray(new ItemStack[0]));
+                }
+                // Upgrading claim
+                manager.upgrade(claim);
+                // Sending success message and play level up sound
+                ClaimsLang.send(executor, ClaimsLang.UPGRADE_SUCCESS.replace("{size}", nextLevel.getSize()));
+                executor.playSound(executor.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
+                // Refreshing the view
+                this.generateView();
+                if (ClaimsConfig.LOGS) {
+                    fileLogger.log(ClaimsConfig.LOG_FORMAT_UPGRADED
+                            .replace("{claim-id}", claim.getId())
+                            .replace("{claim-level}", String.valueOf(claim.getLevel()))
+                            .replace("{issuer-name}", executor.getName())
+                            .replace("{issuer-uuid}", executor.getUniqueId().toString()));
+                }
+                return;
             }
-            // Upgrading claim
-            manager.upgrade(claim);
-            // Sending success message and play level up sound
-            ClaimsLang.send(executor, ClaimsLang.UPGRADE_SUCCESS.replace("{size}", nextLevel.getSize()));
-            executor.playSound(executor.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
-            // Refreshing the view
-            this.generateView();
-            if (ClaimsConfig.LOGS) {
-                fileLogger.log(ClaimsConfig.LOG_FORMAT_UPGRADED
-                        .replace("{claim-id}", claim.getId())
-                        .replace("{claim-level}", String.valueOf(claim.getLevel()))
-                        .replace("{issuer-name}", executor.getName())
-                        .replace("{issuer-uuid}", executor.getUniqueId().toString()));
-            }
+            executor.playSound(executor.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 1);
         });
         // Return button
         panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));

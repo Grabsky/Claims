@@ -101,7 +101,7 @@ public class ClaimManager implements ClaimsAPI {
 
     public Claim createRegionAt(Location loc, Player owner, int level) {
         // Returning if location is too close to spawn or other claim
-        if (this.isInSquare(loc, this.getClosestTo(loc), 70) || this.isInSquare(loc, ClaimsConfig.DEFAULT_WORLD.getSpawnLocation(), ClaimsConfig.MINIMUM_DISTANCE_FROM_SPAWN)) return null;
+        if (this.isInSquare(loc, this.getClosestTo(loc), 80) || this.isInSquare(loc, ClaimsConfig.DEFAULT_WORLD.getSpawnLocation(), ClaimsConfig.MINIMUM_DISTANCE_FROM_SPAWN)) return null;
         // Points
         final UUID ownerUniqueId = owner.getUniqueId();
         final int x = loc.getBlockX();
@@ -175,7 +175,7 @@ public class ClaimManager implements ClaimsAPI {
     }
 
     public boolean upgrade(Claim claim) {
-        if (claim.getLevel() >= 4) return false;
+        if (claim.getLevel() >= 5) return false;
         int newLevel = claim.getLevel() + 1;
         final ProtectedRegion wgRegion = claim.getWGRegion();
         final String id = claim.getId();
