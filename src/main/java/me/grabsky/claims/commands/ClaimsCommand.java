@@ -59,7 +59,13 @@ public class ClaimsCommand extends BaseCommand {
         if (args.length == 0) {
             this.onClaims(sender);
         } else switch (args[0]) {
-            case "edit" -> this.onClaimsEdit(sender, args[1]);
+            case "edit" -> {
+                if (args.length == 2) {
+                    this.onClaimsEdit(sender, args[1]);
+                    return;
+                }
+                ClaimsLang.send(sender, Global.CORRECT_USAGE + "/claims edit <player>");
+            }
             case "fix" -> this.onClaimsFix(sender);
             case "get" -> this.onClaimsGet(sender);
             case "reload" -> this.onClaimsReload(sender);
