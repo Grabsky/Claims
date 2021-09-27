@@ -1,12 +1,13 @@
 package me.grabsky.claims.panel.sections;
 
 import me.grabsky.claims.claims.Claim;
+import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Icons;
 import me.grabsky.claims.utils.InventoryUtils;
-import me.grabsky.claims.utils.TeleportUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.user.UserCache;
+import me.grabsky.indigo.utils.Teleport;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -38,7 +39,7 @@ public class SectionMain extends Section {
             switch (event.getClick()) {
                 case LEFT, SHIFT_LEFT -> {
                     executor.closeInventory();
-                    TeleportUtils.teleportAsync(executor, claim.getHome(), 5);
+                    Teleport.async(executor, claim.getHome(), ClaimsConfig.TELEPORT_DELAY, "azure.bypass.teleportdelay");
                 }
                 case RIGHT, SHIFT_RIGHT -> panel.applySection(new SectionHomes(panel, executor, owner, claim));
             }

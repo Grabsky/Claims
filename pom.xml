@@ -89,13 +89,6 @@
             <version>7.0.5</version>
             <scope>provided</scope>
         </dependency>
-        <!-- PaperLib -->
-        <dependency>
-            <groupId>io.papermc</groupId>
-            <artifactId>paperlib</artifactId>
-            <version>1.0.6</version>
-            <scope>compile</scope>
-        </dependency>
         <!-- Indigo -->
         <dependency>
             <groupId>me.grabsky</groupId>

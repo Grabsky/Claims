@@ -46,7 +46,7 @@ public class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH)
     public void onClaimPlace(BlockPlaceEvent event) {
         if (event.isCancelled()) return;
-        if (!event.canBuild()) return;
+        if (!event.canBuild()) return; // Not sure if that check covers all possible scenarios including building in WorldGuard regions
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
         if (data.has(Claims.claimBlockLevel, PersistentDataType.INTEGER)) {
             final Player player = event.getPlayer();
@@ -111,7 +111,7 @@ public class RegionListener implements Listener {
                         // Removing drops
                         event.setExpToDrop(0);
                         event.setDropItems(false);
-                        // Log action if enabled
+                        // Logging action if enabled
                         if (ClaimsConfig.LOGS) {
                             fileLogger.log(ClaimsConfig.LOG_FORMAT_DESTROYED
                                     .replace("{claim-id}", id)
@@ -124,7 +124,9 @@ public class RegionListener implements Listener {
                         // Deleting region
                         manager.removeRegionOf(ownerUniqueId);
                         // Dropping the item
-                        if (player.getGameMode() == GameMode.SURVIVAL) event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
+                        if (player.getGameMode() == GameMode.SURVIVAL) {
+                            event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
+                        }
                         ClaimsLang.send(player, ClaimsLang.DESTROY_SUCCESS);
                         final Player owner = Bukkit.getPlayer(ownerUniqueId);
                         if (owner != null && owner.isOnline()) {
@@ -159,13 +161,21 @@ public class RegionListener implements Listener {
     // Prevents block from being pushed by piston
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent event) {
-        for (Block block : event.getBlocks()) if (manager.containsClaim(ClaimsUtils.createId(block.getLocation()))) event.setCancelled(true);
+        for (Block block : event.getBlocks()) {
+            if (manager.containsClaim(ClaimsUtils.createId(block.getLocation()))) {
+                event.setCancelled(true);
+            }
+        }
     }
 
     // Prevents block from being pulled by piston
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent event) {
-        for (Block block : event.getBlocks()) if (manager.containsClaim(ClaimsUtils.createId(block.getLocation()))) event.setCancelled(true);
+        for (Block block : event.getBlocks()) {
+            if (manager.containsClaim(ClaimsUtils.createId(block.getLocation()))) {
+                event.setCancelled(true);
+            }
+        }
     }
 
     // Prevents block from being destroyed because of block explosion (TNT)

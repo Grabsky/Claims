@@ -24,9 +24,6 @@ public class ClaimsLang extends AbstractLang {
     public static Component PLACE_SUCCESS;
     public static Component DESTROY_SUCCESS;
     public static Component NOT_SNEAKING;
-    public static Component TELEPORT_SUCCEED;
-    public static Component TELEPORT_CANCELLED;
-    public static Component TELEPORT_FAILED;
     public static Component RESTORE_CLAIM_BLOCK_SUCCESS;
     public static Component RESTORE_CLAIM_BLOCK_FAIL;
     public static Component CLAIM_BLOCKS_ADDED;
@@ -36,7 +33,6 @@ public class ClaimsLang extends AbstractLang {
 
     public static String REACHED_MEMBERS_LIMIT;
     public static String UPGRADE_SUCCESS;
-    public static String TELEPORTING;
 
     public static String DEFAULT_GREETING;
     public static String DEFAULT_FAREWELL;
@@ -78,11 +74,6 @@ public class ClaimsLang extends AbstractLang {
         BLACKLISTED_WORLD = component("claims.blacklisted-world");
         SET_HOME_SUCCESS = component("claims.set-home-success");
         SET_HOME_FAIL = component("claims.set-home-fail");
-        // Teleport
-        TELEPORTING = string("teleport.teleporting");
-        TELEPORT_SUCCEED = component("teleport.teleport-succeed");
-        TELEPORT_CANCELLED = component("teleport.teleport-cancelled");
-        TELEPORT_FAILED = component("teleport.teleport-failed");
         // Flags
         DEFAULT_GREETING = fileConfiguration.getString("flags.default-greeting", "");
         DEFAULT_FAREWELL = fileConfiguration.getString("flags.default-farewell", "");

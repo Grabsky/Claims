@@ -3,20 +3,20 @@ package me.grabsky.claims.panel.sections;
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.claims.ClaimManager;
+import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Icons;
 import me.grabsky.claims.utils.InventoryUtils;
-import me.grabsky.claims.utils.TeleportUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.user.User;
 import me.grabsky.indigo.user.UserCache;
+import me.grabsky.indigo.utils.Teleport;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class SectionHomes extends Section {
     private final ClaimManager manager = Claims.getInstance().getClaimManager();
@@ -30,9 +30,8 @@ public class SectionHomes extends Section {
     }
 
     public void prepare() {
-        this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("claims.plugin.displayallclaims"))
-                ? new ArrayList<>(manager.getClaimIds()).stream().filter((id) -> !id.equals(claim.getId())).collect(Collectors.toList())
-                : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
+        this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("claims.plugin.displayallclaims")) ? new ArrayList<>(manager.getClaimIds()) : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
+        this.relatives.removeIf((id) -> id.equals(claim.getId())); // Removing player's claim from a list (it's there only when displaying all claims)
         this.maxOnPage = 21;
         this.usableSize = relatives.size();
         this.pages = (relatives.size() - 1) / maxOnPage + 1;
@@ -69,7 +68,7 @@ public class SectionHomes extends Section {
                     .setSkullTexture(user.getTexture())
                     .build(), (event) -> {
                         executor.closeInventory();
-                        TeleportUtils.teleportAsync(executor, relativeClaim.getHome(), 5);
+                        Teleport.async(executor, relativeClaim.getHome(), ClaimsConfig.TELEPORT_DELAY, "azure.bypass.teleportdelay");
             });
         }
         // If player is not on the first page - displaying PREVIOUS PAGE button

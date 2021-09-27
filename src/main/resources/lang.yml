@@ -21,12 +21,6 @@ claims:
   set-home-success: '§6§lS§e§lD§8 » §7Teleport na teren został nadpisany.'
   set-home-fail: '§6§lS§e§lD§8 » §cTeleport nie może zostać ustawiony poza terenem.'
 
-teleport:
-  teleporting: '§6§lS§e§lD§8 » §7Zostaniesz przeteleportowany za §e{cooldown} §7sekund.'
-  teleport-succeed: '§6§lS§e§lD§8 » §7Zostałeś przeteleportowany na teren.'
-  teleport-cancelled: '§6§lS§e§lD§8 » §cTeleportacja anulowana. Ruszyłeś się.'
-  teleport-failed: '§6§lS§e§lD§8 » §cCoś poszło nie tak, spróbuj ponownie.'
-
 # Following section(s) supports only classic color codes (§)
 # WARNING: Changing this value WON'T update greeting/farewell flags in existing regions.
 flags:
