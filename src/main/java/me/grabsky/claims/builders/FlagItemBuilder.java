@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+// Not an ideal solution, but it works fine. Could extend ItemBuilder if we decide to make it generic.
 public class FlagItemBuilder {
     private final ItemMeta meta;
     private final ItemStack item;

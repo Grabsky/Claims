@@ -8,7 +8,7 @@ import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 
 public class InventoryUtils {
-    // Updates title of inventory currently open by specified player
+    // Updates title of inventory currently open for player
     public static void updateTitle(Player player, String title, boolean editMode) {
         final String finalTitle = (editMode) ? title + "\u7001§r*" : title;
         final EntityPlayer handle = ((CraftPlayer) player).getHandle();

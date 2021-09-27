@@ -10,11 +10,11 @@ import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.claims.ClaimPlayer;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
-import me.grabsky.claims.configuration.Items;
 import me.grabsky.claims.flags.ClaimFlags;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.panel.sections.SectionHomes;
 import me.grabsky.claims.panel.sections.SectionMain;
+import me.grabsky.claims.templates.Items;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.configuration.Global;
 import me.grabsky.indigo.framework.commands.BaseCommand;
@@ -135,6 +135,7 @@ public class ClaimsCommand extends BaseCommand {
                 inventory.addItem(Items.getClaimBlock(2)); // GOLD
                 inventory.addItem(Items.getClaimBlock(3)); // DIAMOND
                 inventory.addItem(Items.getClaimBlock(4)); // EMERALD
+                inventory.addItem(Items.getClaimBlock(5)); // NETHERITE
                 inventory.addItem(Items.UPGRADE_CRYSTAL); // UPGRADE_CRYSTAL
                 ClaimsLang.send(sender, ClaimsLang.CLAIM_BLOCKS_ADDED);
                 return;

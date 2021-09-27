@@ -4,8 +4,8 @@ import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
-import me.grabsky.claims.configuration.Items;
 import me.grabsky.claims.panel.Panel;
+import me.grabsky.claims.templates.Icons;
 import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.logger.FileLogger;
@@ -22,7 +22,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SectionMembersAdd extends Section {
-
     private final FileLogger fileLogger = Claims.getInstance().getFileLogger();
     private List<User> onlineUsers;
     private int maxOnPage;
@@ -88,10 +87,10 @@ public class SectionMembersAdd extends Section {
             });
         }
         // If player is not on the first page - displaying PREVIOUS PAGE button
-        if (pageToDisplay > 1) panel.setItem(18, Items.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
+        if (pageToDisplay > 1) panel.setItem(18, Icons.NAVIGATION_PREVIOUS, (event) -> generateView(pageToDisplay - 1));
         // If there is more pages - displaying NEXT PAGE button
-        if (pageToDisplay + 1 <= pages) panel.setItem(26, Items.NEXT, (event) -> generateView(pageToDisplay + 1));
+        if (pageToDisplay + 1 <= pages) panel.setItem(26, Icons.NAVIGATION_NEXT, (event) -> generateView(pageToDisplay + 1));
         // As usually, displaying RETURN button
-        panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
     }
 }

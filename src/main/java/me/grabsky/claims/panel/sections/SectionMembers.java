@@ -4,8 +4,8 @@ import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
-import me.grabsky.claims.configuration.Items;
 import me.grabsky.claims.panel.Panel;
+import me.grabsky.claims.templates.Icons;
 import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.logger.FileLogger;
@@ -25,7 +25,7 @@ public class SectionMembers extends Section {
 
     @Override
     public void prepare() {
-        // Nothing to prepare this time :)
+        // Nothing to prepare
     }
 
     @Override
@@ -67,7 +67,7 @@ public class SectionMembers extends Section {
             });
             slot = (slot == 15) ? 20 : slot + 1;
         }
-        if (slot != 25) panel.setItem(slot, Items.ADD, event -> panel.applySection(new SectionMembersAdd(panel, executor, owner, claim)));
-        panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));
+        if (slot != 25) panel.setItem(slot, Icons.ICON_ADD_MEMBER, event -> panel.applySection(new SectionMembersAdd(panel, executor, owner, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));
     }
 }

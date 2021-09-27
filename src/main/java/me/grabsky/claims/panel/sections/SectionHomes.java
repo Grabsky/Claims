@@ -3,8 +3,8 @@ package me.grabsky.claims.panel.sections;
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.claims.ClaimManager;
-import me.grabsky.claims.configuration.Items;
 import me.grabsky.claims.panel.Panel;
+import me.grabsky.claims.templates.Icons;
 import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.claims.utils.TeleportUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
@@ -30,7 +30,6 @@ public class SectionHomes extends Section {
     }
 
     public void prepare() {
-        // Some useful values
         this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("claims.plugin.displayallclaims"))
                 ? new ArrayList<>(manager.getClaimIds()).stream().filter((id) -> !id.equals(claim.getId())).collect(Collectors.toList())
                 : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
@@ -74,11 +73,11 @@ public class SectionHomes extends Section {
             });
         }
         // If player is not on the first page - displaying PREVIOUS PAGE button
-        if (pageToDisplay > 1) panel.setItem(18, Items.PREVIOUS, (event) -> generateView(pageToDisplay - 1));
+        if (pageToDisplay > 1) panel.setItem(18, Icons.NAVIGATION_PREVIOUS, (event) -> generateView(pageToDisplay - 1));
         // If there is more pages - displaying NEXT PAGE button
-        if (pageToDisplay + 1 <= pages) panel.setItem(26, Items.NEXT, (event) -> generateView(pageToDisplay + 1));
+        if (pageToDisplay + 1 <= pages) panel.setItem(26, Icons.NAVIGATION_NEXT, (event) -> generateView(pageToDisplay + 1));
         // Return button
-        panel.setItem(49, Items.RETURN, (event) -> {
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> {
             if (claim != null) {
                 panel.applySection(new SectionMain(panel, executor, owner, claim));
             } else {

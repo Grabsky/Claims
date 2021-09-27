@@ -40,9 +40,7 @@ public class TeleportUtils {
     }
 
     private static Component getStatusMessage(boolean status) {
-        if (status) {
-            return ClaimsLang.TELEPORT_SUCCEED;
-        }
+        if (status) return ClaimsLang.TELEPORT_SUCCEED;
         return ClaimsLang.TELEPORT_FAILED;
     }
 }

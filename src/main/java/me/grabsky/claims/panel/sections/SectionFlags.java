@@ -7,8 +7,8 @@ import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.grabsky.claims.builders.FlagItemBuilder;
 import me.grabsky.claims.claims.Claim;
-import me.grabsky.claims.configuration.Items;
 import me.grabsky.claims.panel.Panel;
+import me.grabsky.claims.templates.Icons;
 import me.grabsky.claims.utils.InventoryUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -97,7 +97,7 @@ public class SectionFlags extends Section {
         panel.setItem(22, time_lock.build(), (event) -> event.setCurrentItem(time_lock.toggle(value -> wgRegion.setFlag(Flags.TIME_LOCK, (String) value)).build()));
         panel.setItem(23, weather_lock.build(), (event) -> event.setCurrentItem(weather_lock.toggle(value -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) value)).build()));
         // Return button
-        panel.setItem(49, Items.RETURN, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
     }
 
 }

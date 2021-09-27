@@ -1,6 +1,5 @@
-package me.grabsky.claims.claims.upgrades;
+package me.grabsky.claims.claims;
 
-import me.grabsky.indigo.builders.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,13 +12,14 @@ public class ClaimLevel {
     private final String colorCode;
     private final Material blockMaterial;
     private final Set<ItemStack> upgradeCost;
-    private ItemBuilder icon;
+    private final ItemStack icon;
 
-    public ClaimLevel(final String name, final String size, final String colorCode, final Material blockMaterial) {
+    public ClaimLevel(final String name, final String size, final String colorCode, final Material blockMaterial, final ItemStack icon) {
         this.name = name;
         this.size = size;
         this.colorCode = colorCode;
         this.blockMaterial = blockMaterial;
+        this.icon = icon;
         this.upgradeCost = new HashSet<>();
     }
 
@@ -28,13 +28,12 @@ public class ClaimLevel {
         return this;
     }
 
-    public ClaimLevel setIconBuilder(final ItemBuilder builder) {
-        this.icon = builder;
-        return this;
-    }
-
     public String getColorCode() {
         return colorCode;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getSize() {
@@ -49,11 +48,7 @@ public class ClaimLevel {
         return upgradeCost;
     }
 
-    public ItemBuilder getIconBuilder() {
+    public ItemStack getIcon() {
         return icon;
-    }
-
-    public String getName() {
-        return name;
     }
 }

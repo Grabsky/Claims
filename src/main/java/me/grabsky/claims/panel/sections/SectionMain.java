@@ -1,8 +1,8 @@
 package me.grabsky.claims.panel.sections;
 
 import me.grabsky.claims.claims.Claim;
-import me.grabsky.claims.configuration.Items;
 import me.grabsky.claims.panel.Panel;
+import me.grabsky.claims.templates.Icons;
 import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.claims.utils.TeleportUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
@@ -34,7 +34,7 @@ public class SectionMain extends Section {
         // Changing panel texture
         InventoryUtils.updateTitle(executor, "§f\u7000\u7101", editMode);
         // Setting menu items
-        panel.setItem(11, Items.HOMES, (event) -> {
+        panel.setItem(11, Icons.CATEGORY_HOMES, (event) -> {
             switch (event.getClick()) {
                 case LEFT, SHIFT_LEFT -> {
                     executor.closeInventory();
@@ -44,7 +44,7 @@ public class SectionMain extends Section {
             }
         });
         panel.setItem(13, members, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
-        panel.setItem(15, Items.SETTINGS, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
-        panel.setItem(49, Items.RETURN, (event) -> executor.closeInventory());
+        panel.setItem(15, Icons.CATEGORY_SETTINGS, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> executor.closeInventory());
     }
 }
