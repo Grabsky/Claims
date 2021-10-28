@@ -10,7 +10,7 @@ import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.claims.ClaimPlayer;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
-import me.grabsky.claims.flags.ClaimFlags;
+import me.grabsky.claims.flags.ExtraFlags;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.panel.sections.SectionHomes;
 import me.grabsky.claims.panel.sections.SectionMain;
@@ -107,8 +107,8 @@ public class ClaimsCommand extends BaseCommand {
                 for (ProtectedRegion region : instance.getRegionManager().getApplicableRegions(BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ())).getRegions()) {
                     if (region.getId().startsWith(ClaimsConfig.REGION_PREFIX)) {
                         // Both variables shouldn't be null unless claim was manually modified
-                        final Location center = BukkitAdapter.adapt(region.getFlag(ClaimFlags.CLAIM_CENTER));
-                        final Material type = ClaimsUtils.getClaimLevel(region.getFlag(ClaimFlags.CLAIM_LEVEL)).getBlockMaterial();
+                        final Location center = BukkitAdapter.adapt(region.getFlag(ExtraFlags.CLAIM_CENTER));
+                        final Material type = ClaimsUtils.getClaimLevel(region.getFlag(ExtraFlags.CLAIM_LEVEL)).getBlockMaterial();
                         PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
                             chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
                             ClaimsLang.send(sender, ClaimsLang.RESTORE_CLAIM_BLOCK_SUCCESS);
@@ -161,9 +161,10 @@ public class ClaimsCommand extends BaseCommand {
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {
         final ClaimPlayer owner = manager.getClaimPlayer(ownerUniqueId);
-        final Panel panel = new Panel(54, "§f\u7000\u7100");
+        final Panel panel = new Panel(SectionMain.INVENTORY_TITLE, 54, Panel.CLICK_SOUND);
         if (owner.hasClaim()) {
             final Claim claim = owner.getClaim();
+            // This has to be run 1 tick later to update the inventory title correctly
             Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionMain(panel, executor, owner.getUniqueId(), claim)), 1L);
         } else if (owner.hasRelatives()) {
             Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionHomes(panel, executor, owner.getUniqueId(), null)), 1L);

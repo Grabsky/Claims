@@ -9,20 +9,18 @@ import java.util.UUID;
 
 public abstract class Section {
     protected final Panel panel;
-    protected final Player executor;
-    protected final UUID owner;
+    protected final Player viewer;
+    protected final UUID claimOwnerUniqueId;
+    protected final boolean editMode;
     protected Claim claim;
-    protected boolean editMode = false;
 
     /** Constructor required to prepare and apply Section to a Panel */
-    public Section(Panel panel, Player executor, UUID owner, @Nullable Claim claim) {
+    public Section(final Panel panel, final Player viewer, final UUID claimOwnerUniqueId, @Nullable Claim claim) {
         this.panel = panel;
-        this.executor = executor;
-        this.owner = owner;
+        this.viewer = viewer;
+        this.claimOwnerUniqueId = claimOwnerUniqueId;
         this.claim = claim;
-        if (!executor.getUniqueId().equals(owner)) {
-            editMode = true;
-        }
+        this.editMode = !viewer.getUniqueId().equals(claimOwnerUniqueId);
         this.panel.clear();
     }
 

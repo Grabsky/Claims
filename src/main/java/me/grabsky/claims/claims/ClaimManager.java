@@ -13,7 +13,7 @@ import me.grabsky.claims.Claims;
 import me.grabsky.claims.api.ClaimsAPI;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
-import me.grabsky.claims.flags.ClaimFlags;
+import me.grabsky.claims.flags.ExtraFlags;
 import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import org.bukkit.Location;
@@ -110,12 +110,12 @@ public class ClaimManager implements ClaimsAPI {
         final BlockVector3 min = BlockVector3.at(x - radius, 0, z - radius);
         final BlockVector3 max = BlockVector3.at(x + radius, 255, z + radius);
         // Creating region id
-        final String id = ClaimsUtils.createId(loc);
+        final String id = Claim.createId(loc);
         // Creating region at new points
         final ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
         this.setDefaultFlags(region, loc, owner);
-        region.setFlag(ClaimFlags.CLAIM_LEVEL, level);
+        region.setFlag(ExtraFlags.CLAIM_LEVEL, level);
         // Setting region priority
         region.setPriority(ClaimsConfig.REGION_PRIORITY);
         // Adding owner
@@ -156,8 +156,8 @@ public class ClaimManager implements ClaimsAPI {
         region.setFlag(Flags.FIRE_SPREAD, StateFlag.State.DENY);
         region.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
         region.setFlag(Flags.GHAST_FIREBALL, StateFlag.State.DENY);
-        region.setFlag(ClaimFlags.GREETING_ACTIONBAR, ClaimsLang.DEFAULT_GREETING.replace("{player}", name));
-        region.setFlag(ClaimFlags.FAREWELL_ACTIONBAR, ClaimsLang.DEFAULT_FAREWELL.replace("{player}", name));
+        region.setFlag(ExtraFlags.GREETING_ACTIONBAR, ClaimsLang.DEFAULT_GREETING.replace("{player}", name));
+        region.setFlag(ExtraFlags.FAREWELL_ACTIONBAR, ClaimsLang.DEFAULT_FAREWELL.replace("{player}", name));
         // Dynamic flags (changeable)
         region.setFlag(Flags.USE, StateFlag.State.DENY);
         region.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
@@ -169,7 +169,7 @@ public class ClaimManager implements ClaimsAPI {
         region.setFlag(Flags.ICE_MELT, StateFlag.State.ALLOW);
         region.setFlag(Flags.MOB_SPAWNING, StateFlag.State.ALLOW);
         // Setting center location (not modifiable)
-        region.setFlag(ClaimFlags.CLAIM_CENTER, BukkitAdapter.adapt(loc));
+        region.setFlag(ExtraFlags.CLAIM_CENTER, BukkitAdapter.adapt(loc));
         // Setting default home location (modifiable)
         region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc.clone().add(0, 0.5, 0)));
     }
@@ -187,7 +187,7 @@ public class ClaimManager implements ClaimsAPI {
         // Creating cuboid at new points
         final ProtectedRegion newRegion = new ProtectedCuboidRegion(id, min, max);
         // Updating region flag
-        wgRegion.setFlag(ClaimFlags.CLAIM_LEVEL, newLevel);
+        wgRegion.setFlag(ExtraFlags.CLAIM_LEVEL, newLevel);
         // Redefining region
         newRegion.copyFrom(wgRegion);
         regionManager.addRegion(newRegion);

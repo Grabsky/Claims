@@ -21,7 +21,7 @@ public class FarewellActionBarFlag extends FlagValueChangeHandler<String> {
     }
 
     public FarewellActionBarFlag(Session session) {
-        super(session, ClaimFlags.FAREWELL_ACTIONBAR);
+        super(session, ExtraFlags.FAREWELL_ACTIONBAR);
     }
 
     @Override

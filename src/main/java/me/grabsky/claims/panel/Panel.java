@@ -1,76 +1,33 @@
 package me.grabsky.claims.panel;
 
-import me.grabsky.claims.Claims;
-import me.grabsky.claims.interfaces.ClickTrigger;
 import me.grabsky.claims.panel.sections.Section;
+import me.grabsky.indigo.framework.inventories.ExclusiveInventory;
+import me.grabsky.indigo.utils.Benchmarks;
+import net.kyori.adventure.key.Key;
+import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
-public class Panel {
-    private static final PanelManager panelManager = Claims.getInstance().getPanelManager();
-    private final Inventory inventory;
-    private final int size;
-    private ClickTrigger[] triggers;
+public class Panel extends ExclusiveInventory {
+    public static Sound CLICK_SOUND = Sound.sound(Key.key("block.note_block.hat"), Sound.Source.MASTER, 1f, 1.5f);
 
-    /** Construtor required to create Panel object */
-    public Panel(int size, @NotNull Component title) {
-        this.size = size;
-        this.inventory = Bukkit.createInventory(null, size, title);
-        this.triggers = new ClickTrigger[size];
+    public Panel(final Component title, final int size) {
+        super(title, size);
     }
 
-    /** Construtor required to create Panel object */
-    public Panel(int size, @NotNull String title) {
-        this.size = size;
-        this.inventory = Bukkit.createInventory(null, size, Component.text(title));
-        this.triggers = new ClickTrigger[size];
+    public Panel(final Component title, final int size, final Sound clickSound) {
+        super(title, size, clickSound);
     }
 
-    /** Returns this inventory */
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    /** Sets item in panel inventory */
-    public void setItem(int slot, @NotNull ItemStack item, @NotNull ClickTrigger action) {
-        inventory.setItem(slot, item);
-        triggers[slot] = action;
-    }
-
-    /** Sets item in panel inventory */
-    public void setItem(int slot, @NotNull ItemStack item) {
-        inventory.setItem(slot, item);
-    }
-
-    /** Returns ClickAction (callback) for specified slot */
-    @Nullable public ClickTrigger getTrigger(int slot) {
-        return triggers[slot];
-    }
-
-    /** Clears contents of this panel (including callbacks) */
-    public void clear() {
-        inventory.clear();
-        this.triggers = new ClickTrigger[size];
-    }
-
-    /** Opens panel to player */
-    public void open(Player player) {
-        panelManager.add(player, this);
-        player.openInventory(inventory);
-    }
-
-    /** Opens panel to player */
-    public void applySection(Section section) {
-        section.prepare();
-        section.apply();
-        for (HumanEntity e : inventory.getViewers()) {
-            ((Player) e).updateInventory();
-        }
+    public void applySection(final Section section) {
+        final double s = Benchmarks.simple(() -> {
+            section.prepare();
+            section.apply();
+            for (final HumanEntity human : inventory.getViewers()) {
+                ((Player) human).updateInventory();
+            }
+        }, 1);
+        System.out.println(s);
     }
 }

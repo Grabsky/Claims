@@ -21,7 +21,7 @@ public class GreetingActionBarFlag extends FlagValueChangeHandler<String> {
     }
 
     public GreetingActionBarFlag(Session session) {
-        super(session, ClaimFlags.GREETING_ACTIONBAR);
+        super(session, ExtraFlags.GREETING_ACTIONBAR);
     }
 
     @Override

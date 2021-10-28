@@ -36,7 +36,7 @@ public class SectionMembersAdd extends Section {
     public void prepare() {
         final VanishAPI vanish = (Bukkit.getPluginManager().getPlugin("Vanish") != null) ? Vanish.getInstance().getAPI() : null;
         this.onlineUsers = UserCache.getOnlineUsers().stream()
-                .filter(user -> (!user.getUniqueId().equals(owner) && !claim.isMember(user.getUniqueId()) && (vanish == null || !vanish.isVanished(user.getUniqueId()))))
+                .filter(user -> (!user.getUniqueId().equals(claimOwnerUniqueId) && !claim.isMember(user.getUniqueId()) && (vanish == null || !vanish.isVanished(user.getUniqueId()))))
                 .collect(Collectors.toList());
         this.maxOnPage = 21;
         this.usableSize = onlineUsers.size();
@@ -46,7 +46,7 @@ public class SectionMembersAdd extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(executor, "§f\u7000\u7103", editMode);
+        InventoryUtils.updateTitle(viewer, "§f\u7000\u7103", editMode);
         // Display first page of online players
         this.generateView(1);
     }
@@ -70,19 +70,19 @@ public class SectionMembersAdd extends Section {
                     .build(), (event) -> {
                 // One more check just in case something changed while GUI was open
                 if (claim.addMember(user.getUniqueId())) {
-                    panel.applySection(new SectionMembers(panel, executor, owner, claim));
+                    panel.applySection(new SectionMembers(panel, viewer, claimOwnerUniqueId, claim));
                     if (ClaimsConfig.LOGS) {
                         fileLogger.log(ClaimsConfig.LOG_FORMAT_MEMBER_ADDED
                                 .replace("{member-name}", user.getName())
                                 .replace("{member-uuid}", user.getUniqueId().toString())
                                 .replace("{claim-id}", claim.getId())
                                 .replace("{claim-level}", String.valueOf(claim.getLevel()))
-                                .replace("{issuer-name}", executor.getName())
-                                .replace("{issuer-uuid}", executor.getUniqueId().toString()));
+                                .replace("{issuer-name}", viewer.getName())
+                                .replace("{issuer-uuid}", viewer.getUniqueId().toString()));
                     }
                 } else {
-                    executor.closeInventory();
-                    ClaimsLang.send(executor, ClaimsLang.REACHED_MEMBERS_LIMIT.replace("{limit}", String.valueOf(ClaimsConfig.MEMBERS_LIMIT)));
+                    viewer.closeInventory();
+                    ClaimsLang.send(viewer, ClaimsLang.REACHED_MEMBERS_LIMIT.replace("{limit}", String.valueOf(ClaimsConfig.MEMBERS_LIMIT)));
                 }
             });
         }
@@ -91,6 +91,6 @@ public class SectionMembersAdd extends Section {
         // If there is more pages - displaying NEXT PAGE button
         if (pageToDisplay + 1 <= pages) panel.setItem(26, Icons.NAVIGATION_NEXT, (event) -> generateView(pageToDisplay + 1));
         // As usually, displaying RETURN button
-        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMembers(panel, executor, owner, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMembers(panel, viewer, claimOwnerUniqueId, claim)));
     }
 }

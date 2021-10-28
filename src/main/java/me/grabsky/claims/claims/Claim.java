@@ -5,14 +5,15 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.configuration.ClaimsConfig;
-import me.grabsky.claims.flags.ClaimFlags;
+import me.grabsky.claims.flags.ExtraFlags;
 import org.bukkit.Location;
 
 import java.util.Set;
 import java.util.UUID;
 
 public class Claim {
-    private final ClaimManager manager = Claims.getInstance().getClaimManager();
+    private final static ClaimManager manager = Claims.getInstance().getClaimManager();
+
     private final String id;
     private final UUID owner;
     private ProtectedRegion wgRegion;
@@ -23,7 +24,7 @@ public class Claim {
         this.owner = owner;
     }
 
-    protected void update(ProtectedRegion wgRegion) {
+    protected void update(final ProtectedRegion wgRegion) {
         this.wgRegion = wgRegion;
     }
 
@@ -39,14 +40,14 @@ public class Claim {
         return owner;
     }
 
-    // This shouldn't be null unless manually deleted
     public int getLevel() {
-        return wgRegion.getFlag(ClaimFlags.CLAIM_LEVEL);
+        final Integer value = wgRegion.getFlag(ExtraFlags.CLAIM_LEVEL);
+        return (value == null) ? 0 : value;
     }
 
     // This shouldn't be null unless manually deleted
     public Location getCenter() {
-        return BukkitAdapter.adapt(wgRegion.getFlag(ClaimFlags.CLAIM_CENTER));
+        return BukkitAdapter.adapt(wgRegion.getFlag(ExtraFlags.CLAIM_CENTER));
     }
 
     // This shouldn't be null unless manually deleted
@@ -87,5 +88,12 @@ public class Claim {
             return true;
         }
         return false;
+    }
+
+    /* Utility Methods */
+
+    // 'Generates' region ID for specified location
+    public static String createId(final org.bukkit.Location location) {
+        return new StringBuilder().append(ClaimsConfig.REGION_PREFIX).append("x").append(location.getBlockX()).append("y").append(location.getBlockY()).append("z").append(location.getBlockZ()).toString();
     }
 }

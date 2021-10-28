@@ -6,9 +6,8 @@ import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.claims.ClaimPlayer;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
-import me.grabsky.claims.panel.PanelManager;
+import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Items;
-import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.configuration.Global;
 import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.UserCache;
@@ -35,12 +34,10 @@ import java.util.UUID;
 public class RegionListener implements Listener {
     private final FileLogger fileLogger;
     private final ClaimManager manager;
-    private final PanelManager panelManager;
 
     public RegionListener(Claims instance) {
         this.fileLogger = instance.getFileLogger();
         this.manager = instance.getClaimManager();
-        this.panelManager = instance.getPanelManager();
     }
 
     @EventHandler(priority = EventPriority.HIGH)
@@ -100,7 +97,7 @@ public class RegionListener implements Listener {
     public void onClaimBreak(BlockBreakEvent event) {
         if (event.isCancelled()) return;
         if (event.getBlock().getWorld() != ClaimsConfig.DEFAULT_WORLD) return;
-        final String id = ClaimsUtils.createId(event.getBlock().getLocation());
+        final String id = Claim.createId(event.getBlock().getLocation());
         if (manager.containsClaim(id)) {
             final Claim claim = manager.getClaim(id);
             final Player player = event.getPlayer();
@@ -130,7 +127,7 @@ public class RegionListener implements Listener {
                         ClaimsLang.send(player, ClaimsLang.DESTROY_SUCCESS);
                         final Player owner = Bukkit.getPlayer(ownerUniqueId);
                         if (owner != null && owner.isOnline()) {
-                            if (panelManager.isInventoryOpen(owner)) {
+                            if (owner.getOpenInventory().getTopInventory().getHolder() instanceof Panel) {
                                 owner.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
                             }
                         }
@@ -162,7 +159,7 @@ public class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent event) {
         for (Block block : event.getBlocks()) {
-            if (manager.containsClaim(ClaimsUtils.createId(block.getLocation()))) {
+            if (manager.containsClaim(Claim.createId(block.getLocation()))) {
                 event.setCancelled(true);
             }
         }
@@ -172,7 +169,7 @@ public class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonRetract(BlockPistonRetractEvent event) {
         for (Block block : event.getBlocks()) {
-            if (manager.containsClaim(ClaimsUtils.createId(block.getLocation()))) {
+            if (manager.containsClaim(Claim.createId(block.getLocation()))) {
                 event.setCancelled(true);
             }
         }
@@ -181,13 +178,13 @@ public class RegionListener implements Listener {
     // Prevents block from being destroyed because of block explosion (TNT)
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockExplode(BlockExplodeEvent event) {
-        event.blockList().removeIf(block -> manager.containsClaim(ClaimsUtils.createId(block.getLocation())));
+        event.blockList().removeIf(block -> manager.containsClaim(Claim.createId(block.getLocation())));
     }
 
     // Prevents block from being destroyed because of entity explosion
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(EntityExplodeEvent event) {
-        event.blockList().removeIf(block -> manager.containsClaim(ClaimsUtils.createId(block.getLocation())));
+        event.blockList().removeIf(block -> manager.containsClaim(Claim.createId(block.getLocation())));
     }
 
     // Prevents item from being a crafting ingredient

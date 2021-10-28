@@ -14,7 +14,7 @@
     <properties>
         <java.version>17</java.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <builds.local>D:/java/builds</builds.local>
+        <builds.local>${env.IDEA_WORKSPACE}/builds</builds.local>
     </properties>
 
     <build>
@@ -24,8 +24,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version>
                 <configuration>
-                    <source>${java.version}</source>
-                    <target>${java.version}</target>
+                    <source>16</source>
+                    <target>16</target>
                 </configuration>
             </plugin>
             <plugin>
@@ -79,21 +79,21 @@
         <dependency>
             <groupId>com.sk89q.worldedit</groupId>
             <artifactId>worldedit-bukkit</artifactId>
-            <version>7.2.5</version>
+            <version>7.2.6</version>
             <scope>provided</scope>
         </dependency>
         <!-- WorldGuard API -->
         <dependency>
             <groupId>com.sk89q.worldguard</groupId>
             <artifactId>worldguard-bukkit</artifactId>
-            <version>7.0.5</version>
+            <version>7.0.6</version>
             <scope>provided</scope>
         </dependency>
         <!-- Indigo -->
         <dependency>
             <groupId>me.grabsky</groupId>
             <artifactId>Indigo</artifactId>
-            <version>latest</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${builds.local}/Indigo.jar</systemPath>
         </dependency>
@@ -101,7 +101,7 @@
         <dependency>
             <groupId>me.grabsky</groupId>
             <artifactId>Vanish</artifactId>
-            <version>latest</version>
+            <version>1.0-SNAPSHOT</version>
             <scope>system</scope>
             <systemPath>${builds.local}/Vanish.jar</systemPath>
         </dependency>

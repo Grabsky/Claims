@@ -5,12 +5,12 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.grabsky.claims.builders.FlagItemBuilder;
 import me.grabsky.claims.claims.Claim;
+import me.grabsky.claims.flags.management.ClaimFlag;
+import me.grabsky.claims.flags.management.ClaimFlagProperties;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Icons;
 import me.grabsky.claims.utils.InventoryUtils;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.UUID;
@@ -18,15 +18,15 @@ import java.util.UUID;
 public class SectionFlags extends Section {
     private final ProtectedRegion wgRegion;
 
-    private FlagItemBuilder use;
-    private FlagItemBuilder entry;
-    private FlagItemBuilder tnt;
-    private FlagItemBuilder mob_spawning;
-    private FlagItemBuilder creeper_explosion;
-    private FlagItemBuilder snow_melt;
-    private FlagItemBuilder ice_melt;
-    private FlagItemBuilder time_lock;
-    private FlagItemBuilder weather_lock;
+    private ClaimFlag useFlag;
+    private ClaimFlag entryFlag;
+    private ClaimFlag tntFlag;
+    private ClaimFlag creeperExplosionFlag;
+    private ClaimFlag snowMelt;
+    private ClaimFlag iceMelt;
+    private ClaimFlag mobSpawning;
+    private ClaimFlag timeLock;
+    private ClaimFlag weatherLock;
 
     public SectionFlags(Panel panel, Player executor, UUID owner, Claim claim) {
         super(panel, executor, owner, claim);
@@ -35,69 +35,42 @@ public class SectionFlags extends Section {
 
     @Override
     public void prepare() {
-        this.use = new FlagItemBuilder(Material.ENCHANTING_TABLE, Flags.USE, wgRegion.getFlag(Flags.USE))
-                .setName("§e§lInterakcja")
-                .setPrefix("§7Interakcja z blokami użytkowymi.", "", "§7Zakres: §eGoście", "")
-                .setSuffix("", "§cNie dotyczy kontenerów na przedmioty.")
-                .updateLore();
-        this.entry = new FlagItemBuilder(Material.DARK_OAK_DOOR, Flags.ENTRY, wgRegion.getFlag(Flags.ENTRY))
-                .setName("§e§lWejście")
-                .setPrefix("§7Możliwość wejścia na teren.", "", "§7Zakres: §eGoście", "")
-                .updateLore();
-        this.tnt = new FlagItemBuilder(Material.TNT, Flags.TNT, wgRegion.getFlag(Flags.TNT))
-                .setName("§e§lWybuch TNT")
-                .setPrefix("§7Niszczenie terenu przez wybuch TNT.", "", "§7Zakres: §eŚrodowisko", "")
-                .updateLore();
-        this.creeper_explosion = new FlagItemBuilder(Material.CREEPER_HEAD, Flags.CREEPER_EXPLOSION, wgRegion.getFlag(Flags.CREEPER_EXPLOSION))
-                .setName("§e§lWybuch Creeperów")
-                .setPrefix("§7Niszczenie terenu przez creepery.", "", "§7Zakres: §eŚrodowisko", "")
-                .updateLore();
-        this.snow_melt = new FlagItemBuilder(Material.SNOWBALL, Flags.SNOW_MELT, wgRegion.getFlag(Flags.SNOW_MELT))
-                .setName("§e§lTopnienie Śniegu")
-                .setPrefix("§7Topnienie śniegu na terenie.", "", "§7Zakres: §eŚrodowisko", "")
-                .updateLore();
-        this.ice_melt = new FlagItemBuilder(Material.ICE, Flags.ICE_MELT, wgRegion.getFlag(Flags.ICE_MELT))
-                .setName("§e§lTopnienie Lodu")
-                .setPrefix("§7Topnienie lodu na terenie.", "", "§7Zakres: §eŚrodowisko", "")
-                .updateLore();
-        this.mob_spawning = new FlagItemBuilder(Material.SPAWNER, Flags.MOB_SPAWNING, wgRegion.getFlag(Flags.MOB_SPAWNING))
-                .setName("§e§lSpawn Mobów")
-                .setPrefix("§7Spawn mobów na terenie.", "", "§7Zakres: §eŚrodowisko", "")
-                .updateLore();
-        this.time_lock = new FlagItemBuilder(Material.CLOCK, Flags.TIME_LOCK, wgRegion.getFlag(Flags.TIME_LOCK))
-                .setName("§e§lGodzina")
-                .setPrefix("§7Godzina widoczna na terenie.", "", "§7Zakres: §eŚrodowisko", "")
-                .setSuffix("", "§cZmiany widoczne po przelogowaniu.")
-                .updateLore();
-        this.weather_lock = new FlagItemBuilder(Material.NAUTILUS_SHELL, Flags.WEATHER_LOCK, wgRegion.getFlag(Flags.WEATHER_LOCK))
-                .setName("§e§lPogoda")
-                .setPrefix("§7Pogoda widoczna na terenie.", "", "§7Zakres: §eŚrodowisko", "")
-                .setSuffix("", "§cZmiany widoczne po przelogowaniu.")
-                .updateLore();
+        this.useFlag = new ClaimFlag(ClaimFlagProperties.USE, wgRegion.getFlag(Flags.USE));
+        this.entryFlag = new ClaimFlag(ClaimFlagProperties.ENTRY, wgRegion.getFlag(Flags.ENTRY));
+        this.tntFlag = new ClaimFlag(ClaimFlagProperties.TNT, wgRegion.getFlag(Flags.TNT));
+        this.creeperExplosionFlag = new ClaimFlag(ClaimFlagProperties.CREEPER_EXPLOSION, wgRegion.getFlag(Flags.CREEPER_EXPLOSION));
+        this.snowMelt = new ClaimFlag(ClaimFlagProperties.SNOW_MELT, wgRegion.getFlag(Flags.SNOW_MELT));
+        this.iceMelt = new ClaimFlag(ClaimFlagProperties.ICE_MELT, wgRegion.getFlag(Flags.ICE_MELT));
+        this.mobSpawning = new ClaimFlag(ClaimFlagProperties.MOB_SPAWNING, wgRegion.getFlag(Flags.MOB_SPAWNING));
+        this.timeLock = new ClaimFlag(ClaimFlagProperties.TIME_LOCK, wgRegion.getFlag(Flags.TIME_LOCK));
+        this.weatherLock = new ClaimFlag(ClaimFlagProperties.WEATHER_LOCK, wgRegion.getFlag(Flags.WEATHER_LOCK));
     }
 
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(executor, "§f\u7000\u7105", editMode);
-        // Setting up flags
-        panel.setItem(11, use.build(), (event) -> event.setCurrentItem(use.toggle(value -> {
-            wgRegion.setFlag(Flags.USE, (StateFlag.State) value);
-            wgRegion.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
-        }).build()));
-        panel.setItem(12, entry.build(), (event) -> event.setCurrentItem(entry.toggle(value -> {
-            wgRegion.setFlag(Flags.ENTRY, (StateFlag.State) value);
-            wgRegion.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
-        }).build()));
-        panel.setItem(13, tnt.build(), (event) -> event.setCurrentItem(tnt.toggle(value -> wgRegion.setFlag(Flags.TNT, (StateFlag.State) value)).build()));
-        panel.setItem(14, creeper_explosion.build(), (event) -> event.setCurrentItem(creeper_explosion.toggle(value -> wgRegion.setFlag(Flags.CREEPER_EXPLOSION, (StateFlag.State) value)).build()));
-        panel.setItem(15, snow_melt.build(), (event) -> event.setCurrentItem(snow_melt.toggle(value -> wgRegion.setFlag(Flags.SNOW_MELT, (StateFlag.State) value)).build()));
-        panel.setItem(20, ice_melt.build(), (event) -> event.setCurrentItem(ice_melt.toggle(value -> wgRegion.setFlag(Flags.ICE_MELT, (StateFlag.State) value)).build()));
-        panel.setItem(21, mob_spawning.build(), (event) -> event.setCurrentItem(mob_spawning.toggle(value -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) value)).build()));
-        panel.setItem(22, time_lock.build(), (event) -> event.setCurrentItem(time_lock.toggle(value -> wgRegion.setFlag(Flags.TIME_LOCK, (String) value)).build()));
-        panel.setItem(23, weather_lock.build(), (event) -> event.setCurrentItem(weather_lock.toggle(value -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) value)).build()));
-        // Return button
-        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionSettings(panel, executor, owner, claim)));
+        InventoryUtils.updateTitle(viewer, "§f\u7000\u7105", editMode);
+        // Adding flag items
+        panel.setItem(11, useFlag.updateItem(), (event) -> {
+            event.setCurrentItem(useFlag.nextOption((newVal) -> {
+                wgRegion.setFlag(Flags.USE, (StateFlag.State) newVal);
+                wgRegion.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            }));
+        });
+        panel.setItem(12, entryFlag.updateItem(), (event) -> {
+            event.setCurrentItem(entryFlag.nextOption((newVal) -> {
+                wgRegion.setFlag(Flags.ENTRY, (StateFlag.State) newVal);
+                wgRegion.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+            }));
+        });
+        panel.setItem(13, tntFlag.updateItem(), (event) -> event.setCurrentItem(tntFlag.nextOption((newVal) -> wgRegion.setFlag(Flags.TNT, (StateFlag.State) newVal))));
+        panel.setItem(14, creeperExplosionFlag.updateItem(), (event) -> event.setCurrentItem(creeperExplosionFlag.nextOption((newVal) -> wgRegion.setFlag(Flags.CREEPER_EXPLOSION, (StateFlag.State) newVal))));
+        panel.setItem(15, snowMelt.updateItem(), (event) -> event.setCurrentItem(snowMelt.nextOption((newVal) -> wgRegion.setFlag(Flags.SNOW_MELT, (StateFlag.State) newVal))));
+        panel.setItem(20, iceMelt.updateItem(), (event) -> event.setCurrentItem(iceMelt.nextOption((newVal) -> wgRegion.setFlag(Flags.ICE_MELT, (StateFlag.State) newVal))));
+        panel.setItem(21, mobSpawning.updateItem(), (event) -> event.setCurrentItem(mobSpawning.nextOption((newVal) -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) newVal))));
+        panel.setItem(22, timeLock.updateItem(), (event) -> event.setCurrentItem(timeLock.nextOption((newVal) -> wgRegion.setFlag(Flags.TIME_LOCK, (String) newVal))));
+        panel.setItem(23, weatherLock.updateItem(), (event) -> event.setCurrentItem(weatherLock.nextOption((newVal) -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) newVal))));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionSettings(panel, viewer, claimOwnerUniqueId, claim)));
     }
 
 }

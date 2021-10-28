@@ -31,7 +31,7 @@ public class SectionMembers extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(executor, "§f\u7000\u7104", editMode);
+        InventoryUtils.updateTitle(viewer, "§f\u7000\u7104", editMode);
         // Generating the view
         this.generateView();
     }
@@ -57,17 +57,17 @@ public class SectionMembers extends Section {
                                 .replace("{member-uuid}", user.getUniqueId().toString())
                                 .replace("{claim-id}", claim.getId())
                                 .replace("{claim-level}", String.valueOf(claim.getLevel()))
-                                .replace("{issuer-name}", executor.getName())
-                                .replace("{issuer-uuid}", executor.getUniqueId().toString()));
+                                .replace("{issuer-name}", viewer.getName())
+                                .replace("{issuer-uuid}", viewer.getUniqueId().toString()));
                     }
                 } else {
-                    executor.closeInventory();
-                    ClaimsLang.send(executor, ClaimsLang.NOT_MEMBER);
+                    viewer.closeInventory();
+                    ClaimsLang.send(viewer, ClaimsLang.NOT_MEMBER);
                 }
             });
             slot = (slot == 15) ? 20 : slot + 1;
         }
-        if (slot != 25) panel.setItem(slot, Icons.ICON_ADD_MEMBER, event -> panel.applySection(new SectionMembersAdd(panel, executor, owner, claim)));
-        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMain(panel, executor, owner, claim)));
+        if (slot != 25) panel.setItem(slot, Icons.ICON_ADD_MEMBER, event -> panel.applySection(new SectionMembersAdd(panel, viewer, claimOwnerUniqueId, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMain(panel, viewer, claimOwnerUniqueId, claim)));
     }
 }

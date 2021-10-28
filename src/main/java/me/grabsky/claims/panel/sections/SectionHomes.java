@@ -30,7 +30,7 @@ public class SectionHomes extends Section {
     }
 
     public void prepare() {
-        this.relatives = (executor.getUniqueId().equals(owner) && executor.hasPermission("claims.plugin.displayallclaims")) ? new ArrayList<>(manager.getClaimIds()) : new ArrayList<>(manager.getClaimPlayer(owner).getRelatives());
+        this.relatives = (viewer.getUniqueId().equals(claimOwnerUniqueId) && viewer.hasPermission("claims.plugin.displayallclaims")) ? new ArrayList<>(manager.getClaimIds()) : new ArrayList<>(manager.getClaimPlayer(claimOwnerUniqueId).getRelatives());
         this.relatives.removeIf((id) -> id.equals(claim.getId())); // Removing player's claim from a list (it's there only when displaying all claims)
         this.maxOnPage = 21;
         this.usableSize = relatives.size();
@@ -40,7 +40,7 @@ public class SectionHomes extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(executor, "§f\u7000\u7103", editMode);
+        InventoryUtils.updateTitle(viewer, "§f\u7000\u7103", editMode);
         // Generating the view
         this.generateView(1);
     }
@@ -67,8 +67,8 @@ public class SectionHomes extends Section {
                     .setLore("§7Kliknij, aby teleportować się", "§7na teren tego gracza.")
                     .setSkullTexture(user.getTexture())
                     .build(), (event) -> {
-                        executor.closeInventory();
-                        Teleport.async(executor, relativeClaim.getHome(), ClaimsConfig.TELEPORT_DELAY, "azure.bypass.teleportdelay");
+                        viewer.closeInventory();
+                        Teleport.async(viewer, relativeClaim.getHome(), ClaimsConfig.TELEPORT_DELAY, "azure.bypass.teleportdelay");
             });
         }
         // If player is not on the first page - displaying PREVIOUS PAGE button
@@ -78,9 +78,9 @@ public class SectionHomes extends Section {
         // Return button
         panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> {
             if (claim != null) {
-                panel.applySection(new SectionMain(panel, executor, owner, claim));
+                panel.applySection(new SectionMain(panel, viewer, claimOwnerUniqueId, claim));
             } else {
-                executor.closeInventory();
+                viewer.closeInventory();
             }
         });
     }

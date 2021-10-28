@@ -9,10 +9,8 @@ import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.commands.ClaimsCommand;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
-import me.grabsky.claims.flags.ClaimFlags;
+import me.grabsky.claims.flags.ExtraFlags;
 import me.grabsky.claims.listeners.RegionListener;
-import me.grabsky.claims.panel.PanelManager;
-import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.framework.commands.CommandManager;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import me.grabsky.indigo.logger.FileLogger;
@@ -30,7 +28,6 @@ public final class Claims extends JavaPlugin {
     private ClaimsLang lang;
     private RegionManager region;
     private ClaimManager claim;
-    private PanelManager panel;
     // Getters
     public static Claims getInstance() { return instance; }
     public ConsoleLogger getConsoleLogger() { return consoleLogger; }
@@ -38,7 +35,6 @@ public final class Claims extends JavaPlugin {
     public RegionManager getRegionManager() { return region; }
     public ClaimManager getClaimManager() { return claim; }
     public ClaimsAPI getAPI() { return claim; }
-    public PanelManager getPanelManager() { return panel; }
 
     public static NamespacedKey claimBlockLevel;
 
@@ -53,7 +49,7 @@ public final class Claims extends JavaPlugin {
         // Reloading configuration files
         this.reload();
         // Registering flag handlers
-        ClaimFlags.registerHandlers();
+        ExtraFlags.registerHandlers();
         // Creating NamespacedKey
         claimBlockLevel = new NamespacedKey(this, "claimBlockLevel");
         // Creating instance of RegionManager
@@ -61,14 +57,12 @@ public final class Claims extends JavaPlugin {
         this.region = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // Creating other instances
         this.claim = new ClaimManager(this);
-        this.panel = new PanelManager(this);
+        // Initializing Indigo's InventoryManager
         // Registering events
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
         // Registering command(s)
         final CommandManager commands = new CommandManager(this);
         commands.register(new ClaimsCommand(this));
-        // Initializing available upgrades
-        ClaimsUtils.initialize();
     }
 
     @Override
@@ -78,7 +72,7 @@ public final class Claims extends JavaPlugin {
 
     @Override
     public void onLoad() {
-        ClaimFlags.registerFlags();
+        ExtraFlags.registerFlags();
     }
 
     public boolean reload() {
