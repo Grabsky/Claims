@@ -3,10 +3,10 @@ package me.grabsky.claims.panel.sections;
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.claims.ClaimManager;
+import me.grabsky.claims.claims.ClaimPlayer;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Icons;
-import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.user.User;
 import me.grabsky.indigo.user.UserCache;
@@ -16,21 +16,26 @@ import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class SectionHomes extends Section {
     private final ClaimManager manager = Claims.getInstance().getClaimManager();
+    private final Player viewer;
+    private final ClaimPlayer claimOwner;
+    private final Claim claim;
     private List<String> relatives;
     private int maxOnPage;
     private int usableSize;
     private int pages;
 
-    public SectionHomes(Panel panel, Player executor, UUID owner, Claim claim) {
-        super(panel, executor, owner, claim);
+    public SectionHomes(Panel panel) {
+        super(panel);
+        this.viewer = panel.getViewer();
+        this.claimOwner = panel.getClaimOwner();
+        this.claim = claimOwner.getClaim();
     }
 
     public void prepare() {
-        this.relatives = (viewer.getUniqueId().equals(claimOwnerUniqueId) && viewer.hasPermission("claims.plugin.displayallclaims")) ? new ArrayList<>(manager.getClaimIds()) : new ArrayList<>(manager.getClaimPlayer(claimOwnerUniqueId).getRelatives());
+        this.relatives = (viewer.getUniqueId().equals(claimOwner.getUniqueId()) && viewer.hasPermission("claims.plugin.displayallclaims")) ? new ArrayList<>(manager.getClaimIds()) : new ArrayList<>(manager.getClaimPlayer(claimOwner.getUniqueId()).getRelatives());
         this.relatives.removeIf((id) -> id.equals(claim.getId())); // Removing player's claim from a list (it's there only when displaying all claims)
         this.maxOnPage = 21;
         this.usableSize = relatives.size();
@@ -40,7 +45,7 @@ public class SectionHomes extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(viewer, "§f\u7000\u7103", editMode);
+        panel.updateClientTitle("§f\u7000\u7103");
         // Generating the view
         this.generateView(1);
     }
@@ -78,7 +83,7 @@ public class SectionHomes extends Section {
         // Return button
         panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> {
             if (claim != null) {
-                panel.applySection(new SectionMain(panel, viewer, claimOwnerUniqueId, claim));
+                panel.applySection(new SectionMain(panel));
             } else {
                 viewer.closeInventory();
             }

@@ -2,11 +2,11 @@ package me.grabsky.claims.panel.sections;
 
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
+import me.grabsky.claims.claims.ClaimPlayer;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Icons;
-import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.User;
@@ -18,25 +18,30 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 public class SectionMembersAdd extends Section {
     private final FileLogger fileLogger = Claims.getInstance().getFileLogger();
+    private final Player viewer;
+    private final ClaimPlayer claimOwner;
+    private final Claim claim;
     private List<User> onlineUsers;
     private int maxOnPage;
     private int usableSize;
     private int pages;
 
-    public SectionMembersAdd(Panel panel, Player executor, UUID owner, Claim claim) {
-        super(panel, executor, owner, claim);
+    public SectionMembersAdd(Panel panel) {
+        super(panel);
+        this.viewer = panel.getViewer();
+        this.claimOwner = panel.getClaimOwner();
+        this.claim = claimOwner.getClaim();
     }
 
     @Override
     public void prepare() {
         final VanishAPI vanish = (Bukkit.getPluginManager().getPlugin("Vanish") != null) ? Vanish.getInstance().getAPI() : null;
         this.onlineUsers = UserCache.getOnlineUsers().stream()
-                .filter(user -> (!user.getUniqueId().equals(claimOwnerUniqueId) && !claim.isMember(user.getUniqueId()) && (vanish == null || !vanish.isVanished(user.getUniqueId()))))
+                .filter(user -> (!user.getUniqueId().equals(claimOwner.getUniqueId()) && !claim.isMember(user.getUniqueId()) && (vanish == null || !vanish.isVanished(user.getUniqueId()))))
                 .collect(Collectors.toList());
         this.maxOnPage = 21;
         this.usableSize = onlineUsers.size();
@@ -46,7 +51,7 @@ public class SectionMembersAdd extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(viewer, "§f\u7000\u7103", editMode);
+        panel.updateClientTitle("§f\u7000\u7103");
         // Display first page of online players
         this.generateView(1);
     }
@@ -70,7 +75,7 @@ public class SectionMembersAdd extends Section {
                     .build(), (event) -> {
                 // One more check just in case something changed while GUI was open
                 if (claim.addMember(user.getUniqueId())) {
-                    panel.applySection(new SectionMembers(panel, viewer, claimOwnerUniqueId, claim));
+                    panel.applySection(new SectionMembers(panel));
                     if (ClaimsConfig.LOGS) {
                         fileLogger.log(ClaimsConfig.LOG_FORMAT_MEMBER_ADDED
                                 .replace("{member-name}", user.getName())
@@ -91,6 +96,6 @@ public class SectionMembersAdd extends Section {
         // If there is more pages - displaying NEXT PAGE button
         if (pageToDisplay + 1 <= pages) panel.setItem(26, Icons.NAVIGATION_NEXT, (event) -> generateView(pageToDisplay + 1));
         // As usually, displaying RETURN button
-        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMembers(panel, viewer, claimOwnerUniqueId, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMembers(panel)));
     }
 }

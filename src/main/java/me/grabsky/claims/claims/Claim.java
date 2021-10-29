@@ -90,6 +90,10 @@ public class Claim {
         return false;
     }
 
+    public boolean upgrade() {
+        return manager.upgrade(this);
+    }
+
     /* Utility Methods */
 
     // 'Generates' region ID for specified location

@@ -3,28 +3,34 @@ package me.grabsky.claims.panel.sections;
 import me.grabsky.claims.Claims;
 import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.claims.ClaimLevel;
-import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Icons;
-import me.grabsky.claims.utils.ClaimsUtils;
-import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.indigo.logger.FileLogger;
+import me.grabsky.indigo.utils.Components;
 import me.grabsky.indigo.utils.Inventories;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 public class SectionSettings extends Section {
-    private final ClaimManager manager = Claims.getInstance().getClaimManager();
     private final FileLogger fileLogger = Claims.getInstance().getFileLogger();
+    private final Player viewer;
+    private final Claim claim;
 
-    public SectionSettings(Panel panel, Player viewer, UUID owner, Claim claim) {
-        super(panel, viewer, owner, claim);
+    private static final Component CLICK_TO_UPGRADE = Components.parseSection("§7Kliknij, aby ulepszyć.").decoration(TextDecoration.ITALIC, false);
+    private static final Component CONDITIONS_NOT_MET = Components.parseSection("§cNie posiadasz wymaganych przedmiotów.").decoration(TextDecoration.ITALIC, false);
+
+    public SectionSettings(Panel panel) {
+        super(panel);
+        this.viewer = panel.getViewer();
+        this.claim = panel.getClaimOwner().getClaim();
     }
 
     @Override
@@ -35,7 +41,7 @@ public class SectionSettings extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(viewer, "§f\u7000\u7101", editMode);
+        panel.updateClientTitle("§f\u7000\u7101");
         // Setting menu items
         this.generateView();
     }
@@ -47,7 +53,7 @@ public class SectionSettings extends Section {
     private void generateView() {
         panel.clear();
         // Button: FLAGS
-        panel.setItem(11, Icons.CATEGORY_FLAGS, event -> panel.applySection(new SectionFlags(panel, viewer, claimOwnerUniqueId, claim)));
+        panel.setItem(11, Icons.CATEGORY_FLAGS, event -> panel.applySection(new SectionFlags(panel)));
         // Teleport location button
         panel.setItem(13, Icons.ICON_SET_TELEPORT, (event) -> {
             if (claim.setHome(viewer.getLocation())) {
@@ -58,19 +64,20 @@ public class SectionSettings extends Section {
             viewer.closeInventory();
         });
         // Getting object of CURRENT upgrade level
-        final ClaimLevel currentLevel = ClaimsUtils.getClaimLevel(claim.getLevel());
-        // Getting object of NEXT upgrade level
-        final ClaimLevel nextLevel = (claim.getLevel() < 5) ? ClaimsUtils.getClaimLevel(claim.getLevel() + 1) : null;
-        final ItemStack icon = currentLevel.getIcon().clone();
+        final ClaimLevel currentLevel = ClaimLevel.getClaimLevel(claim.getLevel());
+        // Getting object of NEXT upgrade level; Ignoring for levels higher than 5
+        final ClaimLevel nextLevel = (claim.getLevel() < 6) ? ClaimLevel.getClaimLevel(claim.getLevel() + 1) : null;
+        // Creating inventory icon
+        final ItemStack inventoryIcon = new ItemStack(currentLevel.getInventoryIcon());
         if (nextLevel != null) {
-            icon.editMeta((meta) -> {
-               final List<String> lore = meta.getLore();
-               lore.add(this.canUpgrade(viewer, nextLevel) ? "§7Kliknij, aby ulepszyć." : "§cNie posiadasz wymaganych przedmiotów.");
-               meta.setLore(lore);
+            inventoryIcon.editMeta((meta) -> {
+               final List<Component> lore = (meta.hasLore()) ? meta.lore() : new ArrayList<>();
+               lore.add(this.canUpgrade(viewer, nextLevel) ? CLICK_TO_UPGRADE : CONDITIONS_NOT_MET);
+               meta.lore(lore);
             });
         }
         // Upgrade button
-        panel.setItem(15, icon, event -> {
+        panel.setItem(15, inventoryIcon, (event) -> {
             if (nextLevel == null) return;
             // Removing material if player doesn't have bypass permission
             if (this.canUpgrade(viewer, nextLevel)) {
@@ -78,9 +85,8 @@ public class SectionSettings extends Section {
                     Inventories.removeItems(viewer, nextLevel.getUpgradeCost().toArray(new ItemStack[0]));
                 }
                 // Upgrading claim
-                manager.upgrade(claim);
-                // Sending success message and playing level up sound
-                ClaimsLang.send(viewer, ClaimsLang.UPGRADE_SUCCESS.replace("{size}", nextLevel.getSize()));
+                claim.upgrade();
+                // TO-DO: Use Kyori components
                 viewer.playSound(viewer.getLocation(), Sound.ENTITY_PLAYER_LEVELUP, 1, 1);
                 // Refreshing the view
                 this.generateView();
@@ -96,6 +102,6 @@ public class SectionSettings extends Section {
             viewer.playSound(viewer.getLocation(), Sound.BLOCK_ANVIL_PLACE, 1, 1);
         });
         // Return button
-        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMain(panel, viewer, claimOwnerUniqueId, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMain(panel)));
     }
 }

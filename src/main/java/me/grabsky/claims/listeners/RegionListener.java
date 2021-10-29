@@ -1,7 +1,9 @@
 package me.grabsky.claims.listeners;
 
 import me.grabsky.claims.Claims;
+import me.grabsky.claims.ClaimsKeys;
 import me.grabsky.claims.claims.Claim;
+import me.grabsky.claims.claims.ClaimLevel;
 import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.claims.ClaimPlayer;
 import me.grabsky.claims.configuration.ClaimsConfig;
@@ -45,7 +47,7 @@ public class RegionListener implements Listener {
         if (event.isCancelled()) return;
         if (!event.canBuild()) return; // Not sure if that check covers all possible scenarios including building in WorldGuard regions
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
-        if (data.has(Claims.claimBlockLevel, PersistentDataType.INTEGER)) {
+        if (data.has(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER)) {
             final Player player = event.getPlayer();
             if (player.hasPermission("claims.plugin.place")) {
                 if (event.getBlock().getWorld() == ClaimsConfig.DEFAULT_WORLD) {
@@ -56,7 +58,7 @@ public class RegionListener implements Listener {
                         // The reason why it's here and not in RegionManager is that I want the messages to be different
                         if (!manager.isInSquare(loc, ClaimsConfig.DEFAULT_WORLD.getSpawnLocation(), ClaimsConfig.MINIMUM_DISTANCE_FROM_SPAWN)) {
                             // This shouldn't be null
-                            final int level = data.get(Claims.claimBlockLevel, PersistentDataType.INTEGER);
+                            final int level = data.get(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER);
                             final Claim claim = manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level);
                             if (claim != null) {
                                 ClaimsLang.send(player, ClaimsLang.PLACE_SUCCESS);
@@ -122,7 +124,7 @@ public class RegionListener implements Listener {
                         manager.removeRegionOf(ownerUniqueId);
                         // Dropping the item
                         if (player.getGameMode() == GameMode.SURVIVAL) {
-                            event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), Items.getClaimBlock(claim.getLevel()));
+                            event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), ClaimLevel.getClaimLevel(claim.getLevel()).getClaimBlockItem());
                         }
                         ClaimsLang.send(player, ClaimsLang.DESTROY_SUCCESS);
                         final Player owner = Bukkit.getPlayer(ownerUniqueId);
@@ -193,7 +195,7 @@ public class RegionListener implements Listener {
         if (event.getRecipe() == null) return;
         for (ItemStack item : event.getInventory().getMatrix()) {
             // Yes Bukkit, apparently it can be null...
-            if (item != null && item.getItemMeta().getPersistentDataContainer().has(Claims.claimBlockLevel, PersistentDataType.INTEGER)) {
+            if (item != null && item.getItemMeta().getPersistentDataContainer().has(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER)) {
                 event.getInventory().setResult(new ItemStack(Material.AIR));
             }
         }

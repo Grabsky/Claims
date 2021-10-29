@@ -14,7 +14,6 @@ import me.grabsky.claims.api.ClaimsAPI;
 import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.flags.ExtraFlags;
-import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -34,11 +33,10 @@ public class ClaimManager implements ClaimsAPI {
     public ClaimManager(Claims instance) {
         this.regionManager = instance.getRegionManager();
         this.consoleLogger = instance.getConsoleLogger();
-        this.cacheClaims();
     }
 
     // Should be run only during the server startup
-    private void cacheClaims() {
+    public void cacheClaims() {
         int loadedClaims = 0;
         for (Map.Entry<String, ProtectedRegion> en : regionManager.getRegions().entrySet()) {
             final ProtectedRegion region = en.getValue();
@@ -175,8 +173,9 @@ public class ClaimManager implements ClaimsAPI {
     }
 
     public boolean upgrade(Claim claim) {
-        if (claim.getLevel() >= 5) return false;
-        int newLevel = claim.getLevel() + 1;
+        // Ignore for levels higher than 6
+        if (claim.getLevel() >= 6) return false;
+        final int newLevel = claim.getLevel() + 1;
         final ProtectedRegion wgRegion = claim.getWGRegion();
         final String id = claim.getId();
         final Location center = claim.getCenter();
@@ -194,7 +193,7 @@ public class ClaimManager implements ClaimsAPI {
         // Updating Claim with new WorldGuard region
         claim.update(newRegion);
         // Updating block type ('& 0xF' thingy is doing some magic to get block's position in chunk)
-        final Material type = ClaimsUtils.getClaimLevel(newLevel).getBlockMaterial();
+        final Material type = ClaimLevel.getClaimLevel(newLevel).getClaimBlockMaterial();
         PaperLib.getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));
         return true;
     }

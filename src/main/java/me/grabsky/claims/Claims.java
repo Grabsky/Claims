@@ -14,7 +14,6 @@ import me.grabsky.claims.listeners.RegionListener;
 import me.grabsky.indigo.framework.commands.CommandManager;
 import me.grabsky.indigo.logger.ConsoleLogger;
 import me.grabsky.indigo.logger.FileLogger;
-import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.text.SimpleDateFormat;
@@ -36,8 +35,6 @@ public final class Claims extends JavaPlugin {
     public ClaimManager getClaimManager() { return claim; }
     public ClaimsAPI getAPI() { return claim; }
 
-    public static NamespacedKey claimBlockLevel;
-
     @Override
     public void onEnable() {
         instance = this;
@@ -50,19 +47,19 @@ public final class Claims extends JavaPlugin {
         this.reload();
         // Registering flag handlers
         ExtraFlags.registerHandlers();
-        // Creating NamespacedKey
-        claimBlockLevel = new NamespacedKey(this, "claimBlockLevel");
         // Creating instance of RegionManager
         final World world = BukkitAdapter.adapt(ClaimsConfig.DEFAULT_WORLD);
         this.region = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
-        // Creating other instances
+        // Initializing ClaimManager and caching claims
         this.claim = new ClaimManager(this);
-        // Initializing Indigo's InventoryManager
+        this.claim.cacheClaims();
         // Registering events
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
         // Registering command(s)
         final CommandManager commands = new CommandManager(this);
         commands.register(new ClaimsCommand(this));
+        // Initialize NamespacedKeys
+        new ClaimsKeys(this);
     }
 
     @Override

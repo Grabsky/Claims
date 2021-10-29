@@ -5,15 +5,10 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.flags.StateFlag;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import me.grabsky.claims.claims.Claim;
 import me.grabsky.claims.flags.management.ClaimFlag;
 import me.grabsky.claims.flags.management.ClaimFlagProperties;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Icons;
-import me.grabsky.claims.utils.InventoryUtils;
-import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 public class SectionFlags extends Section {
     private final ProtectedRegion wgRegion;
@@ -28,9 +23,10 @@ public class SectionFlags extends Section {
     private ClaimFlag timeLock;
     private ClaimFlag weatherLock;
 
-    public SectionFlags(Panel panel, Player executor, UUID owner, Claim claim) {
-        super(panel, executor, owner, claim);
-        this.wgRegion = claim.getWGRegion();
+    public SectionFlags(Panel panel) {
+        super(panel);
+        this.wgRegion = panel.getClaimOwner().getClaim().getWGRegion();
+
     }
 
     @Override
@@ -49,7 +45,7 @@ public class SectionFlags extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(viewer, "§f\u7000\u7105", editMode);
+        panel.updateClientTitle("§f\u7000\u7105");
         // Adding flag items
         panel.setItem(11, useFlag.updateItem(), (event) -> {
             event.setCurrentItem(useFlag.nextOption((newVal) -> {
@@ -70,7 +66,7 @@ public class SectionFlags extends Section {
         panel.setItem(21, mobSpawning.updateItem(), (event) -> event.setCurrentItem(mobSpawning.nextOption((newVal) -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) newVal))));
         panel.setItem(22, timeLock.updateItem(), (event) -> event.setCurrentItem(timeLock.nextOption((newVal) -> wgRegion.setFlag(Flags.TIME_LOCK, (String) newVal))));
         panel.setItem(23, weatherLock.updateItem(), (event) -> event.setCurrentItem(weatherLock.nextOption((newVal) -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) newVal))));
-        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionSettings(panel, viewer, claimOwnerUniqueId, claim)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionSettings(panel)));
     }
 
 }

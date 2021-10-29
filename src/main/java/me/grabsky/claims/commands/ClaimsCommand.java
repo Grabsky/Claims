@@ -5,7 +5,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.lib.PaperLib;
 import me.grabsky.claims.Claims;
-import me.grabsky.claims.claims.Claim;
+import me.grabsky.claims.claims.ClaimLevel;
 import me.grabsky.claims.claims.ClaimManager;
 import me.grabsky.claims.claims.ClaimPlayer;
 import me.grabsky.claims.configuration.ClaimsConfig;
@@ -15,7 +15,6 @@ import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.panel.sections.SectionHomes;
 import me.grabsky.claims.panel.sections.SectionMain;
 import me.grabsky.claims.templates.Items;
-import me.grabsky.claims.utils.ClaimsUtils;
 import me.grabsky.indigo.configuration.Global;
 import me.grabsky.indigo.framework.commands.BaseCommand;
 import me.grabsky.indigo.framework.commands.Context;
@@ -69,7 +68,7 @@ public class ClaimsCommand extends BaseCommand {
             case "fix" -> this.onClaimsFix(sender);
             case "get" -> this.onClaimsGet(sender);
             case "reload" -> this.onClaimsReload(sender);
-
+            default -> this.onClaims(sender);
         }
     }
 
@@ -108,7 +107,7 @@ public class ClaimsCommand extends BaseCommand {
                     if (region.getId().startsWith(ClaimsConfig.REGION_PREFIX)) {
                         // Both variables shouldn't be null unless claim was manually modified
                         final Location center = BukkitAdapter.adapt(region.getFlag(ExtraFlags.CLAIM_CENTER));
-                        final Material type = ClaimsUtils.getClaimLevel(region.getFlag(ExtraFlags.CLAIM_LEVEL)).getBlockMaterial();
+                        final Material type = ClaimLevel.getClaimLevel(region.getFlag(ExtraFlags.CLAIM_LEVEL)).getClaimBlockMaterial();
                         PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
                             chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
                             ClaimsLang.send(sender, ClaimsLang.RESTORE_CLAIM_BLOCK_SUCCESS);
@@ -130,12 +129,12 @@ public class ClaimsCommand extends BaseCommand {
         if (sender instanceof Player executor) {
             if (sender.hasPermission("claims.command.claims.get")) {
                 final Inventory inventory = executor.getInventory();
-                inventory.addItem(Items.getClaimBlock(0)); // COAL
-                inventory.addItem(Items.getClaimBlock(1)); // IRON
-                inventory.addItem(Items.getClaimBlock(2)); // GOLD
-                inventory.addItem(Items.getClaimBlock(3)); // DIAMOND
-                inventory.addItem(Items.getClaimBlock(4)); // EMERALD
-                inventory.addItem(Items.getClaimBlock(5)); // NETHERITE
+                inventory.addItem(ClaimLevel.COAL.getClaimBlockItem()); // COAL
+                inventory.addItem(ClaimLevel.IRON.getClaimBlockItem()); // IRON
+                inventory.addItem(ClaimLevel.GOLD.getClaimBlockItem()); // GOLD
+                inventory.addItem(ClaimLevel.DIAMOND.getClaimBlockItem()); // DIAMOND
+                inventory.addItem(ClaimLevel.EMERALD.getClaimBlockItem()); // EMERALD
+                inventory.addItem(ClaimLevel.NETHERITE.getClaimBlockItem()); // NETHERITE
                 inventory.addItem(Items.UPGRADE_CRYSTAL); // UPGRADE_CRYSTAL
                 ClaimsLang.send(sender, ClaimsLang.CLAIM_BLOCKS_ADDED);
                 return;
@@ -161,17 +160,18 @@ public class ClaimsCommand extends BaseCommand {
 
     private void openClaimMenu(Player executor, UUID ownerUniqueId) {
         final ClaimPlayer owner = manager.getClaimPlayer(ownerUniqueId);
-        final Panel panel = new Panel(SectionMain.INVENTORY_TITLE, 54, Panel.CLICK_SOUND);
+        final Panel panel = new Panel(SectionMain.INVENTORY_TITLE, owner, !executor.getUniqueId().equals(owner.getUniqueId()));
         if (owner.hasClaim()) {
-            final Claim claim = owner.getClaim();
             // This has to be run 1 tick later to update the inventory title correctly
-            Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionMain(panel, executor, owner.getUniqueId(), claim)), 1L);
+            Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionMain(panel)), 1L);
+            panel.open(executor);
+            return;
         } else if (owner.hasRelatives()) {
-            Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionHomes(panel, executor, owner.getUniqueId(), null)), 1L);
-        } else {
-            ClaimsLang.send(executor, (executor.getUniqueId().equals(ownerUniqueId)) ? ClaimsLang.YOU_DONT_HAVE_A_CLAIM : ClaimsLang.PLAYER_HAS_NO_CLAIM);
+            // This has to be run 1 tick later to update the inventory title correctly
+            Bukkit.getScheduler().runTaskLater(instance, () -> panel.applySection(new SectionHomes(panel)), 1L);
+            panel.open(executor);
             return;
         }
-        panel.open(executor);
+        ClaimsLang.send(executor, (executor.getUniqueId().equals(ownerUniqueId)) ? ClaimsLang.YOU_DONT_HAVE_A_CLAIM : ClaimsLang.PLAYER_HAS_NO_CLAIM);
     }
 }

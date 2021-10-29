@@ -6,7 +6,6 @@ import me.grabsky.claims.configuration.ClaimsConfig;
 import me.grabsky.claims.configuration.ClaimsLang;
 import me.grabsky.claims.panel.Panel;
 import me.grabsky.claims.templates.Icons;
-import me.grabsky.claims.utils.InventoryUtils;
 import me.grabsky.indigo.builders.ItemBuilder;
 import me.grabsky.indigo.logger.FileLogger;
 import me.grabsky.indigo.user.User;
@@ -18,9 +17,13 @@ import java.util.UUID;
 
 public class SectionMembers extends Section {
     private final FileLogger fileLogger = Claims.getInstance().getFileLogger();
+    private final Player viewer;
+    private final Claim claim;
 
-    public SectionMembers(Panel panel, Player executor, UUID owner, Claim claim) {
-        super(panel, executor, owner, claim);
+    public SectionMembers(Panel panel) {
+        super(panel);
+        this.viewer = panel.getViewer();
+        this.claim = panel.getClaimOwner().getClaim();
     }
 
     @Override
@@ -31,7 +34,7 @@ public class SectionMembers extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        InventoryUtils.updateTitle(viewer, "§f\u7000\u7104", editMode);
+        panel.updateClientTitle("§f\u7000\u7104");
         // Generating the view
         this.generateView();
     }
@@ -67,7 +70,7 @@ public class SectionMembers extends Section {
             });
             slot = (slot == 15) ? 20 : slot + 1;
         }
-        if (slot != 25) panel.setItem(slot, Icons.ICON_ADD_MEMBER, event -> panel.applySection(new SectionMembersAdd(panel, viewer, claimOwnerUniqueId, claim)));
-        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMain(panel, viewer, claimOwnerUniqueId, claim)));
+        if (slot != 25) panel.setItem(slot, Icons.ICON_ADD_MEMBER, event -> panel.applySection(new SectionMembersAdd(panel)));
+        panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionMain(panel)));
     }
 }
