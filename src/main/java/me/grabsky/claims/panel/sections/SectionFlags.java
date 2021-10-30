@@ -19,6 +19,7 @@ public class SectionFlags extends Section {
     private ClaimFlag creeperExplosionFlag;
     private ClaimFlag snowMelt;
     private ClaimFlag iceMelt;
+    private ClaimFlag fireSpread;
     private ClaimFlag mobSpawning;
     private ClaimFlag timeLock;
     private ClaimFlag weatherLock;
@@ -26,7 +27,6 @@ public class SectionFlags extends Section {
     public SectionFlags(Panel panel) {
         super(panel);
         this.wgRegion = panel.getClaimOwner().getClaim().getWGRegion();
-
     }
 
     @Override
@@ -37,6 +37,7 @@ public class SectionFlags extends Section {
         this.creeperExplosionFlag = new ClaimFlag(ClaimFlagProperties.CREEPER_EXPLOSION, wgRegion.getFlag(Flags.CREEPER_EXPLOSION));
         this.snowMelt = new ClaimFlag(ClaimFlagProperties.SNOW_MELT, wgRegion.getFlag(Flags.SNOW_MELT));
         this.iceMelt = new ClaimFlag(ClaimFlagProperties.ICE_MELT, wgRegion.getFlag(Flags.ICE_MELT));
+        this.fireSpread = new ClaimFlag(ClaimFlagProperties.FIRE_SPREAD, wgRegion.getFlag(Flags.FIRE_SPREAD));
         this.mobSpawning = new ClaimFlag(ClaimFlagProperties.MOB_SPAWNING, wgRegion.getFlag(Flags.MOB_SPAWNING));
         this.timeLock = new ClaimFlag(ClaimFlagProperties.TIME_LOCK, wgRegion.getFlag(Flags.TIME_LOCK));
         this.weatherLock = new ClaimFlag(ClaimFlagProperties.WEATHER_LOCK, wgRegion.getFlag(Flags.WEATHER_LOCK));
@@ -45,7 +46,7 @@ public class SectionFlags extends Section {
     @Override
     public void apply() {
         // Changing panel texture
-        panel.updateClientTitle("§f\u7000\u7105");
+        panel.updateClientTitle("§f\u7000\u7104");
         // Adding flag items
         panel.setItem(11, useFlag.updateItem(), (event) -> {
             event.setCurrentItem(useFlag.nextOption((newVal) -> {
@@ -63,9 +64,10 @@ public class SectionFlags extends Section {
         panel.setItem(14, creeperExplosionFlag.updateItem(), (event) -> event.setCurrentItem(creeperExplosionFlag.nextOption((newVal) -> wgRegion.setFlag(Flags.CREEPER_EXPLOSION, (StateFlag.State) newVal))));
         panel.setItem(15, snowMelt.updateItem(), (event) -> event.setCurrentItem(snowMelt.nextOption((newVal) -> wgRegion.setFlag(Flags.SNOW_MELT, (StateFlag.State) newVal))));
         panel.setItem(20, iceMelt.updateItem(), (event) -> event.setCurrentItem(iceMelt.nextOption((newVal) -> wgRegion.setFlag(Flags.ICE_MELT, (StateFlag.State) newVal))));
-        panel.setItem(21, mobSpawning.updateItem(), (event) -> event.setCurrentItem(mobSpawning.nextOption((newVal) -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) newVal))));
-        panel.setItem(22, timeLock.updateItem(), (event) -> event.setCurrentItem(timeLock.nextOption((newVal) -> wgRegion.setFlag(Flags.TIME_LOCK, (String) newVal))));
-        panel.setItem(23, weatherLock.updateItem(), (event) -> event.setCurrentItem(weatherLock.nextOption((newVal) -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) newVal))));
+        panel.setItem(21, fireSpread.updateItem(), (event) -> event.setCurrentItem(fireSpread.nextOption((newVal) -> wgRegion.setFlag(Flags.FIRE_SPREAD, (StateFlag.State) newVal))));
+        panel.setItem(22, mobSpawning.updateItem(), (event) -> event.setCurrentItem(mobSpawning.nextOption((newVal) -> wgRegion.setFlag(Flags.MOB_SPAWNING, (StateFlag.State) newVal))));
+        panel.setItem(23, timeLock.updateItem(), (event) -> event.setCurrentItem(timeLock.nextOption((newVal) -> wgRegion.setFlag(Flags.TIME_LOCK, (String) newVal))));
+        panel.setItem(24, weatherLock.updateItem(), (event) -> event.setCurrentItem(weatherLock.nextOption((newVal) -> wgRegion.setFlag(Flags.WEATHER_LOCK, (WeatherType) newVal))));
         panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> panel.applySection(new SectionSettings(panel)));
     }
 

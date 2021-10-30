@@ -136,6 +136,13 @@ public class ClaimFlagProperties {
             .setFlagOptions(ClaimFlagOptions.STATE)
             .build();
 
+    public static final ClaimFlagProperties FIRE_SPREAD = new ClaimFlagProperties.Builder()
+            .setMaterial(Material.FLINT_AND_STEEL)
+            .setDisplayName("§e§lRozprzestrzenianie Ognia")
+            .setPrefix("§7Rozprzestrzenianie się ognia na terenie.", "", "§7Zakres: §eŚrodowisko", "")
+            .setFlagOptions(ClaimFlagOptions.STATE)
+            .build();
+
     public static final ClaimFlagProperties MOB_SPAWNING = new ClaimFlagProperties.Builder()
             .setMaterial(Material.SPAWNER)
             .setDisplayName("§e§lSpawn Mobów")

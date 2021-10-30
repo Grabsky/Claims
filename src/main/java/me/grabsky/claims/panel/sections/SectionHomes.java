@@ -21,7 +21,6 @@ public class SectionHomes extends Section {
     private final ClaimManager manager = Claims.getInstance().getClaimManager();
     private final Player viewer;
     private final ClaimPlayer claimOwner;
-    private final Claim claim;
     private List<String> relatives;
     private int maxOnPage;
     private int usableSize;
@@ -31,12 +30,14 @@ public class SectionHomes extends Section {
         super(panel);
         this.viewer = panel.getViewer();
         this.claimOwner = panel.getClaimOwner();
-        this.claim = claimOwner.getClaim();
     }
 
     public void prepare() {
         this.relatives = (viewer.getUniqueId().equals(claimOwner.getUniqueId()) && viewer.hasPermission("claims.plugin.displayallclaims")) ? new ArrayList<>(manager.getClaimIds()) : new ArrayList<>(manager.getClaimPlayer(claimOwner.getUniqueId()).getRelatives());
-        this.relatives.removeIf((id) -> id.equals(claim.getId())); // Removing player's claim from a list (it's there only when displaying all claims)
+        // Removing player's claim from a list (it's there only when displaying all claims)
+        if (claimOwner.hasClaim()) {
+            this.relatives.removeIf((id) -> id.equals(claimOwner.getClaim().getId()));
+        }
         this.maxOnPage = 21;
         this.usableSize = relatives.size();
         this.pages = (relatives.size() - 1) / maxOnPage + 1;
@@ -82,11 +83,11 @@ public class SectionHomes extends Section {
         if (pageToDisplay + 1 <= pages) panel.setItem(26, Icons.NAVIGATION_NEXT, (event) -> generateView(pageToDisplay + 1));
         // Return button
         panel.setItem(49, Icons.NAVIGATION_RETURN, (event) -> {
-            if (claim != null) {
+            if (claimOwner.hasClaim()) {
                 panel.applySection(new SectionMain(panel));
-            } else {
-                viewer.closeInventory();
+                return;
             }
+            viewer.closeInventory();
         });
     }
 }
