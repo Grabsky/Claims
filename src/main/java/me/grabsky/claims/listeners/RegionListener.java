@@ -44,25 +44,30 @@ public class RegionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onClaimPlace(BlockPlaceEvent event) {
-        if (event.isCancelled()) return;
-        if (!event.canBuild()) return; // Not sure if that check covers all possible scenarios including building in WorldGuard regions
+        // Preconditions
+        if (event.isCancelled()) return; // Not sure if that check covers all possible scenarios including building in WorldGuard regions
+        if (!event.canBuild()) return;
+        // Checking if placed block is a claim block
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
         if (data.has(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER)) {
             final Player player = event.getPlayer();
+            // Checking if player has permission to create a claim
             if (player.hasPermission("claims.plugin.place")) {
+                // Checking if player can create claim in that world
                 if (event.getBlock().getWorld() == ClaimsConfig.DEFAULT_WORLD) {
                     final UUID uuid = player.getUniqueId();
                     final ClaimPlayer cp = manager.getClaimPlayer(uuid);
                     final Location loc = event.getBlock().getLocation();
+                    // Making sure player DOES NOT have a claim
                     if (!cp.hasClaim()) {
-                        // The reason why it's here and not in RegionManager is that I want the messages to be different
+                        // Making sure that placed region is further enough from spawn
                         if (!manager.isInSquare(loc, ClaimsConfig.DEFAULT_WORLD.getSpawnLocation(), ClaimsConfig.MINIMUM_DISTANCE_FROM_SPAWN)) {
-                            // This shouldn't be null
-                            final int level = data.get(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER);
+                            final int level = data.get(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER); // This shouldn't be null
+                            // Finally, trying to create a claim
                             final Claim claim = manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level);
                             if (claim != null) {
                                 ClaimsLang.send(player, ClaimsLang.PLACE_SUCCESS);
-                                // Log action if enabled
+                                // Logging action to the file
                                 if (ClaimsConfig.LOGS) {
                                     fileLogger.log(ClaimsConfig.LOG_FORMAT_PLACED
                                             .replace("{claim-id}", claim.getId())
@@ -94,18 +99,22 @@ public class RegionListener implements Listener {
         }
     }
 
-    // TO-DO: Do not generate location of every block placed (unless that's the best way to do so)
     @EventHandler(priority = EventPriority.HIGH)
     public void onClaimBreak(BlockBreakEvent event) {
+        // Preconditions
         if (event.isCancelled()) return;
         if (event.getBlock().getWorld() != ClaimsConfig.DEFAULT_WORLD) return;
+        // Checking if destroyed block is a claim block
         final String id = Claim.createId(event.getBlock().getLocation());
         if (manager.containsClaim(id)) {
             final Claim claim = manager.getClaim(id);
             final Player player = event.getPlayer();
             final UUID ownerUniqueId = claim.getOwner();
+            // Checking if player has permission to destroy a claim
             if (player.hasPermission("claims.plugin.destroy")) {
+                // Checking if player CAN destroy the claim
                 if (player.getUniqueId().equals(ownerUniqueId) || player.hasPermission("claims.bypass.ownercheck")) {
+                    // Checking if player is sneaking
                     if (event.getPlayer().isSneaking()) {
                         // Removing drops
                         event.setExpToDrop(0);
@@ -127,6 +136,7 @@ public class RegionListener implements Listener {
                             event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), ClaimLevel.getClaimLevel(claim.getLevel()).getClaimBlockItem());
                         }
                         ClaimsLang.send(player, ClaimsLang.DESTROY_SUCCESS);
+                        // Closing owner's claim management inventory (if open)
                         final Player owner = Bukkit.getPlayer(ownerUniqueId);
                         if (owner != null && owner.isOnline()) {
                             if (owner.getOpenInventory().getTopInventory().getHolder() instanceof Panel) {

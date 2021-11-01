@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 public class Panel extends ExclusiveInventory {
     private boolean editMode = false;
     private ClaimPlayer claimPlayer;
+
     public static Sound CLICK_SOUND = Sound.sound(Key.key("block.note_block.hat"), Sound.Source.MASTER, 1f, 1.5f);
 
     public Panel(final Component title, final int size) {
