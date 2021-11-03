@@ -104,7 +104,7 @@ public class ClaimManager implements ClaimsAPI {
         final UUID ownerUniqueId = owner.getUniqueId();
         final int x = loc.getBlockX();
         final int z = loc.getBlockZ();
-        final int radius = 15 + (5 * level);
+        final int radius = 10 + (5 * level);
         final BlockVector3 min = BlockVector3.at(x - radius, 0, z - radius);
         final BlockVector3 max = BlockVector3.at(x + radius, 255, z + radius);
         // Creating region id
