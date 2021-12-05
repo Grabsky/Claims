@@ -30,8 +30,8 @@ dependencies {
 tasks {
     build {
         dependsOn(reobfJar)
-        // Copying output file to builds directory
         doLast {
+            // Copying output file to builds directory
             copy {
                 from (reobfJar)
                 into(buildsDirectory)
