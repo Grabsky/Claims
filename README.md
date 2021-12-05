@@ -5,25 +5,35 @@ Create protected region and manage it using in-game GUI. Limited to 1 claim per 
 
 *You shouldn't modify claim regions manually unless you know what you're doing. Severe issues may appear.*
 
+## Running
+### Supported server software
+Server | Version
+--- | ---
+[Paper](https://github.com/PaperMC/Paper) (and forks...) | 1.18 | https://papermc.io/downloads
+
+### External dependencies
+Dependency | Required
+--- | ---
+[Indigo](https://github.com/Grabsky/Indigo) | Yes
+[Vanish](https://github.com/Grabsky/Vanish) | No
+
 ## Building
-To build, run `mvn install` or `mvn clean install`.
+To build, run `gradle build` or `gradle clean build`.
 
 ## Permissions
 #### Safe to be given to players:
-Permission | Description
---- | ---
-`claims.command.claims` | Use `/claims` command to manage own claim.
-`claims.plugin.place` | Create a protected claim.
-`claims.plugin.destroy` | Destroy (own) claim.
+Permission | Description | Admin*
+--- | --- | ---
+`claims.command.claims` | Use `/claims` command to manage own claim. | No
+`claims.plugin.place` | Create a protected claim. | No
+`claims.plugin.destroy` | Destroy (own) claim. | No
+`claims.command.claims.edit` | Use `/claims edit <player>` command. | Yes
+`claims.command.claims.get` | Use `/claims get` command. | Yes
+`claims.command.claims.fix` | Use `/claims fix` command. | Yes
+`claims.command.claims.reload` | Use `/claims reload` command. | Yes
+`claims.bypass.ownercheck` | Bypass owner checks. | Yes
+`claims.bypass.teleportdelay` | Bypass teleport delays. | Yes
+`claims.bypass.upgradecost` | Bypass upgrade costs. | Yes
+`claims.plugin.displayallclaims` | View all claims in "accessible claims" list. | Yes
 
-#### Recommended only for admins:
-Permission | Description
---- | ---
-`claims.command.claims.edit` | Use `/claims edit <player>` command to manage their claims.
-`claims.command.claims.get` | Use `/claims get` command to get claim blocks and upgrade crystal.
-`claims.command.claims.fix` | Use `/claims fix` command to place hidden claim block.
-`claims.command.claims.reload` | Use `/claims reload` command to reload plugin configuration.
-`claims.bypass.ownercheck` | Bypass owner check. (eg. when destroying not owned region)
-`claims.bypass.teleportdelay` | Bypass teleport delay.
-`claims.bypass.upgradecost` | Bypass upgrade cost.
-`claims.plugin.displayallclaims` | Plugin will show all claims in "accessible claim list" view.
+\* Recommended only for players with admin rights
