@@ -1,10 +1,10 @@
 package me.grabsky.claims.flags.management;
 
-import brave.internal.Nullable;
 import me.grabsky.indigo.utils.Components;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Material;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;

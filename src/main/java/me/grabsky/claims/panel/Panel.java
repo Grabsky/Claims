@@ -5,12 +5,10 @@ import me.grabsky.claims.panel.sections.Section;
 import me.grabsky.indigo.framework.inventories.ExclusiveInventory;
 import net.kyori.adventure.key.Key;
 import net.kyori.adventure.sound.Sound;
-import net.kyori.adventure.text.Component;
-import net.minecraft.network.chat.IChatBaseComponent;
-import net.minecraft.network.protocol.game.PacketPlayOutOpenWindow;
-import net.minecraft.server.level.EntityPlayer;
-import net.minecraft.world.inventory.Containers;
-import org.bukkit.craftbukkit.v1_17_R1.entity.CraftPlayer;
+import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.MenuType;
+import org.bukkit.craftbukkit.v1_18_R1.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 
@@ -20,15 +18,15 @@ public class Panel extends ExclusiveInventory {
 
     public static Sound CLICK_SOUND = Sound.sound(Key.key("block.note_block.hat"), Sound.Source.MASTER, 1f, 1.5f);
 
-    public Panel(final Component title, final int size) {
+    public Panel(final net.kyori.adventure.text.Component title, final int size) {
         super(title, size);
     }
 
-    public Panel(final Component title, final int size, final Sound clickSound) {
+    public Panel(final net.kyori.adventure.text.Component title, final int size, final Sound clickSound) {
         super(title, size, clickSound);
     }
 
-    public Panel(final Component title, final ClaimPlayer claimPlayer, final boolean editMode) {
+    public Panel(final net.kyori.adventure.text.Component title, final ClaimPlayer claimPlayer, final boolean editMode) {
         super(title, 54, CLICK_SOUND);
         this.claimPlayer = claimPlayer;
         this.editMode = editMode;
@@ -45,13 +43,13 @@ public class Panel extends ExclusiveInventory {
     public void updateClientTitle(final String title) {
         final Player player = (Player) inventory.getViewers().get(0);
         final String finalTitle = (editMode) ? title + "\u7001§r*" : title;
-        final EntityPlayer handle = ((CraftPlayer) player).getHandle();
-        final PacketPlayOutOpenWindow packet = new PacketPlayOutOpenWindow(
-                handle.bV.j, // No idea what's this
-                Containers.f, // GENERIC_9X6 (54 slots)
-                IChatBaseComponent.ChatSerializer.a("{\"text\": \"" + finalTitle + "\"}") // Should be safe to ignore
+        final ServerPlayer handle = ((CraftPlayer) player).getHandle();
+        final net.minecraft.network.protocol.game.ClientboundOpenScreenPacket packet = new ClientboundOpenScreenPacket(
+                handle.containerMenu.containerId, // Active container id
+                MenuType.GENERIC_9x6, // GENERIC_9X6 (54 slots)
+                net.minecraft.network.chat.Component.Serializer.fromJson("{\"text\": \"" + finalTitle + "\"}") // Safe to ignore
         );
-        handle.b.sendPacket(packet);
+        handle.connection.send(packet);
         player.updateInventory();
     }
 
