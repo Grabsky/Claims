@@ -105,8 +105,8 @@ public class ClaimManager implements ClaimsAPI {
         final int x = loc.getBlockX();
         final int z = loc.getBlockZ();
         final int radius = 10 + (5 * level);
-        final BlockVector3 min = BlockVector3.at(x - radius, 0, z - radius);
-        final BlockVector3 max = BlockVector3.at(x + radius, 255, z + radius);
+        final BlockVector3 min = BlockVector3.at(x - radius, loc.getWorld().getMinHeight(), z - radius);
+        final BlockVector3 max = BlockVector3.at(x + radius, loc.getWorld().getMaxHeight(), z + radius);
         // Creating region id
         final String id = Claim.createId(loc);
         // Creating region at new points
