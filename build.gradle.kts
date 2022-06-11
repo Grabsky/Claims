@@ -1,16 +1,13 @@
-var buildsDirectory = "${System.getenv("IDEA_WORKSPACE")}/builds"
+val buildsDirectory = "${System.getenv("DEVELOPMENT_DIR")}/builds"
 
-// Project values
-group = "me.grabsky"
+group = "claims"
 version = "1.0-SNAPSHOT"
 description = "Claims"
 
-// Defining Java version
-java { toolchain.languageVersion.set(JavaLanguageVersion.of(17)) }
-
 plugins {
     id("java-library")
-    id("io.papermc.paperweight.userdev") version "1.3.1"
+    id("org.jetbrains.kotlin.jvm") version "1.7.0"
+    id("io.papermc.paperweight.userdev") version "1.3.6"
 }
 
 repositories {
@@ -20,11 +17,16 @@ repositories {
 }
 
 dependencies {
-    paperDevBundle("1.18-R0.1-SNAPSHOT")
+    // Kotlin (required)
+    compileOnly("org.jetbrains.kotlin", "kotlin-stdlib-jdk8", "1.7.0")
+    compileOnly("org.jetbrains.kotlin", "kotlin-reflect", "1.7.0")
+    // Paper (mojang mapped)
+    paperDevBundle("1.19-R0.1-SNAPSHOT")
+    // Dependencies
     compileOnly("com.sk89q.worldedit:worldedit-bukkit:7.2.8-SNAPSHOT")
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.6")
     compileOnly(files(buildsDirectory + File.separator + "Indigo.jar"))
-    compileOnly(files(buildsDirectory + File.separator + "Vanish.jar"))
+    // compileOnly(files(buildsDirectory + File.separator + "Vanish.jar"))
 }
 
 tasks {
@@ -36,10 +38,9 @@ tasks {
                 from (reobfJar)
                 into(buildsDirectory)
                 // Renaming output file
-                rename(reobfJar.get().outputJar.asFile.get().name, rootProject.name + ".jar")
+                rename(reobfJar.get().outputJar.asFile.get().name, "${rootProject.name}.jar")
             }
         }
     }
-    compileJava { options.encoding = Charsets.UTF_8.name() }
     processResources { filteringCharset = Charsets.UTF_8.name() }
 }
