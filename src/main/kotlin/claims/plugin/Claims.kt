@@ -1,6 +1,8 @@
 package claims.plugin
 
 import claims.framework.ClaimsAPI
+import claims.framework.ClaimsManagerAPI
+import claims.plugin.claims.ClaimsManager
 import indigo.framework.ServerPlugin
 import indigo.framework.logger.FileLogger
 import indigo.framework.utils.DateFormats
@@ -19,6 +21,8 @@ object ClaimsProvider {
 class Claims : ServerPlugin(), ClaimsAPI {
     lateinit var fileLogger: FileLogger
 
+    override lateinit var claimsManager: ClaimsManagerAPI
+
     override fun onEnable() {
         super.onEnable()
         // Creating instances
@@ -28,6 +32,11 @@ class Claims : ServerPlugin(), ClaimsAPI {
         this.fileLogger = FileLogger(this, File(this.dataFolder, "logs.log"), DateFormats.UNIVERSAL)
         // Setting up configuration files
         this.reloadConfiguration()
+        // Setting up ClaimsManager
+        val manager = ClaimsManager(this)
+        // ...
+        claimsManager = manager
+        // Registering commands
     }
 
     override fun reloadPlugin(): Boolean {

@@ -1,3 +1,5 @@
 package claims.framework
 
-interface ClaimsAPI
+interface ClaimsAPI {
+    val claimsManager: ClaimsManagerAPI
+}
