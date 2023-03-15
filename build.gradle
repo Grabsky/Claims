@@ -1,0 +1,49 @@
+plugins {
+    id("java")
+    id("com.github.johnrengelman.shadow") version "8.1.0"
+}
+
+final buildsDirectory = (System.getenv("JVM_WORKSPACE") ?: ".") + File.separator + "builds"
+
+group = "cloud.grabsky"
+version = "0.9.0-pre"
+
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven { url = "https://maven.enginehub.org/repo/" }
+    maven { url = "https://repo.grabsky.cloud/snapshots" }
+    maven { url = "https://papermc.io/repo/repository/maven-public/" }
+}
+
+dependencies {
+    // Lombok
+    compileOnly("org.projectlombok:lombok:1.18.24")
+    annotationProcessor("org.projectlombok:lombok:1.18.24")
+    // Paper
+    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    // Dependencies
+    implementation("cloud.grabsky:bedrock:61f4fe8")
+    implementation("cloud.grabsky:commands:86ace06")
+    implementation("cloud.grabsky:configuration-paper:fc2b94c")
+    // WorldEdit
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
+}
+
+tasks.register("deploy", Copy) {
+    from shadowJar
+    into buildsDirectory
+    rename(shadowJar.archiveFileName.get(), "${rootProject.name}-${rootProject.version}.jar")
+}
+
+tasks {
+    assemble {
+        dependsOn(shadowJar)
+        finalizedBy(deploy)
+    }
+    compileJava { options.compilerArgs += "-parameters" }
+    processResources { filteringCharset "UTF-8" }
+}
