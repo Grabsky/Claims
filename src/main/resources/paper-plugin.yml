@@ -1,0 +1,15 @@
+name: 'Claims'
+version: '0.9.0-pre'
+api-version: '1.19'
+main: 'cloud.grabsky.claims.Claims'
+# loader: 'cloud.grabsky.claims.ClaimsPluginLoader'
+dependencies:
+  - name: WorldEdit
+    required: true
+  - name: WorldGuard
+    required: true
+load-after:
+  - name: WorldEdite
+    bootstrap: false
+  - name: WorldGuard
+    bootstrap: false
