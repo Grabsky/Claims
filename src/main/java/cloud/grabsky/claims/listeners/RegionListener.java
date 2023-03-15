@@ -1,7 +1,6 @@
 package cloud.grabsky.claims.listeners;
 
 import cloud.grabsky.claims.Claims;
-import cloud.grabsky.claims.ClaimsKeys;
 import cloud.grabsky.claims.claims.ClaimLevel;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.ClaimsConfig;
@@ -49,7 +48,7 @@ public class RegionListener implements Listener {
         if (!event.canBuild()) return;
         // Checking if placed block is a claim block
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
-        if (data.has(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER)) {
+        if (data.has(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER)) {
             final Player player = event.getPlayer();
             // Checking if player has permission to create a claim
             if (player.hasPermission("claims.plugin.place")) {
@@ -62,7 +61,7 @@ public class RegionListener implements Listener {
                     if (!cp.hasClaim()) {
                         // Making sure that placed region is further enough from spawn
                         if (!manager.isInSquare(loc, ClaimsConfig.DEFAULT_WORLD.getSpawnLocation(), ClaimsConfig.MINIMUM_DISTANCE_FROM_SPAWN)) {
-                            final int level = data.get(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER); // This shouldn't be null
+                            final int level = data.get(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER); // This shouldn't be null
                             // Finally, trying to create a claim
                             final Claim claim = manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level);
                             if (claim != null) {
@@ -205,7 +204,7 @@ public class RegionListener implements Listener {
         if (event.getRecipe() == null) return;
         for (ItemStack item : event.getInventory().getMatrix()) {
             // Yes Bukkit, apparently it can be null...
-            if (item != null && item.getItemMeta().getPersistentDataContainer().has(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER)) {
+            if (item != null && item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER)) {
                 event.getInventory().setResult(new ItemStack(Material.AIR));
             }
         }

@@ -1,6 +1,6 @@
 package cloud.grabsky.claims.claims;
 
-import cloud.grabsky.claims.ClaimsKeys;
+import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.templates.Items;
 import me.grabsky.indigo.builders.ItemBuilder;
 import org.bukkit.Material;
@@ -99,7 +99,7 @@ public class ClaimLevel {
             .setClaimBlockItem(new ItemBuilder(Material.COAL_BLOCK)
                     .setName("§7§lTeren")
                     .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze 31x31 bloków.")
-                    .setPersistentData(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER, 1)
+                    .setPersistentData(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER, 1)
                     .build())
             .setInventoryIcon(new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§7§lUlepsz")
@@ -113,7 +113,7 @@ public class ClaimLevel {
             .setClaimBlockItem(new ItemBuilder(Material.IRON_BLOCK)
                     .setName("§f§lTeren")
                     .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze §f41x41§7 bloków.")
-                    .setPersistentData(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER, 2)
+                    .setPersistentData(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER, 2)
                     .build())
             .setInventoryIcon(new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§f§lUlepsz")
@@ -128,7 +128,7 @@ public class ClaimLevel {
             .setClaimBlockItem(new ItemBuilder(Material.GOLD_BLOCK)
                     .setName("§6§lTeren")
                     .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze §651x51§7 bloków.")
-                    .setPersistentData(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER, 3)
+                    .setPersistentData(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER, 3)
                     .build())
             .setInventoryIcon(new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§6§lUlepsz")
@@ -143,7 +143,7 @@ public class ClaimLevel {
             .setClaimBlockItem(new ItemBuilder(Material.DIAMOND_BLOCK)
                     .setName("§b§lTeren")
                     .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze §b61x61§7 bloków.")
-                    .setPersistentData(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER, 4)
+                    .setPersistentData(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER, 4)
                     .build())
             .setInventoryIcon(new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§b§lUlepsz")
@@ -158,7 +158,7 @@ public class ClaimLevel {
             .setClaimBlockItem(new ItemBuilder(Material.EMERALD_BLOCK)
                     .setName("§a§lTeren")
                     .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze §a71x71§7 bloków.")
-                    .setPersistentData(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER, 5)
+                    .setPersistentData(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER, 5)
                     .build())
             .setInventoryIcon(new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§a§lUlepsz")
@@ -173,7 +173,7 @@ public class ClaimLevel {
             .setClaimBlockItem(new ItemBuilder(Material.NETHERITE_BLOCK)
                     .setName("§8§lTeren")
                     .setLore("§7Postaw, aby ochronić obszar ", "§7o rozmiarze §881x81§7 bloków.")
-                    .setPersistentData(ClaimsKeys.CLAIM_LEVEL, PersistentDataType.INTEGER, 6)
+                    .setPersistentData(Claims.Key.CLAIM_LEVEL, PersistentDataType.INTEGER, 6)
                     .build())
             .setInventoryIcon(new ItemBuilder(Material.PLAYER_HEAD)
                     .setName("§8§lUlepsz")
