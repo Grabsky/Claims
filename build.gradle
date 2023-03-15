@@ -29,6 +29,8 @@ dependencies {
     implementation("cloud.grabsky:bedrock:61f4fe8")
     implementation("cloud.grabsky:commands:86ace06")
     implementation("cloud.grabsky:configuration-paper:fc2b94c")
+    // PaperLib
+    implementation("io.papermc:paperlib:1.0.7")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
 }
