@@ -1,11 +1,15 @@
 package cloud.grabsky.claims;
 
+import cloud.grabsky.bedrock.BedrockPlugin;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.configuration.ClaimsConfig;
-import cloud.grabsky.claims.configuration.ClaimsLang;
+import cloud.grabsky.claims.configuration.ClaimsLocale;
 import cloud.grabsky.claims.flags.ExtraFlags;
 import cloud.grabsky.claims.listeners.RegionListener;
 import cloud.grabsky.commands.RootCommandManager;
+import cloud.grabsky.configuration.ConfigurationMapper;
+import cloud.grabsky.configuration.exception.ConfigurationMappingException;
+import cloud.grabsky.configuration.paper.PaperConfigurationMapper;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
@@ -13,17 +17,20 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import lombok.AccessLevel;
 import lombok.Getter;
 import org.bukkit.NamespacedKey;
-import org.bukkit.plugin.java.JavaPlugin;
+
+import java.io.File;
+import java.io.IOException;
+
+import static cloud.grabsky.configuration.paper.util.Resources.ensureResourceExistence;
 
 // TO-DO: Console & File loggers
 // TO-DO: Claims API (if needed)
-public final class Claims extends JavaPlugin {
+public final class Claims extends BedrockPlugin {
 
     @Getter(AccessLevel.PUBLIC)
     private static Claims instance;
 
-    private ClaimsConfig config;
-    private ClaimsLang lang;
+    private ConfigurationMapper mapper;
 
     @Getter(AccessLevel.PUBLIC)
     private RegionManager regionManager;
@@ -35,11 +42,11 @@ public final class Claims extends JavaPlugin {
     public void onEnable() {
         instance = this;
         // ...
-        // Initializing configuration
-        this.lang = new ClaimsLang(this);
-        this.config = new ClaimsConfig(this);
-        // Reloading configuration files
-        this.reload();
+        this.mapper = PaperConfigurationMapper.create();
+        // ...
+        if (this.onReload() == false) {
+            return; // Plugin should be disabled automatically whenever exception is thrown.
+        }
         // Registering flag handlers
         ExtraFlags.registerHandlers();
         // Creating instance of RegionManager
@@ -55,19 +62,30 @@ public final class Claims extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
-        // Plugin shutdown logic
-    }
-
-    @Override
     public void onLoad() {
         ExtraFlags.registerFlags();
     }
 
-    public boolean reload() {
-        config.reload();
-        lang.reload();
-        return true;
+    @Override
+    public boolean onReload() throws ConfigurationMappingException {
+        try {
+            final File config = ensureResourceExistence(this, new File(this.getDataFolder(), "config.json"));
+            final File locale = ensureResourceExistence(this, new File(this.getDataFolder(), "locale.json"));
+            // ...
+            mapper.map(ClaimsConfig.class, locale);
+            mapper.map(ClaimsLocale.class, config);
+            return true;
+        } catch (final IOException exc) {
+            throw new IllegalStateException(exc); // Re-throwing as runtime exception
+        }
+    }
+
+    public boolean reloadConfiguration() {
+        try {
+            return onReload();
+        } catch (final ConfigurationMappingException exc) {
+            return false;
+        }
     }
 
     public static final class Key {

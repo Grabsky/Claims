@@ -4,7 +4,7 @@ import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.ClaimLevel;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.ClaimsConfig;
-import cloud.grabsky.claims.configuration.ClaimsLang;
+import cloud.grabsky.claims.configuration.ClaimsLocale;
 import cloud.grabsky.claims.templates.Items;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
@@ -65,7 +65,7 @@ public class RegionListener implements Listener {
                             // Finally, trying to create a claim
                             final Claim claim = manager.createRegionAt(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, level);
                             if (claim != null) {
-                                ClaimsLang.send(player, ClaimsLang.PLACE_SUCCESS);
+                                ClaimsLocale.send(player, ClaimsLocale.PLACE_SUCCESS);
                                 // Logging action to the file
                                 if (ClaimsConfig.LOGS) {
                                     fileLogger.log(ClaimsConfig.LOG_FORMAT_PLACED
@@ -78,23 +78,23 @@ public class RegionListener implements Listener {
                                 return;
                             }
                             event.setCancelled(true);
-                            ClaimsLang.send(player, ClaimsLang.OVERLAPS_OTHER_CLAIM);
+                            ClaimsLocale.send(player, ClaimsLocale.OVERLAPS_OTHER_CLAIM);
                             return;
                         }
                         event.setCancelled(true);
-                        ClaimsLang.send(player, ClaimsLang.TOO_CLOSE_TO_SPAWN);
+                        ClaimsLocale.send(player, ClaimsLocale.TOO_CLOSE_TO_SPAWN);
                         return;
                     }
                     event.setCancelled(true);
-                    ClaimsLang.send(player, ClaimsLang.REACHED_CLAIMS_LIMIT);
+                    ClaimsLocale.send(player, ClaimsLocale.REACHED_CLAIMS_LIMIT);
                     return;
                 }
                 event.setCancelled(true);
-                ClaimsLang.send(player, ClaimsLang.BLACKLISTED_WORLD);
+                ClaimsLocale.send(player, ClaimsLocale.BLACKLISTED_WORLD);
                 return;
             }
             event.setCancelled(true);
-            ClaimsLang.send(player, Global.MISSING_PERMISSIONS);
+            ClaimsLocale.send(player, Global.MISSING_PERMISSIONS);
         }
     }
 
@@ -134,7 +134,7 @@ public class RegionListener implements Listener {
                         if (player.getGameMode() == GameMode.SURVIVAL) {
                             event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), ClaimLevel.getClaimLevel(claim.getLevel()).getClaimBlockItem());
                         }
-                        ClaimsLang.send(player, ClaimsLang.DESTROY_SUCCESS);
+                        ClaimsLocale.send(player, ClaimsLocale.DESTROY_SUCCESS);
                         // Closing owner's claim management inventory (if open)
                         final Player owner = Bukkit.getPlayer(ownerUniqueId);
                         if (owner != null && owner.isOnline()) {
@@ -145,15 +145,15 @@ public class RegionListener implements Listener {
                         return;
                     }
                     event.setCancelled(true);
-                    ClaimsLang.send(player, ClaimsLang.NOT_SNEAKING);
+                    ClaimsLocale.send(player, ClaimsLocale.NOT_SNEAKING);
                     return;
                 }
                 event.setCancelled(true);
-                ClaimsLang.send(player, ClaimsLang.NOT_OWNER);
+                ClaimsLocale.send(player, ClaimsLocale.NOT_OWNER);
                 return;
             }
             event.setCancelled(true);
-            ClaimsLang.send(player, Global.MISSING_PERMISSIONS);
+            ClaimsLocale.send(player, Global.MISSING_PERMISSIONS);
         }
     }
 

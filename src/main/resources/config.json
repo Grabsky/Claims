@@ -1,0 +1,30 @@
+{
+    // Determines if file logging is enabled or not
+    "logs": true,
+    // World used to fetch all regions from
+    "claims_world": "world",
+    // Prefix used to distinguish Claims from regular WorldGuard region
+    "region_prefix": "claims_",
+    // Priority of WorldGuard region
+    "region_priority": 0,
+
+    // Claims settings.
+    "claim_settings": {
+        // Delay before player is teleported to a claim (in seconds)
+        "teleport_delay": 5,
+        // Limit of players that can be added to a single claim
+        "members_limit": 10,
+        // Minimum distance from spawn required to create a protected claim (in blocks)
+        "minimum_distance_from_spawn": 300
+    },
+
+    // Logging format.
+    "logging_format": {
+        "claim_placed": 'Claim ({claim-id}:{claim-level}) has been PLACED by {issuer-name} ({issuer-uuid}) at {location}',
+        "claim_destroyed": 'Claim ({claim-id}:{claim-level}) owned by {owner-name} ({owner-uuid}) has been DESTROYED by {issuer-name} ({issuer-uuid})',
+        "claim_upgraded": 'Claim ({claim-id}:{claim-level}) has been UPGRADED by {issuer-name} ({issuer-uuid})',
+        "claim_member_added": 'Player {member-name} ({member-uuid}) has been ADDED to claim ({claim-id}:{claim-level}) by {issuer-name} ({issuer-uuid})',
+        "claim_member_removed": 'Player {member-name} ({member-uuid}) has been REMOVED from claim ({claim-id}:{claim-level}) by {issuer-name} ({issuer-uuid})'
+    }
+
+}

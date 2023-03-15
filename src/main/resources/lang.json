@@ -1,0 +1,29 @@
+{
+    "claims": {
+        "player_has_no_claim": "§6§lS§e§lD§8 » §cTen gracz nie ma terenu.",
+        "you_dont_have_a_claim": "§6§lS§e§lD§8 » §cNie posiadasz swojego terenu.",
+        "too_close_to_spawn": "§6§lS§e§lD§8 » §cMinimalna odległość od spawnu to 300 kratek.",
+        "overlaps_other_claim": "§6§lS§e§lD§8 » §cZa blisko innego terenu.",
+        "not_member": "§6§lS§e§lD§8 » §cTen gracz nie jest dodany do terenu.",
+        "not_owner": "§6§lS§e§lD§8 » §cTylko właściciel terenu ma do tego uprawnienia.",
+        "reached_claims_limit": "§6§lS§e§lD§8 » §cJuż posiadasz swój teren.",
+        "reached_members_limit": "§6§lS§e§lD§8 » §cOsiągnąłeś limit ({limit}) graczy dodanych do terenu.",
+        "place_success": "§6§lS§e§lD§8 » §7Chroniony teren został utworzony.",
+        "destroy_success": "§6§lS§e§lD§8 » §7Chroniony teren został usunięty.",
+        "not_sneaking": "§6§lS§e§lD§8 » §cOchrona przed przypadkowym zniszczeniem. Aby usunąć teren, zniszcz jego blok kucając.",
+        "upgrade_success": "§6§lS§e§lD§8 » §7Rozmiar terenu został zwiększony do {size}§7.",
+        "restore_claim_block_success": "§6§lS§e§lD§8 » §7Przywrócono blok terenu na swoje miejsce.",
+        "restore_claim_block_fail": "§6§lS§e§lD§8 » §cNie znajdujesz się na żadnym terenie.",
+        "claim_blocks_added": "§6§lS§e§lD§8 » §7Bloki terenu zostały dodane do Twojego ekwipunku.",
+        "blacklisted_world": "§6§lS§e§lD§8 » §cNie możesz postawić terenu w tym świecie.",
+        "set_home_success": "§6§lS§e§lD§8 » §7Teleport na teren został nadpisany.",
+        "set_home_fail": "§6§lS§e§lD§8 » §cTeleport nie może zostać ustawiony poza terenem."
+    },
+    // WARNING: Changing this value WON"T update greeting/farewell flags in existing regions.
+    "flags": {
+        "default_greeting": "§7Wszedłeś na teren gracza §e{player}",
+        "default_farewell": "§7Opuściłeś teren gracza §e{player}"
+    }
+}
+
+

@@ -4,7 +4,7 @@ import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.ClaimsConfig;
-import cloud.grabsky.claims.configuration.ClaimsLang;
+import cloud.grabsky.claims.configuration.ClaimsLocale;
 import cloud.grabsky.claims.panel.Panel;
 import cloud.grabsky.claims.templates.Icons;
 import me.grabsky.indigo.builders.ItemBuilder;
@@ -87,7 +87,7 @@ public class SectionMembersAdd extends Section {
                     }
                 } else {
                     viewer.closeInventory();
-                    ClaimsLang.send(viewer, ClaimsLang.REACHED_MEMBERS_LIMIT.replace("{limit}", String.valueOf(ClaimsConfig.MEMBERS_LIMIT)));
+                    ClaimsLocale.send(viewer, ClaimsLocale.REACHED_MEMBERS_LIMIT.replace("{limit}", String.valueOf(ClaimsConfig.MEMBERS_LIMIT)));
                 }
             });
         }

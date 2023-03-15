@@ -3,7 +3,7 @@ package cloud.grabsky.claims.claims;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.api.ClaimsAPI;
 import cloud.grabsky.claims.configuration.ClaimsConfig;
-import cloud.grabsky.claims.configuration.ClaimsLang;
+import cloud.grabsky.claims.configuration.ClaimsLocale;
 import cloud.grabsky.claims.flags.ExtraFlags;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
@@ -154,8 +154,8 @@ public class ClaimManager implements ClaimsAPI {
         region.setFlag(Flags.FIRE_SPREAD, StateFlag.State.DENY);
         region.setFlag(Flags.WITHER_DAMAGE, StateFlag.State.DENY);
         region.setFlag(Flags.GHAST_FIREBALL, StateFlag.State.DENY);
-        region.setFlag(ExtraFlags.GREETING_ACTIONBAR, ClaimsLang.DEFAULT_GREETING.replace("{player}", name));
-        region.setFlag(ExtraFlags.FAREWELL_ACTIONBAR, ClaimsLang.DEFAULT_FAREWELL.replace("{player}", name));
+        region.setFlag(ExtraFlags.GREETING_ACTIONBAR, ClaimsLocale.DEFAULT_GREETING.replace("{player}", name));
+        region.setFlag(ExtraFlags.FAREWELL_ACTIONBAR, ClaimsLocale.DEFAULT_FAREWELL.replace("{player}", name));
         // Dynamic flags (changeable)
         region.setFlag(Flags.USE, StateFlag.State.DENY);
         region.setFlag(Flags.USE.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);

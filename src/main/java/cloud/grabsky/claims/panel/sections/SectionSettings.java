@@ -4,7 +4,7 @@ import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimLevel;
 import cloud.grabsky.claims.configuration.ClaimsConfig;
-import cloud.grabsky.claims.configuration.ClaimsLang;
+import cloud.grabsky.claims.configuration.ClaimsLocale;
 import cloud.grabsky.claims.panel.Panel;
 import cloud.grabsky.claims.templates.Icons;
 import me.grabsky.indigo.logger.FileLogger;
@@ -57,9 +57,9 @@ public class SectionSettings extends Section {
         // Teleport location button
         panel.setItem(13, Icons.ICON_SET_TELEPORT, (event) -> {
             if (claim.setHome(viewer.getLocation())) {
-                ClaimsLang.send(viewer, ClaimsLang.SET_HOME_SUCCESS);
+                ClaimsLocale.send(viewer, ClaimsLocale.SET_HOME_SUCCESS);
             } else {
-                ClaimsLang.send(viewer, ClaimsLang.SET_HOME_FAIL);
+                ClaimsLocale.send(viewer, ClaimsLocale.SET_HOME_FAIL);
             }
             viewer.closeInventory();
         });

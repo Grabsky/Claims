@@ -3,7 +3,7 @@ package cloud.grabsky.claims.panel.sections;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.configuration.ClaimsConfig;
-import cloud.grabsky.claims.configuration.ClaimsLang;
+import cloud.grabsky.claims.configuration.ClaimsLocale;
 import cloud.grabsky.claims.panel.Panel;
 import cloud.grabsky.claims.templates.Icons;
 import me.grabsky.indigo.builders.ItemBuilder;
@@ -65,7 +65,7 @@ public class SectionMembers extends Section {
                     }
                 } else {
                     viewer.closeInventory();
-                    ClaimsLang.send(viewer, ClaimsLang.NOT_MEMBER);
+                    ClaimsLocale.send(viewer, ClaimsLocale.NOT_MEMBER);
                 }
             });
             slot = (slot == 15) ? 20 : slot + 1;
