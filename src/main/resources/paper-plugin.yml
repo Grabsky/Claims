@@ -9,7 +9,7 @@ dependencies:
   - name: WorldGuard
     required: true
 load-after:
-  - name: WorldEdite
+  - name: WorldEdit
     bootstrap: false
   - name: WorldGuard
     bootstrap: false
