@@ -1,50 +1,55 @@
 package cloud.grabsky.claims.claims;
 
-import java.util.HashSet;
-import java.util.Set;
+import cloud.grabsky.azure.api.AzureProvider;
+import cloud.grabsky.azure.api.user.User;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+
+import java.util.List;
 import java.util.UUID;
 
-public class ClaimPlayer {
-    private final UUID uuid;
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
+public final class ClaimPlayer {
+
+    @Getter(AccessLevel.PUBLIC)
+    private final ClaimManager manager;
+
+    @Getter(AccessLevel.PUBLIC)
+    private final UUID uniqueId;
+
+    @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.MODULE)
     private Claim claim;
-    private final Set<String> relatives;
-
-    public ClaimPlayer(UUID uuid) {
-        this.uuid = uuid;
-        this.claim = null;
-        this.relatives = new HashSet<>();
-    }
-
-    public UUID getUniqueId() {
-        return uuid;
-    }
 
     public boolean hasClaim() {
         return claim != null;
     }
 
-    public Claim getClaim() {
-        return claim;
+    public List<Claim> getRelativeClaims() {
+        return manager.getClaims().stream().filter(this::isMemberOf).toList();
     }
 
-    protected void setClaim(Claim claim) {
-        this.claim = claim;
+    public boolean isMemberOf(final Claim claim) {
+        return claim.isMember(this);
     }
 
-    public boolean hasRelatives() {
-        return !relatives.isEmpty();
+    public boolean isOwnerOf(final Claim claim) {
+        return claim.getOwner() == this;
     }
 
-    public Set<String> getRelatives() {
-        return relatives;
+    public Player toPlayer() {
+        return Bukkit.getPlayer(uniqueId);
     }
 
-    protected void addRelative(String id) {
-        relatives.add(id);
+    public User toUser() {
+        return AzureProvider.getAPI().getUserCache().getUser(uniqueId);
     }
 
-    protected void removeRelative(String id) {
-        relatives.remove(id);
+    @Override
+    public boolean equals(final Object other) {
+        return (other instanceof ClaimPlayer otherClaimPlayer && uniqueId.equals(otherClaimPlayer.uniqueId) == true);
     }
-
 }

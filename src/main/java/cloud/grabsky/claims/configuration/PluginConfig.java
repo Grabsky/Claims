@@ -3,8 +3,10 @@ package cloud.grabsky.claims.configuration;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonPath;
 import org.bukkit.World;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
-public final class ClaimsConfig implements JsonConfiguration {
+@Internal
+public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("logs")
     public static boolean LOGS;

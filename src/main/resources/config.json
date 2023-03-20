@@ -1,8 +1,9 @@
+// This JSON configuration file is lenient but keep an eye where you leave trailing commas as they tend to cause issues.
 {
     // Determines if file logging is enabled or not
     "logs": true,
-    // World used to fetch all regions from
-    "claims_world": "world",
+    // World used to fetch all regions from. Default world is always minecraft:overworld
+    "claims_world": "minecraft:overworld",
     // Prefix used to distinguish Claims from regular WorldGuard region
     "region_prefix": "claims_",
     // Priority of WorldGuard region

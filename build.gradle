@@ -1,6 +1,7 @@
 plugins {
     id("java")
     id("com.github.johnrengelman.shadow") version "8.1.0"
+    id("io.papermc.paperweight.userdev") version "1.5.2"
 }
 
 final buildsDirectory = (System.getenv("JVM_WORKSPACE") ?: ".") + File.separator + "builds"
@@ -24,26 +25,27 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.24")
     annotationProcessor("org.projectlombok:lombok:1.18.24")
     // Paper
-    compileOnly("io.papermc.paper:paper-api:1.19.3-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
     // Dependencies
     implementation("cloud.grabsky:bedrock:61f4fe8")
     implementation("cloud.grabsky:commands:86ace06")
-    implementation("cloud.grabsky:configuration-paper:fc2b94c")
+    implementation("cloud.grabsky:configuration-paper:741c63e")
     // PaperLib
     implementation("io.papermc:paperlib:1.0.7")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
+    compileOnly("cloud.grabsky:azure-api:1d5a8f7")
 }
 
 tasks.register("deploy", Copy) {
-    from shadowJar
+    from reobfJar
     into buildsDirectory
-    rename(shadowJar.archiveFileName.get(), "${rootProject.name}-${rootProject.version}.jar")
+    rename(reobfJar.outputJar.asFile.get().name, "${rootProject.name}-${rootProject.version}.jar")
 }
 
 tasks {
     assemble {
-        dependsOn(shadowJar)
+        dependsOn(reobfJar)
         finalizedBy(deploy)
     }
     compileJava { options.compilerArgs += "-parameters" }

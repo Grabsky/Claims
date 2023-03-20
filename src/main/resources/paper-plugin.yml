@@ -8,8 +8,12 @@ dependencies:
     required: true
   - name: WorldGuard
     required: true
+  - name: Azure
+    required: true
 load-after:
   - name: WorldEdit
     bootstrap: false
   - name: WorldGuard
+    bootstrap: false
+  - name: Azure
     bootstrap: false

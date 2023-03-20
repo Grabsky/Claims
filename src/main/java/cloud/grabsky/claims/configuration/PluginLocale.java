@@ -3,8 +3,10 @@ package cloud.grabsky.claims.configuration;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonPath;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus.Internal;
 
-public final class ClaimsLocale implements JsonConfiguration {
+@Internal
+public final class PluginLocale implements JsonConfiguration {
 
     // Claims
 
@@ -62,7 +64,7 @@ public final class ClaimsLocale implements JsonConfiguration {
     @JsonPath("claims.upgrade_success")
     public static String UPGRADE_SUCCESS;
 
-    // Flags
+    // PluginFlags
 
     @JsonPath("flags.default_greeting")
     public static String DEFAULT_GREETING;

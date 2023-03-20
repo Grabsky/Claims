@@ -1,0 +1,121 @@
+{
+    "upgrade_crystal": {
+        "material": "minecraft:amethyst_shard",
+        "amount": 1,
+        "meta": {
+            "name": "<light_purple><b>Kryształ Ulepszenia",
+            "lore": ["<gray>Potrzebny do ulepszenia terenu."],
+            "enchantments": [
+                { "key": "minecraft:sharpness", "level": 1 }
+            ]
+        }
+    },
+    "category_homes": {
+        "material": "minecraft:player_head",
+        "amount": 1,
+        "meta": {
+            "name": "<yellow><b>Teren",
+            "lore": [
+                "<gray>Kliknij <yellow>LPM<gray>, aby teleportować się na teren.",
+                "<gray>Kliknij <yellow>PPM<gray>, aby przeglądać listę dostępnych regionów."
+            ],
+            "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0="
+        }
+    },
+    "category_settings": {
+        "material": "minecraft:player_head",
+        "amount": 1,
+        "meta": {
+            "name": "<yellow><b>Ustawienia",
+            "lore": [
+                "<gray>Kliknij, aby zmienić ustawienia."
+            ],
+            "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzZiY2I1OWFkNGIyNjExM2IxYTIwMGE5MDNhNTMxYWRjMzI1MjJjMWJlMTc1N2E1NjZkYjhjOGIifX19"
+        }
+    },
+    "category_members": {
+        "material": "minecraft:player_head",
+        "amount": 1,
+        "meta": {
+            "name": "<yellow><b>Członkowie",
+            "lore": [
+                "<gray>Kliknij, aby zarządzać członkami terenu."
+            ]
+        }
+    },
+    "category_flags": {
+        "material": "minecraft:player_head",
+        "amount": 1,
+        "meta": {
+            "name": "<yellow><b>Flagi",
+            "lore": [
+                "<gray>Kliknij, aby zarządzać flagami."
+            ],
+            "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWNiYTcyNzdmYzg5NWJmM2I2NzM2OTQxNTk4NjRiODMzNTFhNGQxNDcxN2U0NzZlYmRhMWMzYmYzOGZjZjM3In19fQ=="
+        }
+    },
+    "icon_browse_players": {
+        "material": "minecraft:structure_void",
+        "amount": 1,
+        "meta": {
+            "name": "<gray><b>Dodaj",
+            "lore": [
+                "<gray>Kliknij, aby przeglądać listę graczy."
+            ],
+            "custom_model_data": 3
+        }
+    },
+    "icon_add_member": {
+        "material": "minecraft:player_head",
+        "amount": 1,
+        "meta": {
+            "lore": [
+                "<gray>Kliknij, aby dodać tego gracza do terenu."
+            ]
+        }
+    },
+    "icon_remove_member": {
+        "material": "minecraft:player_head",
+        "amount": 1,
+        "meta": {
+            "lore": [
+                "<gray>Kliknij, aby usunąć tego gracza z terenu."
+            ]
+        }
+    },
+    "icon_set_teleport": {
+        "material": "minecraft:red_bed",
+        "amount": 1,
+        "meta": {
+            "name": "<yellow><b>Teleport",
+            "lore": [
+                "<gray>Ustaw teleport na teren",
+                "<gray>na miejsce, w którym stoisz."
+            ]
+        }
+    },
+    "navigation_previous": {
+        "material": "minecraft:structure_void",
+        "amount": 1,
+        "meta": {
+            "name": "<gray>Poprzednia Strona",
+            "custom_model_data": 1
+        }
+    },
+    "navigation_next": {
+        "material": "minecraft:structure_void",
+        "amount": 1,
+        "meta": {
+            "name": "<gray>Następna Strona",
+            "custom_model_data": 2
+        }
+    },
+    "navigation_return": {
+        "material": "minecraft:barrier",
+        "amount": 1,
+        "meta": {
+            "name": "<red>Powrót",
+            "custom_model_data": 1
+        }
+    }
+}

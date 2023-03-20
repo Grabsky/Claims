@@ -1,0 +1,29 @@
+// This JSON configuration file is lenient but keep an eye where you leave trailing commas as they tend to cause issues.
+{
+    "claims": {
+        "player_has_no_claim": "<dark_gray>› <red>Ten gracz nie ma terenu.",
+        "you_dont_have_a_claim": "<dark_gray>› <red>Nie posiadasz swojego terenu.",
+        "too_close_to_spawn": "<dark_gray>› <red>Minimalna odległość od spawnu to 300 kratek.",
+        "overlaps_other_claim": "<dark_gray>› <red>Za blisko innego terenu.",
+        "not_member": "<dark_gray>› <red>Ten gracz nie jest dodany do terenu.",
+        "not_owner": "<dark_gray>› <red>Tylko właściciel terenu ma do tego uprawnienia.",
+        "reached_claims_limit": "<dark_gray>› <red>Już posiadasz swój teren.",
+        "reached_members_limit": "<dark_gray>› <red>Osiągnąłeś limit ({limit}) graczy dodanych do terenu.",
+        "place_success": "<dark_gray>› <gray>Chroniony teren został utworzony.",
+        "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
+        "not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając. <u>Wszystkie flagi zostaną zresetowane.",
+        "upgrade_success": "<dark_gray>› <gray>Rozmiar terenu został zwiększony do {size}<gray>.",
+        "restore_claim_block_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
+        "restore_claim_block_fail": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie.",
+        "claim_blocks_added": "<dark_gray>› <gray>Bloki terenu zostały dodane do Twojego ekwipunku.",
+        "blacklisted_world": "<dark_gray>› <red>Nie możesz postawić terenu w tym świecie.",
+        "set_home_success": "<dark_gray>› <gray>Teleport na teren został nadpisany.",
+        "set_home_fail": "<dark_gray>› <red>Teleport nie może zostać ustawiony poza terenem."
+    },
+    // WARNING: Changing this value WON"T update greeting/farewell flags in existing regions.
+    "flags": {
+        "default_greeting": "<gray>Wszedłeś na teren gracza <yellow>{player}",
+        "default_farewell": "<gray>Opuściłeś teren gracza <yellow>{player}"
+    }
+}
+
