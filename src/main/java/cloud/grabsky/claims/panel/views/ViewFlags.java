@@ -2,88 +2,92 @@ package cloud.grabsky.claims.panel.views;
 
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.claims.Claim;
+import cloud.grabsky.claims.claims.ClaimFlag;
 import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginItems;
-import cloud.grabsky.claims.claims.ClaimFlag;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
-import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.function.Consumer;
+
 import static net.kyori.adventure.text.Component.text;
 
-public class ViewFlags extends ClaimPanel.View {
+public class ViewFlags implements Consumer<Panel> {
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7104", NamedTextColor.WHITE);
 
     @Override
-    public void accept(final ClaimPanel panel) {
-        final ProtectedRegion region = panel.getClaim().getRegion();
-        // Changing panel texture
-        panel.updateClientTitle(INVENTORY_TITLE);
-        // ...ROW 1
-        panel.setItem(11,
-                createDisplay(region, Flags.USE, PluginFlags.USE),
-                createClickAction(region, Flags.USE, PluginFlags.USE, RegionGroup.NON_MEMBERS)
-        );
-        panel.setItem(12,
-                createDisplay(region, Flags.ENTRY, PluginFlags.ENTRY),
-                createClickAction(region, Flags.ENTRY, PluginFlags.ENTRY, RegionGroup.NON_MEMBERS));
-        panel.setItem(13,
-                createDisplay(region, Flags.TNT, PluginFlags.TNT),
-                createClickAction(region, Flags.TNT, PluginFlags.TNT));
-        panel.setItem(14,
-                createDisplay(region, Flags.CREEPER_EXPLOSION, PluginFlags.CREEPER_EXPLOSION),
-                createClickAction(region, Flags.CREEPER_EXPLOSION, PluginFlags.CREEPER_EXPLOSION));
-        panel.setItem(15,
-                createDisplay(region, Flags.SNOW_MELT, PluginFlags.SNOW_MELT),
-                createClickAction(region, Flags.SNOW_MELT, PluginFlags.SNOW_MELT));
-        // ...ROW 2
-        panel.setItem(20,
-                createDisplay(region, Flags.ICE_MELT, PluginFlags.ICE_MELT),
-                createClickAction(region, Flags.ICE_MELT, PluginFlags.ICE_MELT));
-        panel.setItem(21,
-                createDisplay(region, Flags.FIRE_SPREAD, PluginFlags.FIRE_SPREAD),
-                createClickAction(region, Flags.FIRE_SPREAD, PluginFlags.FIRE_SPREAD));
-        panel.setItem(22,
-                createDisplay(region, Flags.MOB_SPAWNING, PluginFlags.MOB_SPAWNING),
-                createClickAction(region, Flags.MOB_SPAWNING, PluginFlags.MOB_SPAWNING));
-        panel.setItem(23,
-                createDisplay(region, Claims.CustomFlag.CLIENT_TIME, PluginFlags.CLIENT_TIME),
-                createClickAction(region, Claims.CustomFlag.CLIENT_TIME, PluginFlags.CLIENT_TIME));
-        panel.setItem(24,
-                createDisplay(region, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.WEATHER_LOCK),
-                createClickAction(region, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.WEATHER_LOCK));
+    public void accept(final Panel panel) {
+        final ClaimPanel cPanel = (ClaimPanel) panel;
         // ...
-        panel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> panel.applyView(new ViewSettings(), true));
+        final Claim claim = cPanel.getClaim();
+        // Changing panel texture
+        cPanel.updateClientTitle(INVENTORY_TITLE);
+        // ...ROW 1
+        cPanel.setItem(11,
+                createDisplay(claim, Flags.USE, PluginFlags.USE),
+                createClickAction(claim, Flags.USE, PluginFlags.USE, RegionGroup.NON_MEMBERS)
+        );
+        cPanel.setItem(12,
+                createDisplay(claim, Flags.ENTRY, PluginFlags.ENTRY),
+                createClickAction(claim, Flags.ENTRY, PluginFlags.ENTRY, RegionGroup.NON_MEMBERS));
+        cPanel.setItem(13,
+                createDisplay(claim, Flags.TNT, PluginFlags.TNT),
+                createClickAction(claim, Flags.TNT, PluginFlags.TNT));
+        cPanel.setItem(14,
+                createDisplay(claim, Flags.CREEPER_EXPLOSION, PluginFlags.CREEPER_EXPLOSION),
+                createClickAction(claim, Flags.CREEPER_EXPLOSION, PluginFlags.CREEPER_EXPLOSION));
+        cPanel.setItem(15,
+                createDisplay(claim, Flags.SNOW_MELT, PluginFlags.SNOW_MELT),
+                createClickAction(claim, Flags.SNOW_MELT, PluginFlags.SNOW_MELT));
+        // ...ROW 2
+        cPanel.setItem(20,
+                createDisplay(claim, Flags.ICE_MELT, PluginFlags.ICE_MELT),
+                createClickAction(claim, Flags.ICE_MELT, PluginFlags.ICE_MELT));
+        cPanel.setItem(21,
+                createDisplay(claim, Flags.FIRE_SPREAD, PluginFlags.FIRE_SPREAD),
+                createClickAction(claim, Flags.FIRE_SPREAD, PluginFlags.FIRE_SPREAD));
+        cPanel.setItem(22,
+                createDisplay(claim, Flags.MOB_SPAWNING, PluginFlags.MOB_SPAWNING),
+                createClickAction(claim, Flags.MOB_SPAWNING, PluginFlags.MOB_SPAWNING));
+        cPanel.setItem(23,
+                createDisplay(claim, Claims.CustomFlag.CLIENT_TIME, PluginFlags.CLIENT_TIME),
+                createClickAction(claim, Claims.CustomFlag.CLIENT_TIME, PluginFlags.CLIENT_TIME));
+        cPanel.setItem(24,
+                createDisplay(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.WEATHER_LOCK),
+                createClickAction(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.WEATHER_LOCK));
+        // ...
+        cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewSettings(), true));
    }
 
-   private static <T> ItemStack createDisplay(final ProtectedRegion region, final Flag<T> flag, final ClaimFlag<T> claimFlag) {
-        return claimFlag.getDisplay(region.getFlag(flag));
+   private static <T> ItemStack createDisplay(final Claim claim, final Flag<T> flag, final ClaimFlag<T> claimFlag) {
+        return claimFlag.getDisplay(claim.getFlag(flag));
    }
 
-   private static <T> Panel.ClickAction createClickAction(final ProtectedRegion region, final Flag<T> flag, final ClaimFlag<T> claimFlag) {
+   private static <T> Panel.ClickAction createClickAction(final Claim claim, final Flag<T> flag, final ClaimFlag<T> claimFlag) {
         return (event) -> {
-            final T current = region.getFlag(flag);
+            final T current = claim.getFlag(flag);
             final T next = claimFlag.next(current);
             // ...
-            region.setFlag(flag, next);
+            claim.setFlag(flag, next);
             // ...
             event.setCurrentItem(claimFlag.getDisplay(next));
         };
    }
 
-    private static <T> Panel.ClickAction createClickAction(final ProtectedRegion region, final Flag<T> flag, final ClaimFlag<T> claimFlag, final RegionGroup regionGroup) {
+    private static <T> Panel.ClickAction createClickAction(final Claim claim, final Flag<T> flag, final ClaimFlag<T> claimFlag, final RegionGroup regionGroup) {
         return (event) -> {
-            final T current = region.getFlag(flag);
+            final T current = claim.getFlag(flag);
             final T next = claimFlag.next(current);
             // ...
-            region.setFlag(flag, next);
-            region.setFlag(flag.getRegionGroupFlag(), regionGroup);
+            claim.setFlag(flag, next);
+            claim.setFlag(flag.getRegionGroupFlag(), regionGroup);
             // ...
             event.setCurrentItem(claimFlag.getDisplay(next));
         };

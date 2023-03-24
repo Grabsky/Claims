@@ -1,76 +1,138 @@
 package cloud.grabsky.claims.configuration;
 
+import cloud.grabsky.configuration.JsonAdapter;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonPath;
+import cloud.grabsky.configuration.paper.adapter.StringComponentAdapter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 @Internal
 public final class PluginLocale implements JsonConfiguration {
 
-    // Claims
+    @JsonPath("missing_permissions")
+    public static Component MISSING_PERMISSIONS;
 
-    @JsonPath("claims.player_has_no_claim")
-    public static Component PLAYER_HAS_NO_CLAIM;
+    @JsonPath("reload_success")
+    public static Component RELOAD_SUCCESS;
 
-    @JsonPath("claims.you_dont_have_a_claim")
-    public static Component YOU_DONT_HAVE_A_CLAIM;
+    @JsonPath("reload_failure")
+    public static Component RELOAD_FAILURE;
 
-    @JsonPath("claims.too_close_to_spawn")
-    public static Component TOO_CLOSE_TO_SPAWN;
+    // ...
 
-    @JsonPath("claims.overlaps_other_claim")
-    public static Component OVERLAPS_OTHER_CLAIM;
+    @JsonPath("claims_not_in_claimed_area")
+    public static Component NOT_IN_CLAIMED_AREA;
 
-    @JsonPath("claims.not_member")
-    public static Component NOT_MEMBER;
+    @JsonPath("claims_not_owner")
+    public static Component NOT_CLAIM_OWNER;
 
-    @JsonPath("claims.not_owner")
-    public static Component NOT_OWNER;
+    @JsonPath("claim_does_not_exist")
+    public static Component CLAIM_DOES_NOT_EXIST;
 
-    @JsonPath("claims.reached_claims_limit")
-    public static Component REACHED_CLAIMS_LIMIT;
+    @JsonPath("claim_no_center_defined")
+    public static Component CLAIM_NO_CENTER_DEFINED;
 
-    @JsonPath("claims.place_success")
-    public static Component PLACE_SUCCESS;
+    // Claims > Commands > Edit
 
-    @JsonPath("claims.destroy_success")
-    public static Component DESTROY_SUCCESS;
+    @JsonPath("commands.claims.claims_edit_failure")
+    @JsonAdapter(fromJson = StringComponentAdapter.class)
+    public static String CLAIMS_EDIT_FAILURE;
 
-    @JsonPath("claims.not_sneaking")
-    public static Component NOT_SNEAKING;
+    // Claims > Commands > Claims > Get
 
-    @JsonPath("claims.restore_claim_block_success")
-    public static Component RESTORE_CLAIM_BLOCK_SUCCESS;
+    @JsonPath("commands.claims.claims_get_success")
+    public static Component CLAIMS_GET_SUCCESS;
 
-    @JsonPath("claims.restore_claim_block_fail")
-    public static Component RESTORE_CLAIM_BLOCK_FAIL;
+    @JsonPath("commands.claims.claims_get_failure")
+    public static Component CLAIMS_GET_FAILURE;
 
-    @JsonPath("claims.claim_blocks_added")
-    public static Component CLAIM_BLOCKS_ADDED;
+    // Claims > Commands > Claims > Find
 
-    @JsonPath("claims.blacklisted_world")
-    public static Component BLACKLISTED_WORLD;
+    @JsonPath("commands.claims.claims_find_owner_of")
+    public static String CLAIMS_FIND_OWNER_OF;
 
-    @JsonPath("claims.set_home_success")
-    public static Component SET_HOME_SUCCESS;
+    @JsonPath("commands.claims.claims_find_member_of")
+    public static String CLAIMS_FIND_MEMBER_OF;
 
-    @JsonPath("claims.set_home_fail")
-    public static Component SET_HOME_FAIL;
+    @JsonPath("commands.claims.claims_find_entry")
+    public static String CLAIMS_FIND_ENTRY;
 
-    @JsonPath("claims.reached_members_limit")
-    public static String REACHED_MEMBERS_LIMIT;
+    // Claims > Commands > Claims > Restore
 
-    @JsonPath("claims.upgrade_success")
-    public static String UPGRADE_SUCCESS;
+    @JsonPath("commands.claims.claims_restore_success")
+    public static Component CLAIMS_RESTORE_SUCCESS;
 
-    // PluginFlags
+    // Interface > Upgrade
 
-    @JsonPath("flags.default_greeting")
-    public static String DEFAULT_GREETING;
+    @JsonPath("interface.upgrade_success")
+    public static String UI_UPGRADE_SUCCESS;
 
-    @JsonPath("flags.default_farewell")
-    public static String DEFAULT_FAREWELL;
+    @JsonPath("interface.upgrade_failure")
+    public static Component UI_UPGRADE_FAILURE;
+
+    // Interface > Set Home
+
+    @JsonPath("interface.set_home_success")
+    public static Component UI_SET_HOME_SUCCESS;
+
+    @JsonPath("interface.set_home_failure")
+    public static Component UI_SET_HOME_FAILURE;
+
+    // Interface > Members > Add
+
+    @JsonPath("interface.members_add_success")
+    public static String UI_MEMBERS_ADD_SUCCESS;
+
+    @JsonPath("interface.members_add_failure_already_added")
+    public static Component UI_MEMBERS_ADD_FAILURE_ALREADY_ADDED;
+
+    @JsonPath("interface.members_add_failure_reached_limit")
+    public static String UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT;
+
+    // Interface > Members > Remove
+
+    @JsonPath("interface.members_remove_success")
+    public static String UI_MEMBERS_REMOVE_SUCCESS;
+
+    @JsonPath("interface.members_remove_failure_not_a_member")
+    public static Component UI_MEMBERS_REMOVE_FAILURE_NOT_A_MEMBER;
+
+    // Placement > Place
+
+    @JsonPath("placement.place_success")
+    public static Component PLACEMENT_PLACE_SUCCESS;
+
+    @JsonPath("placement.place_failure_overlaps")
+    public static Component PLACEMENT_PLACE_FAILURE_OVERLAPS;
+
+    @JsonPath("placement.place_failure_blacklisted_world")
+    public static Component PLACEMENT_PLACE_FAILURE_BLACKLISTED_WORLD;
+
+    @JsonPath("placement.place_failure_too_close_to_spawn")
+    public static Component PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN;
+
+    @JsonPath("placement.place_failure_reached_claims_limit")
+    public static Component PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT;
+
+    @JsonPath("placement.place_failure_other_claims_must_be_upgraded")
+    public static Component PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED;
+
+    // Placement > Destroy
+
+    @JsonPath("placement.destroy_success")
+    public static Component PLACEMENT_DESTROY_SUCCESS;
+
+    @JsonPath("placement.destroy_failure_not_sneaking")
+    public static Component PLACEMENT_DESTROY_FAILURE_NOT_SNEAKING;
+
+    // Flags
+
+    @JsonPath("flags.default_claim_enter")
+    public static String FLAGS_CLAIM_ENTER;
+
+    @JsonPath("flags.default_claim_leave")
+    public static String FLAGS_CLAIM_LEAVE;
 
 }
 

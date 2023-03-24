@@ -1,13 +1,14 @@
 package cloud.grabsky.claims;
 
 import cloud.grabsky.bedrock.BedrockPlugin;
-import cloud.grabsky.bedrock.inventory.Panel;
+import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.commands.ClaimsCommand;
+import cloud.grabsky.claims.commands.argument.ClaimArgument;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginFlags;
-import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.configuration.PluginItems;
+import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.configuration.adapter.ClaimFlagAdapterFactory;
 import cloud.grabsky.claims.configuration.adapter.NamedTextColorAdapter;
 import cloud.grabsky.claims.flags.ClientTimeFlag;
@@ -17,11 +18,11 @@ import cloud.grabsky.claims.flags.LeaveActionBarFlag;
 import cloud.grabsky.claims.flags.object.FixedTime;
 import cloud.grabsky.claims.flags.object.FixedWeather;
 import cloud.grabsky.claims.listeners.RegionListener;
+import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.commands.RootCommandManager;
 import cloud.grabsky.configuration.ConfigurationMapper;
 import cloud.grabsky.configuration.exception.ConfigurationMappingException;
 import cloud.grabsky.configuration.paper.PaperConfigurationMapper;
-import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.World;
@@ -59,8 +60,6 @@ public final class Claims extends BedrockPlugin {
 
     private ConfigurationMapper mapper;
 
-    private WorldGuard worldGuard;
-
     @Override
     public void onEnable() {
         super.onEnable();
@@ -75,21 +74,24 @@ public final class Claims extends BedrockPlugin {
         if (this.onReload() == false) {
             return; // Plugin should be disabled automatically whenever exception is thrown.
         }
-        Panel.registerListener(this);
+        ClaimPanel.registerListener(this);
         // Creating instance of RegionManager
         final World world = BukkitAdapter.adapt(PluginConfig.DEFAULT_WORLD);
-        this.worldGuard = WorldGuard.getInstance();
-        this.regionManager = worldGuard.getPlatform().getRegionContainer().get(world);
+        // ...
+        this.regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // ...
         Claims.CustomFlag.registerHandlers();
         // Initializing ClaimManager and caching claims
         this.claimManager = new ClaimManager(this);
-        this.claimManager.loadClaimLevels();
+        this.claimManager.cacheClaimTypes();
         this.claimManager.cacheClaims();
         // Registering events
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
         // Registering command(s)
         final RootCommandManager commands = new RootCommandManager(this);
+        final ClaimArgument argument = new ClaimArgument(claimManager);
+        commands.setArgumentParser(Claim.class, argument);
+        commands.setCompletionsProvider(Claim.class, argument);
         commands.registerCommand(new ClaimsCommand(this));
     }
 
@@ -126,7 +128,7 @@ public final class Claims extends BedrockPlugin {
 
     public static final class Key {
 
-        public static final NamespacedKey CLAIM_LEVEL = new NamespacedKey("claims", "claim_level");
+        public static final NamespacedKey CLAIM_TYPE = new NamespacedKey("claims", "claim_level");
 
     }
 

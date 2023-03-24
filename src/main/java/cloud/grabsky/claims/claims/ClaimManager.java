@@ -1,12 +1,22 @@
 package cloud.grabsky.claims.claims;
 
 import cloud.grabsky.claims.Claims;
-import cloud.grabsky.claims.api.ClaimsAPI;
+import cloud.grabsky.claims.Claims.CustomFlag;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.configuration.adapter.ClaimTypeAdapterFactory;
-import cloud.grabsky.configuration.paper.adapter.*;
+import cloud.grabsky.claims.exception.ClaimProcessException;
+import cloud.grabsky.configuration.paper.adapter.ComponentAdapter;
+import cloud.grabsky.configuration.paper.adapter.EnchantmentAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.EnchantmentEntryAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.EntityTypeAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.ItemFlagAdapter;
+import cloud.grabsky.configuration.paper.adapter.ItemStackAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.MaterialAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
+import cloud.grabsky.configuration.paper.adapter.PersistentDataEntryAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.PersistentDataTypeAdapterFactory;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.flags.Flags;
@@ -19,7 +29,6 @@ import com.squareup.moshi.Moshi;
 import io.papermc.lib.PaperLib;
 import lombok.AccessLevel;
 import lombok.Getter;
-import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import okio.BufferedSource;
 import okio.Okio;
@@ -28,18 +37,26 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 
-import static java.util.Arrays.sort;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
+import static java.util.Comparator.comparingDouble;
 
-public final class ClaimManager implements ClaimsAPI {
+public final class ClaimManager {
 
     private final Claims claims;
     private final Moshi moshi;
@@ -49,13 +66,14 @@ public final class ClaimManager implements ClaimsAPI {
     private final Map<UUID, ClaimPlayer> claimPlayerCache = new HashMap<>();
 
     @Getter(AccessLevel.PUBLIC)
-    private final TreeMap<String, Claim.Type> claimTypes = new TreeMap<>();
+    private final Map<String, Claim.Type> claimTypes = new HashMap<>();
 
     public ClaimManager(final Claims claims) {
         this.claims = claims;
         this.regionManager = claims.getRegionManager();
         // ...
         this.moshi = new Moshi.Builder()
+                // Everything needed for ItemStack deserialization...
                 .add(Component.class, ComponentAdapter.INSTANCE)
                 .add(ItemFlag.class, ItemFlagAdapter.INSTANCE)
                 .add(NamespacedKey.class, NamespacedKeyAdapter.INSTANCE)
@@ -66,12 +84,13 @@ public final class ClaimManager implements ClaimsAPI {
                 .add(MaterialAdapterFactory.INSTANCE)
                 .add(PersistentDataEntryAdapterFactory.INSTANCE)
                 .add(PersistentDataTypeAdapterFactory.INSTANCE)
-                .add(SoundAdapterFactory.INSTANCE)
+                // ClaimType deserialization...
                 .add(new ClaimTypeAdapterFactory(this))
                 .build();
     }
 
-    public void loadClaimLevels() {
+    @Internal
+    public void cacheClaimTypes() {
         final File typesDirectory = new File(claims.getDataFolder(), "types");
         // ...
         if (typesDirectory.exists() == false || typesDirectory.isDirectory() == false)
@@ -82,7 +101,10 @@ public final class ClaimManager implements ClaimsAPI {
         if (files == null || files.length == 0)
             throw new IllegalStateException("No claims defined.");
         // ,,,
-        final List<File> sortedFiles = stream(files).sorted(comparing(File::getName).reversed()).toList();
+        final List<File> sortedFiles = stream(files)
+                .filter(file -> file.getName().endsWith(".json"))
+                .sorted(comparing(File::getName).reversed())
+                .toList();
         // ...
         Claim.Type previous = null;
         // ...
@@ -105,50 +127,56 @@ public final class ClaimManager implements ClaimsAPI {
         }
     }
 
-    // Should be run only during the server startup
-    public void cacheClaims() {
-        int loadedClaims = 0;
-        for (Map.Entry<String, ProtectedRegion> en : regionManager.getRegions().entrySet()) {
-            final ProtectedRegion region = en.getValue();
-            if (!region.getId().startsWith(PluginConfig.REGION_PREFIX) || !region.hasMembersOrOwners() || region.getOwners().size() != 1) continue;
-            final UUID owner = region.getOwners().getUniqueIds().iterator().next();
-            final ClaimPlayer claimOwner = this.getClaimPlayer(owner);
-            final Claim.Type typeId = claimTypes.get(region.getFlag(Claims.CustomFlag.CLAIM_TYPE));
-            final Claim claim = new Claim(this, claimOwner, region, typeId);
-            claimOwner.setClaim(claim);
-            // Creating members' references
-            for (final UUID memberUuid : region.getMembers().getUniqueIds()) {
-                ClaimPlayer cm = this.getClaimPlayer(memberUuid);
-                // cm.addRelativeClaim(claim.getId());
-            }
+    @Internal // Should be run only during the server startup
+    public void cacheClaims() throws IllegalStateException {
+        final AtomicInteger loadedClaims = new AtomicInteger(0);
+        regionManager.getRegions().forEach((id, region) -> {
+            // Skipping regions not starting with configured prefix, or regions which owner count =/= 1.
+            if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
+                return;
+            // ...
+            final String claimTypeId = region.getFlag(CustomFlag.CLAIM_TYPE);
+            final Claim.Type claimType = claimTypes.get(claimTypeId);
+            final Claim claim = new Claim(id, this, region, claimType);
+            // ...
+            region.getOwners().getUniqueIds().forEach(uuid -> {
+                final ClaimPlayer claimOwner = this.getClaimPlayer(uuid);
+                // Skipping claims with non-existent or invalid type.
+                if (claimTypeId == null || claimTypes.containsKey(claimTypeId) == false) {
+                    claims.getLogger().severe("Claim " + id + " owned by " + claimOwner + " cannot be loaded. (CLAIM_TYPE = " + claimTypeId + ")");
+                    return;
+                }
+                claimOwner.addClaim(claim);
+            });
             // Adding claim to the cache
-            final String id = region.getId();
-            this.addClaim(id, claim);
-            loadedClaims++;
-        }
+            claimsCache.put(id, claim);
+            // ...
+            loadedClaims.getAndIncrement();
+        });
         claims.getLogger().info("Loaded " + loadedClaims + " claims.");
     }
 
-    // Returns true if Claim is in cache
-    public boolean containsClaim(String id) {
+    // Returns true if Claim exists and is currently cached.
+    public boolean containsClaim(final @NotNull String id) {
+        // Removing "stale" regions if they don't exist in world anymore.
+        if (regionManager.hasRegion(id) == false) {
+            claimsCache.remove(id);
+        }
+        // ...
         return claimsCache.containsKey(id);
     }
 
-    // Adds Claim to cache
-    public void addClaim(String id, Claim claim) {
-        claimsCache.put(id, claim);
+    // Returns true if Claim exists and is currently cached.
+    public boolean containsClaim(final @NotNull Claim claim) {
+        return containsClaim(claim.getId());
     }
 
-    // Removes Claim from cache
-    public void removeClaim(String id) {
-        claimsCache.remove(id);
-    }
 
     // Returns center of claim closest to given location
     public @Nullable Location getClosestTo(final @NotNull Location location) {
         return claimsCache.values().stream()
                 .map(Claim::getCenter)
-                .min(Comparator.comparingDouble(location::distance))
+                .min(comparingDouble(location::distance))
                 .orElse(null);
     }
 
@@ -159,12 +187,13 @@ public final class ClaimManager implements ClaimsAPI {
         return false;
     }
 
-    public Claim createRegionAt(final Location loc, final Player owner, final String typeName) {
+    public Claim createClaim(final Location loc, final Player owner, final String typeName) {
         // Returning if location is too close to spawn or other claim
-        if (this.isInSquare(loc, this.getClosestTo(loc), 80) || this.isInSquare(loc, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN))
+        if (this.isInSquare(loc, this.getClosestTo(loc), 80) == true || this.isInSquare(loc, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == true)
             return null;
         // Points
         final UUID ownerUniqueId = owner.getUniqueId();
+        // ...
         final int x = loc.getBlockX();
         final int z = loc.getBlockZ();
         // ...
@@ -180,7 +209,7 @@ public final class ClaimManager implements ClaimsAPI {
         final ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
         this.setDefaultFlags(region, loc, owner);
-        region.setFlag(Claims.CustomFlag.CLAIM_TYPE, type.getUniqueId());
+        region.setFlag(CustomFlag.CLAIM_TYPE, type.getUniqueId());
         // Setting region priority
         region.setPriority(PluginConfig.REGION_PRIORITY);
         // Adding owner
@@ -190,35 +219,49 @@ public final class ClaimManager implements ClaimsAPI {
         // Adding newly created claim to cache
         final ClaimPlayer claimOwner = this.getClaimPlayer(ownerUniqueId);
         // ...
-        final Claim claim = new Claim(this, claimOwner, region, type);
-        this.addClaim(id, claim);
+        final Claim claim = new Claim(id, this, region, type);
+        claimsCache.put(id, claim);
         // Making a connection between player and newly created claim
-        claimOwner.setClaim(claim);
+        claimOwner.addClaim(claim);
         return claim;
     }
 
     // Existence check is already in RegionHandler
-    public void removeRegionOf(final UUID ownerUniqueId) {
-        final ClaimPlayer cp = this.getClaimPlayer(ownerUniqueId);
-        final Claim claim = cp.getClaim();
+    public void deleteClaim(final Claim claim) {
         final String id = claim.getRegion().getId();
         // Setting owner's claim to null (because it's going to be removed in a sec)
-        cp.setClaim(null);
+        claim.getOwners().forEach(owner -> owner.removeClaim(claim));
         // Removing claim from cache
-        this.removeClaim(id);
+        claimsCache.remove(id);
         // Removing claim from the world
         final ProtectedRegion region = claim.getRegion();
         regionManager.removeRegion(region.getId());
     }
 
-    private void setDefaultFlags(ProtectedRegion region, Location loc, Player owner) {
+    public @Nullable Claim getClaimAt(final @NotNull Location location) {
+        final List<String> ids = regionManager.getApplicableRegionsIDs(BukkitAdapter.adapt(location).toVector().toBlockPoint())
+                .stream().filter(id -> id.startsWith(PluginConfig.REGION_PREFIX) == true).toList();
+        // ...
+        if (ids.isEmpty() == true || ids.size() > 1)
+            return null;
+        // ...
+        final @Nullable Claim claim = this.getClaim(ids.iterator().next());
+        // ...
+        if (claim != null && this.containsClaim(claim) == true)
+            return claim;
+        // ...
+        return null;
+    }
+
+    private void setDefaultFlags(final @NotNull ProtectedRegion region, final @NotNull Location center, final Player owner) {
         final String name = owner.getName();
+        final com.sk89q.worldedit.util.Location regionCenter = BukkitAdapter.adapt(center);
         // Static flags (not changeable)
-        region.setFlag(Flags.PVP,                         StateFlag.State.DENY);
-        region.setFlag(Flags.WITHER_DAMAGE,               StateFlag.State.DENY);
-        region.setFlag(Flags.GHAST_FIREBALL,              StateFlag.State.DENY);
-        region.setFlag(Claims.CustomFlag.ENTER_ACTIONBAR, PluginLocale.DEFAULT_GREETING.replace("{player}", name));
-        region.setFlag(Claims.CustomFlag.LEAVE_ACTIONBAR, PluginLocale.DEFAULT_FAREWELL.replace("{player}", name));
+        region.setFlag(Flags.PVP,                  StateFlag.State.DENY);
+        region.setFlag(Flags.WITHER_DAMAGE,        StateFlag.State.DENY);
+        region.setFlag(Flags.GHAST_FIREBALL,       StateFlag.State.DENY);
+        region.setFlag(CustomFlag.ENTER_ACTIONBAR, PluginLocale.FLAGS_CLAIM_ENTER.replace("<player>", name));
+        region.setFlag(CustomFlag.LEAVE_ACTIONBAR, PluginLocale.FLAGS_CLAIM_LEAVE.replace("<player>", name));
         // Flag policy
         region.setFlag(Flags.USE.getRegionGroupFlag(),   RegionGroup.NON_MEMBERS);
         region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
@@ -232,12 +275,15 @@ public final class ClaimManager implements ClaimsAPI {
         region.setFlag(Flags.FIRE_SPREAD,       PluginFlags.FIRE_SPREAD.getDefaultValue());
         region.setFlag(Flags.MOB_SPAWNING,      PluginFlags.MOB_SPAWNING.getDefaultValue());
         // Setting center location (not modifiable)
-        region.setFlag(Claims.CustomFlag.CLAIM_CENTER, BukkitAdapter.adapt(loc));
+        region.setFlag(CustomFlag.CLAIM_CENTER, regionCenter);
         // Setting default home location (modifiable)
-        region.setFlag(Flags.TELE_LOC, BukkitAdapter.adapt(loc.clone().add(0, 0.5, 0)));
+        region.setFlag(Flags.TELE_LOC, regionCenter.setY(regionCenter.getY() + 0.5));
     }
 
-    public boolean upgradeClaim(final Claim claim) {
+    public boolean upgradeClaim(final @NotNull Claim claim) throws ClaimProcessException {
+        if (this.containsClaim(claim) == false)
+            throw new ClaimProcessException(PluginLocale.CLAIM_DOES_NOT_EXIST);
+        // ...
         // Ignore for levels higher than 6
         if (claim.getType().isUpgradeable() == false)
             return false;
@@ -246,16 +292,15 @@ public final class ClaimManager implements ClaimsAPI {
         // ...
         final ProtectedRegion region = claim.getRegion();
         // ...
-        final String id = claim.getRegion().getId();
         final Location center = claim.getCenter();
         // Calculating new region size
-        int radius = claim.getType().getNextType().getRadius();
+        final int radius = claim.getType().getNextType().getRadius();
         final BlockVector3 min = BlockVector3.at(center.getBlockX() - radius, center.getWorld().getMinHeight(), center.getBlockZ() - radius);
         final BlockVector3 max = BlockVector3.at(center.getBlockX() + radius, center.getWorld().getMaxHeight(), center.getBlockZ() + radius);
         // Creating cuboid at new points
-        final ProtectedRegion newRegion = new ProtectedCuboidRegion(id, min, max);
+        final ProtectedRegion newRegion = new ProtectedCuboidRegion(claim.getId(), min, max);
         // Updating region flag
-        region.setFlag(Claims.CustomFlag.CLAIM_TYPE, claim.getType().getNextType().getUniqueId());
+        region.setFlag(CustomFlag.CLAIM_TYPE, claim.getType().getNextType().getUniqueId());
         // Redefining region
         newRegion.copyFrom(region);
         regionManager.addRegion(newRegion);
@@ -268,22 +313,14 @@ public final class ClaimManager implements ClaimsAPI {
         return true;
     }
 
-    @Override
-    public boolean hasClaim(final @NotNull UUID uuid) {
-        return this.getClaimPlayer(uuid).getClaim() != null;
-    }
-
-    @Override
-    public @Nullable Claim getClaim(final @NotNull UUID uuid) {
-        return this.getClaimPlayer(uuid).getClaim();
-    }
-
-    @Override
     public @Nullable Claim getClaim(final @NotNull String id) {
         return claimsCache.get(id);
     }
 
-    @Override
+    public @Nullable Claim getClaim(final @NotNull ProtectedRegion region) {
+        return claimsCache.get(region.getId());
+    }
+
     public @NotNull ClaimPlayer getClaimPlayer(final @NotNull UUID uuid) {
         return claimPlayerCache.computeIfAbsent(uuid, (u) -> new ClaimPlayer(this, u));
     }
@@ -292,9 +329,8 @@ public final class ClaimManager implements ClaimsAPI {
         return claimPlayerCache.computeIfAbsent(player.getUniqueId(), (uuid) -> new ClaimPlayer(this, uuid));
     }
 
-    @Override
-    public @NotNull List<String> getClaimIds() {
-        return new ArrayList<>(claimsCache.keySet());
+    public @NotNull Set<String> getClaimIds() {
+        return Collections.unmodifiableSet(claimsCache.keySet());
     }
 
     public @NotNull Collection<Claim> getClaims() {

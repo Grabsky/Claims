@@ -28,7 +28,7 @@ dependencies {
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
     // Dependencies
     implementation("cloud.grabsky:bedrock:61f4fe8")
-    implementation("cloud.grabsky:commands:86ace06")
+    implementation("cloud.grabsky:commands:7743a41")
     implementation("cloud.grabsky:configuration-paper:741c63e")
     // PaperLib
     implementation("io.papermc:paperlib:1.0.7")

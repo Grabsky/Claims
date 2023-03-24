@@ -1,29 +1,56 @@
-// This JSON configuration file is lenient but keep an eye where you leave trailing commas as they tend to cause issues.
 {
-    "claims": {
-        "player_has_no_claim": "<dark_gray>› <red>Ten gracz nie ma terenu.",
-        "you_dont_have_a_claim": "<dark_gray>› <red>Nie posiadasz swojego terenu.",
-        "too_close_to_spawn": "<dark_gray>› <red>Minimalna odległość od spawnu to 300 kratek.",
-        "overlaps_other_claim": "<dark_gray>› <red>Za blisko innego terenu.",
-        "not_member": "<dark_gray>› <red>Ten gracz nie jest dodany do terenu.",
-        "not_owner": "<dark_gray>› <red>Tylko właściciel terenu ma do tego uprawnienia.",
-        "reached_claims_limit": "<dark_gray>› <red>Już posiadasz swój teren.",
-        "reached_members_limit": "<dark_gray>› <red>Osiągnąłeś limit ({limit}) graczy dodanych do terenu.",
-        "place_success": "<dark_gray>› <gray>Chroniony teren został utworzony.",
-        "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
-        "not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając. <u>Wszystkie flagi zostaną zresetowane.",
-        "upgrade_success": "<dark_gray>› <gray>Rozmiar terenu został zwiększony do {size}<gray>.",
-        "restore_claim_block_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
-        "restore_claim_block_fail": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie.",
-        "claim_blocks_added": "<dark_gray>› <gray>Bloki terenu zostały dodane do Twojego ekwipunku.",
-        "blacklisted_world": "<dark_gray>› <red>Nie możesz postawić terenu w tym świecie.",
-        "set_home_success": "<dark_gray>› <gray>Teleport na teren został nadpisany.",
-        "set_home_fail": "<dark_gray>› <red>Teleport nie może zostać ustawiony poza terenem."
+    "missing_permissions": "<dark_gray>› <red>Nie masz uprawnień aby to zrobić.",
+    "reload_success": "<dark_gray>› <gray>Plugin <yellow>Claims<gray> został pomyślnie załadowany.",
+    "reload_failure": "<dark_gray>› <red>Plugin <yellow>Claims<red> nie został pomyślnie załadowany.",
+    // ...
+    "claims_not_in_claimed_area": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie.",
+    "claims_not_owner": "<dark_gray>› <red>Tylko właściciel terenu ma do tego uprawnienia.",
+    // ...
+    "claim_does_not_exist": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie istnieje.",
+    "claim_no_center_defined": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie został poprawnie zdefiniowany.",
+    // ...
+    "commands": {
+        "claims": {
+            "claims_edit_failure": "<dark_gray>› <red>Panel jest teraz używany przez innego gracza...",
+            "claims_edit_failure_suggest_force_flag": "<dark_gray>› <hover:show_text:'<gray>/<command> --force'><click:run_command:'<command> --force'><red>Użyj flagi <yellow>--force<red>, aby kontynuować.", // </click></hover>
+            // ...
+            "claims_get_success": "<dark_gray>› <gray>Bloki terenu zostały dodane do twojego ekwipunku.",
+            "claims_get_failure": "<dark_gray>› <red>Nie zdefiniowano żadnego typu terenu.",
+            // ...
+            "claims_find_owner_of": "<dark_gray>› <gray>Gracz <yellow><player><gray> jest właścicielem <yellow><count><gray> terenów:",
+            "claims_find_member_of": "<dark_gray>› <gray>Gracz <yellow><player><gray> jest członkiem <yellow><count><gray> terenów:",
+            "claims_find_entry": "<dark_gray>›    <yellow><hover:show_text'<gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <id>'><id></click></hover>",
+            // ...
+            "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce."
+        }
     },
-    // WARNING: Changing this value WON"T update greeting/farewell flags in existing regions.
+    "interface": {
+        "upgrade_success": "<dark_gray>› <gray>Rozmiar terenu został zwiększony do <yellow><size><gray>.",
+        "upgrade_failure": "<dark_gray>› <red>Nie posiadasz przedmiotów wymaganych do ulepszenia.",
+        "upgrade_icon_upgrade_ready": "<gray>Kliknij, aby ulepszyć.",
+        "upgrade_icon_upgrade_not_ready": "<red>Nie posiadasz wymaganych przedmiotów.",
+        "set_home_success": "<dark_gray>› <gray>Teleport na teren został nadpisany.",
+        "set_home_failure": "<dark_gray>› <red>Teleport nie może zostać ustawiony poza terenem.",
+        "members_add_success": "<dark_gray>› <gray>Gracz <yellow><player><gray> został dodany do terenu.",
+        "members_add_failure_already_added": "<dark_gray>› <red>Ten gracz jest już dodany do terenu.",
+        "members_add_failure_reached_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) graczy dodanych do terenu.",
+        "members_remove_success": "<dark_gray>› <gray>Gracz <yellow><player><gray> został usunięty do terenu.",
+        "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu."
+    },
+    "placement": {
+        "place_success": "<dark_gray>› <gray>Chroniony teren został utworzony.",
+        "place_failure_overlaps": "<dark_gray>› <red>Za blisko innego terenu.",
+        "place_failure_blacklisted_world": "<dark_gray>› <red>Nie możesz postawić terenu w tym świecie.",
+        "place_failure_too_close_to_spawn": "<dark_gray>› <red>Minimalna odległość od spawnu to 300 kratek.",
+        "place_failure_reached_claims_limit": "<dark_gray>› <red>Osiągnąłeś limit terenów.",
+        "place_failure_other_claims_must_be_upgraded": "<dark_gray>› <red>Poprzednie tereny muszą być ulepszone od maksymalnego poziomu.",
+        "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
+        "destroy_failure_not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając. <u>Wszystkie flagi zostaną zresetowane."
+    },
+    // NOTE: Changing those values will NOT update enter/leave messages in existing claims.
     "flags": {
-        "default_greeting": "<gray>Wszedłeś na teren gracza <yellow>{player}",
-        "default_farewell": "<gray>Opuściłeś teren gracza <yellow>{player}"
+        "default_claim_enter": "<gray>Wszedłeś na teren gracza <yellow><player>",
+        "default_claim_leave": "<gray>Opuściłeś teren gracza <yellow><player>"
     }
 }
 

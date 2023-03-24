@@ -2,6 +2,7 @@ package cloud.grabsky.claims.panel.views;
 
 import cloud.grabsky.azure.api.user.User;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
+import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
@@ -19,11 +20,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.function.Consumer;
 
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static net.kyori.adventure.text.Component.text;
 
-public class ViewMembersAdd extends ClaimPanel.View {
+public class ViewMembersAdd implements Consumer<Panel> {
 
     private List<ClaimPlayer> onlineClaimPlayers = new ArrayList<>();
 
@@ -31,29 +33,32 @@ public class ViewMembersAdd extends ClaimPanel.View {
     private static final List<Integer> UI_SLOTS = List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34);
 
     @Override
-    public void accept(final ClaimPanel panel) {
-        final ClaimManager claimManager = panel.getClaim().getManager();
-        final Claim claim = panel.getClaim();
+    public void accept(final Panel panel) {
+        final ClaimPanel cPanel = (ClaimPanel) panel;
+        // ...
+        final ClaimManager claimManager = cPanel.getClaim().getManager();
+        final Claim claim = cPanel.getClaim();
         // ...
         this.onlineClaimPlayers = Bukkit.getOnlinePlayers().stream()
+                .filter(player -> cPanel.getViewer().canSee(player) == true)
                 .map(claimManager::getClaimPlayer)
                 .filter(claimPlayer -> claimPlayer.isOwnerOf(claim) == false) // excluding owner(s)
                 .filter(claimPlayer -> claimPlayer.isMemberOf(claim) == false) // excluding member(s)
                 .toList();
         // Changing panel texture
-        panel.updateClientTitle(INVENTORY_TITLE);
+        cPanel.updateClientTitle(INVENTORY_TITLE);
         // Display first page of online players
-        this.generateView(panel, 1, UI_SLOTS.size());
+        this.generate(cPanel, 1, UI_SLOTS.size());
     }
 
-    private void generateView(final ClaimPanel panel, final int pageToDisplay, final int maxOnPage) {
-        panel.clear();
+    private void generate(final ClaimPanel cPanel, final int pageToDisplay, final int maxOnPage) {
+        cPanel.clear();
         // ...
         final var onlineClaimPlayersIterator = moveIteratorBefore(onlineClaimPlayers.listIterator(), (pageToDisplay * maxOnPage) - maxOnPage);
         final var uiSlotsIterator = UI_SLOTS.iterator();
         // ...
-        final Player viewer = panel.getViewer();
-        final Claim claim = panel.getClaim();
+        final Player viewer = cPanel.getViewer();
+        final Claim claim = cPanel.getClaim();
         // ...
         while (onlineClaimPlayersIterator.hasNext() == true && uiSlotsIterator.hasNext() == true) {
             final ClaimPlayer claimPlayer = onlineClaimPlayersIterator.next();
@@ -64,24 +69,24 @@ public class ViewMembersAdd extends ClaimPanel.View {
                     .setSkullTexture(user.getTextures())
                     .build();
             // ...
-            panel.setItem(uiSlotsIterator.next(), head, (event) -> {
+            cPanel.setItem(uiSlotsIterator.next(), head, (event) -> {
                 // One more check just in case something changed while GUI was open
                 if (claim.addMember(claimPlayer) == true) {
-                    panel.applyView(new ViewMembers(), true);
+                    cPanel.applyTemplate(new ViewMembers(), true);
                 } else {
                     viewer.closeInventory();
-                    sendMessage(viewer, PluginLocale.REACHED_MEMBERS_LIMIT.replace("{limit}", String.valueOf(PluginConfig.MEMBERS_LIMIT)));
+                    sendMessage(viewer, PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT.replace("{limit}", String.valueOf(PluginConfig.MEMBERS_LIMIT)));
                 }
             });
         }
         // If player is not on the first page - displaying previous page button
         if (pageToDisplay > 1)
-            panel.setItem(18, PluginItems.NAVIGATION_PREVIOUS, (event) -> generateView(panel, pageToDisplay - 1, maxOnPage));
+            cPanel.setItem(18, PluginItems.NAVIGATION_PREVIOUS, (event) -> generate(cPanel, pageToDisplay - 1, maxOnPage));
         // If there is more players to be displayed, showing next page button
         if (onlineClaimPlayersIterator.hasNext() == true)
-            panel.setItem(26, PluginItems.NAVIGATION_NEXT, (event) -> generateView(panel, pageToDisplay + 1, maxOnPage));
+            cPanel.setItem(26, PluginItems.NAVIGATION_NEXT, (event) -> generate(cPanel, pageToDisplay + 1, maxOnPage));
         // ...
-        panel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> panel.applyView(new ViewMembers(), true));
+        cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMembers(), true));
     }
 
     private static <T> ListIterator<T> moveIteratorBefore(final ListIterator<T> iterator, final int index) {

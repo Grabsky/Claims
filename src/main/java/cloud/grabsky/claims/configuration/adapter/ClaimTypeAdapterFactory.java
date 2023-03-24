@@ -3,8 +3,12 @@ package cloud.grabsky.claims.configuration.adapter;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.configuration.util.LazyInit;
-import com.squareup.moshi.*;
+import com.squareup.moshi.JsonAdapter;
+import com.squareup.moshi.JsonDataException;
+import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonReader.Token;
+import com.squareup.moshi.JsonWriter;
+import com.squareup.moshi.Moshi;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -53,7 +57,6 @@ public class ClaimTypeAdapterFactory implements JsonAdapter.Factory {
                             while (in.hasNext() == true) {
                                 final String nextNextName = in.nextName().toLowerCase();
                                 switch (nextNextName) {
-                                    case "next_level" -> in.skipValue();
                                     case "upgrade_button" -> init.upgradeButton = adapter0.fromJson(in);
                                     case "upgrade_cost" -> init.upgradeCost = (in.peek() == Token.NULL) ? null : adapter1.fromJson(in);
                                     default -> throw new JsonDataException("Unexpected field at " + in.getPath() + ": " + nextNextName);

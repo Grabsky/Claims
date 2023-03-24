@@ -1,10 +1,7 @@
 package cloud.grabsky.claims.panel.views;
 
-import cloud.grabsky.azure.api.AzureProvider;
-import cloud.grabsky.azure.api.user.User;
-import cloud.grabsky.azure.api.user.UserCache;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
-import cloud.grabsky.claims.claims.ClaimPlayer;
+import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import io.papermc.lib.PaperLib;
@@ -12,33 +9,33 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
 
+import java.util.function.Consumer;
+
 import static net.kyori.adventure.text.Component.text;
 
-public class ViewMain extends ClaimPanel.View {
-
-    private final UserCache userCache = AzureProvider.getAPI().getUserCache();
+public class ViewMain implements Consumer<Panel> {
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
 
     @Override
-    public void accept(final ClaimPanel panel) {
-        final Player viewer = panel.getViewer();
-        final ClaimPlayer owner = panel.getClaim().getOwner();
+    public void accept(final Panel panel) {
+        final ClaimPanel cPanel = (ClaimPanel) panel;
+        // ...
+        final Player viewer = cPanel.getViewer();
         // Changing panel texture
-        panel.updateClientTitle(INVENTORY_TITLE);
+        cPanel.updateClientTitle(INVENTORY_TITLE);
         // Setting menu items
-        panel.setItem(11, PluginItems.CATEGORY_HOMES, (event) -> {
+        cPanel.setItem(11, PluginItems.CATEGORY_HOMES, (event) -> {
             switch (event.getClick()) {
                 case LEFT, SHIFT_LEFT -> {
                     viewer.closeInventory();
-                    PaperLib.teleportAsync(viewer, owner.getClaim().getHome());
+                    PaperLib.teleportAsync(viewer, cPanel.getClaim().getHome());
                 }
-                case RIGHT, SHIFT_RIGHT -> panel.applyView(new ViewHomes(), true);
             }
         });
-        panel.setItem(13, new ItemBuilder(PluginItems.CATEGORY_MEMBERS).setSkullTexture(owner.toPlayer()).build(), (event) -> panel.applyView(new ViewMembers(), true));
-        panel.setItem(15, PluginItems.CATEGORY_SETTINGS, (event) -> panel.applyView(new ViewSettings(), true));
-        panel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> viewer.closeInventory());
+        cPanel.setItem(13, new ItemBuilder(PluginItems.CATEGORY_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyTemplate(new ViewMembers(), true));
+        cPanel.setItem(15, PluginItems.CATEGORY_SETTINGS, (event) -> cPanel.applyTemplate(new ViewSettings(), true));
+        cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> viewer.closeInventory());
     }
 
 }

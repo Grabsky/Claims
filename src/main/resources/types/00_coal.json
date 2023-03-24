@@ -1,7 +1,6 @@
-// This JSON configuration file is lenient but keep an eye where you leave trailing commas as they tend to cause issues.
 {
     "id": "coal",
-    "radius": 15, // touching this mid-season is asking for issues... please don't
+    "radius": 15,
     "block": {
         "material": "minecraft:coal_block",
         "amount": 1,
@@ -11,7 +10,6 @@
         }
     },
     "upgrade": {
-        "next_level": null,
         "upgrade_button": {
             "material": "minecraft:iron_block",
             "amount": 1,
@@ -26,14 +24,13 @@
                     "<dark_gray>› <gray>Rozmiar: <white>41x41",
                     "",
                     "<gray>Koszt ulepszenia:",
-                    "<dark_gray>› <light_purple>1x Kryształ Ulepszenia",
                     "<dark_gray>› <white>16x Sztabka Żelaza",
                     ""
                 ]
             }
-        }
-//        "upgrade_cost": [
-//            { "material": "minecraft:iron_ingot", "amount": 16 }
-//        ]
+        },
+        "upgrade_cost": [
+            { "material": "minecraft:iron_ingot", "amount": 16 }
+        ]
     }
 }
