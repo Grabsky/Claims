@@ -4,7 +4,6 @@ import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
-import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.exception.ClaimProcessException;
 import cloud.grabsky.claims.panel.ClaimPanel;
@@ -15,44 +14,33 @@ import cloud.grabsky.commands.RootCommandContext;
 import cloud.grabsky.commands.argument.StringArgument;
 import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.exception.CommandLogicException;
-import com.sk89q.worldedit.math.BlockVector3;
 import io.papermc.lib.PaperLib;
 import lombok.SneakyThrows;
-import net.minecraft.network.protocol.game.ClientboundAddEntityPacket;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
-import org.bukkit.craftbukkit.v1_19_R3.CraftWorld;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftBlockDisplay;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftEntity;
 import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Display;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.BlockVector;
 import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
-import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanel;
 import static java.lang.String.valueOf;
 import static java.util.Comparator.comparingInt;
 import static net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.parsed;
@@ -165,8 +153,9 @@ public class ClaimsCommand extends RootCommand {
                             this.openClaimMenu(sender, claim);
                             return;
                         }
+                        sendMessage(sender, PluginLocale.CLAIMS_EDIT_FAILURE, parsed("command", context.getInput().toString()));
+                        return;
                     }
-                    sendMessage(sender, PluginLocale.CLAIMS_EDIT_FAILURE, parsed("command", context.getInput().toString()));
                     return;
                 }
                 sendMessage(sender, PluginLocale.MISSING_PERMISSIONS);
