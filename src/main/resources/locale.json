@@ -25,15 +25,21 @@
         }
     },
     "interface": {
-        "upgrade_success": "<dark_gray>› <gray>Rozmiar terenu został zwiększony do <yellow><size><gray>.",
-        "upgrade_failure": "<dark_gray>› <red>Nie posiadasz przedmiotów wymaganych do ulepszenia.",
+        "upgrade_success": "<dark_gray>› <gray>Rozmiar terenu został zwiększony do <yellow><size>x<size><gray>.",
+        "upgrade_failure_not_upgradeable": "<dark_gray>› <red>Ten teren został już maksymalnie ulepszony.",
+        "upgrade_failure_missing_items": "<dark_gray>› <red>Nie posiadasz przedmiotów wymaganych do ulepszenia.",
+        // ...
         "upgrade_icon_upgrade_ready": "<gray>Kliknij, aby ulepszyć.",
-        "upgrade_icon_upgrade_not_ready": "<red>Nie posiadasz wymaganych przedmiotów.",
+        "upgrade_icon_upgrade_not_upgradeable": "<red>Osiągnąłeś maksymalny poziom terenu.",
+        "upgrade_icon_upgrade_missing_items": "<red>Nie posiadasz wymaganych przedmiotów.",
+        // ...
         "set_home_success": "<dark_gray>› <gray>Teleport na teren został nadpisany.",
         "set_home_failure": "<dark_gray>› <red>Teleport nie może zostać ustawiony poza terenem.",
+        // ...
         "members_add_success": "<dark_gray>› <gray>Gracz <yellow><player><gray> został dodany do terenu.",
         "members_add_failure_already_added": "<dark_gray>› <red>Ten gracz jest już dodany do terenu.",
         "members_add_failure_reached_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) graczy dodanych do terenu.",
+        // ...
         "members_remove_success": "<dark_gray>› <gray>Gracz <yellow><player><gray> został usunięty do terenu.",
         "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu."
     },
@@ -45,7 +51,7 @@
         "place_failure_reached_claims_limit": "<dark_gray>› <red>Osiągnąłeś limit terenów.",
         "place_failure_other_claims_must_be_upgraded": "<dark_gray>› <red>Poprzednie tereny muszą być ulepszone od maksymalnego poziomu.",
         "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
-        "destroy_failure_not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając. <u>Wszystkie flagi zostaną zresetowane."
+        "destroy_failure_not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając."
     },
     // NOTE: Changing those values will NOT update enter/leave messages in existing claims.
     "flags": {

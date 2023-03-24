@@ -15,11 +15,13 @@
         // Limit of players that can be added to a single claim
         "members_limit": 10,
         // Minimum distance from spawn required to create a protected claim (in blocks)
-        "minimum_distance_from_spawn": 300
+        "minimum_distance_from_spawn": 300,
+        // Upgrade sound that is played upon claim upgrade
+        "upgrade_sound": { "key": "minecraft:entity.player.levelup", "source": "master", "volume": 1.0, "pitch": 1.0 }
     },
 
     "lodestone_teleport": {
-        "enabled": true,
+        "enabled": true
         // ...
 
     },

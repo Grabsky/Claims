@@ -25,7 +25,8 @@
                     "",
                     "<gray>Koszt ulepszenia:",
                     "<dark_gray>› <white>16x Sztabka Żelaza",
-                    ""
+                    "",
+                    "[UPGRADE_STATUS]"
                 ]
             }
         },

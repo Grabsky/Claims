@@ -1,9 +1,12 @@
 package cloud.grabsky.claims.configuration;
 
 import cloud.grabsky.configuration.JsonConfiguration;
+import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
+import net.kyori.adventure.sound.Sound;
 import org.bukkit.World;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.Nullable;
 
 @Internal
 public final class PluginConfig implements JsonConfiguration {
@@ -30,6 +33,9 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("claim_settings.minimum_distance_from_spawn")
     public static int MINIMUM_DISTANCE_FROM_SPAWN;
+
+    @JsonNullable @JsonPath("claim_settings.upgrade_sound")
+    public static Sound UPGRADE_SOUND;
 
     // Logging Format
 

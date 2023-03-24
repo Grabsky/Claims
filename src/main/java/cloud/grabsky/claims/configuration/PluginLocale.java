@@ -68,8 +68,20 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("interface.upgrade_success")
     public static String UI_UPGRADE_SUCCESS;
 
-    @JsonPath("interface.upgrade_failure")
-    public static Component UI_UPGRADE_FAILURE;
+    @JsonPath("interface.upgrade_failure_not_upgradeable")
+    public static Component UI_UPGRADE_FAILURE_NOT_UPGRADEABLE;
+
+    @JsonPath("interface.upgrade_failure_missing_items")
+    public static Component UI_UPGRADE_FAILURE_MISSING_ITEMS;
+
+    @JsonPath("interface.upgrade_icon_upgrade_ready")
+    public static Component UPGRADE_ICON_UPGRADE_READY;
+
+    @JsonPath("interface.upgrade_icon_upgrade_not_upgradeable")
+    public static Component UPGRADE_ICON_UPGRADE_NOT_UPGRADEABLE;
+
+    @JsonPath("interface.upgrade_icon_upgrade_missing_items")
+    public static Component UPGRADE_ICON_UPGRADE_MISSING_ITEMS;
 
     // Interface > Set Home
 

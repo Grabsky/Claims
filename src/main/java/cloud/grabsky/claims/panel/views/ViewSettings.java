@@ -1,8 +1,8 @@
 package cloud.grabsky.claims.panel.views;
 
-import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
+import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
@@ -11,21 +11,26 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.ApiStatus.Experimental;
+import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
-import static net.kyori.adventure.key.Key.key;
-import static net.kyori.adventure.sound.Sound.sound;
+import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
+import static cloud.grabsky.bedrock.helpers.Inventories.hasSimilarItems;
+import static cloud.grabsky.bedrock.helpers.Inventories.removeSimilarItems;
+import static java.lang.String.valueOf;
+import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
 public class ViewSettings implements Consumer<Panel> {
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
-
-    private static final Component UPGRADE_READY = text("Kliknij, aby ulepszyć.", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false);
-    private static final Component UPGRADE_NOT_READY = text("Nie posiadasz wymaganych przedmiotów.", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false);
-    private static final Component MAX_LEVEL = text("Osiągnąłeś maksymalny poziom terenu.", NamedTextColor.RED).decoration(TextDecoration.ITALIC, false);
 
     @Override
     public void accept(final Panel panel) {
@@ -45,39 +50,69 @@ public class ViewSettings implements Consumer<Panel> {
         cPanel.setItem(11, PluginItems.CATEGORY_FLAGS, event -> cPanel.applyTemplate(new ViewFlags(), true));
         // Teleport location button
         cPanel.setItem(13, PluginItems.ICON_SET_TELEPORT, (event) -> {
+            viewer.closeInventory();
+            // ...
             sendMessage(viewer, (claim.setHome(viewer.getLocation()))
                     ? PluginLocale.UI_SET_HOME_SUCCESS
                     : PluginLocale.UI_SET_HOME_FAILURE
             );
-            viewer.closeInventory();
         });
         // Getting object of CURRENT upgrade level
         final Claim.Type type = claim.getType();
         // ...
-        final ItemBuilder upgradeButtonBuilder = new ItemBuilder(type.getUpgradeButton());
+        final ItemStack upgradeButton = new ItemStack(type.getUpgradeButton());
         // ...
-        upgradeButtonBuilder.addLore(
-                (type.isUpgradeable() == true)
-                        ? (canUpgrade(viewer, type.getNextType()) == true)
-                                ? UPGRADE_READY
-                                : UPGRADE_NOT_READY
-                        : MAX_LEVEL
-        );
-        cPanel.setItem(15, upgradeButtonBuilder.build(), (event) -> {
-            if (cPanel.getManager().upgradeClaim(claim) == true) {
-                final int size = (type.getNextType().getRadius() * 2) + 1;
-                viewer.playSound(sound(key("minecraft:entity.player.levelup"), net.kyori.adventure.sound.Sound.Source.MASTER, 1.0F, 1.0F));
-                sendMessage(viewer, PluginLocale.UI_UPGRADE_SUCCESS, Placeholder.unparsed("size", size + "x" + size));
-                // ...
-                this.generate(cPanel);
+        setUpgradeStatus(upgradeButton, viewer, type);
+        // ...
+        cPanel.setItem(15, upgradeButton, (event) -> {
+            if (type.isUpgradeable() == false)
+                return;
+            // ...
+            if (viewer.hasPermission("claims.bypass.upgrade_cost") == true || hasUpgradeCost(viewer, type) == true) {
+                // Removing upgrade cost from Player unless it has bypass permission
+                if (viewer.hasPermission("claims.bypass.upgrade_cost") == false)
+                    removeSimilarItems(viewer, type.getUpgradeCost());
+                // Trying to upgrade the claim...
+                if (cPanel.getManager().upgradeClaim(claim) == true) {
+                    if (PluginConfig.UPGRADE_SOUND != null)
+                        viewer.playSound(PluginConfig.UPGRADE_SOUND);
+                    // ...
+                    sendMessage(viewer, PluginLocale.UI_UPGRADE_SUCCESS, Placeholder.unparsed("size", valueOf(type.getRadius() * 2 + 1)));
+                    // ...
+                    this.generate(cPanel);
+                    return;
+                }
+                sendMessage(viewer, PluginLocale.UPGRADE_ICON_UPGRADE_MISSING_ITEMS);
             }
         });
         // Return button
         cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMain(), true));
     }
 
-    private static boolean canUpgrade(final Player player, final Claim.Type type) {
-        return player.hasPermission("claims.bypass.upgradecost");
+    private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {
+        final Component statusComponent = (type.isUpgradeable() == true)
+                ? (player.hasPermission("claims.bypass.upgrade_cost") == true || hasUpgradeCost(player, type) == true)
+                        ? PluginLocale.UPGRADE_ICON_UPGRADE_READY
+                        : PluginLocale.UPGRADE_ICON_UPGRADE_MISSING_ITEMS
+                : PluginLocale.UPGRADE_ICON_UPGRADE_NOT_UPGRADEABLE;
+        // ...
+        item.editMeta(meta -> {
+            final List<Component> lore = new ArrayList<>();
+            // ...
+            requirePresent(item.getItemMeta().lore(), new ArrayList<Component>()).forEach(line -> {
+                lore.add((plainText().serialize(line).equals("[UPGRADE_STATUS]") == true) ? empty().decoration(TextDecoration.ITALIC, false).append(statusComponent) : line);
+            });
+            // ...
+            meta.lore(lore);
+        });
+    }
+
+    @Experimental // Inheriting @Experimental status from Inventories#hasSimilarItems
+    private static boolean hasUpgradeCost(final @NotNull Player player, final @NotNull Claim.Type type) {
+        if (type.getUpgradeCost() == null)
+            return false;
+        // ...
+        return hasSimilarItems(player, type.getUpgradeCost());
     }
 
 }

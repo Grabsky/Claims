@@ -38,7 +38,10 @@ import com.sk89q.worldguard.session.handler.ExitFlag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.minecraft.world.level.block.state.BlockBehaviour;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 
 import java.io.File;
 import java.io.IOException;
@@ -93,6 +96,7 @@ public final class Claims extends BedrockPlugin {
         commands.setArgumentParser(Claim.class, argument);
         commands.setCompletionsProvider(Claim.class, argument);
         commands.registerCommand(new ClaimsCommand(this));
+        // ...
     }
 
     @Override
