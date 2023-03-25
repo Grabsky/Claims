@@ -8,7 +8,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.TextComponent;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.inventory.ItemStack;
@@ -49,7 +48,7 @@ public abstract class ClaimFlag<T> {
         return result;
     }
 
-    public T next(final @Nullable T current) {
+    public T next(final @Nullable T current) throws IllegalArgumentException {
         final Iterator<Option<T>> iterator = options.iterator();
         // ...
         while (iterator.hasNext() == true) {

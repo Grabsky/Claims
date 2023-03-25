@@ -6,7 +6,6 @@ import cloud.grabsky.configuration.JsonPath;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.World;
 import org.jetbrains.annotations.ApiStatus.Internal;
-import org.jetbrains.annotations.Nullable;
 
 @Internal
 public final class PluginConfig implements JsonConfiguration {
