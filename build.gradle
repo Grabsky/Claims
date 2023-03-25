@@ -34,6 +34,7 @@ dependencies {
     implementation("io.papermc:paperlib:1.0.7")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
+    // Azure
     compileOnly("cloud.grabsky:azure-api:1d5a8f7")
 }
 
