@@ -126,6 +126,7 @@ public final class Claims extends BedrockPlugin {
         try {
             return onReload();
         } catch (final ConfigurationMappingException exc) {
+            exc.printStackTrace();
             return false;
         }
     }
