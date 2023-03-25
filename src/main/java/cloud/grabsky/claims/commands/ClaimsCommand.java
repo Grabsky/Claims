@@ -255,6 +255,10 @@ public class ClaimsCommand extends RootCommand {
                                         blockDisplay.setBrightness(new Display.Brightness(15, 15));
                                         blockDisplay.setShadowRadius(0.0F);
                                         blockDisplay.setShadowStrength(0.0F);
+                                        blockDisplay.setVisibleByDefault(false);
+                                        blockDisplay.setPersistent(false);
+                                        // ...
+                                        sender.showEntity(claims, entity);
                                     }
                                     // ...
                                     claims.getBedrockScheduler().run(300L, (task) -> entity.remove());
