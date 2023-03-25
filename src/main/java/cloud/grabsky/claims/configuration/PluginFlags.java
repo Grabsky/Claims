@@ -25,8 +25,8 @@ public final class PluginFlags implements JsonConfiguration {
     @JsonPath("flags.use")
     public static ClaimFlag<StateFlag.State> USE;
 
-    @JsonPath("flags.entry")
-    public static ClaimFlag<StateFlag.State> ENTRY;
+    @JsonPath("flags.chest-access")
+    public static ClaimFlag<StateFlag.State> CHEST_ACCESS;
 
     @JsonPath("flags.tnt")
     public static ClaimFlag<StateFlag.State> TNT;
@@ -47,7 +47,7 @@ public final class PluginFlags implements JsonConfiguration {
     public static ClaimFlag<StateFlag.State> MOB_SPAWNING;
 
     @JsonPath("flags.client_weather")
-    public static ClaimFlag<FixedWeather> WEATHER_LOCK;
+    public static ClaimFlag<FixedWeather> CLIENT_WEATHER;
 
     @JsonPath("flags.client_time")
     public static ClaimFlag<FixedTime> CLIENT_TIME;

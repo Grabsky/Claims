@@ -254,30 +254,32 @@ public final class ClaimManager {
     }
 
     private void setDefaultFlags(final @NotNull ProtectedRegion region, final @NotNull Location center, final Player owner) {
-        final String name = owner.getName();
-        final com.sk89q.worldedit.util.Location regionCenter = BukkitAdapter.adapt(center);
+        final String ownerName = owner.getName();
+        final com.sk89q.worldedit.util.Location regionCenter = adapt(center);
         // Static flags (not changeable)
         region.setFlag(Flags.PVP,                  StateFlag.State.DENY);
         region.setFlag(Flags.WITHER_DAMAGE,        StateFlag.State.DENY);
         region.setFlag(Flags.GHAST_FIREBALL,       StateFlag.State.DENY);
-        region.setFlag(CustomFlag.ENTER_ACTIONBAR, PluginLocale.FLAGS_CLAIM_ENTER.replace("<player>", name));
-        region.setFlag(CustomFlag.LEAVE_ACTIONBAR, PluginLocale.FLAGS_CLAIM_LEAVE.replace("<player>", name));
+        region.setFlag(CustomFlag.ENTER_ACTIONBAR, PluginLocale.FLAGS_CLAIM_ENTER.replace("<player>", ownerName));
+        region.setFlag(CustomFlag.LEAVE_ACTIONBAR, PluginLocale.FLAGS_CLAIM_LEAVE.replace("<player>", ownerName));
         // Flag policy
-        region.setFlag(Flags.USE.getRegionGroupFlag(),   RegionGroup.NON_MEMBERS);
-        region.setFlag(Flags.ENTRY.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
+        region.setFlag(Flags.USE.getRegionGroupFlag(),          RegionGroup.NON_MEMBERS);
+        region.setFlag(Flags.CHEST_ACCESS.getRegionGroupFlag(), RegionGroup.NON_MEMBERS);
         // Dynamic flags (changeable)
-        region.setFlag(Flags.USE,               PluginFlags.USE.getDefaultValue());
-        region.setFlag(Flags.ENTRY,             PluginFlags.ENTRY.getDefaultValue());
-        region.setFlag(Flags.TNT,               PluginFlags.TNT.getDefaultValue());
-        region.setFlag(Flags.CREEPER_EXPLOSION, PluginFlags.CREEPER_EXPLOSION.getDefaultValue());
-        region.setFlag(Flags.SNOW_MELT,         PluginFlags.SNOW_MELT.getDefaultValue());
-        region.setFlag(Flags.ICE_MELT,          PluginFlags.ICE_MELT.getDefaultValue());
-        region.setFlag(Flags.FIRE_SPREAD,       PluginFlags.FIRE_SPREAD.getDefaultValue());
-        region.setFlag(Flags.MOB_SPAWNING,      PluginFlags.MOB_SPAWNING.getDefaultValue());
+        region.setFlag(Flags.USE,                 PluginFlags.USE.getDefaultValue());
+        region.setFlag(Flags.CHEST_ACCESS,        PluginFlags.CHEST_ACCESS.getDefaultValue());
+        region.setFlag(Flags.TNT,                 PluginFlags.TNT.getDefaultValue());
+        region.setFlag(Flags.CREEPER_EXPLOSION,   PluginFlags.CREEPER_EXPLOSION.getDefaultValue());
+        region.setFlag(Flags.SNOW_MELT,           PluginFlags.SNOW_MELT.getDefaultValue());
+        region.setFlag(Flags.ICE_MELT,            PluginFlags.ICE_MELT.getDefaultValue());
+        region.setFlag(Flags.FIRE_SPREAD,         PluginFlags.FIRE_SPREAD.getDefaultValue());
+        region.setFlag(Flags.MOB_SPAWNING,        PluginFlags.MOB_SPAWNING.getDefaultValue());
+        region.setFlag(CustomFlag.CLIENT_TIME,    PluginFlags.CLIENT_TIME.getDefaultValue());
+        region.setFlag(CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER.getDefaultValue());
         // Setting center location (not modifiable)
         region.setFlag(CustomFlag.CLAIM_CENTER, regionCenter);
         // Setting default home location (modifiable)
-        region.setFlag(Flags.TELE_LOC, regionCenter.setY(regionCenter.getY() + 0.5));
+        region.setFlag(Flags.TELE_LOC, regionCenter.setY(regionCenter.getY() + 0.5F));
     }
 
     public boolean upgradeClaim(final @NotNull Claim claim) throws ClaimProcessException {

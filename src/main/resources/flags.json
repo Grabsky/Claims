@@ -5,17 +5,15 @@
     "option_color_selected": "YELLOW",
     // ...
     "flags": {
-        // Interaction with blocks, crafting stations. Does not apply to containers.
-        // SCOPE: Guests (non-members)
         "use": {
             "default_value": "DENY",
-            "ui_display_options": ["Włączone", "Wyłączone"],
+            "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             // ...
             "ui_display": {
-                "material": "minecraft:crafting_table",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Interakcja",
+                    "name": "<yellow><b>Interakcja</b><gray> (bloki użytkowe)",
                     "lore": [
                         "<gray>Interakcja z blokami użytkowymi.",
                         "",
@@ -24,35 +22,35 @@
                         "[OPTIONS]",
                         "",
                         "<red>Nie dotyczy kontenerów na przedmioty."
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTk3MTNlMWNkYzIzZmRhZjM4NDA5NWMzYTNhZDY0YzY3MGQyOGFlOWVlZjkyZDEwZjFlYTA1NWE4NWQ5MGQ0OSJ9fX0="
                 }
             }
         },
-        // Claim entrance.
-        // SCOPE: Guests (non-members)
-        "entry": {
-            "default_value": "ALLOW",
-            "ui_display_options": ["Włączone", "Wyłączone"],
+        "chest-access": {
+            "default_value": "DENY",
+            "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
-                "material": "minecraft:oak_door",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Wejście",
+                    "name": "<yellow><b>Interakcja</b><gray> (kontenery)",
                     "lore": [
-                        "<gray>Możliwość wejścia na teren.",
+                        "<gray>Interakcja z kontenerami na przedmioty.",
                         "",
                         "<gray>Zakres: <yellow>Goście",
                         "",
                         "[OPTIONS]"
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWRjMzZjOWNiNTBhNTI3YWE1NTYwN2EwZGY3MTg1YWQyMGFhYmFhOTAzZThkOWFiZmM3ODI2MDcwNTU0MGRlZiJ9fX0="
                 }
             }
         },
         "tnt": {
             "default_value": "DENY",
-            "ui_display_options": ["Włączone", "Wyłączone"],
+            "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
-                "material": "minecraft:tnt",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
                     "name": "<yellow><b>Wybuch TNT",
@@ -62,13 +60,14 @@
                         "<gray>Zakres: <yellow>Środowisko",
                         "",
                         "[OPTIONS]"
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGQ3NGQyOGQwOTdlNTNkYjExMTJlMzkwYTdkNGZmODJkZjcxODg2NmFlYThmMTY1MGQ5NDY2NTdhOTM2OTY5OSJ9fX0="
                 }
             }
         },
         "creeper_explosion": {
             "default_value": "DENY",
-            "ui_display_options": ["Włączone", "Wyłączone"],
+            "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
                 "material": "minecraft:creeper_head",
                 "amount": 1,
@@ -86,9 +85,9 @@
         },
         "snow_melt": {
             "default_value": "ALLOW",
-            "ui_display_options": ["Włączone", "Wyłączone"],
+            "ui_display_options": ["Włączone (Domyślne)", "Wyłączone"],
             "ui_display": {
-                "material": "minecraft:snowball",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
                     "name": "<yellow><b>Topnienie Śniegu",
@@ -98,15 +97,16 @@
                         "<gray>Zakres: <yellow>Środowisko",
                         "",
                         "[OPTIONS]"
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDgyZWQ1M2Q5N2U2MjhjYjMwYzlhNDIyZDU3ODU4NTdiNWZjZmJlNjg5NjFlMDdmY2I1MGY0ZTZjMTA1MjAxYiJ9fX0="
                 }
             }
         },
         "ice_melt": {
             "default_value": "ALLOW",
-            "ui_display_options": ["Włączone", "Wyłączone"],
+            "ui_display_options": ["Włączone (Domyślne)", "Wyłączone"],
             "ui_display": {
-                "material": "minecraft:blue_ice",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
                     "name": "<yellow><b>Topnienie Lodu",
@@ -116,15 +116,16 @@
                         "<gray>Zakres: <yellow>Środowisko",
                         "",
                         "[OPTIONS]"
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTgxYjRmNWYzZDk5NjcyYWIxYTM5ZjVmNDEwYmQ0ZDRmZDkyNTQ4ZTA3ZDE3YmRmMGQ0ZjFmNTdkY2ViYjVjZiJ9fX0="
                 }
             }
         },
         "fire_spread": {
             "default_value": "DENY",
-            "ui_display_options": ["Włączone", "Wyłączone"],
+            "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
-                "material": "minecraft:flint_and_steel",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
                     "name": "<yellow><b>Rozprzestrzenianie Ognia",
@@ -134,15 +135,16 @@
                         "<gray>Zakres: <yellow>Środowisko",
                         "",
                         "[OPTIONS]"
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDA4MGJiZWZjYTg3ZGMwZjM2NTM2YjY1MDg0MjVjZmM0Yjk1YmE2ZThmNWU2YTQ2ZmY5ZTljYjQ4OGE5ZWQifX19"
                 }
             }
         },
         "mob_spawning": {
             "default_value": "ALLOW",
-            "ui_display_options": ["Włączone", "Wyłączone"],
+            "ui_display_options": ["Włączone (Domyślne)", "Wyłączone"],
             "ui_display": {
-                "material": "minecraft:tropical_fish_spawn_egg",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
                     "name": "<yellow><b>Spawn Mobów",
@@ -152,15 +154,16 @@
                         "<gray>Zakres: <yellow>Środowisko",
                         "",
                         "[OPTIONS]"
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNGViMDdlZWEzODBhZjU4ZGM5MWVlZWUxNWQ5NWQ4NzkwYTA3ODFjNjk1ZWMwYThmZDhmZTMxZDQ4MzljYTU2MiJ9fX0="
                 }
             }
         },
         "client_weather": {
             "default_value": "NONE",
-            "ui_display_options": ["Wyłączone", "Słonecznie", "Deszcz"],
+            "ui_display_options": ["Wyłączone (Domyślne)", "Słonecznie", "Deszcz"],
             "ui_display": {
-                "material": "minecraft:nautilus_shell",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
                     "name": "<yellow><b>Pogoda",
@@ -172,15 +175,16 @@
                         "[OPTIONS]",
                         "",
                         "<red>Zmiany widoczne po przelogowaniu."
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjU5ZThkNDE5NmZlYTgyNzAyNWMyOTI3YTZmY2Q2ZTk4ZDAzMDA1NzM3MTIzOGE3N2FlNGNkZGViY2U4NjQ3NyJ9fX0="
                 }
             }
         },
         "client_time": {
             "default_value": "NONE",
-            "ui_display_options": ["Wyłączone", "Rano (6:00)", "Południe (12:00)", "Wieczór (18:00)", "Północ (00:00)"],
+            "ui_display_options": ["Wyłączone (Domyślne)", "Rano", "Południe", "Wieczór", "Północ"],
             "ui_display": {
-                "material": "minecraft:clock",
+                "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
                     "name": "<yellow><b>Czas",
@@ -192,7 +196,8 @@
                         "[OPTIONS]",
                         "",
                         "<red>Zmiany widoczne po przelogowaniu."
-                    ]
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmZlOGNmZjc1ZjdkNDMzMjYwYWYxZWNiMmY3NzNiNGJjMzgxZDk1MWRlNGUyZWI2NjE0MjM3NzlhNTkwZTcyYiJ9fX0="
                 }
             }
         }

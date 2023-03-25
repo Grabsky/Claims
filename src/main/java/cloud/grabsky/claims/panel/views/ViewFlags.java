@@ -35,8 +35,8 @@ public class ViewFlags implements Consumer<Panel> {
                 createClickAction(claim, Flags.USE, PluginFlags.USE, RegionGroup.NON_MEMBERS)
         );
         cPanel.setItem(12,
-                createDisplay(claim, Flags.ENTRY, PluginFlags.ENTRY),
-                createClickAction(claim, Flags.ENTRY, PluginFlags.ENTRY, RegionGroup.NON_MEMBERS));
+                createDisplay(claim, Flags.ENTRY, PluginFlags.CHEST_ACCESS),
+                createClickAction(claim, Flags.ENTRY, PluginFlags.CHEST_ACCESS, RegionGroup.NON_MEMBERS));
         cPanel.setItem(13,
                 createDisplay(claim, Flags.TNT, PluginFlags.TNT),
                 createClickAction(claim, Flags.TNT, PluginFlags.TNT));
@@ -60,8 +60,8 @@ public class ViewFlags implements Consumer<Panel> {
                 createDisplay(claim, Claims.CustomFlag.CLIENT_TIME, PluginFlags.CLIENT_TIME),
                 createClickAction(claim, Claims.CustomFlag.CLIENT_TIME, PluginFlags.CLIENT_TIME));
         cPanel.setItem(24,
-                createDisplay(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.WEATHER_LOCK),
-                createClickAction(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.WEATHER_LOCK));
+                createDisplay(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER),
+                createClickAction(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER));
         // ...
         cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewSettings(), true));
    }
