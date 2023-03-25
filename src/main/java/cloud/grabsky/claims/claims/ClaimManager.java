@@ -327,13 +327,13 @@ public final class ClaimManager {
         // ...
         final Location center = claim.getCenter();
         // Calculating new region size
-        final int radius = claim.getType().getNextType().getRadius();
+        final int radius = newType.getRadius();
         final BlockVector3 min = BlockVector3.at(center.getBlockX() - radius, center.getWorld().getMinHeight(), center.getBlockZ() - radius);
         final BlockVector3 max = BlockVector3.at(center.getBlockX() + radius, center.getWorld().getMaxHeight(), center.getBlockZ() + radius);
         // Creating cuboid at new points
         final ProtectedRegion newRegion = new ProtectedCuboidRegion(claim.getId(), min, max);
         // Updating region flag
-        region.setFlag(CustomFlag.CLAIM_TYPE, claim.getType().getNextType().getId());
+        region.setFlag(CustomFlag.CLAIM_TYPE, newType.getId());
         // Redefining region
         newRegion.copyFrom(region);
         regionManager.addRegion(newRegion);
@@ -341,7 +341,7 @@ public final class ClaimManager {
         claim.setRegion(newRegion);
         claim.setType(newType);
         // Updating block type ('& 0xF' thingy is doing some magic to get block's position in chunk)
-        final Material type = claim.getType().getBlock().getType();
+        final Material type = newType.getBlock().getType();
         PaperLib.getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));
         return true;
     }

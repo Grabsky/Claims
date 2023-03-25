@@ -35,8 +35,8 @@ public class ViewFlags implements Consumer<Panel> {
                 createClickAction(claim, Flags.USE, PluginFlags.USE, RegionGroup.NON_MEMBERS)
         );
         cPanel.setItem(12,
-                createDisplay(claim, Flags.ENTRY, PluginFlags.CHEST_ACCESS),
-                createClickAction(claim, Flags.ENTRY, PluginFlags.CHEST_ACCESS, RegionGroup.NON_MEMBERS));
+                createDisplay(claim, Flags.CHEST_ACCESS, PluginFlags.CHEST_ACCESS),
+                createClickAction(claim, Flags.CHEST_ACCESS, PluginFlags.CHEST_ACCESS, RegionGroup.NON_MEMBERS));
         cPanel.setItem(13,
                 createDisplay(claim, Flags.TNT, PluginFlags.TNT),
                 createClickAction(claim, Flags.TNT, PluginFlags.TNT));
