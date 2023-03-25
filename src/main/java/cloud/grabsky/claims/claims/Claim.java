@@ -144,7 +144,7 @@ public final class Claim {
     public static final class Type {
 
         @Getter(AccessLevel.PUBLIC)
-        private final @NotNull String uniqueId;
+        private final @NotNull String id;
 
         @Getter(AccessLevel.PUBLIC)
         private final int radius;

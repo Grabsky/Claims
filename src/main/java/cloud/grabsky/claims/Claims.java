@@ -38,25 +38,17 @@ import com.sk89q.worldguard.session.handler.ExitFlag;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.craftbukkit.v1_19_R3.util.CraftMagicNumbers;
 
 import java.io.File;
 import java.io.IOException;
 
 import static cloud.grabsky.configuration.paper.util.Resources.ensureResourceExistence;
 
-// TO-DO: Console & File loggers
-// TO-DO: Claims API (if needed)
 public final class Claims extends BedrockPlugin {
 
     @Getter(AccessLevel.PUBLIC)
     private static Claims instance;
-
-    @Getter(AccessLevel.PUBLIC)
-    private RegionManager regionManager;
 
     @Getter(AccessLevel.PUBLIC)
     private ClaimManager claimManager;
@@ -77,26 +69,24 @@ public final class Claims extends BedrockPlugin {
         if (this.onReload() == false) {
             return; // Plugin should be disabled automatically whenever exception is thrown.
         }
-        ClaimPanel.registerListener(this);
         // Creating instance of RegionManager
         final World world = BukkitAdapter.adapt(PluginConfig.DEFAULT_WORLD);
-        // ...
-        this.regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
+        final RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // ...
         Claims.CustomFlag.registerHandlers();
-        // Initializing ClaimManager and caching claims
-        this.claimManager = new ClaimManager(this);
-        this.claimManager.cacheClaimTypes();
-        this.claimManager.cacheClaims();
+        // Initializing ClaimManager
+        this.claimManager = new ClaimManager(this, regionManager);
         // Registering events
+        ClaimPanel.registerListener(this);
         this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
-        // Registering command(s)
+        // Initializing RootCommandManager
         final RootCommandManager commands = new RootCommandManager(this);
-        final ClaimArgument argument = new ClaimArgument(claimManager);
-        commands.setArgumentParser(Claim.class, argument);
-        commands.setCompletionsProvider(Claim.class, argument);
+        // Registering Claim argument parser and completions provider
+        final ClaimArgument claimArgument = new ClaimArgument(claimManager);
+        commands.setArgumentParser(Claim.class, claimArgument);
+        commands.setCompletionsProvider(Claim.class, claimArgument);
+        // Registering command(s)
         commands.registerCommand(new ClaimsCommand(this));
-        // ...
     }
 
     @Override
@@ -105,7 +95,7 @@ public final class Claims extends BedrockPlugin {
     }
 
     @Override
-    public boolean onReload() throws ConfigurationMappingException {
+    public boolean onReload() throws ConfigurationMappingException, IllegalStateException {
         try {
             final File config = ensureResourceExistence(this, new File(this.getDataFolder(), "config.json"));
             final File locale = ensureResourceExistence(this, new File(this.getDataFolder(), "locale.json"));

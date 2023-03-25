@@ -17,7 +17,6 @@ import cloud.grabsky.configuration.paper.adapter.MaterialAdapterFactory;
 import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
 import cloud.grabsky.configuration.paper.adapter.PersistentDataEntryAdapterFactory;
 import cloud.grabsky.configuration.paper.adapter.PersistentDataTypeAdapterFactory;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
@@ -50,8 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
+import static com.sk89q.worldedit.bukkit.BukkitAdapter.adapt;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static java.util.Comparator.comparingDouble;
@@ -59,7 +58,6 @@ import static java.util.Comparator.comparingDouble;
 public final class ClaimManager {
 
     private final Claims claims;
-    private final Moshi moshi;
 
     private final RegionManager regionManager;
     private final Map<String, Claim> claimsCache = new HashMap<>();
@@ -68,11 +66,40 @@ public final class ClaimManager {
     @Getter(AccessLevel.PUBLIC)
     private final Map<String, Claim.Type> claimTypes = new HashMap<>();
 
-    public ClaimManager(final Claims claims) {
+    public ClaimManager(final Claims claims, final RegionManager regionManager) {
         this.claims = claims;
-        this.regionManager = claims.getRegionManager();
+        this.regionManager = regionManager;
         // ...
-        this.moshi = new Moshi.Builder()
+        this.cacheClaimTypes();
+        this.cacheClaims();
+    }
+
+    @Internal
+    private void cacheClaimTypes() throws IllegalStateException {
+        final File typesDirectory = new File(claims.getDataFolder(), "types");
+        // Creating /plugins/Claims/types directory if does not exist.
+        if (typesDirectory.exists() == false)
+            typesDirectory.mkdirs();
+        // Throwing exception if /plugins/Claims/types is not a directory.
+        if (typesDirectory.isDirectory() == false)
+            throw new IllegalStateException(typesDirectory.getPath() + " is not a directory. Read documentation at [DOCS_LINK] to learn how to define claim types.");
+        // ...
+        final File[] files = typesDirectory.listFiles();
+        // Guiding to read docs if no claim types are defined.
+        if (files == null)
+            throw new IllegalStateException(typesDirectory.getPath() + " is not a directory. Read documentation at [DOCS_LINK] to learn how to define claim types.");
+        // Filtering and sorting
+        final List<File> sortedFiles = stream(files)
+                .filter(file -> file.getName().endsWith(".json"))
+                .sorted(comparing(File::getName).reversed())
+                .toList();
+        // ...
+        if (sortedFiles.isEmpty() == true) {
+            claims.getLogger().warning("No claim types has been defined inside /plugins/Claims/types/ directory. Read documentation at [DOCS_LINK] to learn how.");
+            return;
+        }
+        // ...
+        final Moshi moshi = new Moshi.Builder()
                 // Everything needed for ItemStack deserialization...
                 .add(Component.class, ComponentAdapter.INSTANCE)
                 .add(ItemFlag.class, ItemFlagAdapter.INSTANCE)
@@ -87,73 +114,77 @@ public final class ClaimManager {
                 // ClaimType deserialization...
                 .add(new ClaimTypeAdapterFactory(this))
                 .build();
-    }
-
-    @Internal
-    public void cacheClaimTypes() {
-        final File typesDirectory = new File(claims.getDataFolder(), "types");
-        // ...
-        if (typesDirectory.exists() == false || typesDirectory.isDirectory() == false)
-            throw new IllegalStateException(typesDirectory.getPath() + " does not exist or is not a directory.");
-        // ...
-        final File[] files = typesDirectory.listFiles();
-        // ...
-        if (files == null || files.length == 0)
-            throw new IllegalStateException("No claims defined.");
-        // ,,,
-        final List<File> sortedFiles = stream(files)
-                .filter(file -> file.getName().endsWith(".json"))
-                .sorted(comparing(File::getName).reversed())
-                .toList();
         // ...
         Claim.Type previous = null;
         // ...
+        int totalClaimTypes = 0;
+        int loadedClaimTypes = 0;
         for (final File file : sortedFiles) {
             try {
                 final BufferedSource buffer = Okio.buffer(Okio.source(file));
                 // ...
+                totalClaimTypes++;
+                // Reading
                 final Claim.Type type = moshi.adapter(Claim.Type.class).lenient().fromJson(buffer);
                 // ...
-                if (type != null) {
-                    type.setNextType(previous);
-                    // ...
-                    claimTypes.put(type.getUniqueId(), type);
-                    // ...
-                    previous = type;
+                if (type == null) {
+                    claims.getLogger().warning("Claim type cannot be loaded. (FILE = " + file.getPath() + ")");
+                    continue;
                 }
-            } catch (final IOException exc) {
-                exc.printStackTrace();
+                // ...
+                type.setNextType(previous);
+                // ...
+                claimTypes.put(type.getId(), type);
+                // ...
+                previous = type;
+                // ...
+                loadedClaimTypes++;
+            } catch (final IOException e) {
+                e.printStackTrace();
             }
         }
+        // ...
+        claims.getLogger().info("Loaded " + loadedClaimTypes + " out of " + totalClaimTypes + " claim types total.");
     }
 
-    @Internal // Should be run only during the server startup
-    public void cacheClaims() throws IllegalStateException {
-        final AtomicInteger loadedClaims = new AtomicInteger(0);
-        regionManager.getRegions().forEach((id, region) -> {
+    @Internal
+    private void cacheClaims() throws IllegalStateException {
+        int totalClaims = 0;
+        int loadedClaims = 0;
+        for (final var entry : regionManager.getRegions().entrySet()) {
+            final String id = entry.getKey();
+            final ProtectedRegion region = entry.getValue();
             // Skipping regions not starting with configured prefix, or regions which owner count =/= 1.
             if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
                 return;
             // ...
+            totalClaims++;
+            // ...
             final String claimTypeId = region.getFlag(CustomFlag.CLAIM_TYPE);
-            final Claim.Type claimType = claimTypes.get(claimTypeId);
+            final @Nullable Claim.Type claimType = claimTypes.get(claimTypeId);
+            // Skipping claims with non-existent or invalid type.
+            if (claimTypeId == null || claimTypes.containsKey(claimTypeId) == false) {
+                claims.getLogger().warning("Claim cannot be loaded because it's TYPE is not defined. (CLAIM_ID = " + id + ", CLAIM_TYPE_ID = " + claimTypeId + ")");
+                continue;
+            }
             final Claim claim = new Claim(id, this, region, claimType);
             // ...
             region.getOwners().getUniqueIds().forEach(uuid -> {
                 final ClaimPlayer claimOwner = this.getClaimPlayer(uuid);
-                // Skipping claims with non-existent or invalid type.
-                if (claimTypeId == null || claimTypes.containsKey(claimTypeId) == false) {
-                    claims.getLogger().severe("Claim " + id + " owned by " + claimOwner + " cannot be loaded. (CLAIM_TYPE = " + claimTypeId + ")");
-                    return;
-                }
+                // ...
                 claimOwner.addClaim(claim);
             });
             // Adding claim to the cache
             claimsCache.put(id, claim);
             // ...
-            loadedClaims.getAndIncrement();
-        });
-        claims.getLogger().info("Loaded " + loadedClaims + " claims.");
+            loadedClaims++;
+        }
+        // ...
+        claims.getLogger().info("Loaded " + loadedClaims + " out of " + totalClaims + " claims total.");
+        // ...
+        if (loadedClaims < totalClaims) {
+            claims.getLogger().warning("Unloaded claims ARE STILL PROTECTED but are excluded from plugin cache and are inaccessible by players. You should take a closer look at all of them individually to see what's wrong.");
+        }
     }
 
     // Returns true if Claim exists and is currently cached.
@@ -209,7 +240,7 @@ public final class ClaimManager {
         final ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
         this.setDefaultFlags(region, loc, owner);
-        region.setFlag(CustomFlag.CLAIM_TYPE, type.getUniqueId());
+        region.setFlag(CustomFlag.CLAIM_TYPE, type.getId());
         // Setting region priority
         region.setPriority(PluginConfig.REGION_PRIORITY);
         // Adding owner
@@ -239,7 +270,7 @@ public final class ClaimManager {
     }
 
     public @Nullable Claim getClaimAt(final @NotNull Location location) {
-        final List<String> ids = regionManager.getApplicableRegionsIDs(BukkitAdapter.adapt(location).toVector().toBlockPoint())
+        final List<String> ids = regionManager.getApplicableRegionsIDs(adapt(location).toVector().toBlockPoint())
                 .stream().filter(id -> id.startsWith(PluginConfig.REGION_PREFIX) == true).toList();
         // ...
         if (ids.isEmpty() == true || ids.size() > 1)
@@ -302,7 +333,7 @@ public final class ClaimManager {
         // Creating cuboid at new points
         final ProtectedRegion newRegion = new ProtectedCuboidRegion(claim.getId(), min, max);
         // Updating region flag
-        region.setFlag(CustomFlag.CLAIM_TYPE, claim.getType().getNextType().getUniqueId());
+        region.setFlag(CustomFlag.CLAIM_TYPE, claim.getType().getNextType().getId());
         // Redefining region
         newRegion.copyFrom(region);
         regionManager.addRegion(newRegion);

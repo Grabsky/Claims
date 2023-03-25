@@ -195,7 +195,7 @@ public class ClaimsCommand extends RootCommand {
                         claimManager.getClaimTypes().values().stream().sorted(comparingInt(Claim.Type::getRadius)).forEach(type -> {
                             final ItemStack item = type.getBlock();
                             item.editMeta(meta -> {
-                                meta.getPersistentDataContainer().set(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, type.getUniqueId());
+                                meta.getPersistentDataContainer().set(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, type.getId());
                             });
                             sender.getInventory().addItem(item);
                         });
@@ -232,10 +232,10 @@ public class ClaimsCommand extends RootCommand {
                             final Vector3f scale = new Vector3f(radius, radius, 0);
                             // ...
                             final Iterator<Location> locations = List.of(
-                                    center.clone().add(0, -0.5F, -entityPosition),
-                                    center.clone().add(entityPosition, -0.5F, 0),
-                                    center.clone().add(0, -0.5F, entityPosition),
-                                    center.clone().add(-entityPosition, -0.5F, 0)
+                                    center.clone().add(0, -entityPosition - 0.5F, -entityPosition),
+                                    center.clone().add(entityPosition, -entityPosition - 0.5F, 0),
+                                    center.clone().add(0, -entityPosition - 0.5F, entityPosition),
+                                    center.clone().add(-entityPosition, -entityPosition - 0.5F, 0)
                             ).iterator();
                             // ...
                             final Iterator<Transformation> transformations = List.of(
@@ -252,7 +252,7 @@ public class ClaimsCommand extends RootCommand {
                                         blockDisplay.setBlock(data);
                                         blockDisplay.setTransformation(transformations.next());
                                         blockDisplay.setViewRange(Float.MAX_VALUE);
-                                        blockDisplay.setBrightness(new Display.Brightness(15, 15));
+                                        blockDisplay.setBrightness(new Display.Brightness(15, 0));
                                         blockDisplay.setShadowRadius(0.0F);
                                         blockDisplay.setShadowStrength(0.0F);
                                         blockDisplay.setVisibleByDefault(false);
