@@ -64,7 +64,7 @@ public final class ViewMembersAdd implements Consumer<Panel> {
             final ClaimPlayer claimPlayer = onlineClaimPlayersIterator.next();
             final User user = claimPlayer.toUser();
             // ...
-            final ItemStack head = new ItemBuilder(PluginItems.ICON_ADD_MEMBER)
+            final ItemStack head = new ItemBuilder(PluginItems.UI_ICON_ADD_MEMBER)
                     .setName(text(user.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                     .setSkullTexture(user.getTextures())
                     .build();
@@ -81,12 +81,12 @@ public final class ViewMembersAdd implements Consumer<Panel> {
         }
         // If player is not on the first page - displaying previous page button
         if (pageToDisplay > 1)
-            cPanel.setItem(18, PluginItems.NAVIGATION_PREVIOUS, (event) -> generate(cPanel, pageToDisplay - 1, maxOnPage));
+            cPanel.setItem(18, PluginItems.UI_NAVIGATION_PREVIOUS, (event) -> generate(cPanel, pageToDisplay - 1, maxOnPage));
         // If there is more players to be displayed, showing next page button
         if (onlineClaimPlayersIterator.hasNext() == true)
-            cPanel.setItem(26, PluginItems.NAVIGATION_NEXT, (event) -> generate(cPanel, pageToDisplay + 1, maxOnPage));
+            cPanel.setItem(26, PluginItems.UI_NAVIGATION_NEXT, (event) -> generate(cPanel, pageToDisplay + 1, maxOnPage));
         // ...
-        cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMembers(), true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMembers(), true));
     }
 
     private static <T> ListIterator<T> moveIteratorBefore(final ListIterator<T> iterator, final int index) {

@@ -46,10 +46,10 @@ public final class ViewMembers implements Consumer<Panel> {
             final User user = member.toUser();
             // ...
             final ItemStack head = (user == null)
-                    ? new ItemBuilder(PluginItems.ICON_REMOVE_MEMBER)
+                    ? new ItemBuilder(PluginItems.UI_ICON_REMOVE_MEMBER)
                             .setName(text(member.getUniqueId().toString(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                             .build()
-                    : new ItemBuilder(PluginItems.ICON_REMOVE_MEMBER)
+                    : new ItemBuilder(PluginItems.UI_ICON_REMOVE_MEMBER)
                             .setName(text(user.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                             .setSkullTexture(user.getTextures())
                             .build();
@@ -66,8 +66,8 @@ public final class ViewMembers implements Consumer<Panel> {
         }
         // Displaying [ICON_BROWSE_PLAYERS] button.
         if (slotsIterator.hasNext() == true)
-            cPanel.setItem(slotsIterator.next(), PluginItems.ICON_BROWSE_PLAYERS, event -> cPanel.applyTemplate(new ViewMembersAdd(), true));
+            cPanel.setItem(slotsIterator.next(), PluginItems.UI_ICON_BROWSE_PLAYERS, event -> cPanel.applyTemplate(new ViewMembersAdd(), true));
         // return
-        cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMain(), true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMain(), true));
     }
 }

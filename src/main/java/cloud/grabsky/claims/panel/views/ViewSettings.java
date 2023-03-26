@@ -47,9 +47,9 @@ public final class ViewSettings implements Consumer<Panel> {
         // ...
         cPanel.clear();
         // Button: FLAGS
-        cPanel.setItem(11, PluginItems.CATEGORY_FLAGS, event -> cPanel.applyTemplate(new ViewFlags(), true));
+        cPanel.setItem(11, PluginItems.UI_CATEGORY_FLAGS, event -> cPanel.applyTemplate(new ViewFlags(), true));
         // Teleport location button
-        cPanel.setItem(13, PluginItems.ICON_SET_TELEPORT, (event) -> {
+        cPanel.setItem(13, PluginItems.UI_ICON_SET_TELEPORT, (event) -> {
             viewer.closeInventory();
             // ...
             sendMessage(viewer, (claim.setHome(viewer.getLocation()))
@@ -86,7 +86,7 @@ public final class ViewSettings implements Consumer<Panel> {
             }
         });
         // Return button
-        cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMain(), true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMain(), true));
     }
 
     private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {

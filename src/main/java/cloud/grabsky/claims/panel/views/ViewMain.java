@@ -24,7 +24,7 @@ public final class ViewMain implements Consumer<Panel> {
         // Changing panel texture
         cPanel.updateClientTitle(INVENTORY_TITLE);
         // Setting menu items
-        cPanel.setItem(11, PluginItems.CATEGORY_HOMES, (event) -> {
+        cPanel.setItem(11, PluginItems.UI_CATEGORY_HOMES, (event) -> {
             switch (event.getClick()) {
                 case LEFT, SHIFT_LEFT -> {
                     viewer.closeInventory();
@@ -32,9 +32,9 @@ public final class ViewMain implements Consumer<Panel> {
                 }
             }
         });
-        cPanel.setItem(13, new ItemBuilder(PluginItems.CATEGORY_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyTemplate(new ViewMembers(), true));
-        cPanel.setItem(15, PluginItems.CATEGORY_SETTINGS, (event) -> cPanel.applyTemplate(new ViewSettings(), true));
-        cPanel.setItem(49, PluginItems.NAVIGATION_RETURN, (event) -> viewer.closeInventory());
+        cPanel.setItem(13, new ItemBuilder(PluginItems.UI_CATEGORY_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyTemplate(new ViewMembers(), true));
+        cPanel.setItem(15, PluginItems.UI_CATEGORY_SETTINGS, (event) -> cPanel.applyTemplate(new ViewSettings(), true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> viewer.closeInventory());
     }
 
 }
