@@ -73,7 +73,6 @@ public final class ClaimManager {
         this.cacheClaims();
     }
 
-    @Internal
     private void cacheClaimTypes() throws IllegalStateException {
         final File typesDirectory = new File(claims.getDataFolder(), "types");
         // Creating /plugins/Claims/types directory if does not exist.
@@ -146,7 +145,6 @@ public final class ClaimManager {
         claims.getLogger().info("Loaded " + loadedClaimTypes + " out of " + totalClaimTypes + " claim types total.");
     }
 
-    @Internal
     private void cacheClaims() throws IllegalStateException {
         int totalClaims = 0;
         int loadedClaims = 0;
