@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static net.kyori.adventure.text.Component.text;
 
-public class ViewMembersAdd implements Consumer<Panel> {
+public final class ViewMembersAdd implements Consumer<Panel> {
 
     private List<ClaimPlayer> onlineClaimPlayers = new ArrayList<>();
 

@@ -18,7 +18,7 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public class ViewFlags implements Consumer<Panel> {
+public final class ViewFlags implements Consumer<Panel> {
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7104", NamedTextColor.WHITE);
 

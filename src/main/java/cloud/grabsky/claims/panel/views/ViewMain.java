@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public class ViewMain implements Consumer<Panel> {
+public final class ViewMain implements Consumer<Panel> {
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
 
