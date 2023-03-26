@@ -21,8 +21,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Set;
 
-import static cloud.grabsky.configuration.util.LazyInit.notNull;
 import static com.squareup.moshi.Types.getRawType;
+import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public class ClaimTypeAdapterFactory implements JsonAdapter.Factory {
@@ -83,20 +83,20 @@ public class ClaimTypeAdapterFactory implements JsonAdapter.Factory {
 
     public static final class ClaimTypeInit implements LazyInit<Claim.Type> {
 
-        private String id;
-        private int radius;
-        private ItemStack block;
-        private ItemStack upgradeButton;
+        private @Nullable String id;
+        private @Nullable Integer radius;
+        private @Nullable ItemStack block;
+        private @Nullable ItemStack upgradeButton;
         private @Nullable ItemStack[] upgradeCost;
 
         @Override
         public Claim.Type init() throws IllegalStateException {
             return new Claim.Type(
-                    notNull(id, "id", String.class),
-                    notNull(radius, "name", int.class),
-                    notNull(block, "block", ItemStack.class),
-                    notNull(upgradeButton, "upgradeButton", ItemStack.class),
-                    upgradeCost // @Nullable
+                    requireNonNull(id),
+                    requireNonNull(radius),
+                    requireNonNull(block),
+                    requireNonNull(upgradeButton),
+                    upgradeCost // Can be null
             );
         }
 

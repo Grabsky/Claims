@@ -28,6 +28,7 @@ import java.util.Set;
 
 import static com.squareup.moshi.Types.getRawType;
 import static com.squareup.moshi.Types.newParameterizedType;
+import static java.util.Objects.requireNonNull;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ClaimFlagAdapterFactory implements JsonAdapter.Factory {
@@ -69,7 +70,6 @@ public final class ClaimFlagAdapterFactory implements JsonAdapter.Factory {
                         default -> throw new JsonDataException("failed at:" + nextName);
                     }
                 }
-                // ...
                 in.endObject();
                 // ...
                 return init.init();
@@ -88,34 +88,34 @@ public final class ClaimFlagAdapterFactory implements JsonAdapter.Factory {
 
         private final Class<?> type;
 
-        private Object defaultValue;
-        private ItemStack display;
-        private List<Component> displayOptions;
+        private @Nullable Object defaultValue;
+        private @Nullable ItemStack display;
+        private @Nullable List<Component> displayOptions;
 
         @Override
         public ClaimFlag<?> init() throws IllegalStateException {
             // StateFlag.State
             if (StateFlag.State.class.isAssignableFrom(type) == true)
                 return new ClaimFlag.State(
-                        (StateFlag.State) defaultValue,
-                        display,
-                        displayOptions
+                        requireNonNull((StateFlag.State) defaultValue),
+                        requireNonNull(display),
+                        requireNonNull(displayOptions)
                 );
             // FixedTime
             else if (FixedTime.class.isAssignableFrom(type) == true)
                 return new ClaimFlag.Time(
-                        (FixedTime) defaultValue,
-                        display,
-                        displayOptions
+                        requireNonNull((FixedTime) defaultValue),
+                        requireNonNull(display),
+                        requireNonNull(displayOptions)
                 );
             // FixedWeather
             else if (FixedWeather.class.isAssignableFrom(type) == true)
                 return new ClaimFlag.Weather(
-                        (FixedWeather) defaultValue,
-                        display,
-                        displayOptions
+                        requireNonNull((FixedWeather) defaultValue),
+                        requireNonNull(display),
+                        requireNonNull(displayOptions)
                 );
-            throw new IllegalArgumentException("Flag of type " + type.getSimpleName() + " is not supported.");
+            throw new IllegalArgumentException("Flag of type " + type.getName() + " is not supported.");
         }
 
     }

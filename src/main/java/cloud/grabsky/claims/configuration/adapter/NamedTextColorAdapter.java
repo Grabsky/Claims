@@ -17,10 +17,10 @@ public final class NamedTextColorAdapter extends JsonAdapter<NamedTextColor> {
     public static final NamedTextColorAdapter INSTANCE = new NamedTextColorAdapter();
 
     @Override
-    public @Nullable NamedTextColor fromJson(final @NotNull JsonReader in) throws IOException {
-        final String color = in.nextString();
+    public NamedTextColor fromJson(final @NotNull JsonReader in) throws IOException {
+        final String value = in.nextString();
         // ...
-        return switch (color.toLowerCase()) {
+        return switch (value.toLowerCase()) {
             case "aqua" -> NamedTextColor.AQUA;
             case "black" -> NamedTextColor.BLACK;
             case "blue" -> NamedTextColor.BLUE;
@@ -37,7 +37,7 @@ public final class NamedTextColorAdapter extends JsonAdapter<NamedTextColor> {
             case "red" -> NamedTextColor.RED;
             case "white" -> NamedTextColor.WHITE;
             case "yellow" -> NamedTextColor.YELLOW;
-            default -> throw new JsonDataException("...");
+            default -> throw new JsonDataException("Expected " + NamedTextColor.class.getName() + " but found: " + value);
         };
     }
 
