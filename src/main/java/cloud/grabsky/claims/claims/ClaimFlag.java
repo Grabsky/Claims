@@ -11,6 +11,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.inventory.ItemStack;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -25,15 +26,15 @@ import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerial
 public abstract class ClaimFlag<T> {
 
     @Getter(AccessLevel.PUBLIC)
-    private final T defaultValue;
+    private final @Nullable T defaultValue; // May be null because it is technically a valid region flag value.
 
     @Getter(AccessLevel.PUBLIC)
-    private final ItemStack display;
+    private final @NotNull ItemStack display;
 
     @Getter(AccessLevel.PUBLIC)
-    private final List<Option<T>> options;
+    private final @NotNull List<Option<T>> options;
 
-    public static <T> List<Option<T>> createOptions(final List<T> options, final List<Component> displayOptions) throws IllegalArgumentException {
+    public static <T> @NotNull List<Option<T>> createOptions(final @NotNull List<T> options, final @NotNull List<Component> displayOptions) throws IllegalArgumentException {
         if (options.size() != displayOptions.size())
             throw new IllegalArgumentException("Both options arrays must be of the same length. Expected legnth: " + options.size());
         // ...
@@ -48,7 +49,8 @@ public abstract class ClaimFlag<T> {
         return result;
     }
 
-    public T next(final @Nullable T current) throws IllegalArgumentException {
+    // May accept or return null because it's technically a valid region flag value.
+    public @Nullable T next(final @Nullable T current) throws IllegalArgumentException {
         final Iterator<Option<T>> iterator = options.iterator();
         // ...
         while (iterator.hasNext() == true) {
@@ -58,7 +60,8 @@ public abstract class ClaimFlag<T> {
         throw new IllegalArgumentException("Unexpected flag value: " + current);
     }
 
-    public ItemStack getDisplay(final T value) {
+    // May accept null because it's technically a valid region flag value.
+    public @NotNull ItemStack getDisplay(final @Nullable T value) {
         final ItemStack result = new ItemStack(display);
         result.editMeta(meta -> {
             final List<Component> lore = new ArrayList<>();
@@ -88,16 +91,17 @@ public abstract class ClaimFlag<T> {
     public static final class Option<V> {
 
         @Getter(AccessLevel.PUBLIC)
-        private final V value;
+        private final @Nullable V value; // May be null because it is technically a valid region flag value.
 
         @Getter(AccessLevel.PUBLIC)
-        private final Component display;
+        private final @NotNull Component display;
 
     }
 
     public static final class State extends ClaimFlag<StateFlag.State> {
 
-        public State(final StateFlag.State defaultValue, final ItemStack display, final List<Component> displayOptions) {
+        // May accept null because it's technically a valid region flag value.
+        public State(final @Nullable StateFlag.State defaultValue, final @NotNull ItemStack display, final @NotNull List<Component> displayOptions) {
             super(
                     defaultValue,
                     display,
@@ -109,7 +113,8 @@ public abstract class ClaimFlag<T> {
 
     public static final class Time extends ClaimFlag<FixedTime> {
 
-        public Time(final FixedTime defaultValue, final ItemStack display, final List<Component> displayOptions) {
+        // May accept null because it's technically a valid region flag value.
+        public Time(final @Nullable FixedTime defaultValue, final @NotNull ItemStack display, final @NotNull List<Component> displayOptions) {
             super(
                     defaultValue,
                     display,
@@ -119,9 +124,10 @@ public abstract class ClaimFlag<T> {
 
     }
 
+    // May accept null because it's technically a valid region flag value.
     public static final class Weather extends ClaimFlag<FixedWeather> {
 
-        public Weather(final FixedWeather defaultValue, final ItemStack display, final List<Component> displayOptions) {
+        public Weather(final @Nullable FixedWeather defaultValue, final @NotNull ItemStack display, final @NotNull List<Component> displayOptions) {
             super(
                     defaultValue,
                     display,
