@@ -58,7 +58,7 @@ public final class ClaimFlagAdapterFactory implements JsonAdapter.Factory {
                     // ...
                     switch (nextName.toLowerCase()) {
                         case "default_value" -> {
-                            if (in.peekJson().peek() == Token.STRING && in.peekJson().nextString().equals("NONE") == true) {
+                            if (in.peek() == Token.STRING && in.peekJson().nextString().equals("NONE") == true) {
                                 init.defaultValue = null;
                                 in.skipValue();
                             } else {
@@ -67,7 +67,7 @@ public final class ClaimFlagAdapterFactory implements JsonAdapter.Factory {
                         }
                         case "ui_display_options" -> init.displayOptions = (List<Component>) adapter1.fromJson(in);
                         case "ui_display" -> init.display = adapter2.fromJson(in);
-                        default -> throw new JsonDataException("failed at:" + nextName);
+                        default -> throw new JsonDataException("Unexpected field: " + nextName);
                     }
                 }
                 in.endObject();
@@ -97,21 +97,21 @@ public final class ClaimFlagAdapterFactory implements JsonAdapter.Factory {
             // StateFlag.State
             if (StateFlag.State.class.isAssignableFrom(type) == true)
                 return new ClaimFlag.State(
-                        requireNonNull((StateFlag.State) defaultValue),
+                        (StateFlag.State) defaultValue,
                         requireNonNull(display),
                         requireNonNull(displayOptions)
                 );
             // FixedTime
             else if (FixedTime.class.isAssignableFrom(type) == true)
                 return new ClaimFlag.Time(
-                        requireNonNull((FixedTime) defaultValue),
+                        (FixedTime) defaultValue,
                         requireNonNull(display),
                         requireNonNull(displayOptions)
                 );
             // FixedWeather
             else if (FixedWeather.class.isAssignableFrom(type) == true)
                 return new ClaimFlag.Weather(
-                        requireNonNull((FixedWeather) defaultValue),
+                        (FixedWeather) defaultValue,
                         requireNonNull(display),
                         requireNonNull(displayOptions)
                 );
