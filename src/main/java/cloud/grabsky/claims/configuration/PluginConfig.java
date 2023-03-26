@@ -33,8 +33,11 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("claim_settings.minimum_distance_from_spawn")
     public static int MINIMUM_DISTANCE_FROM_SPAWN;
 
-    @JsonNullable @JsonPath("claim_settings.upgrade_sound")
-    public static Sound UPGRADE_SOUND;
+    @JsonNullable @JsonPath("claim_settings.interface_upgrade_sound")
+    public static Sound UI_UPGRADE_SOUND;
+
+    @JsonNullable @JsonPath("claim_settings.interface_click_sound")
+    public static Sound UI_CLICK_SOUND;
 
     // Logging Format
 

@@ -74,8 +74,8 @@ public final class ViewSettings implements Consumer<Panel> {
                     removeSimilarItems(viewer, type.getUpgradeCost());
                 // Trying to upgrade the claim...
                 if (cPanel.getManager().upgradeClaim(claim) == true) {
-                    if (PluginConfig.UPGRADE_SOUND != null)
-                        viewer.playSound(PluginConfig.UPGRADE_SOUND);
+                    if (PluginConfig.UI_UPGRADE_SOUND != null)
+                        viewer.playSound(PluginConfig.UI_UPGRADE_SOUND);
                     // ...
                     sendMessage(viewer, PluginLocale.UI_UPGRADE_SUCCESS, Placeholder.unparsed("size", valueOf(type.getRadius() * 2 + 1)));
                     // ...
