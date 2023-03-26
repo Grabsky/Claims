@@ -4,7 +4,6 @@ import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import io.papermc.lib.PaperLib;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -29,7 +28,7 @@ public class ViewMain implements Consumer<Panel> {
             switch (event.getClick()) {
                 case LEFT, SHIFT_LEFT -> {
                     viewer.closeInventory();
-                    PaperLib.teleportAsync(viewer, cPanel.getClaim().getHome());
+                    viewer.teleportAsync(cPanel.getClaim().getHome());
                 }
             }
         });

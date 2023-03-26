@@ -25,7 +25,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.squareup.moshi.Moshi;
-import io.papermc.lib.PaperLib;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -342,7 +341,7 @@ public final class ClaimManager {
         claim.setType(newType);
         // Updating block type ('& 0xF' thingy is doing some magic to get block's position in chunk)
         final Material type = newType.getBlock().getType();
-        PaperLib.getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));
+        center.getWorld().getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));
         return true;
     }
 

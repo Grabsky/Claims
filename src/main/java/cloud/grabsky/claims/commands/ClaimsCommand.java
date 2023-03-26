@@ -14,7 +14,6 @@ import cloud.grabsky.commands.RootCommandContext;
 import cloud.grabsky.commands.argument.StringArgument;
 import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.exception.CommandLogicException;
-import io.papermc.lib.PaperLib;
 import lombok.SneakyThrows;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -172,7 +171,7 @@ public class ClaimsCommand extends RootCommand {
                         try {
                             final Location center = claim.getCenter();
                             final Material type = claim.getType().getBlock().getType();
-                            PaperLib.getChunkAtAsync(center).thenAccept(chunk -> {
+                            center.getWorld().getChunkAtAsync(center).thenAccept(chunk -> {
                                 chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
                                 sendMessage(sender, PluginLocale.CLAIMS_RESTORE_SUCCESS);
                             });
