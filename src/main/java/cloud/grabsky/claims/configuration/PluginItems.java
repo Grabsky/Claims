@@ -8,9 +8,6 @@ import org.jetbrains.annotations.ApiStatus.Internal;
 @Internal
 public final class PluginItems implements JsonConfiguration {
 
-    @JsonPath("upgrade_crystal")
-    public static ItemStack UPGRADE_CRYSTAL;
-
     @JsonPath("category_homes")
     public static ItemStack CATEGORY_HOMES;
 
