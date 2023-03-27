@@ -34,6 +34,8 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -74,6 +76,9 @@ public final class ClaimManager {
         this.cacheClaims();
     }
 
+    /**
+     * Loads and caches defined {@link Claim.Type} objects defined in configuration files.
+     */
     private void cacheClaimTypes() throws IllegalStateException {
         final File typesDirectory = new File(claims.getDataFolder(), "types");
         // Creating /plugins/Claims/types directory if does not exist.
@@ -146,6 +151,9 @@ public final class ClaimManager {
         claims.getLogger().info("Successfully loaded " + loadedClaimTypes + " out of " + totalClaimTypes + " claim types total.");
     }
 
+    /**
+     * Loads and caches {@link Claim} objects and related components.
+     */
     private void cacheClaims() throws IllegalStateException {
         int totalClaims = 0;
         int loadedClaims = 0;
@@ -201,19 +209,6 @@ public final class ClaimManager {
      */
     public boolean containsClaim(final @NotNull Claim claim) {
         return containsClaim(claim.getId());
-    }
-
-    public boolean isWithinSquare(final @NotNull Location location, final @Nullable Location squareCenter, final int squareRadius) {
-        return squareCenter != null && (abs(location.getBlockX() - squareCenter.getBlockX()) > squareRadius || abs(location.getBlockZ() - squareCenter.getBlockZ()) > squareRadius) == false;
-    }
-
-    private static boolean isColliding(final BlockVector3 min, final BlockVector3 max, final BlockVector3 otherMin, final BlockVector3 otherMax) {
-        return min.getBlockX() <= otherMax.getBlockX()
-                && min.getBlockY() <= otherMax.getBlockY()
-                && min.getBlockZ() <= otherMax.getBlockZ()
-                && max.getBlockX() >= otherMin.getBlockX()
-                && max.getBlockY() >= otherMin.getBlockY()
-                && max.getBlockZ() >= otherMin.getBlockZ();
     }
 
     /**
@@ -276,7 +271,9 @@ public final class ClaimManager {
         return true;
     }
 
-    // Existence check is already in RegionHandler
+    /**
+     * Deletes specified {@link Claim} and associated {@link ProtectedRegion}.
+     */
     public void deleteClaim(final Claim claim) {
         final String id = claim.getRegion().getId();
         // Removing reference to the claim from owners
@@ -287,11 +284,14 @@ public final class ClaimManager {
         regionManager.removeRegion(id);
     }
 
+    /**
+     * Returns {@link Claim} at specified {@link Location} or {@code null} if none or multiple claims are found.
+     */
     public @Nullable Claim getClaimAt(final @NotNull Location location) {
         final List<String> ids = regionManager.getApplicableRegionsIDs(adapt(location).toVector().toBlockPoint())
                 .stream().filter(id -> id.startsWith(PluginConfig.REGION_PREFIX) == true).toList();
         // ...
-        if (ids.isEmpty() == true || ids.size() > 1)
+        if (ids.size() != 1)
             return null;
         // ...
         final @Nullable Claim claim = this.getClaim(ids.iterator().next());
@@ -302,7 +302,7 @@ public final class ClaimManager {
         return null;
     }
 
-    private void setDefaultFlags(final @NotNull ProtectedRegion region, final @NotNull Location center, final Player owner) {
+    private void setDefaultFlags(final @NotNull ProtectedRegion region, final @NotNull Location center, final @NotNull Player owner) {
         final String ownerName = owner.getName();
         final com.sk89q.worldedit.util.Location regionCenter = adapt(center);
         // Static flags (not changeable)
@@ -331,6 +331,10 @@ public final class ClaimManager {
         region.setFlag(Flags.TELE_LOC, regionCenter.setY(regionCenter.getY() + 0.5F));
     }
 
+    /**
+     * Upgrades provided {@link Claim}.
+     * Returns {@code true} if successful or {@code false} if {@link Claim.Type} is not upgrade-able.
+     */
     public boolean upgradeClaim(final @NotNull Claim claim) throws ClaimProcessException {
         if (this.containsClaim(claim) == false)
             throw new ClaimProcessException(PluginLocale.CLAIM_DOES_NOT_EXIST);
@@ -362,6 +366,21 @@ public final class ClaimManager {
         final Material type = newType.getBlock().getType();
         center.getWorld().getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));
         return true;
+    }
+
+    @Experimental
+    public boolean isWithinSquare(final @NotNull Location location, final @Nullable Location squareCenter, final int squareRadius) {
+        return squareCenter != null && (abs(location.getBlockX() - squareCenter.getBlockX()) > squareRadius || abs(location.getBlockZ() - squareCenter.getBlockZ()) > squareRadius) == false;
+    }
+
+    @Experimental
+    private static boolean isColliding(final BlockVector3 min, final BlockVector3 max, final BlockVector3 otherMin, final BlockVector3 otherMax) {
+        return min.getBlockX() <= otherMax.getBlockX()
+                && min.getBlockY() <= otherMax.getBlockY()
+                && min.getBlockZ() <= otherMax.getBlockZ()
+                && max.getBlockX() >= otherMin.getBlockX()
+                && max.getBlockY() >= otherMin.getBlockY()
+                && max.getBlockZ() >= otherMin.getBlockZ();
     }
 
     public @Nullable Claim getClaim(final @NotNull String id) {
