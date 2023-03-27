@@ -13,7 +13,6 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -212,11 +211,34 @@ public final class RegionListener implements Listener {
     public void onCraftPrepare(final PrepareItemCraftEvent event) {
         if (event.getRecipe() == null) return;
         for (final ItemStack item : event.getInventory().getMatrix()) {
-            // Yes Bukkit, apparently it can be null...
-            if (item != null && item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.INTEGER) == true) {
-                event.getInventory().setResult(new ItemStack(Material.AIR));
+            if (item != null && item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true) {
+                event.getInventory().setResult(null);
+                return;
             }
         }
+    }
+
+    // Prevents item from being used as a furnace fuel.
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onFurnaceBurn(final FurnaceBurnEvent event) {
+        if (event.getFuel().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+            event.setCancelled(true);
+    }
+
+    // Prevents item from being renamed/combined in anvil.
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onAnvilPrepare(final PrepareAnvilEvent event) {
+        if (event.getInventory().getFirstItem() != null && event.getInventory().getFirstItem().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+            event.setResult(null);
+        if (event.getInventory().getSecondItem() != null && event.getInventory().getSecondItem().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+            event.setResult(null);
+    }
+
+    // Prevents item from being used in stonecutter recipe.
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onStonecutterRecipeSelect(final PlayerStonecutterRecipeSelectEvent event) {
+        if (event.getStonecutterInventory().getInputItem() != null && event.getStonecutterInventory().getInputItem().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+            event.getStonecutterInventory().setResult(null);
     }
 
     // Prevents item from being used in smithing recipe.
