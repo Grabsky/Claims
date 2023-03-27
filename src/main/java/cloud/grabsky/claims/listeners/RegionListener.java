@@ -35,6 +35,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 import java.util.UUID;
@@ -42,7 +43,7 @@ import java.util.UUID;
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanel;
 
-// TO-DO: Share common logic between listeners. (eg. PDC check)
+// TO-DO: Share common logic between listeners.
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class RegionListener implements Listener {
 
@@ -216,7 +217,7 @@ public final class RegionListener implements Listener {
     public void onCraftPrepare(final PrepareItemCraftEvent event) {
         if (event.getRecipe() == null) return;
         for (final ItemStack item : event.getInventory().getMatrix()) {
-            if (item != null && item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true) {
+            if (item != null && containsClaimType(item) == true) {
                 event.getInventory().setResult(null);
                 return;
             }
@@ -226,33 +227,37 @@ public final class RegionListener implements Listener {
     // Prevents item from being used as a furnace fuel.
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFurnaceBurn(final FurnaceBurnEvent event) {
-        if (event.getFuel().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+        if (containsClaimType(event.getFuel()) == true)
             event.setCancelled(true);
     }
 
     // Prevents item from being renamed/combined in anvil.
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAnvilPrepare(final PrepareAnvilEvent event) {
-        if (event.getInventory().getFirstItem() != null && event.getInventory().getFirstItem().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+        if (event.getInventory().getFirstItem() != null && containsClaimType(event.getInventory().getFirstItem()) == true)
             event.setResult(null);
-        if (event.getInventory().getSecondItem() != null && event.getInventory().getSecondItem().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+        if (event.getInventory().getSecondItem() != null && containsClaimType(event.getInventory().getSecondItem()) == true)
             event.setResult(null);
     }
 
     // Prevents item from being used in stonecutter recipe.
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onStonecutterRecipeSelect(final PlayerStonecutterRecipeSelectEvent event) {
-        if (event.getStonecutterInventory().getInputItem() != null && event.getStonecutterInventory().getInputItem().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+        if (event.getStonecutterInventory().getInputItem() != null && containsClaimType(event.getStonecutterInventory().getInputItem()) == true)
             event.getStonecutterInventory().setResult(null);
     }
 
     // Prevents item from being used in smithing recipe.
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSmithingPrepare(final PrepareSmithingEvent event) {
-        if (event.getInventory().getInputEquipment() != null && event.getInventory().getInputEquipment().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+        if (event.getInventory().getInputEquipment() != null && containsClaimType(event.getInventory().getInputEquipment()) == true)
             event.setResult(null);
-        if (event.getInventory().getInputMineral() != null && event.getInventory().getInputMineral().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+        if (event.getInventory().getInputMineral() != null && containsClaimType(event.getInventory().getInputMineral()) == true)
             event.setResult(null);
+    }
+
+    private static boolean containsClaimType(final @NotNull ItemStack item) {
+        return item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true;
     }
 
 }
