@@ -49,6 +49,7 @@
         "place_failure_blacklisted_world": "<dark_gray>› <red>Nie możesz postawić terenu w tym świecie.",
         "place_failure_too_close_to_spawn": "<dark_gray>› <red>Minimalna odległość od spawnu to 300 kratek.",
         "place_failure_reached_claims_limit": "<dark_gray>› <red>Osiągnąłeś limit terenów.",
+        "place_failure_invalid_claim_type": "<dark_gray>› <red>Typ terenu, który próbujesz postawić jest nieprawidłowy. Skontaktuj się z administracją.",
         "place_failure_other_claims_must_be_upgraded": "<dark_gray>› <red>Poprzednie tereny muszą być ulepszone od maksymalnego poziomu.",
         "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
         "destroy_failure_not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając."

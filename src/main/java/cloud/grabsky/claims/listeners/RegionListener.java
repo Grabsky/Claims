@@ -67,24 +67,28 @@ public final class RegionListener implements Listener {
                     final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
                     // Making sure player does not exceed claim limit.
                     if (player.hasPermission("claims.bypass.claim_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIMS_LIMIT) {
-                        // Making sure that placed region is further enough from spawn
+                        // Making sure that placed region is far enough from spawn
                         if (claimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
-                            final String type = data.get(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING); // This shouldn't be null
-                            // Checking if player has all existing claims fully upgraded.
-                            if (player.hasPermission("claims.bypass.claim_limit") == true || claimManager.getClaimTypes().get(type).getNextType() == null || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
-                                // Finally, trying to create a claim. If it returns null, it means it's colliding with other region.
-                                final Claim claim = claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type);
-                                // ...
-                                if (claim != null) {
-                                    sendMessage(player, PluginLocale.PLACEMENT_PLACE_SUCCESS);
+                            final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING));
+                            // ...
+                            if (type != null) {
+                                // Checking if player has all existing claims fully upgraded.
+                                if (player.hasPermission("claims.bypass.claim_limit") == true || type.isUpgradeable() == false || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
+                                    // Finally, trying to create a claim.
+                                    if (claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type) == true) {
+                                        sendMessage(player, PluginLocale.PLACEMENT_PLACE_SUCCESS);
+                                        return;
+                                    }
+                                    event.setCancelled(true);
+                                    sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_OVERLAPS);
                                     return;
                                 }
                                 event.setCancelled(true);
-                                sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_OVERLAPS);
+                                sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED);
                                 return;
                             }
                             event.setCancelled(true);
-                            sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED);
+                            sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE);
                             return;
                         }
                         event.setCancelled(true);
@@ -119,7 +123,7 @@ public final class RegionListener implements Listener {
             // Checking if player has permission to destroy a claim
             if (player.hasPermission("claims.plugin.destroy") == true) {
                 // Checking if player CAN destroy the claim
-                if (claimPlayer.isOwnerOf(claim) == true || player.hasPermission("claims.bypass.ownercheck") == true) {
+                if (player.hasPermission("claims.plugin.can_modify_unowned_claim") == true || claimPlayer.isOwnerOf(claim) == true) {
                     // Checking if player is sneaking
                     if (event.getPlayer().isSneaking() == true) {
                         // Removing drops
@@ -152,19 +156,21 @@ public final class RegionListener implements Listener {
         }
     }
 
-    // TO-DO: Make sure none else has the panel open.
+    // TO-DO: Make sure none else has the claim panel open.
     @EventHandler(priority = EventPriority.HIGH)
     public void onClaimInteract(final PlayerInteractEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY || event.getClickedBlock() == null)
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY || event.getClickedBlock() == null)
             return;
         // ...
         final String id = Claim.createId(event.getClickedBlock().getLocation());
         // ...
         if (claimManager.containsClaim(id) == true) {
+            event.setCancelled(true);
+            // ...
             final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(event.getPlayer());
             final Claim claim = claimManager.getClaim(id);
             // ...
-            if (claim != null && (event.getPlayer().hasPermission("claims.command.edit") == true|| claim.isOwner(claimPlayer) == true) == true) {
+            if (claim != null && (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claim") == true|| claim.isOwner(claimPlayer) == true) == true) {
                 // ...
                 new ClaimPanel(claimManager, claim).open(event.getPlayer(), (panel) -> {
                     claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(new ViewMain(), false));

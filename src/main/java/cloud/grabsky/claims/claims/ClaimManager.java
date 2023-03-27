@@ -216,44 +216,46 @@ public final class ClaimManager {
                 && max.getBlockZ() >= otherMin.getBlockZ();
     }
 
-    public Claim createClaim(final Location loc, final Player owner, final String typeName) {
+    /**
+     * Tries to create {@link Claim} (and {@link ProtectedRegion} it relies on) at the following location.
+     * Returns {@code true} if {@link Claim} and all its components were successfully created.
+     */
+    public boolean createClaim(final @NotNull Location location, final @NotNull Player owner, final @NotNull Claim.Type type) {
         // ...
-        final int x = loc.getBlockX();
-        final int z = loc.getBlockZ();
+        final int x = location.getBlockX();
+        final int z = location.getBlockZ();
         // This should always return the "largest" radius, assuming it's always the last one defined. (highest level)
         final int maxRadius = claimTypes.values().iterator().next().getRadius();
         // ...
-        final BlockVector3 tMin = BlockVector3.at(x - maxRadius, loc.getWorld().getMinHeight(), z - maxRadius);
-        final BlockVector3 tMax = BlockVector3.at(x + maxRadius, loc.getWorld().getMaxHeight(), z + maxRadius);
+        final BlockVector3 tMin = BlockVector3.at(x - maxRadius, location.getWorld().getMinHeight(), z - maxRadius);
+        final BlockVector3 tMax = BlockVector3.at(x + maxRadius, location.getWorld().getMaxHeight(), z + maxRadius);
         // Checking if region that is about to be created collides with any other regions, including nearby regions that are not yet fully upgraded.
         final boolean isColliding = regionManager.getApplicableRegions(new ProtectedCuboidRegion("_", true, tMin.subtract(maxRadius, 0, maxRadius), tMax.add(maxRadius, 0, maxRadius))).getRegions().stream()
                 .anyMatch(region -> {
                     // Ignoring regions with lower priority.
                     if (region.getPriority() < PluginConfig.REGION_PRIORITY)
                         return false;
-                    // ...regular regions...
+                    // Regular regions.
                     if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
                         return isColliding(tMin, tMax, region.getMinimumPoint(), region.getMaximumPoint());
-                    // ...claims...
+                    // Claims.
                     final BlockVector3 center = region.getMinimumPoint().add(region.getMaximumPoint()).divide(2);
                     return isColliding(tMin, tMax, center.subtract(maxRadius, 0, maxRadius), center.add(maxRadius, 0, maxRadius));
                 });
-        // Returning null if region is colliding with a region nearby
+        // Returning null if region is colliding with a region nearby.
         if (isColliding == true)
-            return null;
-        // ...
-        final Claim.Type type = claimTypes.get(typeName);
+            return false;
         // ...
         final int radius = type.getRadius();
         // ...
-        final BlockVector3 min = BlockVector3.at(x - radius, loc.getWorld().getMinHeight(), z - radius);
-        final BlockVector3 max = BlockVector3.at(x + radius, loc.getWorld().getMaxHeight(), z + radius);
+        final BlockVector3 min = BlockVector3.at(x - radius, location.getWorld().getMinHeight(), z - radius);
+        final BlockVector3 max = BlockVector3.at(x + radius, location.getWorld().getMaxHeight(), z + radius);
         // Creating region id
-        final String id = Claim.createId(loc);
+        final String id = Claim.createId(location);
         // Creating region at new points
         final ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
-        this.setDefaultFlags(region, loc, owner);
+        this.setDefaultFlags(region, location, owner);
         region.setFlag(CustomFlag.CLAIM_TYPE, type.getId());
         // Setting region priority
         region.setPriority(PluginConfig.REGION_PRIORITY);
@@ -270,7 +272,8 @@ public final class ClaimManager {
         claimsCache.put(id, claim);
         // Making a connection between player and newly created claim
         claimOwner.addClaim(claim);
-        return claim;
+        // ...
+        return true;
     }
 
     // Existence check is already in RegionHandler
@@ -355,7 +358,7 @@ public final class ClaimManager {
         // Updating Claim with new WorldGuard region
         claim.setRegion(newRegion);
         claim.setType(newType);
-        // Updating block type ('& 0xF' thingy is doing some magic to get block's position in chunk)
+        // Updating block type '& 0xF' thingy is doing some magic to get block's position in chunk)
         final Material type = newType.getBlock().getType();
         center.getWorld().getChunkAtAsync(center).thenAccept(chunk -> chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type));
         return true;

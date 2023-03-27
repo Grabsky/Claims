@@ -127,6 +127,9 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("placement.place_failure_reached_claims_limit")
     public static Component PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT;
 
+    @JsonPath("placement.place_failure_invalid_claim_type")
+    public static Component PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE;
+
     @JsonPath("placement.place_failure_other_claims_must_be_upgraded")
     public static Component PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED;
 
