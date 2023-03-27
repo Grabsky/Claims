@@ -8,6 +8,7 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.views.ViewMain;
+import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
@@ -19,13 +20,17 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.inventory.FurnaceBurnEvent;
+import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
+import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
@@ -38,13 +43,14 @@ import java.util.UUID;
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanel;
 
+// TO-DO: Share common logic between listeners. (eg. PDC check)
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
-public class RegionListener implements Listener {
+public final class RegionListener implements Listener {
 
     private final Claims claims;
     private final ClaimManager claimManager;
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH) // TO-DO: Some sort of cooldown?
     public void onClaimPlace(final BlockPlaceEvent event) {
         // Not sure if that covers all possible cases including building in WorldGuard regions, but it's better than nothing.
         if (event.isCancelled() == true || event.canBuild() == false)
@@ -169,8 +175,8 @@ public class RegionListener implements Listener {
         }
     }
 
-    // Prevents block from being pushed by piston
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    // Prevents block from being pushed by piston.
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPistonExtend(final BlockPistonExtendEvent event) {
         for (final Block block : event.getBlocks()) {
             if (claimManager.containsClaim(Claim.createId(block.getLocation()))) {
@@ -179,8 +185,8 @@ public class RegionListener implements Listener {
         }
     }
 
-    // Prevents block from being pulled by piston
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    // Prevents block from being pulled by a piston.
+    @EventHandler(priority = EventPriority.HIGH)
     public void onPistonRetract(final BlockPistonRetractEvent event) {
         for (final Block block : event.getBlocks()) {
             if (claimManager.containsClaim(Claim.createId(block.getLocation())) == true) {
@@ -190,19 +196,19 @@ public class RegionListener implements Listener {
     }
 
     // Prevents block from being destroyed because of block explosion (TNT)
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGH)
     public void onBlockExplode(final BlockExplodeEvent event) {
         event.blockList().removeIf(block -> claimManager.containsClaim(Claim.createId(block.getLocation())) == true);
     }
 
-    // Prevents block from being destroyed because of entity explosion
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    // Prevents block from being destroyed because of entity explosion.
+    @EventHandler(priority = EventPriority.HIGH)
     public void onEntityExplode(final EntityExplodeEvent event) {
         event.blockList().removeIf(block -> claimManager.containsClaim(Claim.createId(block.getLocation())) == true);
     }
 
-    // Prevents item from being a crafting ingredient
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    // Prevents item from being a crafting ingredient.
+    @EventHandler(priority = EventPriority.HIGH)
     public void onCraftPrepare(final PrepareItemCraftEvent event) {
         if (event.getRecipe() == null) return;
         for (final ItemStack item : event.getInventory().getMatrix()) {
@@ -212,4 +218,14 @@ public class RegionListener implements Listener {
             }
         }
     }
+
+    // Prevents item from being used in smithing recipe.
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onSmithingPrepare(final PrepareSmithingEvent event) {
+        if (event.getInventory().getInputEquipment() != null && event.getInventory().getInputEquipment().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+            event.setResult(null);
+        if (event.getInventory().getInputMineral() != null && event.getInventory().getInputMineral().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
+            event.setResult(null);
+    }
+
 }
