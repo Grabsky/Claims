@@ -49,10 +49,10 @@ public final class RegionListener implements Listener {
     private final Claims claims;
     private final ClaimManager claimManager;
 
-    @EventHandler(priority = EventPriority.HIGH) // TO-DO: Some sort of cooldown?
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true) // TO-DO: Some sort of cooldown? Perhaps allow collision between owned regions?
     public void onClaimPlace(final BlockPlaceEvent event) {
         // Not sure if that covers all possible cases including building in WorldGuard regions, but it's better than nothing.
-        if (event.isCancelled() == true || event.canBuild() == false)
+        if (event.canBuild() == false)
             return;
         // Checking if placed block is a claim block.
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
@@ -108,10 +108,9 @@ public final class RegionListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onClaimBreak(final BlockBreakEvent event) {
-        // Preconditions
-        if (event.isCancelled() == true || event.getBlock().getWorld() != PluginConfig.DEFAULT_WORLD)
+        if (event.getBlock().getWorld() != PluginConfig.DEFAULT_WORLD)
             return;
         // Checking if destroyed block is a claim block
         final String id = Claim.createId(event.getBlock().getLocation());
@@ -157,7 +156,7 @@ public final class RegionListener implements Listener {
     }
 
     // TO-DO: Make sure none else has the claim panel open.
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onClaimInteract(final PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY || event.getClickedBlock() == null)
             return;
@@ -180,8 +179,8 @@ public final class RegionListener implements Listener {
         }
     }
 
-    // Prevents block from being pushed by piston.
-    @EventHandler(priority = EventPriority.HIGH)
+    // Prevents block from being pushed by a piston.
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonExtend(final BlockPistonExtendEvent event) {
         for (final Block block : event.getBlocks()) {
             if (claimManager.containsClaim(Claim.createId(block.getLocation()))) {
@@ -191,7 +190,7 @@ public final class RegionListener implements Listener {
     }
 
     // Prevents block from being pulled by a piston.
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonRetract(final BlockPistonRetractEvent event) {
         for (final Block block : event.getBlocks()) {
             if (claimManager.containsClaim(Claim.createId(block.getLocation())) == true) {
@@ -201,19 +200,19 @@ public final class RegionListener implements Listener {
     }
 
     // Prevents block from being destroyed because of block explosion (TNT)
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockExplode(final BlockExplodeEvent event) {
         event.blockList().removeIf(block -> claimManager.containsClaim(Claim.createId(block.getLocation())) == true);
     }
 
-    // Prevents block from being destroyed because of entity explosion.
-    @EventHandler(priority = EventPriority.HIGH)
+    // Prevents block from being destroyed because of entity explosion
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(final EntityExplodeEvent event) {
         event.blockList().removeIf(block -> claimManager.containsClaim(Claim.createId(block.getLocation())) == true);
     }
 
-    // Prevents item from being a crafting ingredient.
-    @EventHandler(priority = EventPriority.HIGH)
+    // Prevents item from being a crafting ingredient
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onCraftPrepare(final PrepareItemCraftEvent event) {
         if (event.getRecipe() == null) return;
         for (final ItemStack item : event.getInventory().getMatrix()) {
@@ -225,14 +224,14 @@ public final class RegionListener implements Listener {
     }
 
     // Prevents item from being used as a furnace fuel.
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onFurnaceBurn(final FurnaceBurnEvent event) {
         if (event.getFuel().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
             event.setCancelled(true);
     }
 
     // Prevents item from being renamed/combined in anvil.
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAnvilPrepare(final PrepareAnvilEvent event) {
         if (event.getInventory().getFirstItem() != null && event.getInventory().getFirstItem().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
             event.setResult(null);
@@ -241,14 +240,14 @@ public final class RegionListener implements Listener {
     }
 
     // Prevents item from being used in stonecutter recipe.
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onStonecutterRecipeSelect(final PlayerStonecutterRecipeSelectEvent event) {
         if (event.getStonecutterInventory().getInputItem() != null && event.getStonecutterInventory().getInputItem().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
             event.getStonecutterInventory().setResult(null);
     }
 
     // Prevents item from being used in smithing recipe.
-    @EventHandler(priority = EventPriority.HIGH)
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onSmithingPrepare(final PrepareSmithingEvent event) {
         if (event.getInventory().getInputEquipment() != null && event.getInventory().getInputEquipment().getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true)
             event.setResult(null);
