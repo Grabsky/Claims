@@ -147,6 +147,28 @@ public class RegionListener implements Listener {
         }
     }
 
+    // TO-DO: Make sure none else has the panel open.
+    @EventHandler(priority = EventPriority.HIGH)
+    public void onClaimInteract(final PlayerInteractEvent event) {
+        if (event.getHand() != EquipmentSlot.HAND || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY || event.getClickedBlock() == null)
+            return;
+        // ...
+        final String id = Claim.createId(event.getClickedBlock().getLocation());
+        // ...
+        if (claimManager.containsClaim(id) == true) {
+            final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(event.getPlayer());
+            final Claim claim = claimManager.getClaim(id);
+            // ...
+            if (claim != null && (event.getPlayer().hasPermission("claims.command.edit") == true|| claim.isOwner(claimPlayer) == true) == true) {
+                // ...
+                new ClaimPanel(claimManager, claim).open(event.getPlayer(), (panel) -> {
+                    claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(new ViewMain(), false));
+                    return true;
+                });
+            }
+        }
+    }
+
     // Prevents block from being pushed by piston
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonExtend(final BlockPistonExtendEvent event) {
