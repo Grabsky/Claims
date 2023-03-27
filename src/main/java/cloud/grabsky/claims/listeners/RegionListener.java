@@ -61,7 +61,7 @@ public class RegionListener implements Listener {
                     final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(uuid);
                     final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
                     // Making sure player does not exceed claim limit.
-                    if (player.hasPermission("claims.bypass.claim_limit") == true || claimPlayer.getClaims().size() < 5) {
+                    if (player.hasPermission("claims.bypass.claim_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIMS_LIMIT) {
                         // Making sure that placed region is further enough from spawn
                         if (claimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
                             final String type = data.get(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING); // This shouldn't be null

@@ -24,6 +24,9 @@ public final class PluginConfig implements JsonConfiguration {
 
     // Claim Settings
 
+    @JsonPath("claim_settings.claims_limit")
+    public static int CLAIMS_LIMIT;
+
     @JsonPath("claim_settings.teleport_delay")
     public static int TELEPORT_DELAY;
 
