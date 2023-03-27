@@ -7,6 +7,9 @@ import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
+import cloud.grabsky.claims.panel.views.ViewMain;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,51 +25,51 @@ import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
-import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
+import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanel;
 
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public class RegionListener implements Listener {
-    private final ClaimManager manager;
 
-    public RegionListener(final Claims instance) {
-        this.manager = instance.getClaimManager();
-    }
+    private final Claims claims;
+    private final ClaimManager claimManager;
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onClaimPlace(final BlockPlaceEvent event) {
-        // Not sure if that check covers all possible scenarios including building in WorldGuard regions
+        // Not sure if that covers all possible cases including building in WorldGuard regions, but it's better than nothing.
         if (event.isCancelled() == true || event.canBuild() == false)
             return;
-        // Checking if placed block is a claim block
+        // Checking if placed block is a claim block.
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
         if (data.has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true) {
             final Player player = event.getPlayer();
-            // Checking if player has permission to create a claim
+            // Checking if player has permission to create a claim.
             if (player.hasPermission("claims.plugin.place") == true) {
                 // Checking if player can create claim in that world
                 if (event.getBlock().getWorld() == PluginConfig.DEFAULT_WORLD) {
                     final UUID uuid = player.getUniqueId();
-                    final ClaimPlayer claimPlayer = manager.getClaimPlayer(uuid);
-                    final Location loc = event.getBlock().getLocation();
-                    // Making sure player DOES NOT have a claim
-                    if (player.hasPermission("claims.bypass.claim_limit") == true || claimPlayer.getClaims().size() <= 5) {
+                    final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(uuid);
+                    final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
+                    // Making sure player does not exceed claim limit.
+                    if (player.hasPermission("claims.bypass.claim_limit") == true || claimPlayer.getClaims().size() < 5) {
                         // Making sure that placed region is further enough from spawn
-                        if (manager.isInSquare(loc, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
+                        if (claimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
                             final String type = data.get(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING); // This shouldn't be null
-                            // Checking if player has all existing claims fully upgraded
-                            if (player.hasPermission("claims.bypass.claim_limit") == true || manager.getClaimTypes().get(type).getNextType() == null || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
-                                // Finally, trying to create a claim
-                                final Claim claim = manager.createClaim(event.getBlock().getLocation().clone().add(0.5, 0.5, 0.5), player, type);
+                            // Checking if player has all existing claims fully upgraded.
+                            if (player.hasPermission("claims.bypass.claim_limit") == true || claimManager.getClaimTypes().get(type).getNextType() == null || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
+                                // Finally, trying to create a claim. If it returns null, it means it's colliding with other region.
+                                final Claim claim = claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type);
+                                // ...
                                 if (claim != null) {
                                     sendMessage(player, PluginLocale.PLACEMENT_PLACE_SUCCESS);
                                     return;
@@ -104,10 +107,10 @@ public class RegionListener implements Listener {
         // Checking if destroyed block is a claim block
         final String id = Claim.createId(event.getBlock().getLocation());
         // ...
-        if (manager.containsClaim(id) == true) {
-            final Claim claim = manager.getClaim(id);
+        if (claimManager.containsClaim(id) == true) {
+            final Claim claim = claimManager.getClaim(id);
             final Player player = event.getPlayer();
-            final ClaimPlayer claimPlayer = manager.getClaimPlayer(player);
+            final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(player);
             // Checking if player has permission to destroy a claim
             if (player.hasPermission("claims.plugin.destroy") == true) {
                 // Checking if player CAN destroy the claim
@@ -117,21 +120,16 @@ public class RegionListener implements Listener {
                         // Removing drops
                         event.setExpToDrop(0);
                         event.setDropItems(false);
-                        // Closing owner's claim management inventory (if open)
-                        claim.getOwners().forEach(owner -> {
-                           final @Nullable Player pOwner = owner.toPlayer();
-                           // ...
-                           if (pOwner != null && pOwner.isOnline() == true)
-                               if (pOwner.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel)
-                                   pOwner.closeInventory(InventoryCloseEvent.Reason.PLUGIN);
-
+                        // Closing owners' claim management inventory (if open)
+                        claim.getOwners().stream().map(ClaimPlayer::toPlayer).filter(Objects::nonNull).filter(Player::isOnline).forEach(owner -> {
+                            if (isClaimPanel(owner.getOpenInventory()) == true)
+                                owner.closeInventory();
                         });
-                        // Deleting region
-                        manager.deleteClaim(claim);
-                        // Dropping the item
-                        if (player.getGameMode() == GameMode.SURVIVAL) {
+                        // Deleting the Claim (and region)
+                        claimManager.deleteClaim(claim);
+                        // Dropping claim block item if player is not creative.
+                        if (player.getGameMode() == GameMode.SURVIVAL)
                             event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), claim.getType().getBlock());
-                        }
                         // ...
                         sendMessage(player, PluginLocale.PLACEMENT_DESTROY_SUCCESS);
                         return;
@@ -149,23 +147,11 @@ public class RegionListener implements Listener {
         }
     }
 
-    @EventHandler(priority = EventPriority.HIGH)
-    public void onClaimInteract(final PlayerInteractEvent event) {
-        if (event.getHand() != EquipmentSlot.HAND || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY || event.getClickedBlock() == null)
-            return;
-        // ...
-        final String id = Claim.createId(event.getClickedBlock().getLocation());
-        // ...
-        if (manager.containsClaim(id) == true) {
-            System.out.println(id);
-        }
-    }
-
     // Prevents block from being pushed by piston
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonExtend(final BlockPistonExtendEvent event) {
         for (final Block block : event.getBlocks()) {
-            if (manager.containsClaim(Claim.createId(block.getLocation()))) {
+            if (claimManager.containsClaim(Claim.createId(block.getLocation()))) {
                 event.setCancelled(true);
             }
         }
@@ -175,7 +161,7 @@ public class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPistonRetract(final BlockPistonRetractEvent event) {
         for (final Block block : event.getBlocks()) {
-            if (manager.containsClaim(Claim.createId(block.getLocation())) == true) {
+            if (claimManager.containsClaim(Claim.createId(block.getLocation())) == true) {
                 event.setCancelled(true);
             }
         }
@@ -184,13 +170,13 @@ public class RegionListener implements Listener {
     // Prevents block from being destroyed because of block explosion (TNT)
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBlockExplode(final BlockExplodeEvent event) {
-        event.blockList().removeIf(block -> manager.containsClaim(Claim.createId(block.getLocation())) == true);
+        event.blockList().removeIf(block -> claimManager.containsClaim(Claim.createId(block.getLocation())) == true);
     }
 
     // Prevents block from being destroyed because of entity explosion
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onEntityExplode(final EntityExplodeEvent event) {
-        event.blockList().removeIf(block -> manager.containsClaim(Claim.createId(block.getLocation())) == true);
+        event.blockList().removeIf(block -> claimManager.containsClaim(Claim.createId(block.getLocation())) == true);
     }
 
     // Prevents item from being a crafting ingredient

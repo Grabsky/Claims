@@ -29,7 +29,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import okio.BufferedSource;
-import okio.Okio;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -43,15 +42,18 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.sk89q.worldedit.bukkit.BukkitAdapter.adapt;
+import static java.lang.Math.abs;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
-import static java.util.Comparator.comparingDouble;
+import static okio.Okio.buffer;
+import static okio.Okio.source;
 
 public final class ClaimManager {
 
@@ -62,7 +64,7 @@ public final class ClaimManager {
     private final Map<UUID, ClaimPlayer> claimPlayerCache = new HashMap<>();
 
     @Getter(AccessLevel.PUBLIC)
-    private final Map<String, Claim.Type> claimTypes = new HashMap<>();
+    private final Map<String, Claim.Type> claimTypes = new LinkedHashMap<>();
 
     public ClaimManager(final Claims claims, final RegionManager regionManager) {
         this.claims = claims;
@@ -117,8 +119,7 @@ public final class ClaimManager {
         int totalClaimTypes = 0;
         int loadedClaimTypes = 0;
         for (final File file : sortedFiles) {
-            try {
-                final BufferedSource buffer = Okio.buffer(Okio.source(file));
+            try (final BufferedSource buffer = buffer(source(file))) {
                 // ...
                 totalClaimTypes++;
                 // Reading
@@ -137,11 +138,12 @@ public final class ClaimManager {
                 // ...
                 loadedClaimTypes++;
             } catch (final IOException e) {
+                claims.getLogger().warning("Claim type cannot be loaded. (FILE = " + file.getPath() + ")");
                 e.printStackTrace();
             }
         }
         // ...
-        claims.getLogger().info("Loaded " + loadedClaimTypes + " out of " + totalClaimTypes + " claim types total.");
+        claims.getLogger().info("Successfully loaded " + loadedClaimTypes + " out of " + totalClaimTypes + " claim types total.");
     }
 
     private void cacheClaims() throws IllegalStateException {
@@ -150,7 +152,7 @@ public final class ClaimManager {
         for (final var entry : regionManager.getRegions().entrySet()) {
             final String id = entry.getKey();
             final ProtectedRegion region = entry.getValue();
-            // Skipping regions not starting with configured prefix, or regions which owner count =/= 1.
+            // Skipping regions not starting with configured prefix.
             if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
                 return;
             // ...
@@ -170,59 +172,75 @@ public final class ClaimManager {
                 // ...
                 claimOwner.addClaim(claim);
             });
-            // Adding claim to the cache
+            // Adding claim to the cache.
             claimsCache.put(id, claim);
             // ...
             loadedClaims++;
         }
         // ...
-        claims.getLogger().info("Loaded " + loadedClaims + " out of " + totalClaims + " claims total.");
+        claims.getLogger().info("Successfully loaded " + loadedClaims + " out of " + totalClaims + " claims total.");
         // ...
         if (loadedClaims < totalClaims) {
-            claims.getLogger().warning("Unloaded claims ARE STILL PROTECTED but are excluded from plugin cache and are inaccessible by players. You should take a closer look at all of them individually to see what's wrong.");
+            claims.getLogger().warning("Not loaded claims ARE STILL PROTECTED but are excluded from plugin cache and are inaccessible by players. You should take a closer look at all of them individually to see what's wrong.");
         }
     }
 
-    // Returns true if Claim exists and is currently cached.
+    /**
+     * Returns {@code true} if {@link Claim} identified with provided id exists and is currently cached.
+     */
     public boolean containsClaim(final @NotNull String id) {
         // Removing "stale" regions if they don't exist in world anymore.
-        if (regionManager.hasRegion(id) == false) {
+        if (regionManager.hasRegion(id) == false)
             claimsCache.remove(id);
-        }
         // ...
         return claimsCache.containsKey(id);
     }
 
-    // Returns true if Claim exists and is currently cached.
+    /**
+     * Returns {@code true} if {@link Claim} exists and is currently cached.
+     */
     public boolean containsClaim(final @NotNull Claim claim) {
         return containsClaim(claim.getId());
     }
 
-
-    // Returns center of claim closest to given location
-    public @Nullable Location getClosestTo(final @NotNull Location location) {
-        return claimsCache.values().stream()
-                .map(Claim::getCenter)
-                .min(comparingDouble(location::distance))
-                .orElse(null);
+    public boolean isWithinSquare(final @NotNull Location location, final @Nullable Location squareCenter, final int squareRadius) {
+        return squareCenter != null && (abs(location.getBlockX() - squareCenter.getBlockX()) > squareRadius || abs(location.getBlockZ() - squareCenter.getBlockZ()) > squareRadius) == false;
     }
 
-    public boolean isInSquare(final @NotNull Location location, final @Nullable Location squareCenter, final int squareRadius) {
-        if (squareCenter != null) {
-            return !(Math.abs(location.getBlockX() - squareCenter.getBlockX()) > squareRadius || Math.abs(location.getBlockZ() - squareCenter.getBlockZ()) > squareRadius);
-        }
-        return false;
+    private static boolean isColliding(final BlockVector3 min, final BlockVector3 max, final BlockVector3 otherMin, final BlockVector3 otherMax) {
+        return min.getBlockX() <= otherMax.getBlockX()
+                && min.getBlockY() <= otherMax.getBlockY()
+                && min.getBlockZ() <= otherMax.getBlockZ()
+                && max.getBlockX() >= otherMin.getBlockX()
+                && max.getBlockY() >= otherMin.getBlockY()
+                && max.getBlockZ() >= otherMin.getBlockZ();
     }
 
     public Claim createClaim(final Location loc, final Player owner, final String typeName) {
-        // Returning if location is too close to spawn or other claim
-        if (this.isInSquare(loc, this.getClosestTo(loc), 80) == true || this.isInSquare(loc, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == true)
-            return null;
-        // Points
-        final UUID ownerUniqueId = owner.getUniqueId();
         // ...
         final int x = loc.getBlockX();
         final int z = loc.getBlockZ();
+        // This should always return the "largest" radius, assuming it's always the last one defined. (highest level)
+        final int maxRadius = claimTypes.values().iterator().next().getRadius();
+        // ...
+        final BlockVector3 tMin = BlockVector3.at(x - maxRadius, loc.getWorld().getMinHeight(), z - maxRadius);
+        final BlockVector3 tMax = BlockVector3.at(x + maxRadius, loc.getWorld().getMaxHeight(), z + maxRadius);
+        // Checking if region that is about to be created collides with any other regions, including nearby regions that are not yet fully upgraded.
+        final boolean isColliding = regionManager.getApplicableRegions(new ProtectedCuboidRegion("_", true, tMin.subtract(maxRadius, 0, maxRadius), tMax.add(maxRadius, 0, maxRadius))).getRegions().stream()
+                .anyMatch(region -> {
+                    // Ignoring regions with lower priority.
+                    if (region.getPriority() < PluginConfig.REGION_PRIORITY)
+                        return false;
+                    // ...regular regions...
+                    if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
+                        return isColliding(tMin, tMax, region.getMinimumPoint(), region.getMaximumPoint());
+                    // ...claims...
+                    final BlockVector3 center = region.getMinimumPoint().add(region.getMaximumPoint()).divide(2);
+                    return isColliding(tMin, tMax, center.subtract(maxRadius, 0, maxRadius), center.add(maxRadius, 0, maxRadius));
+                });
+        // Returning null if region is colliding with a region nearby
+        if (isColliding == true)
+            return null;
         // ...
         final Claim.Type type = claimTypes.get(typeName);
         // ...
@@ -239,6 +257,8 @@ public final class ClaimManager {
         region.setFlag(CustomFlag.CLAIM_TYPE, type.getId());
         // Setting region priority
         region.setPriority(PluginConfig.REGION_PRIORITY);
+        // ...
+        final UUID ownerUniqueId = owner.getUniqueId();
         // Adding owner
         region.getOwners().addPlayer(ownerUniqueId);
         // Registering region
@@ -256,13 +276,12 @@ public final class ClaimManager {
     // Existence check is already in RegionHandler
     public void deleteClaim(final Claim claim) {
         final String id = claim.getRegion().getId();
-        // Setting owner's claim to null (because it's going to be removed in a sec)
+        // Removing reference to the claim from owners
         claim.getOwners().forEach(owner -> owner.removeClaim(claim));
         // Removing claim from cache
         claimsCache.remove(id);
         // Removing claim from the world
-        final ProtectedRegion region = claim.getRegion();
-        regionManager.removeRegion(region.getId());
+        regionManager.removeRegion(id);
     }
 
     public @Nullable Claim getClaimAt(final @NotNull Location location) {

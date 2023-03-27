@@ -78,7 +78,7 @@ public final class Claims extends BedrockPlugin {
         this.claimManager = new ClaimManager(this, regionManager);
         // Registering events
         ClaimPanel.registerListener(this);
-        this.getServer().getPluginManager().registerEvents(new RegionListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new RegionListener(this, claimManager), this);
         // Initializing RootCommandManager
         final RootCommandManager commands = new RootCommandManager(this);
         // Registering Claim argument parser and completions provider
