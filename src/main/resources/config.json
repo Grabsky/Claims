@@ -1,7 +1,7 @@
 {
     // Determines if file logging is enabled or not
     "logs": true,
-    // World used to fetch all regions from. Default world is always minecraft:overworld
+    // World used to fetch all regions from. Default world defined in server.properties is always minecraft:overworld
     "claims_world": "minecraft:overworld",
     // Prefix used to distinguish Claims from regular WorldGuard region
     "region_prefix": "claims_",
@@ -14,6 +14,8 @@
         "claims_limit": 5,
         // Delay before player is teleported to a claim (in seconds)
         "teleport_delay": 5,
+        // Claim block place attempt cooldown. Cooldown is applied to all blocks of the same type, no matter whether it is a claim block or not, so try to keep it low. (in seconds)
+        "place_attempt_cooldown": 5,
         // Limit of players that can be added to a single claim
         "members_limit": 10,
         // Minimum distance from spawn required to create a protected claim (in blocks)

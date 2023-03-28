@@ -11,6 +11,7 @@ import cloud.grabsky.claims.panel.views.ViewMain;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -37,7 +38,6 @@ import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Objects;
 import java.util.UUID;
 
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
@@ -59,6 +59,8 @@ public final class RegionListener implements Listener {
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
         if (data.has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true) {
             final Player player = event.getPlayer();
+            // Setting 5 second cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
+            event.getPlayer().setCooldown(event.getItemInHand().getType(), PluginConfig.PLACE_ATTEMPT_COOLDOWN * 20);
             // Checking if player has permission to create a claim.
             if (player.hasPermission("claims.plugin.place") == true) {
                 // Checking if player can create claim in that world
