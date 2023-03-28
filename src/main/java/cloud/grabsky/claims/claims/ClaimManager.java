@@ -162,7 +162,7 @@ public final class ClaimManager {
             final ProtectedRegion region = entry.getValue();
             // Skipping regions not starting with configured prefix.
             if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
-                return;
+                continue;
             // ...
             totalClaims++;
             // ...
