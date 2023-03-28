@@ -128,6 +128,11 @@ public final class Claim {
         return false;
     }
 
+    @Override
+    public boolean equals(final Object other) {
+        return other instanceof Claim otherClaim && id.equals(otherClaim.id) == true;
+    }
+
     /* Utility Methods */
 
     // 'Generates' region ID for specified location
