@@ -33,15 +33,17 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
 import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
-import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanel;
+import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 
 // TO-DO: Share common logic between listeners.
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
@@ -113,35 +115,35 @@ public final class RegionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onClaimBreak(final BlockBreakEvent event) {
+        // Skipping event for disabled worlds.
         if (event.getBlock().getWorld() != PluginConfig.DEFAULT_WORLD)
             return;
-        // Checking if destroyed block is a claim block
+        // Generating claim ID at block break location.
         final String id = Claim.createId(event.getBlock().getLocation());
-        // ...
+        // Checking if claim with that ID exists.
         if (claimManager.containsClaim(id) == true) {
-            final Claim claim = claimManager.getClaim(id);
+            final @Nullable Claim claim = claimManager.getClaim(id); // Marked as @Nullable but should not be null.
             final Player player = event.getPlayer();
             final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(player);
-            // Checking if player has permission to destroy a claim
+            // Checking if player has permission to destroy a claim.
             if (player.hasPermission("claims.plugin.destroy") == true) {
-                // Checking if player CAN destroy the claim
+                // Checking if player can destroy this specific claim.
                 if (player.hasPermission("claims.plugin.can_modify_unowned_claim") == true || claimPlayer.isOwnerOf(claim) == true) {
-                    // Checking if player is sneaking
+                    // Checking if player is sneaking.
                     if (event.getPlayer().isSneaking() == true) {
-                        // Removing drops
+                        // Removing drops. Item is dropped independently.
                         event.setExpToDrop(0);
                         event.setDropItems(false);
-                        // Closing owners' claim management inventory (if open)
-                        claim.getOwners().stream().map(ClaimPlayer::toPlayer).filter(Objects::nonNull).filter(Player::isOnline).forEach(owner -> {
-                            if (isClaimPanel(owner.getOpenInventory()) == true)
-                                owner.closeInventory();
-                        });
-                        // Deleting the Claim (and region)
+                        // Closing claim management interface in case anyone has it open.
+                        Bukkit.getOnlinePlayers().stream().map(Player::getOpenInventory).filter(view -> {
+                            return (view.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim().equals(claim) == true);
+                        }).forEach(InventoryView::close);
+                        // Deleting the claim and associated region.
                         claimManager.deleteClaim(claim);
-                        // Dropping claim block item if player is not creative.
+                        // Dropping claim block item if player is not in creative mode.
                         if (player.getGameMode() == GameMode.SURVIVAL)
                             event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), claim.getType().getBlock());
-                        // ...
+                        // Showing success message.
                         sendMessage(player, PluginLocale.PLACEMENT_DESTROY_SUCCESS);
                         return;
                     }
@@ -173,11 +175,14 @@ public final class RegionListener implements Listener {
             final Claim claim = claimManager.getClaim(id);
             // ...
             if (claim != null && (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claim") == true|| claim.isOwner(claimPlayer) == true) == true) {
-                // ...
-                new ClaimPanel(claimManager, claim).open(event.getPlayer(), (panel) -> {
-                    claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(new ViewMain(), false));
-                    return true;
-                });
+                if (isClaimPanelOpen(claim) == false) {
+                    new ClaimPanel(claimManager, claim).open(event.getPlayer(), (panel) -> {
+                        claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(new ViewMain(), false));
+                        return true;
+                    });
+                    return;
+                }
+                sendMessage(event.getPlayer(), PluginLocale.CLAIMS_EDIT_FAILURE);
             }
         }
     }
