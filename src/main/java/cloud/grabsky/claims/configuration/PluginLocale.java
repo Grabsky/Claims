@@ -1,9 +1,7 @@
 package cloud.grabsky.claims.configuration;
 
-import cloud.grabsky.configuration.JsonAdapter;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonPath;
-import cloud.grabsky.configuration.paper.adapter.StringComponentAdapter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
@@ -36,7 +34,6 @@ public final class PluginLocale implements JsonConfiguration {
     // Claims > Commands > Edit
 
     @JsonPath("commands.claims.claims_edit_failure")
-    @JsonAdapter(fromJson = StringComponentAdapter.class)
     public static String CLAIMS_EDIT_FAILURE;
 
     // Claims > Commands > Claims > Get

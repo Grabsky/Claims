@@ -11,15 +11,14 @@
     // ...
     "commands": {
         "claims": {
-            "claims_edit_failure": "<dark_gray>› <red>Panel jest teraz używany przez innego gracza...",
-            "claims_edit_failure_suggest_force_flag": "<dark_gray>› <hover:show_text:'<gray>/<command> --force'><click:run_command:'<command> --force'><red>Użyj flagi <yellow>--force<red>, aby kontynuować.", // </click></hover>
+            "claims_edit_failure": "<dark_gray>› <red>Panel jest teraz używany przez innego gracza.",
             // ...
             "claims_get_success": "<dark_gray>› <gray>Bloki terenu zostały dodane do twojego ekwipunku.",
             "claims_get_failure": "<dark_gray>› <red>Nie zdefiniowano żadnego typu terenu.",
             // ...
             "claims_find_owner_of": "<dark_gray>› <gray>Gracz <yellow><player><gray> jest właścicielem <yellow><count><gray> terenów:",
             "claims_find_member_of": "<dark_gray>› <gray>Gracz <yellow><player><gray> jest członkiem <yellow><count><gray> terenów:",
-            "claims_find_entry": "<dark_gray>›    <yellow><hover:show_text'<gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <id>'><id></click></hover>",
+            "claims_find_entry": "<dark_gray>›    <yellow><hover:show_text:'<gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <id>'><id></click></hover>",
             // ...
             "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce."
         }
@@ -60,4 +59,3 @@
         "default_claim_leave": "<gray>Opuściłeś teren gracza <yellow><player>"
     }
 }
-

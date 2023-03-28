@@ -14,6 +14,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
+import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -74,7 +75,7 @@ public final class ClaimPanel extends Panel {
         // ...not sure if needed but just in case
         if (this.getInventory().getViewers().size() > 1)
             throw new IllegalStateException("Only one player can view the same instance of claim panel at one time.");
-        // Cancelling if PreOpenAction returns 'false'
+        // Cancelling if PreOpenAction returns null
         if (onPreOpen != null && onPreOpen.test(this) == false)
             return this;
         // Opening inventory to the HumanEntity
@@ -99,6 +100,12 @@ public final class ClaimPanel extends Panel {
 
     public static boolean isClaimPanel(final InventoryView view) {
         return view.getTopInventory().getHolder() instanceof ClaimPanel;
+    }
+
+    public static boolean isClaimPanelOpen(final @NotNull Claim claim) {
+        return Bukkit.getOnlinePlayers().stream().map(Player::getOpenInventory).anyMatch(view -> {
+            return view.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim().equals(claim) == true;
+        });
     }
 
     public static void registerListener(final Plugin plugin) {
