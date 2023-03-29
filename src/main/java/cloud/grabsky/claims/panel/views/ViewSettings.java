@@ -77,7 +77,7 @@ public final class ViewSettings implements Consumer<Panel> {
                     if (PluginConfig.UI_UPGRADE_SOUND != null)
                         viewer.playSound(PluginConfig.UI_UPGRADE_SOUND);
                     // ...
-                    sendMessage(viewer, PluginLocale.UI_UPGRADE_SUCCESS, Placeholder.unparsed("size", valueOf(type.getRadius() * 2 + 1)));
+                    sendMessage(viewer, PluginLocale.UI_UPGRADE_SUCCESS, Placeholder.unparsed("size", valueOf(claim.getType().getRadius() * 2 + 1)));
                     // ...
                     this.generate(cPanel);
                     return;
