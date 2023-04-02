@@ -22,8 +22,8 @@ import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static java.util.Arrays.asList;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
-@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
-public abstract class ClaimFlag<T> {
+@RequiredArgsConstructor(access = AccessLevel.PROTECTED)
+public abstract sealed class ClaimFlag<T> permits ClaimFlag.State, ClaimFlag.Time, ClaimFlag.Weather {
 
     @Getter(AccessLevel.PUBLIC)
     private final @Nullable T defaultValue; // May be null because it is technically a valid region flag value.
@@ -124,9 +124,9 @@ public abstract class ClaimFlag<T> {
 
     }
 
-    // May accept null because it's technically a valid region flag value.
     public static final class Weather extends ClaimFlag<FixedWeather> {
 
+        // May accept null because it's technically a valid region flag value.
         public Weather(final @Nullable FixedWeather defaultValue, final @NotNull ItemStack display, final @NotNull List<Component> displayOptions) {
             super(
                     defaultValue,
