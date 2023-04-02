@@ -4,7 +4,7 @@ plugins {
     id("io.papermc.paperweight.userdev") version "1.5.2"
 }
 
-final buildsDirectory = (System.getenv("JVM_WORKSPACE") ?: ".") + File.separator + "builds"
+final buildsDirectory = (System.getenv("JVM_BUILDS") ?: "." + File.separator + "builds")
 
 group = "cloud.grabsky"
 version = "0.9.0-pre"
