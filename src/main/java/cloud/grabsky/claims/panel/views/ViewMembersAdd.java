@@ -1,6 +1,7 @@
 package cloud.grabsky.claims.panel.views;
 
 import cloud.grabsky.azure.api.user.User;
+import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
@@ -22,7 +23,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Consumer;
 
-import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static net.kyori.adventure.text.Component.text;
 
 public final class ViewMembersAdd implements Consumer<Panel> {
@@ -75,7 +75,9 @@ public final class ViewMembersAdd implements Consumer<Panel> {
                     cPanel.applyTemplate(new ViewMembers(), true);
                 } else {
                     viewer.closeInventory();
-                    sendMessage(viewer, PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT.replace("{limit}", String.valueOf(PluginConfig.MEMBERS_LIMIT)));
+                    Message.of(PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT)
+                            .placeholder("limit", PluginConfig.MEMBERS_LIMIT)
+                            .send(viewer);
                 }
             });
         }

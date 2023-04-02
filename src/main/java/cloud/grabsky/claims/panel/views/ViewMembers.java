@@ -1,6 +1,7 @@
 package cloud.grabsky.claims.panel.views;
 
 import cloud.grabsky.azure.api.user.User;
+import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.ClaimPlayer;
@@ -16,7 +17,6 @@ import org.bukkit.inventory.ItemStack;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static net.kyori.adventure.text.Component.text;
 
 public final class ViewMembers implements Consumer<Panel> {
@@ -61,7 +61,7 @@ public final class ViewMembers implements Consumer<Panel> {
                     return;
                 }
                 cPanel.close();
-                sendMessage(viewer, PluginLocale.UI_MEMBERS_REMOVE_FAILURE_NOT_A_MEMBER);
+                Message.of(PluginLocale.UI_MEMBERS_REMOVE_FAILURE_NOT_A_MEMBER).send(viewer);
             });
         }
         // Displaying [ICON_BROWSE_PLAYERS] button.

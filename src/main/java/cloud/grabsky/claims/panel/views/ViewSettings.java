@@ -1,5 +1,6 @@
 package cloud.grabsky.claims.panel.views;
 
+import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.configuration.PluginConfig;
@@ -9,7 +10,6 @@ import cloud.grabsky.claims.panel.ClaimPanel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus.Experimental;
@@ -19,11 +19,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.bedrock.helpers.Inventories.hasSimilarItems;
 import static cloud.grabsky.bedrock.helpers.Inventories.removeSimilarItems;
-import static java.lang.String.valueOf;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
@@ -52,10 +50,10 @@ public final class ViewSettings implements Consumer<Panel> {
         cPanel.setItem(13, PluginItems.UI_ICON_SET_TELEPORT, (event) -> {
             viewer.closeInventory();
             // ...
-            sendMessage(viewer, (claim.setHome(viewer.getLocation()))
+            Message.of(claim.setHome(viewer.getLocation()) == true
                     ? PluginLocale.UI_SET_HOME_SUCCESS
                     : PluginLocale.UI_SET_HOME_FAILURE
-            );
+            ).send(viewer);
         });
         // Getting object of CURRENT upgrade level
         final Claim.Type type = claim.getType();
@@ -77,12 +75,14 @@ public final class ViewSettings implements Consumer<Panel> {
                     if (PluginConfig.UI_UPGRADE_SOUND != null)
                         viewer.playSound(PluginConfig.UI_UPGRADE_SOUND);
                     // ...
-                    sendMessage(viewer, PluginLocale.UI_UPGRADE_SUCCESS, Placeholder.unparsed("size", valueOf(claim.getType().getRadius() * 2 + 1)));
+                    Message.of(PluginLocale.UI_UPGRADE_SUCCESS)
+                            .placeholder("size", claim.getType().getRadius() * 2 + 1)
+                            .send(viewer);
                     // ...
                     this.generate(cPanel);
                     return;
                 }
-                sendMessage(viewer, PluginLocale.UPGRADE_ICON_UPGRADE_MISSING_ITEMS);
+                Message.of(PluginLocale.UI_UPGRADE_FAILURE_MISSING_ITEMS).send(viewer);
             }
         });
         // Return button

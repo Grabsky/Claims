@@ -1,5 +1,6 @@
 package cloud.grabsky.claims.listeners;
 
+import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
@@ -42,7 +43,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 
-import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 
 // TO-DO: Share common logic between listeners.
@@ -81,35 +81,35 @@ public final class RegionListener implements Listener {
                                 if (player.hasPermission("claims.bypass.claim_limit") == true || type.isUpgradeable() == false || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
                                     // Finally, trying to create a claim.
                                     if (claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type) == true) {
-                                        sendMessage(player, PluginLocale.PLACEMENT_PLACE_SUCCESS);
+                                        Message.of(PluginLocale.PLACEMENT_PLACE_SUCCESS).send(player);
                                         return;
                                     }
                                     event.setCancelled(true);
-                                    sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_OVERLAPS);
+                                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OVERLAPS).send(player);
                                     return;
                                 }
                                 event.setCancelled(true);
-                                sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED);
+                                Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED).send(player);
                                 return;
                             }
                             event.setCancelled(true);
-                            sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE);
+                            Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE).send(player);
                             return;
                         }
                         event.setCancelled(true);
-                        sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN);
+                        Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN).send(player);
                         return;
                     }
                     event.setCancelled(true);
-                    sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT);
+                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT).send(player);
                     return;
                 }
                 event.setCancelled(true);
-                sendMessage(player, PluginLocale.PLACEMENT_PLACE_FAILURE_BLACKLISTED_WORLD);
+                Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_BLACKLISTED_WORLD).send(player);
                 return;
             }
             event.setCancelled(true);
-            sendMessage(player, PluginLocale.MISSING_PERMISSIONS);
+            Message.of(PluginLocale.MISSING_PERMISSIONS).send(player);
         }
     }
 
@@ -144,19 +144,19 @@ public final class RegionListener implements Listener {
                         if (player.getGameMode() == GameMode.SURVIVAL)
                             event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), claim.getType().getBlock());
                         // Showing success message.
-                        sendMessage(player, PluginLocale.PLACEMENT_DESTROY_SUCCESS);
+                        Message.of(PluginLocale.PLACEMENT_DESTROY_SUCCESS).send(player);
                         return;
                     }
                     event.setCancelled(true);
-                    sendMessage(player, PluginLocale.PLACEMENT_DESTROY_FAILURE_NOT_SNEAKING);
+                    Message.of(PluginLocale.PLACEMENT_DESTROY_FAILURE_NOT_SNEAKING).send(player);
                     return;
                 }
                 event.setCancelled(true);
-                sendMessage(player, PluginLocale.NOT_CLAIM_OWNER);
+                Message.of(PluginLocale.NOT_CLAIM_OWNER).send(player);
                 return;
             }
             event.setCancelled(true);
-            sendMessage(player, PluginLocale.MISSING_PERMISSIONS);
+            Message.of(PluginLocale.MISSING_PERMISSIONS).send(player);
         }
     }
 
@@ -182,7 +182,7 @@ public final class RegionListener implements Listener {
                     });
                     return;
                 }
-                sendMessage(event.getPlayer(), PluginLocale.CLAIMS_EDIT_FAILURE);
+                Message.of(PluginLocale.CLAIMS_EDIT_FAILURE).send(event.getPlayer());
             }
         }
     }

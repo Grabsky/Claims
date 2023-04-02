@@ -1,5 +1,6 @@
 package cloud.grabsky.claims.panel;
 
+import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
@@ -31,7 +32,6 @@ import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Predicate;
 
-import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 
@@ -138,7 +138,7 @@ public final class ClaimPanel extends Panel {
                         // Executing action associated with clicked slot (aka clicked item)
                         panel.getActions().get(event.getSlot()).accept(event);
                     } catch (final ClaimProcessException e) {
-                        sendMessage(event.getWhoClicked(), e.getErrorMessage());
+                        Message.of(e.getErrorMessage()).send(event.getWhoClicked());
                         panel.close();
                     }
                 }

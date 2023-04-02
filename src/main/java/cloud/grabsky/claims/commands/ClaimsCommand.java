@@ -1,5 +1,6 @@
 package cloud.grabsky.claims.commands;
 
+import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
@@ -37,12 +38,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-import static cloud.grabsky.bedrock.components.SystemMessenger.sendMessage;
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
-import static java.lang.String.valueOf;
 import static java.util.Comparator.comparingInt;
-import static net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.parsed;
-import static net.kyori.adventure.text.minimessage.tag.resolver.Placeholder.unparsed;
+import static net.kyori.adventure.text.Component.text;
 
 public class ClaimsCommand extends RootCommand {
 
@@ -92,13 +90,13 @@ public class ClaimsCommand extends RootCommand {
                         });
                         return;
                     }
-                    sendMessage(sender, PluginLocale.CLAIMS_EDIT_FAILURE);
+                    Message.of(PluginLocale.CLAIMS_EDIT_FAILURE).send(sender);
                     return;
                 }
-                sendMessage(sender, PluginLocale.NOT_CLAIM_OWNER);
+                Message.of(PluginLocale.NOT_CLAIM_OWNER).send(sender);
                 return;
             }
-            sendMessage(sender, PluginLocale.NOT_IN_CLAIMED_AREA);
+            Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
         } else switch (arguments.next(String.class).asOptional(null).toLowerCase()) {
             case "border" -> this.onClaimsBorder(context, arguments);
             case "edit" -> this.onClaimsEdit(context, arguments);
@@ -123,10 +121,10 @@ public class ClaimsCommand extends RootCommand {
                 });
                 return;
             }
-            sendMessage(sender, PluginLocale.CLAIMS_EDIT_FAILURE);
+            Message.of(PluginLocale.CLAIMS_EDIT_FAILURE).send(sender);
             return;
         }
-        sendMessage(sender, PluginLocale.MISSING_PERMISSIONS);
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
     @Experimental
@@ -143,10 +141,15 @@ public class ClaimsCommand extends RootCommand {
                 final Set<Claim> ownedClaims = claimPlayer.getClaims();
                 // ...
                 if (ownedClaims.isEmpty() == false) {
-                    sendMessage(sender, PluginLocale.CLAIMS_FIND_OWNER_OF, unparsed("count", valueOf(ownedClaims.size())), unparsed("player", offlinePlayer.getName()));
+                    Message.of(PluginLocale.CLAIMS_FIND_OWNER_OF)
+                            .placeholder("count", ownedClaims.size())
+                            .placeholder("player", offlinePlayer.getName())
+                            .send(sender);
                     // ...
                     ownedClaims.forEach(claim -> {
-                        sendMessage(sender, PluginLocale.CLAIMS_FIND_ENTRY, parsed("id", claim.getId())); // must be parsed to be replaced inside click event
+                        Message.of(PluginLocale.CLAIMS_FIND_ENTRY)
+                                .placeholder("id", text(claim.getId())) // Must be parsed to be replaced inside click event.
+                                .send(sender);
                     });
                 }
                 // ...
@@ -156,22 +159,27 @@ public class ClaimsCommand extends RootCommand {
                     if (ownedClaims.isEmpty() == false)
                         sender.sendMessage("");
                     // ...
-                    sendMessage(sender, PluginLocale.CLAIMS_FIND_MEMBER_OF, unparsed("count", valueOf(relativeClaims.size())), unparsed("player", offlinePlayer.getName()));
+                    Message.of(PluginLocale.CLAIMS_FIND_MEMBER_OF)
+                            .placeholder("count", relativeClaims.size())
+                            .placeholder("player", offlinePlayer.getName())
+                            .send(sender);
                     // ...
                     relativeClaims.forEach(claim -> {
-                        sendMessage(sender, PluginLocale.CLAIMS_FIND_ENTRY, parsed("id", claim.getId())); // must be parsed to be replaced inside click event
+                        Message.of(PluginLocale.CLAIMS_FIND_ENTRY)
+                                .placeholder("id", text(claim.getId())) // Must be parsed to be replaced inside click event.
+                                .send(sender);
                     });
                 }
                 // ...
                 if (ownedClaims.isEmpty() == true && relativeClaims.isEmpty() == true)
-                    sendMessage(sender, "This player does not own nor is added any claim.");
+                    Message.of("This player does not own nor is added any claim.").send(sender);
                 // ...
                 return;
             }
-            sendMessage(sender, "This player has never played before.");
+            Message.of("This player has never played before.").send(sender);
             return;
         }
-        sendMessage(sender, PluginLocale.MISSING_PERMISSIONS);
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
     private void onClaimsGet(final RootCommandContext context, final ArgumentQueue arguments) {
@@ -188,13 +196,13 @@ public class ClaimsCommand extends RootCommand {
                     sender.getInventory().addItem(item);
                 });
                 // ...
-                sendMessage(sender, PluginLocale.CLAIMS_GET_SUCCESS);
+                Message.of(PluginLocale.CLAIMS_GET_SUCCESS).send(sender);
                 return;
             }
-            sendMessage(sender, PluginLocale.CLAIMS_GET_FAILURE);
+            Message.of(PluginLocale.CLAIMS_GET_FAILURE).send(sender);
             return;
         }
-        sendMessage(sender, PluginLocale.MISSING_PERMISSIONS);
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
     private void onClaimsReload(final RootCommandContext context, final ArgumentQueue arguments) {
@@ -202,13 +210,13 @@ public class ClaimsCommand extends RootCommand {
         // ...
         if (sender.hasPermission("claims.command.claims.reload") == true) {
             if (claims.reloadConfiguration() == true) {
-                sendMessage(sender, PluginLocale.RELOAD_SUCCESS);
+                Message.of(PluginLocale.RELOAD_SUCCESS).send(sender);
                 return;
             }
-            sendMessage(sender, PluginLocale.RELOAD_FAILURE);
+            Message.of(PluginLocale.RELOAD_FAILURE).send(sender);
             return;
         }
-        sendMessage(sender, PluginLocale.MISSING_PERMISSIONS);
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
     private void onClaimsRestore(final RootCommandContext context, final ArgumentQueue arguments) {
@@ -225,17 +233,17 @@ public class ClaimsCommand extends RootCommand {
                     final Material type = claim.getType().getBlock().getType();
                     center.getWorld().getChunkAtAsync(center).thenAccept(chunk -> {
                         chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
-                        sendMessage(sender, PluginLocale.CLAIMS_RESTORE_SUCCESS);
+                        Message.of(PluginLocale.CLAIMS_RESTORE_SUCCESS).send(sender);
                     });
                 } catch (final ClaimProcessException e) {
-                    sendMessage(sender, e.getErrorMessage());
+                    Message.of(e.getErrorMessage()).send(sender);
                 }
                 return;
             }
-            sendMessage(sender, PluginLocale.CLAIM_DOES_NOT_EXIST);
+            Message.of(PluginLocale.CLAIM_DOES_NOT_EXIST).send(sender);
             return;
         }
-        sendMessage(sender, PluginLocale.MISSING_PERMISSIONS);
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
     @Experimental
@@ -294,13 +302,13 @@ public class ClaimsCommand extends RootCommand {
                     }
                     return;
                 }
-                sendMessage(sender, PluginLocale.NOT_CLAIM_OWNER);
+                Message.of(PluginLocale.NOT_CLAIM_OWNER).send(sender);
                 return;
             }
-            sendMessage(sender, PluginLocale.NOT_IN_CLAIMED_AREA);
+            Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
             return;
         }
-        sendMessage(sender, PluginLocale.MISSING_PERMISSIONS);
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
 }
