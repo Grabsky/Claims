@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public final class ClaimPlayer {
 
     @Getter(AccessLevel.PUBLIC)
-    private final ClaimManager manager;
+    private final ClaimManager claimManager;
 
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull UUID uniqueId;
@@ -30,12 +30,12 @@ public final class ClaimPlayer {
      * Returns {@code true} if (this) {@link ClaimPlayer} is owner of <i>any</i> {@link Claim}.
      */
     public boolean hasClaim() {
-        return claims.stream().anyMatch(manager::containsClaim);
+        return claims.stream().anyMatch(claimManager::containsClaim);
     }
 
     // ...
     public Set<Claim> getClaims() {
-        return claims.stream().filter(manager::containsClaim).collect(Collectors.toUnmodifiableSet());
+        return claims.stream().filter(claimManager::containsClaim).collect(Collectors.toUnmodifiableSet());
     }
 
     @Internal
@@ -49,7 +49,7 @@ public final class ClaimPlayer {
     }
 
     public Set<Claim> getRelativeClaims() {
-        return manager.getClaims().stream().filter(this::isMemberOf).collect(Collectors.toSet());
+        return claimManager.getClaims().stream().filter(this::isMemberOf).collect(Collectors.toSet());
     }
 
     /**

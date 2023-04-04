@@ -45,7 +45,6 @@ import java.util.UUID;
 
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 
-// TO-DO: Share common logic between listeners.
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class RegionListener implements Listener {
 
@@ -73,7 +72,7 @@ public final class RegionListener implements Listener {
                     // Making sure player does not exceed claim limit.
                     if (player.hasPermission("claims.bypass.claim_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIMS_LIMIT) {
                         // Making sure that placed region is far enough from spawn
-                        if (claimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
+                        if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
                             final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING));
                             // ...
                             if (type != null) {
