@@ -249,7 +249,7 @@ public final class ClaimManager {
         // Creating region at new points
         final ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
-        this.setDefaultFlags(region, location, owner);
+        setDefaultFlags(region, location, owner);
         region.setFlag(CustomFlag.CLAIM_TYPE, type.getId());
         // Setting region priority
         region.setPriority(PluginConfig.REGION_PRIORITY);

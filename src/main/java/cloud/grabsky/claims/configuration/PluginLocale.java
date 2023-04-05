@@ -31,34 +31,57 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("claim_no_center_defined")
     public static Component CLAIM_NO_CENTER_DEFINED;
 
-    // Claims > Commands > Edit
+    // Command Arguments
 
-    @JsonPath("commands.claims.claims_edit_failure")
-    public static String CLAIMS_EDIT_FAILURE;
+    @JsonPath("command_arguments.argument_claim_not_found")
+    public static String ARGUMENT_CLAIM_NOT_FOUND;
 
-    // Claims > Commands > Claims > Get
+    @JsonPath("command_arguments.argument_claim_not_in_claimed_area")
+    public static Component ARGUMENT_CLAIM_NOT_IN_CLAIMED_AREA;
 
-    @JsonPath("commands.claims.claims_get_success")
-    public static Component CLAIMS_GET_SUCCESS;
+    // Commands > Claims > Edit
 
-    @JsonPath("commands.claims.claims_get_failure")
-    public static Component CLAIMS_GET_FAILURE;
+    @JsonPath("commands.claims_edit_usage")
+    public static String COMMAND_CLAIMS_EDIT_USAGE;
 
-    // Claims > Commands > Claims > Find
+    @JsonPath("commands.claims_edit_failure_already_in_use")
+    public static String COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE;
 
-    @JsonPath("commands.claims.claims_find_owner_of")
-    public static String CLAIMS_FIND_OWNER_OF;
+    // Commands > Claims > Get
 
-    @JsonPath("commands.claims.claims_find_member_of")
-    public static String CLAIMS_FIND_MEMBER_OF;
+    @JsonPath("commands.claims_get_success")
+    public static Component COMMAND_CLAIMS_GET_SUCCESS;
 
-    @JsonPath("commands.claims.claims_find_entry")
-    public static String CLAIMS_FIND_ENTRY;
+    @JsonPath("commands.claims_get_failure")
+    public static Component COMMAND_CLAIMS_GET_FAILURE;
 
-    // Claims > Commands > Claims > Restore
+    // Commands > Claims > Find
 
-    @JsonPath("commands.claims.claims_restore_success")
-    public static Component CLAIMS_RESTORE_SUCCESS;
+    @JsonPath("commands.claims_find_usage")
+    public static String COMMAND_CLAIMS_FIND_USAGE;
+
+    @JsonPath("commands.claims_find_owner_of")
+    public static String COMMAND_CLAIMS_FIND_OWNER_OF;
+
+    @JsonPath("commands.claims_find_owner_of_none")
+    public static String COMMAND_CLAIMS_FIND_OWNER_OF_NONE;
+
+    @JsonPath("commands.claims_find_member_of")
+    public static String COMMAND_CLAIMS_FIND_MEMBER_OF;
+
+    @JsonPath("commands.claims_find_member_of_none")
+    public static String COMMAND_CLAIMS_FIND_MEMBER_OF_NONE;
+
+    @JsonPath("commands.claims_find_entry")
+    public static String COMMAND_CLAIMS_FIND_ENTRY;
+
+    // Commands > Claims > Restore
+
+    @JsonPath("commands.claims_restore_usage")
+    public static Component COMMAND_CLAIMS_RESTORE_USAGE;
+
+    @JsonPath("commands.claims_restore_success")
+    public static Component COMMAND_CLAIMS_RESTORE_SUCCESS;
 
     // Interface > Upgrade
 
@@ -145,6 +168,86 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("flags.default_claim_leave")
     public static String FLAGS_CLAIM_LEAVE;
+
+
+    public static final class Commands implements JsonConfiguration {
+
+        // Commands > General
+
+        @JsonPath("missing_permissions")
+        public static Component MISSING_PERMISSIONS;
+
+        // Commands > Executors
+
+        @JsonPath("invalid_executor_player")
+        public static Component INVALID_EXECUTOR_PLAYER;
+
+        @JsonPath("invalid_executor_console")
+        public static Component INVALID_EXECUTOR_CONSOLE;
+
+        // Commands > Arguments
+
+        @JsonPath("invalid_boolean")
+        public static String INVALID_BOOLEAN;
+
+        @JsonPath("invalid_short")
+        public static String INVALID_SHORT;
+
+        @JsonPath("invalid_short_not_in_range")
+        public static String INVALID_SHORT_NOT_IN_RANGE;
+
+        @JsonPath("invalid_integer")
+        public static String INVALID_INTEGER;
+
+        @JsonPath("invalid_integer_not_in_range")
+        public static String INVALID_INTEGER_NOT_IN_RANGE;
+
+        @JsonPath("invalid_long")
+        public static String INVALID_LONG;
+
+        @JsonPath("invalid_long_not_in_range")
+        public static String INVALID_LONG_NOT_IN_RANGE;
+
+        @JsonPath("invalid_float")
+        public static String INVALID_FLOAT;
+
+        @JsonPath("invalid_float_not_in_range")
+        public static String INVALID_FLOAT_NOT_IN_RANGE;
+
+        @JsonPath("invalid_double")
+        public static String INVALID_DOUBLE;
+
+        @JsonPath("invalid_double_not_in_range")
+        public static String INVALID_DOUBLE_NOT_IN_RANGE;
+
+        @JsonPath("invalid_uuid")
+        public static String INVALID_UUID;
+
+        @JsonPath("invalid_player")
+        public static String INVALID_PLAYER;
+
+        @JsonPath("invalid_offline_player")
+        public static String INVALID_OFFLINE_PLAYER;
+
+        @JsonPath("invalid_world")
+        public static String INVALID_WORLD;
+
+        @JsonPath("invalid_enchantment")
+        public static String INVALID_ENCHANTMENT;
+
+        @JsonPath("invalid_material")
+        public static String INVALID_MATERIAL;
+
+        @JsonPath("invalid_entity_type")
+        public static String INVALID_ENTITY_TYPE;
+
+        @JsonPath("invalid_namespacedkey")
+        public static String INVALID_NAMESPACEDKEY;
+
+        @JsonPath("invalid_position")
+        public static String INVALID_POSITION;
+
+    }
 
 }
 

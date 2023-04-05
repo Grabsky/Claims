@@ -1,0 +1,32 @@
+{
+    // Commands > General
+    "missing_permissions": "<dark_gray>› <red>Nie masz wystarczających uprawnień.",
+
+    // Commands > Executors
+    "invalid_executor_player": "<dark_gray>› <red>Ta komenda jest dostępna tylko dla graczy.",
+    "invalid_executor_console": "<dark_gray>› <red>Ta komenda jest dostępna tylko dla konsoli.",
+
+    // Commands > Arguments > Java
+    "invalid_boolean": "<dark_gray>› <red>Argument <yellow><input><red> musi być <yellow>true<red> lub <yellow>false<red>.",
+    "invalid_short": "<dark_gray>› <red>Argument <yellow><input><red> nie jest prawidłową liczbą.",
+    "invalid_short_not_in_range": "<dark_gray>› <red>Argument <yellow><input><red> musi być liczbą w zakresie od <yellow><min><red> do <yellow><max><red>.",
+    "invalid_integer": "<dark_gray>› <red>Argument <yellow><input><red> nie jest prawidłową liczbą.",
+    "invalid_integer_not_in_range": "<dark_gray>› <red>Argument <yellow><input><red> musi być liczbą w zakresie od <yellow><min><red> do <yellow><max><red>.",
+    "invalid_long": "<red>Argument <yellow><input><red> nie jest prawidłową liczbą.",
+    "invalid_long_not_in_range": "<dark_gray>› <red>Argument <yellow><input><red> musi być liczbą w zakresie od <yellow><min><red> do <yellow><max><red>.",
+    "invalid_float": "<dark_gray>› <red>Argument <yellow><input><red> nie jest prawidłową liczbą.",
+    "invalid_float_not_in_range": "<dark_gray>› <red>Argument <yellow><input><red> musi być liczbą w zakresie od <yellow><min><red> do <yellow><max><red>.",
+    "invalid_double": "<dark_gray>› <red>Argument <yellow><input><red> nie jest prawidłową liczbą.",
+    "invalid_double_not_in_range": "<dark_gray>› <red>Argument <yellow><input><red> musi być liczbą w zakresie od <yellow><min><red> do <yellow><max><red>.",
+    "invalid_uuid": "<dark_gray>› <red>Argument <yellow><input><red> nie jest prawidłowym identyfikatorem.",
+
+    // Commands > Arguments > Platform
+    "invalid_player": "<dark_gray>› <red>Gracz <yellow><input><red> nie został znaleziony.",
+    "invalid_offline_player": "<dark_gray>› <red>Gracz <yellow><input><red> nie został znaleziony.",
+    "invalid_world": "<dark_gray>› <red>Świat o nazwie <yellow><input><red> nie istnieje.",
+    "invalid_enchantment": "<dark_gray>› <red>Zaklęcie <yellow><input><red> nie istnieje.",
+    "invalid_material": "<dark_gray>› <red>Przedmiot <yellow><input><red> nie istnieje.",
+    "invalid_entity_type": "<dark_gray>› <red>Entity <yellow><input><red> nie istnieje.",
+    "invalid_namespacedkey": "<dark_gray>› <red>Klucz <yellow><input><red> jest nieprawidłowy.",
+    "invalid_position": "<dark_gray>› <red>Argument <yellow><input><red> nie przedstawia prawidłowej pozycji."
+}

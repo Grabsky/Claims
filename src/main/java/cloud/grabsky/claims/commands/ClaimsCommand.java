@@ -13,7 +13,9 @@ import cloud.grabsky.commands.ArgumentQueue;
 import cloud.grabsky.commands.RootCommand;
 import cloud.grabsky.commands.RootCommandContext;
 import cloud.grabsky.commands.component.CompletionsProvider;
+import cloud.grabsky.commands.component.ExceptionHandler;
 import cloud.grabsky.commands.exception.CommandLogicException;
+import cloud.grabsky.commands.exception.MissingInputException;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -40,7 +42,6 @@ import java.util.stream.Stream;
 
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 import static java.util.Comparator.comparingInt;
-import static net.kyori.adventure.text.Component.text;
 
 public class ClaimsCommand extends RootCommand {
 
@@ -58,15 +59,20 @@ public class ClaimsCommand extends RootCommand {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (index == 0)
-            return CompletionsProvider.of(Stream.of("border", "edit", "find", "get", "reload", "restore").filter(literal -> sender.hasPermission("claims.command.claims." + literal)).toList());
+            return CompletionsProvider.of(Stream.of("border", "edit", "find", "get", "reload", "restore").filter(literal -> sender.hasPermission(this.getPermission() + "." + literal)).toList());
         // ...
         final String literal = context.getInput().at(1).toLowerCase();
-        if (sender.hasPermission("claims.command.claims." + literal) == false)
+        if (sender.hasPermission(this.getPermission() + "." + literal) == false)
             return CompletionsProvider.EMPTY;
         // ...
         return switch (literal) {
-            case "edit" -> (index == 1) ? CompletionsProvider.of(Claim.class) : CompletionsProvider.EMPTY;
+            case "edit" -> switch(index) {
+                case 1 -> CompletionsProvider.of(Claim.class);
+                case 2 -> CompletionsProvider.of("--force");
+                default -> CompletionsProvider.EMPTY;
+            };
             case "find" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
+            case "restore" -> (index == 1) ? CompletionsProvider.of(Claim.class) : CompletionsProvider.EMPTY;
             default -> CompletionsProvider.EMPTY;
         };
     }
@@ -82,7 +88,7 @@ public class ClaimsCommand extends RootCommand {
             final @Nullable Claim claim = claimManager.getClaimAt(location);
             // ...
             if (claim != null) {
-                if (sender.hasPermission("claims.command.claims.edit") == true || claimSender.isOwnerOf(claim) == true) {
+                if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
                     if (isClaimPanelOpen(claim) == false) {
                         new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
                             claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(new ViewMain(), false));
@@ -90,7 +96,7 @@ public class ClaimsCommand extends RootCommand {
                         });
                         return;
                     }
-                    Message.of(PluginLocale.CLAIMS_EDIT_FAILURE).send(sender);
+                    Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
                     return;
                 }
                 Message.of(PluginLocale.NOT_CLAIM_OWNER).send(sender);
@@ -107,12 +113,19 @@ public class ClaimsCommand extends RootCommand {
         }
     }
 
+    private static final ExceptionHandler.Factory CLAIMS_EDIT_USAGE = (exception) -> {
+        if (exception instanceof MissingInputException)
+            return (ExceptionHandler<CommandLogicException>) (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_USAGE).send(context.getExecutor().asCommandSender());
+        // Let other exceptions be handled internally.
+        return null;
+    };
+
     private void onClaimsEdit(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
-        if (sender.hasPermission("claims.command.claims.edit") == true) {
+        if (sender.hasPermission(this.getPermission() + ".edit") == true) {
             // ...
-            final Claim claim = arguments.next(Claim.class).asRequired();
+            final Claim claim = arguments.next(Claim.class).asRequired(CLAIMS_EDIT_USAGE);
             // ...
             if (isClaimPanelOpen(claim) == false) {
                 new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
@@ -121,62 +134,69 @@ public class ClaimsCommand extends RootCommand {
                 });
                 return;
             }
-            Message.of(PluginLocale.CLAIMS_EDIT_FAILURE).send(sender);
+            Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
             return;
         }
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
+    private static final ExceptionHandler.Factory CLAIMS_FIND_USAGE = (exception) -> {
+        if (exception instanceof MissingInputException)
+            return (ExceptionHandler<CommandLogicException>) (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_FIND_USAGE).send(context.getExecutor().asCommandSender());
+        // Let other exceptions be handled internally.
+        return null;
+    };
+
     @Experimental
     private void onClaimsFind(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
-        if (sender.hasPermission("claims.command.claims.find") == true) {
-            final OfflinePlayer offlinePlayer = arguments.next(OfflinePlayer.class).asRequired();
+        if (sender.hasPermission(this.getPermission() + ".find") == true) {
+            final OfflinePlayer offlinePlayer = arguments.next(OfflinePlayer.class).asRequired(CLAIMS_FIND_USAGE);
             // ...
             if (offlinePlayer.hasPlayedBefore() == true) {
                 // ...
                 final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(offlinePlayer.getUniqueId());
                 // ...
                 final Set<Claim> ownedClaims = claimPlayer.getClaims();
+                // Sending appropriate message when
+                if (ownedClaims.isEmpty() == true)
+                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF_NONE).placeholder("player", offlinePlayer.getName()).send(sender);
                 // ...
-                if (ownedClaims.isEmpty() == false) {
-                    Message.of(PluginLocale.CLAIMS_FIND_OWNER_OF)
-                            .placeholder("count", ownedClaims.size())
+                else {
+                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF)
                             .placeholder("player", offlinePlayer.getName())
+                            .placeholder("count", ownedClaims.size())
                             .send(sender);
                     // ...
                     ownedClaims.forEach(claim -> {
-                        Message.of(PluginLocale.CLAIMS_FIND_ENTRY)
-                                .placeholder("id", text(claim.getId())) // Must be parsed to be replaced inside click event.
+                        Message.of(PluginLocale.COMMAND_CLAIMS_FIND_ENTRY)
+                                .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
                                 .send(sender);
                     });
                 }
                 // ...
                 final Set<Claim> relativeClaims = claimPlayer.getRelativeClaims();
                 // ...
-                if (relativeClaims.isEmpty() == false) {
-                    if (ownedClaims.isEmpty() == false)
-                        sender.sendMessage("");
+                if (relativeClaims.isEmpty() == true)
+                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF_NONE).placeholder("player", offlinePlayer.getName()).send(sender);
+                else {
+                    sender.sendPlainMessage("");
                     // ...
-                    Message.of(PluginLocale.CLAIMS_FIND_MEMBER_OF)
-                            .placeholder("count", relativeClaims.size())
+                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF)
                             .placeholder("player", offlinePlayer.getName())
+                            .placeholder("count", relativeClaims.size())
                             .send(sender);
                     // ...
                     relativeClaims.forEach(claim -> {
-                        Message.of(PluginLocale.CLAIMS_FIND_ENTRY)
-                                .placeholder("id", text(claim.getId())) // Must be parsed to be replaced inside click event.
+                        Message.of(PluginLocale.COMMAND_CLAIMS_FIND_ENTRY)
+                                .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
                                 .send(sender);
                     });
                 }
-                // ...
-                if (ownedClaims.isEmpty() == true && relativeClaims.isEmpty() == true)
-                    Message.of("This player does not own nor is added any claim.").send(sender);
-                // ...
                 return;
             }
-            Message.of("This player has never played before.").send(sender);
+            Message.of(PluginLocale.Commands.INVALID_OFFLINE_PLAYER).placeholder("input", offlinePlayer.getUniqueId()).send(sender);
             return;
         }
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
@@ -185,7 +205,7 @@ public class ClaimsCommand extends RootCommand {
     private void onClaimsGet(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
-        if (sender.hasPermission("claims.command.claims.get") == true) {
+        if (sender.hasPermission(this.getPermission() + ".get") == true) {
             if (claimManager.getClaimTypes().isEmpty() == false) {
                 // Claim blocks...
                 claimManager.getClaimTypes().values().stream().sorted(comparingInt(Claim.Type::getRadius)).forEach(type -> {
@@ -196,10 +216,10 @@ public class ClaimsCommand extends RootCommand {
                     sender.getInventory().addItem(item);
                 });
                 // ...
-                Message.of(PluginLocale.CLAIMS_GET_SUCCESS).send(sender);
+                Message.of(PluginLocale.COMMAND_CLAIMS_GET_SUCCESS).send(sender);
                 return;
             }
-            Message.of(PluginLocale.CLAIMS_GET_FAILURE).send(sender);
+            Message.of(PluginLocale.COMMAND_CLAIMS_GET_FAILURE).send(sender);
             return;
         }
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
@@ -208,7 +228,7 @@ public class ClaimsCommand extends RootCommand {
     private void onClaimsReload(final RootCommandContext context, final ArgumentQueue arguments) {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
-        if (sender.hasPermission("claims.command.claims.reload") == true) {
+        if (sender.hasPermission(this.getPermission() + ".reload") == true) {
             if (claims.reloadConfiguration() == true) {
                 Message.of(PluginLocale.RELOAD_SUCCESS).send(sender);
                 return;
@@ -219,28 +239,29 @@ public class ClaimsCommand extends RootCommand {
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
+    private static final ExceptionHandler.Factory CLAIMS_RESTORE_USAGE = (exception) -> {
+        if (exception instanceof MissingInputException)
+            return (ExceptionHandler<CommandLogicException>) (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_RESTORE_USAGE).send(context.getExecutor().asCommandSender());
+        // Let other exceptions be handled internally.
+        return null;
+    };
+
     private void onClaimsRestore(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
-        if (sender.hasPermission("claims.command.claims.restore") == true) {
-            final Location location = sender.getLocation();
+        if (sender.hasPermission(this.getPermission() + ".restore") == true) {
+            final Claim claim = arguments.next(Claim.class).asRequired(CLAIMS_RESTORE_USAGE);
             // ...
-            final @Nullable Claim claim = claimManager.getClaimAt(location);
-            // ...
-            if (claim != null) {
-                try {
-                    final Location center = claim.getCenter();
-                    final Material type = claim.getType().getBlock().getType();
-                    center.getWorld().getChunkAtAsync(center).thenAccept(chunk -> {
-                        chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
-                        Message.of(PluginLocale.CLAIMS_RESTORE_SUCCESS).send(sender);
-                    });
-                } catch (final ClaimProcessException e) {
-                    Message.of(e.getErrorMessage()).send(sender);
-                }
-                return;
+            try {
+                final Location center = claim.getCenter();
+                final Material type = claim.getType().getBlock().getType();
+                center.getWorld().getChunkAtAsync(center).thenAccept(chunk -> {
+                    chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
+                    Message.of(PluginLocale.COMMAND_CLAIMS_RESTORE_SUCCESS).send(sender);
+                });
+            } catch (final ClaimProcessException e) {
+                Message.of(e.getErrorMessage()).send(sender);
             }
-            Message.of(PluginLocale.CLAIM_DOES_NOT_EXIST).send(sender);
             return;
         }
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
@@ -250,7 +271,7 @@ public class ClaimsCommand extends RootCommand {
     private void onClaimsBorder(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
-        if (sender.hasPermission("claims.command.claims.border") == true) {
+        if (sender.hasPermission(this.getPermission() + ".border") == true) {
             // ...
             final ClaimPlayer claimSender = claimManager.getClaimPlayer(sender);
             // ...
@@ -260,7 +281,7 @@ public class ClaimsCommand extends RootCommand {
             final @Nullable Claim claim = claimManager.getClaimAt(location);
             // ...
             if (claim != null) {
-                if (sender.hasPermission("claims.command.claims.edit") == true || claimSender.isOwnerOf(claim) == true) {
+                if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
                     // ...
                     final Location center = claim.getCenter();
                     // ...

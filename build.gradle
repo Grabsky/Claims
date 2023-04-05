@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
     id("com.github.johnrengelman.shadow") version "8.1.0"
-    id("io.papermc.paperweight.userdev") version "1.5.2"
+    id("io.papermc.paperweight.userdev") version "1.5.4"
 }
 
 final buildsDirectory = (System.getenv("JVM_BUILDS") ?: "." + File.separator + "builds")
@@ -22,18 +22,18 @@ repositories {
 
 dependencies {
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.24")
-    annotationProcessor("org.projectlombok:lombok:1.18.24")
+    compileOnly("org.projectlombok:lombok:1.18.26")
+    annotationProcessor("org.projectlombok:lombok:1.18.26")
     // Paper
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
     // Dependencies
     implementation("cloud.grabsky:bedrock:d7cedc0")
-    implementation("cloud.grabsky:commands:2e0ea3e")
+    implementation("cloud.grabsky:commands:6d78c30")
     implementation("cloud.grabsky:configuration-paper:741c63e")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
     // Azure
-    compileOnly("cloud.grabsky:azure-api:9fc9503")
+    compileOnly("cloud.grabsky:azure-api:5708fca")
 }
 
 tasks.register("deploy", Copy) {
@@ -43,10 +43,7 @@ tasks.register("deploy", Copy) {
 }
 
 tasks {
-    assemble {
-        dependsOn(reobfJar)
-        finalizedBy(deploy)
-    }
+    assemble { dependsOn(reobfJar) finalizedBy(deploy) }
     compileJava { options.compilerArgs += "-parameters" }
     processResources { filteringCharset "UTF-8" }
 }

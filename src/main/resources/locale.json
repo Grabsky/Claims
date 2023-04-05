@@ -1,7 +1,7 @@
 {
     "missing_permissions": "<dark_gray>› <red>Nie masz uprawnień aby to zrobić.",
-    "reload_success": "<dark_gray>› <gray>Plugin <yellow>Claims<gray> został pomyślnie załadowany.",
-    "reload_failure": "<dark_gray>› <red>Plugin <yellow>Claims<red> nie został pomyślnie załadowany.",
+    "reload_success": "<dark_gray>› <gray>Plugin <gold>Claims<gray> został pomyślnie załadowany.",
+    "reload_failure": "<dark_gray>› <red>Plugin <gold>Claims<red> nie został pomyślnie załadowany.",
     // ...
     "claims_not_in_claimed_area": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie.",
     "claims_not_owner": "<dark_gray>› <red>Tylko właściciel terenu ma do tego uprawnienia.",
@@ -9,37 +9,46 @@
     "claim_does_not_exist": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie istnieje.",
     "claim_no_center_defined": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie został poprawnie zdefiniowany.",
     // ...
-    "commands": {
-        "claims": {
-            "claims_edit_failure": "<dark_gray>› <red>Panel jest teraz używany przez innego gracza.",
-            // ...
-            "claims_get_success": "<dark_gray>› <gray>Bloki terenu zostały dodane do twojego ekwipunku.",
-            "claims_get_failure": "<dark_gray>› <red>Nie zdefiniowano żadnego typu terenu.",
-            // ...
-            "claims_find_owner_of": "<dark_gray>› <gray>Gracz <yellow><player><gray> jest właścicielem <yellow><count><gray> terenów:",
-            "claims_find_member_of": "<dark_gray>› <gray>Gracz <yellow><player><gray> jest członkiem <yellow><count><gray> terenów:",
-            "claims_find_entry": "<dark_gray>›    <yellow><hover:show_text:'<gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <id>'><id></click></hover>",
-            // ...
-            "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce."
-        }
+    "command_arguments": {
+        "argument_claim_not_found": "<dark_gray>› <red>Teren <gold><claim><red> nie istnieje.",
+        "argument_claim_not_in_claimed_area": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie."
     },
+    "commands": {
+        // Claims > Edit
+        "claims_edit_usage": "<dark_gray>› <gray>Użycie: <gold>/claims edit <white>(claim) <gray>(--force)",
+        "claims_edit_failure_already_in_use": "<dark_gray>› <red>Panel jest teraz używany przez innego gracza.",
+        // Claims > Get
+        "claims_get_success": "<dark_gray>› <gray>Bloki terenu zostały dodane do twojego ekwipunku.",
+        "claims_get_failure": "<dark_gray>› <red>Nie zdefiniowano żadnego typu terenu.",
+        // Claims > Find
+        "claims_find_usage": "<dark_gray>› <gray>Użycie: <gold>/claims find <white>(player)",
+        "claims_find_owner_of": "<dark_gray>› Gracz <gold><player><gray> jest właścicielem <gold><count><gray> terenów:",
+        "claims_find_owner_of_none": "<dark_gray>› <gold><player><gray> nie jest właścicielem żadnego terenu.",
+        "claims_find_member_of": "<dark_gray>› <gold><player><gray> jest członkiem <gold><count><gray> terenów:",
+        "claims_find_member_of_none": "<dark_gray>› <gold><player><gray> nie jest członkiem żadnego terenu.",
+        "claims_find_entry": "<dark_gray>›    <hover:show_text:'<gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <claim>'><gold><claim></click>",
+        // Claims > Restore
+        "claims_restore_usage": "<dark_gray>› <gray>Użycie: <gold>/claims restore <white>(claim)",
+        "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce."
+    },
+    // ...
     "interface": {
-        "upgrade_success": "<dark_gray>› <gray>Rozmiar terenu został zwiększony do <yellow><size>x<size><gray>.",
+        // Interface > Upgrade
+        "upgrade_success": "<dark_gray>› <gray>Rozmiar terenu został zwiększony do <gold><size>x<size><gray>.",
         "upgrade_failure_not_upgradeable": "<dark_gray>› <red>Ten teren został już maksymalnie ulepszony.",
         "upgrade_failure_missing_items": "<dark_gray>› <red>Nie posiadasz przedmiotów wymaganych do ulepszenia.",
-        // ...
         "upgrade_icon_upgrade_ready": "<gray>Kliknij, aby ulepszyć.",
         "upgrade_icon_upgrade_not_upgradeable": "<red>Osiągnąłeś maksymalny poziom terenu.",
         "upgrade_icon_upgrade_missing_items": "<red>Nie posiadasz wymaganych przedmiotów.",
-        // ...
+        // Interface > Set Home
         "set_home_success": "<dark_gray>› <gray>Teleport na teren został nadpisany.",
         "set_home_failure": "<dark_gray>› <red>Teleport nie może zostać ustawiony poza terenem.",
-        // ...
-        "members_add_success": "<dark_gray>› <gray>Gracz <yellow><player><gray> został dodany do terenu.",
+        // Interface > Members > Add
+        "members_add_success": "<dark_gray>› <gray>Gracz <gold><player><gray> został dodany do terenu.",
         "members_add_failure_already_added": "<dark_gray>› <red>Ten gracz jest już dodany do terenu.",
         "members_add_failure_reached_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) graczy dodanych do terenu.",
-        // ...
-        "members_remove_success": "<dark_gray>› <gray>Gracz <yellow><player><gray> został usunięty do terenu.",
+        // Interface > Members > Remove
+        "members_remove_success": "<dark_gray>› <gray>Gracz <gold><player><gray> został usunięty do terenu.",
         "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu."
     },
     "placement": {
@@ -55,7 +64,7 @@
     },
     // NOTE: Changing those values will NOT update enter/leave messages in existing claims.
     "flags": {
-        "default_claim_enter": "<gray>Wszedłeś na teren gracza <yellow><player>",
-        "default_claim_leave": "<gray>Opuściłeś teren gracza <yellow><player>"
+        "default_claim_enter": "<gray>Wszedłeś na teren gracza <gold><player>",
+        "default_claim_leave": "<gray>Opuściłeś teren gracza <gold><player>"
     }
 }
