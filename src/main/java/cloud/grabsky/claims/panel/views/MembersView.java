@@ -19,7 +19,8 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public final class ViewMembers implements Consumer<Panel> {
+public enum MembersView implements Consumer<Panel> {
+    /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7104", NamedTextColor.WHITE);
     private static final List<Integer> UI_SLOTS = List.of(11, 12, 13, 14, 15,  21, 22, 23, 24, 25);
@@ -27,13 +28,13 @@ public final class ViewMembers implements Consumer<Panel> {
     @Override
     public void accept(final Panel panel) {
         final ClaimPanel cPanel = (ClaimPanel) panel;
-        // Changing panel texture
+        // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateClientTitle(INVENTORY_TITLE);
-        // Generating the view
-        this.generate(cPanel);
+        // "Rendering" the inventory contents.
+        this.render(cPanel);
     }
 
-    private void generate(final ClaimPanel cPanel) {
+    private void render(final ClaimPanel cPanel) {
         cPanel.clear();
         // ...
         final Player viewer = cPanel.getViewer();
@@ -57,7 +58,7 @@ public final class ViewMembers implements Consumer<Panel> {
             cPanel.setItem(slotsIterator.next(), head, (event) -> {
                 // One more check just in case something changed while GUI was open
                 if (cPanel.getClaim().removeMember(member) == true) {
-                    this.generate(cPanel);
+                    this.render(cPanel);
                     return;
                 }
                 cPanel.close();
@@ -66,8 +67,8 @@ public final class ViewMembers implements Consumer<Panel> {
         }
         // Displaying [ICON_BROWSE_PLAYERS] button.
         if (slotsIterator.hasNext() == true)
-            cPanel.setItem(slotsIterator.next(), PluginItems.UI_ICON_BROWSE_PLAYERS, event -> cPanel.applyTemplate(new ViewMembersAdd(), true));
+            cPanel.setItem(slotsIterator.next(), PluginItems.UI_ICON_BROWSE_PLAYERS, event -> cPanel.applyTemplate(new MembersAddView(), true));
         // return
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMain(), true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(MainView.INSTANCE, true));
     }
 }

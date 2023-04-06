@@ -18,7 +18,8 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public final class ViewFlags implements Consumer<Panel> {
+public enum FlagsView implements Consumer<Panel> {
+    /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7104", NamedTextColor.WHITE);
 
@@ -27,7 +28,7 @@ public final class ViewFlags implements Consumer<Panel> {
         final ClaimPanel cPanel = (ClaimPanel) panel;
         // ...
         final Claim claim = cPanel.getClaim();
-        // Changing panel texture
+        // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateClientTitle(INVENTORY_TITLE);
         // ...ROW 1
         cPanel.setItem(11,
@@ -63,7 +64,7 @@ public final class ViewFlags implements Consumer<Panel> {
                 createDisplay(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER),
                 createClickAction(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER));
         // ...
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewSettings(), true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(SettingsView.INSTANCE, true));
    }
 
    private static <T> ItemStack createDisplay(final Claim claim, final Flag<T> flag, final ClaimFlag<T> claimFlag) {

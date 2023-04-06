@@ -8,7 +8,7 @@ import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.panel.views.ViewMain;
+import cloud.grabsky.claims.panel.views.MainView;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -134,9 +134,9 @@ public final class RegionListener implements Listener {
                         event.setExpToDrop(0);
                         event.setDropItems(false);
                         // Closing claim management interface in case anyone has it open.
-                        Bukkit.getOnlinePlayers().stream().map(Player::getOpenInventory).filter(view -> {
-                            return (view.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim().equals(claim) == true);
-                        }).forEach(InventoryView::close);
+                        Bukkit.getOnlinePlayers().stream().map(Player::getOpenInventory)
+                                .filter((it) -> (it.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim().equals(claim) == true))
+                                .forEach(InventoryView::close);
                         // Deleting the claim and associated region.
                         claimManager.deleteClaim(claim);
                         // Dropping claim block item if player is not in creative mode.
@@ -176,7 +176,7 @@ public final class RegionListener implements Listener {
             if (claim != null && (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claims") == true|| claim.isOwner(claimPlayer) == true) == true) {
                 if (isClaimPanelOpen(claim) == false) {
                     new ClaimPanel(claimManager, claim).open(event.getPlayer(), (panel) -> {
-                        claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(new ViewMain(), false));
+                        claims.getBedrockScheduler().run(1L, (it) -> panel.applyTemplate(MainView.INSTANCE, false));
                         return true;
                     });
                     return;

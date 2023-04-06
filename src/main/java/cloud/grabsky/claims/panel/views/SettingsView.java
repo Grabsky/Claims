@@ -26,26 +26,27 @@ import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
-public final class ViewSettings implements Consumer<Panel> {
+public enum SettingsView implements Consumer<Panel> {
+    /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
 
     @Override
     public void accept(final Panel panel) {
         final ClaimPanel cPanel = (ClaimPanel) panel;
-        // Changing panel texture
+        // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateClientTitle(INVENTORY_TITLE);
-        // Setting menu items
-        this.generate(cPanel);
+        // "Rendering" the inventory contents.
+        this.render(cPanel);
     }
 
-    private void generate(final ClaimPanel cPanel) {
+    private void render(final ClaimPanel cPanel) {
         final Player viewer = cPanel.getViewer();
         final Claim claim = cPanel.getClaim();
         // ...
         cPanel.clear();
         // Button: FLAGS
-        cPanel.setItem(11, PluginItems.UI_CATEGORY_FLAGS, event -> cPanel.applyTemplate(new ViewFlags(), true));
+        cPanel.setItem(11, PluginItems.UI_CATEGORY_FLAGS, event -> cPanel.applyTemplate(FlagsView.INSTANCE, true));
         // Teleport location button
         cPanel.setItem(13, PluginItems.UI_ICON_SET_TELEPORT, (event) -> {
             viewer.closeInventory();
@@ -79,14 +80,14 @@ public final class ViewSettings implements Consumer<Panel> {
                             .placeholder("size", claim.getType().getRadius() * 2 + 1)
                             .send(viewer);
                     // ...
-                    this.generate(cPanel);
+                    this.render(cPanel);
                     return;
                 }
                 Message.of(PluginLocale.UI_UPGRADE_FAILURE_MISSING_ITEMS).send(viewer);
             }
         });
         // Return button
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMain(), true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(MainView.INSTANCE, true));
     }
 
     private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {

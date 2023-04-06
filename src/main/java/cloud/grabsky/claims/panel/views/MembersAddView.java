@@ -25,7 +25,7 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public final class ViewMembersAdd implements Consumer<Panel> {
+public final class MembersAddView implements Consumer<Panel> {
 
     private List<ClaimPlayer> onlineClaimPlayers = new ArrayList<>();
 
@@ -45,16 +45,16 @@ public final class ViewMembersAdd implements Consumer<Panel> {
                 .filter(claimPlayer -> claimPlayer.isOwnerOf(claim) == false) // excluding owner(s)
                 .filter(claimPlayer -> claimPlayer.isMemberOf(claim) == false) // excluding member(s)
                 .toList();
-        // Changing panel texture
+        // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateClientTitle(INVENTORY_TITLE);
-        // Display first page of online players
-        this.generate(cPanel, 1, UI_SLOTS.size());
+        // "Rendering" the inventory contents.
+        this.render(cPanel, 1, UI_SLOTS.size());
     }
 
-    private void generate(final ClaimPanel cPanel, final int pageToDisplay, final int maxOnPage) {
+    private void render(final ClaimPanel cPanel, final int pageToDisplay, final int maxOnPage) {
         cPanel.clear();
         // ...
-        final var onlineClaimPlayersIterator = moveIteratorBefore(onlineClaimPlayers.listIterator(), (pageToDisplay * maxOnPage) - maxOnPage);
+        final var onlineClaimPlayersIterator = moveIterator(onlineClaimPlayers.listIterator(), (pageToDisplay * maxOnPage) - maxOnPage);
         final var uiSlotsIterator = UI_SLOTS.iterator();
         // ...
         final Player viewer = cPanel.getViewer();
@@ -70,32 +70,33 @@ public final class ViewMembersAdd implements Consumer<Panel> {
                     .build();
             // ...
             cPanel.setItem(uiSlotsIterator.next(), head, (event) -> {
-                // One more check just in case something changed while GUI was open
+                // Trying to add player to the claim.
                 if (claim.addMember(claimPlayer) == true) {
-                    cPanel.applyTemplate(new ViewMembers(), true);
-                } else {
-                    viewer.closeInventory();
-                    Message.of(PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT)
-                            .placeholder("limit", PluginConfig.MEMBERS_LIMIT)
-                            .send(viewer);
+                    cPanel.applyTemplate(MembersView.INSTANCE, true);
+                    return;
                 }
+                // Closing inventory and sending error message members limit has been reached.
+                viewer.closeInventory();
+                Message.of(PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT)
+                        .placeholder("limit", PluginConfig.MEMBERS_LIMIT)
+                        .send(viewer);
             });
         }
         // If player is not on the first page - displaying previous page button
         if (pageToDisplay > 1)
-            cPanel.setItem(18, PluginItems.UI_NAVIGATION_PREVIOUS, (event) -> generate(cPanel, pageToDisplay - 1, maxOnPage));
+            cPanel.setItem(18, PluginItems.UI_NAVIGATION_PREVIOUS, (event) -> render(cPanel, pageToDisplay - 1, maxOnPage));
         // If there is more players to be displayed, showing next page button
         if (onlineClaimPlayersIterator.hasNext() == true)
-            cPanel.setItem(26, PluginItems.UI_NAVIGATION_NEXT, (event) -> generate(cPanel, pageToDisplay + 1, maxOnPage));
+            cPanel.setItem(26, PluginItems.UI_NAVIGATION_NEXT, (event) -> render(cPanel, pageToDisplay + 1, maxOnPage));
         // ...
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(new ViewMembers(), true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(MembersView.INSTANCE, true));
     }
 
-    private static <T> ListIterator<T> moveIteratorBefore(final ListIterator<T> iterator, final int index) {
-        while (iterator.nextIndex() != index) {
-            if (iterator.nextIndex() < index)
+    private static <T> ListIterator<T> moveIterator(final ListIterator<T> iterator, final int nextIndex) {
+        while (iterator.nextIndex() != nextIndex) {
+            if (iterator.nextIndex() < nextIndex)
                 iterator.next();
-            else if (iterator.nextIndex() > index)
+            else if (iterator.nextIndex() > nextIndex)
                 iterator.previous();
         }
         return iterator;

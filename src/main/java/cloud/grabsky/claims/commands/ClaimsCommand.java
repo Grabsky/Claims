@@ -8,7 +8,7 @@ import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.exception.ClaimProcessException;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.panel.views.ViewMain;
+import cloud.grabsky.claims.panel.views.MainView;
 import cloud.grabsky.commands.ArgumentQueue;
 import cloud.grabsky.commands.RootCommand;
 import cloud.grabsky.commands.RootCommandContext;
@@ -59,14 +59,14 @@ public class ClaimsCommand extends RootCommand {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (index == 0)
-            return CompletionsProvider.of(Stream.of("border", "edit", "find", "get", "reload", "restore").filter(literal -> sender.hasPermission(this.getPermission() + "." + literal)).toList());
+            return CompletionsProvider.of(Stream.of("border", "edit", "find", "get", "reload", "restore").filter(it -> sender.hasPermission(this.getPermission() + "." + it)).toList());
         // ...
         final String literal = context.getInput().at(1).toLowerCase();
         if (sender.hasPermission(this.getPermission() + "." + literal) == false)
             return CompletionsProvider.EMPTY;
         // ...
         return switch (literal) {
-            case "edit" -> switch(index) {
+            case "edit" -> switch (index) {
                 case 1 -> CompletionsProvider.of(Claim.class);
                 case 2 -> CompletionsProvider.of("--force");
                 default -> CompletionsProvider.EMPTY;
@@ -91,7 +91,7 @@ public class ClaimsCommand extends RootCommand {
                 if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
                     if (isClaimPanelOpen(claim) == false) {
                         new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                            claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(new ViewMain(), false));
+                            claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
                             return true;
                         });
                         return;
@@ -129,7 +129,7 @@ public class ClaimsCommand extends RootCommand {
             // ...
             if (isClaimPanelOpen(claim) == false) {
                 new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                    claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(new ViewMain(), false));
+                    claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
                     return true;
                 });
                 return;
