@@ -7,6 +7,7 @@ import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.configuration.adapter.ClaimTypeAdapterFactory;
 import cloud.grabsky.claims.exception.ClaimProcessException;
+import cloud.grabsky.claims.waypoints.WaypointManager;
 import cloud.grabsky.configuration.paper.adapter.ComponentAdapter;
 import cloud.grabsky.configuration.paper.adapter.EnchantmentAdapterFactory;
 import cloud.grabsky.configuration.paper.adapter.EnchantmentEntryAdapterFactory;
@@ -65,11 +66,15 @@ public final class ClaimManager {
     private final Map<UUID, ClaimPlayer> claimPlayerCache = new HashMap<>();
 
     @Getter(AccessLevel.PUBLIC)
+    private final WaypointManager waypointManager;
+
+    @Getter(AccessLevel.PUBLIC)
     private final Map<String, Claim.Type> claimTypes = new LinkedHashMap<>();
 
     public ClaimManager(final Claims claims, final RegionManager regionManager) {
         this.claims = claims;
         this.regionManager = regionManager;
+        this.waypointManager = new WaypointManager(claims);
         // ...
         this.cacheClaimTypes();
         this.cacheClaims();

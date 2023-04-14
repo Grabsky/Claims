@@ -18,6 +18,7 @@ import cloud.grabsky.claims.flags.LeaveActionBarFlag;
 import cloud.grabsky.claims.flags.object.FixedTime;
 import cloud.grabsky.claims.flags.object.FixedWeather;
 import cloud.grabsky.claims.listeners.RegionListener;
+import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.commands.RootCommandManager;
 import cloud.grabsky.configuration.ConfigurationHolder;
@@ -83,6 +84,7 @@ public final class Claims extends BedrockPlugin {
         // Registering events
         ClaimPanel.registerListener(this);
         this.getServer().getPluginManager().registerEvents(new RegionListener(this, claimManager), this);
+        this.getServer().getPluginManager().registerEvents(new WaypointListener(this), this);
         // Setting-up RootCommandManager... (applying templates, registering commands)
         this.commandManager = new RootCommandManager(this)
                 .apply(new CommandArgumentTemplate(this))

@@ -6,10 +6,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
@@ -25,6 +29,10 @@ public final class ClaimPlayer {
     private final @NotNull UUID uniqueId;
 
     private final LinkedHashSet<Claim> claims = new LinkedHashSet<>();
+
+    public @Unmodifiable Collection<Location> getLodestones() {
+        return Collections.unmodifiableList(claimManager.getWaypointManager().getCache().get(uniqueId));
+    }
 
     /**
      * Returns {@code true} if (this) {@link ClaimPlayer} is owner of <i>any</i> {@link Claim}.
