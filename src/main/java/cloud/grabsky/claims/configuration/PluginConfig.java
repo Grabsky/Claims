@@ -5,6 +5,7 @@ import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 @Internal
@@ -44,6 +45,14 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonNullable @JsonPath("claim_settings.interface_click_sound")
     public static Sound UI_CLICK_SOUND;
+
+    // Waypoint Settings
+
+    @JsonPath("waypoint_settings.waypoint_block")
+    public static ItemStack WAYPOINT_BLOCK;
+
+    @JsonPath("waypoint_settings.waypoints_limit")
+    public static int WAYPOINTS_LIMIT;
 
     // Logging Format
 

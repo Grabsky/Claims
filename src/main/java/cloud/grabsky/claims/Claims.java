@@ -3,6 +3,7 @@ package cloud.grabsky.claims;
 import cloud.grabsky.bedrock.BedrockPlugin;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.commands.ClaimsCommand;
+import cloud.grabsky.claims.commands.WaypointCommand;
 import cloud.grabsky.claims.commands.templates.CommandArgumentTemplate;
 import cloud.grabsky.claims.commands.templates.CommandExceptionTemplate;
 import cloud.grabsky.claims.configuration.PluginConfig;
@@ -89,7 +90,8 @@ public final class Claims extends BedrockPlugin {
         this.commandManager = new RootCommandManager(this)
                 .apply(new CommandArgumentTemplate(this))
                 .apply(CommandExceptionTemplate.INSTANCE)
-                .registerCommand(new ClaimsCommand(this));
+                .registerCommand(new ClaimsCommand(this))
+                .registerCommand(new WaypointCommand(this));
         // TO-DO: API?
     }
 

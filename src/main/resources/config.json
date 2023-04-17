@@ -26,6 +26,23 @@
         "interface_click_sound": { "key": "block.note_block.hat", "source": "master", "volume": 1.0, "pitch": 1.5 }
     },
 
+    // ...
+    "waypoint_settings": {
+        // ...
+        "waypoint_block": {
+            "material": "minecraft:lodestone",
+            "amount": 1,
+            "meta": {
+                "name": "<light_purple>Kamień Teleportacji",
+                "lore": ["<gray>Postaw aby utworzyć teleport."]
+            }
+        },
+        // ...
+        "waypoints_limit": 5
+        // ...
+
+    },
+
     // Logging format.
     "logging_format": {
         "claim_placed": "Claim ({claim-id}:{claim-level}) has been PLACED by {issuer-name} ({issuer-uuid}) at {location}",

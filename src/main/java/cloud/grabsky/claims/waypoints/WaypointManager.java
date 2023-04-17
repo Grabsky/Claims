@@ -6,15 +6,15 @@ import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
-import lombok.AccessLevel;
-import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -31,9 +31,9 @@ public final class WaypointManager {
     private final Claims plugin;
     private final Moshi moshi;
     private final File waypointsDirectory;
+    private final Map<UUID, List<Waypoint>> cache;
 
-    @Getter(AccessLevel.PUBLIC)
-    private final Map<UUID, List<Location>> cache;
+    private static final Type listOfWaypoint = newParameterizedType(List.class, Waypoint.class);
 
     public WaypointManager(final Claims plugin) {
         this.plugin = plugin;
@@ -43,10 +43,16 @@ public final class WaypointManager {
                 .build();
         this.waypointsDirectory = new File(plugin.getDataFolder(), "waypoints");
         this.cache = new HashMap<>();
+        // ...
+        this.loadCache();
+    }
+
+    public List<Waypoint> getWaypoints(final @NotNull UUID uniqueId) {
+        return cache.getOrDefault(uniqueId, new ArrayList<>());
     }
 
     @Internal
-    public void loadCache() throws IOException {
+    public void loadCache() {
         // Creating cache directory if does not exist.
         if (waypointsDirectory.exists() == false)
             waypointsDirectory.mkdirs();
@@ -66,7 +72,7 @@ public final class WaypointManager {
             if (file.getName().endsWith(".json") == true) {
                 final UUID uniqueId = UUID.fromString(file.getName().split("\\.")[0]);
                 // ...
-                final List<Location> waypoints = this.loadWaypoints(file);
+                final List<Waypoint> waypoints = this.loadWaypoints(file);
                 // ...
                 cache.put(uniqueId, waypoints);
                 // ...
@@ -76,8 +82,15 @@ public final class WaypointManager {
         plugin.getLogger().info(count + " waypoints were loaded from cache.");
     }
 
-    public void createWaypoint(final UUID uuid, final Location location) {
-        cache.get(uuid).add(location);
+    public boolean createWaypoint(final @NotNull UUID uuid, final @Nullable String name, final @NotNull Waypoint.Source source, final @NotNull Location location) {
+        // Returning 'false' when waypoint with similar name is found.
+        for (var waypoint : cache.getOrDefault(uuid, new ArrayList<>()))
+            if (waypoint.getName().equalsIgnoreCase(name) == true)
+                return false;
+        // ...
+        final Waypoint waypoint = (name != null) ? new Waypoint(name, source, location) : new Waypoint(source, location);
+        // ...
+        cache.computeIfAbsent(uuid, (u) -> new ArrayList<>()).add(waypoint);
         // ...
         plugin.getBedrockScheduler().runAsync(1L, (task) -> {
             // Creating directory in case it does not exist.
@@ -91,29 +104,31 @@ public final class WaypointManager {
             // ...
             try (final JsonWriter writer = JsonWriter.of(buffer(sink(file)))) {
                 // Writing data to the file
-                moshi.adapter(newParameterizedType(List.class, Location.class)).toJson(writer, cache.get(uuid));
+                moshi.adapter(listOfWaypoint).toJson(writer, cache.getOrDefault(uuid, new ArrayList<>()));
                 // ...
             } catch (final IOException e) {
                 e.printStackTrace();
             }
         });
+        // ...
+        return true;
     }
 
     @SuppressWarnings("unchecked")
-    private @NotNull List<Location> loadWaypoints(final @NotNull File file) {
+    private @NotNull List<Waypoint> loadWaypoints(final @NotNull File file) {
         // ...
         if (file.exists() == false)
             return new ArrayList<>();
         // ...
         try (final JsonReader reader = JsonReader.of(buffer(source(file)))) {
-            final List<Location> location = (List<Location>) moshi.adapter(newParameterizedType(List.class, Location.class)).fromJson(reader);
+            final List<Waypoint> waypoints = (List<Waypoint>) moshi.adapter(listOfWaypoint).fromJson(reader);
             // ...
             reader.close();
             // ...
-            if (location == null)
+            if (waypoints == null)
                 return new ArrayList<>();
             // ...
-            return location;
+            return waypoints;
         } catch (final IOException e) {
             plugin.getLogger().warning("Waypoint cannot be loaded. (FILE = " + file.getPath() + ")");
             e.printStackTrace();

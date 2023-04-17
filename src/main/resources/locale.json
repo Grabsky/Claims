@@ -62,6 +62,11 @@
         "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
         "destroy_failure_not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając."
     },
+    "waypoints": {
+        "place_success": "<dark_gray>› <gray>Teleport <gold><name><gray> został utworzony.",
+        "place_failure_already_exists": "<dark_gray>› <red>Teleport o tej nazwie już istnieje.",
+        "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś limit teleportów."
+    },
     // NOTE: Changing those values will NOT update enter/leave messages in existing claims.
     "flags": {
         "default_claim_enter": "<gray>Wszedłeś na teren gracza <gold><player>",

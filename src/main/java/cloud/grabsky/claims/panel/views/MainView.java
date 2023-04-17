@@ -28,8 +28,8 @@ public enum MainView implements Consumer<Panel> {
         cPanel.setItem(11, PluginItems.UI_CATEGORY_HOMES, (event) -> {
             switch (event.getClick()) {
                 case LEFT, SHIFT_LEFT -> {
-                    viewer.closeInventory();
-                    viewer.teleportAsync(cPanel.getClaim().getHome());
+                    cPanel.applyTemplate(TeleportView.INSTANCE, true);
+                    // viewer.teleportAsync(cPanel.getClaim().getHome());
                 }
             }
         });

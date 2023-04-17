@@ -7,7 +7,7 @@ plugins {
 final buildsDirectory = (System.getenv("JVM_BUILDS") ?: "." + File.separator + "builds")
 
 group = "cloud.grabsky"
-version = "0.9.0-pre"
+version = "0.9.0-SNAPSHOT"
 
 sourceCompatibility = JavaVersion.VERSION_17
 targetCompatibility = JavaVersion.VERSION_17
@@ -29,11 +29,11 @@ dependencies {
     // Dependencies
     implementation("cloud.grabsky:bedrock:d7cedc0")
     implementation("cloud.grabsky:commands:6d78c30")
-    implementation("cloud.grabsky:configuration-paper:741c63e")
+    implementation("cloud.grabsky:configuration-paper:1ccfb9c")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
     // Azure
-    compileOnly("cloud.grabsky:azure-api:5708fca")
+    compileOnly("cloud.grabsky:azure-api:6bddb8a")
 }
 
 tasks.register("deploy", Copy) {
