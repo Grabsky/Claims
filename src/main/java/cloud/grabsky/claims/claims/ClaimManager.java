@@ -7,7 +7,6 @@ import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.configuration.adapter.ClaimTypeAdapterFactory;
 import cloud.grabsky.claims.exception.ClaimProcessException;
-import cloud.grabsky.claims.waypoints.WaypointManager;
 import cloud.grabsky.configuration.paper.adapter.ComponentAdapter;
 import cloud.grabsky.configuration.paper.adapter.EnchantmentAdapterFactory;
 import cloud.grabsky.configuration.paper.adapter.EnchantmentEntryAdapterFactory;
@@ -59,22 +58,19 @@ import static okio.Okio.source;
 
 public final class ClaimManager {
 
-    private final Claims claims;
+    @Getter(AccessLevel.PUBLIC)
+    private final Claims plugin;
 
     private final RegionManager regionManager;
     private final Map<String, Claim> claimsCache = new HashMap<>();
     private final Map<UUID, ClaimPlayer> claimPlayerCache = new HashMap<>();
 
     @Getter(AccessLevel.PUBLIC)
-    private final WaypointManager waypointManager;
-
-    @Getter(AccessLevel.PUBLIC)
     private final Map<String, Claim.Type> claimTypes = new LinkedHashMap<>();
 
-    public ClaimManager(final Claims claims, final RegionManager regionManager) {
-        this.claims = claims;
+    public ClaimManager(final Claims plugin, final RegionManager regionManager) {
+        this.plugin = plugin;
         this.regionManager = regionManager;
-        this.waypointManager = new WaypointManager(claims);
         // ...
         this.cacheClaimTypes();
         this.cacheClaims();
@@ -84,7 +80,7 @@ public final class ClaimManager {
      * Loads and caches defined {@link Claim.Type} objects defined in configuration files.
      */
     private void cacheClaimTypes() throws IllegalStateException {
-        final File typesDirectory = new File(claims.getDataFolder(), "types");
+        final File typesDirectory = new File(plugin.getDataFolder(), "types");
         // Creating /plugins/Claims/types directory if does not exist.
         if (typesDirectory.exists() == false)
             typesDirectory.mkdirs();
@@ -103,7 +99,7 @@ public final class ClaimManager {
                 .toList();
         // ...
         if (sortedFiles.isEmpty() == true) {
-            claims.getLogger().warning("No claim types has been defined inside /plugins/Claims/types/ directory. Read documentation at [DOCS_LINK] to learn how.");
+            plugin.getLogger().warning("No claim types has been defined inside /plugins/Claims/types/ directory. Read documentation at [DOCS_LINK] to learn how.");
             return;
         }
         // ...
@@ -135,7 +131,7 @@ public final class ClaimManager {
                 final Claim.Type type = moshi.adapter(Claim.Type.class).lenient().fromJson(buffer);
                 // ...
                 if (type == null) {
-                    claims.getLogger().warning("Claim type cannot be loaded. (FILE = " + file.getPath() + ")");
+                    plugin.getLogger().warning("Claim type cannot be loaded. (FILE = " + file.getPath() + ")");
                     continue;
                 }
                 // ...
@@ -147,12 +143,12 @@ public final class ClaimManager {
                 // ...
                 loadedClaimTypes++;
             } catch (final IOException e) {
-                claims.getLogger().warning("Claim type cannot be loaded. (FILE = " + file.getPath() + ")");
+                plugin.getLogger().warning("Claim type cannot be loaded. (FILE = " + file.getPath() + ")");
                 e.printStackTrace();
             }
         }
         // ...
-        claims.getLogger().info("Successfully loaded " + loadedClaimTypes + " out of " + totalClaimTypes + " claim types total.");
+        plugin.getLogger().info("Successfully loaded " + loadedClaimTypes + " out of " + totalClaimTypes + " claim types total.");
     }
 
     /**
@@ -174,7 +170,7 @@ public final class ClaimManager {
             final @Nullable Claim.Type claimType = claimTypes.get(claimTypeId);
             // Skipping claims with non-existent or invalid type.
             if (claimTypeId == null || claimTypes.containsKey(claimTypeId) == false) {
-                claims.getLogger().warning("Claim cannot be loaded because it's TYPE is not defined. (CLAIM_ID = " + id + ", CLAIM_TYPE_ID = " + claimTypeId + ")");
+                plugin.getLogger().warning("Claim cannot be loaded because it's TYPE is not defined. (CLAIM_ID = " + id + ", CLAIM_TYPE_ID = " + claimTypeId + ")");
                 continue;
             }
             final Claim claim = new Claim(id, this, region, claimType);
@@ -190,10 +186,10 @@ public final class ClaimManager {
             loadedClaims++;
         }
         // ...
-        claims.getLogger().info("Successfully loaded " + loadedClaims + " out of " + totalClaims + " claims total.");
+        plugin.getLogger().info("Successfully loaded " + loadedClaims + " out of " + totalClaims + " claims total.");
         // ...
         if (loadedClaims < totalClaims) {
-            claims.getLogger().warning("Not loaded claims ARE STILL PROTECTED but are excluded from plugin cache and are inaccessible by players. You should take a closer look at all of them individually to see what's wrong.");
+            plugin.getLogger().warning("Not loaded claims ARE STILL PROTECTED but are excluded from plugin cache and are inaccessible by players. You should take a closer look at all of them individually to see what's wrong.");
         }
     }
 

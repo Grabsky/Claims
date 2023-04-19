@@ -32,6 +32,24 @@ public final class PluginItems implements JsonConfiguration {
     @JsonPath("interface.icon_remove_member")
     public static ItemStack UI_ICON_REMOVE_MEMBER;
 
+    @JsonPath("interface.icon_teleport_to_spawn")
+    public static ItemStack UI_ICON_TELEPORT_TO_SPAWN;
+
+    @JsonPath("interface.icon_browse_waypoints")
+    public static ItemStack UI_ICON_BROWSE_WAYPOINTS;
+
+    @JsonPath("interface.icon_browse_owned_claims")
+    public static ItemStack UI_ICON_BROWSE_OWNED_CLAIMS;
+
+    @JsonPath("interface.icon_browse_relative_claims")
+    public static ItemStack UI_ICON_BROWSE_RELATIVE_CLAIMS;
+
+    @JsonPath("interface.icon_waypoint_loading")
+    public static ItemStack UI_ICON_WAYPOINT_LOADING;
+
+    @JsonPath("interface.icon_waypoint_ready")
+    public static ItemStack UI_ICON_WAYPOINT_READY;
+
     @JsonPath("interface.navigation_previous")
     public static ItemStack UI_NAVIGATION_PREVIOUS;
 

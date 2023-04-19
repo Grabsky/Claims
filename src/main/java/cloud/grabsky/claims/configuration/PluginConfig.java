@@ -1,5 +1,6 @@
 package cloud.grabsky.claims.configuration;
 
+import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
@@ -71,4 +72,8 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("logging_format.claim_member_removed")
     public static String LOG_FORMAT_MEMBER_REMOVED;
 
+    @Override
+    public void onReload() {
+        WaypointListener.WAYPOINT_BLOCK_TYPE = WAYPOINT_BLOCK.getType();
+    }
 }

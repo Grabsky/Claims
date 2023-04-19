@@ -1,6 +1,7 @@
 package cloud.grabsky.claims;
 
 import cloud.grabsky.bedrock.BedrockPlugin;
+import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.commands.ClaimsCommand;
 import cloud.grabsky.claims.commands.WaypointCommand;
@@ -21,6 +22,7 @@ import cloud.grabsky.claims.flags.object.FixedWeather;
 import cloud.grabsky.claims.listeners.RegionListener;
 import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.claims.panel.ClaimPanel;
+import cloud.grabsky.claims.waypoints.WaypointManager;
 import cloud.grabsky.commands.RootCommandManager;
 import cloud.grabsky.configuration.ConfigurationHolder;
 import cloud.grabsky.configuration.ConfigurationMapper;
@@ -57,6 +59,9 @@ public final class Claims extends BedrockPlugin {
     private ClaimManager claimManager;
 
     @Getter(AccessLevel.PUBLIC)
+    private WaypointManager waypointManager;
+
+    @Getter(AccessLevel.PUBLIC)
     private RootCommandManager commandManager;
 
     private ConfigurationMapper mapper;
@@ -82,7 +87,9 @@ public final class Claims extends BedrockPlugin {
         Claims.CustomFlag.registerHandlers();
         // Initializing ClaimManager
         this.claimManager = new ClaimManager(this, regionManager);
+        this.waypointManager = new WaypointManager(this);
         // Registering events
+        Panel.registerListener(this);
         ClaimPanel.registerListener(this);
         this.getServer().getPluginManager().registerEvents(new RegionListener(this, claimManager), this);
         this.getServer().getPluginManager().registerEvents(new WaypointListener(this), this);

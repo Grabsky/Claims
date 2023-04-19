@@ -28,7 +28,7 @@ public enum MainView implements Consumer<Panel> {
         cPanel.setItem(11, PluginItems.UI_CATEGORY_HOMES, (event) -> {
             switch (event.getClick()) {
                 case LEFT, SHIFT_LEFT -> {
-                    cPanel.applyTemplate(TeleportView.INSTANCE, true);
+                    cPanel.applyTemplate(new TeleportView(cPanel.getManager().getPlugin()), true);
                     // viewer.teleportAsync(cPanel.getClaim().getHome());
                 }
             }

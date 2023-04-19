@@ -25,7 +25,7 @@ public final class WaypointCommand extends RootCommand {
 
     public WaypointCommand(final Claims plugin) {
         super("waypoint", null, "claims.command.waypoint", "/waypoint (...)", "...");
-        this.waypointManager = plugin.getClaimManager().getWaypointManager();
+        this.waypointManager = plugin.getWaypointManager();
     }
 
     @Override
@@ -95,12 +95,13 @@ public final class WaypointCommand extends RootCommand {
                 return;
             }
             // ...
-            if (waypointManager.createWaypoint(target.getUniqueId(), name, Waypoint.Source.COMMAND, sender.getLocation()) == true) {
-                Message.of(PluginLocale.WAYPOINT_PLACE_SUCCESS).placeholder("name", name).send(sender);
-                return;
-            }
-            // ...
-            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS).placeholder("name", name).send(sender);
+            waypointManager.createWaypoint(target.getUniqueId(), name, Waypoint.Source.COMMAND, sender.getLocation()).thenAccept((isSuccess) -> {
+                if (isSuccess == true) {
+                    Message.of(PluginLocale.WAYPOINT_PLACE_SUCCESS).placeholder("name", name).send(sender);
+                    return;
+                }
+                Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS).placeholder("name", name).send(sender);
+            });
             return;
         }
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);

@@ -45,13 +45,13 @@ import static java.util.Comparator.comparingInt;
 
 public class ClaimsCommand extends RootCommand {
 
-    private final Claims claims;
+    private final Claims plugin;
     private final ClaimManager claimManager;
 
-    public ClaimsCommand(final Claims claims) {
+    public ClaimsCommand(final Claims plugin) {
         super("claims", new String[]{"claim"}, "claims.command.claims", null, null);
-        this.claims = claims;
-        this.claimManager = claims.getClaimManager();
+        this.plugin = plugin;
+        this.claimManager = plugin.getClaimManager();
     }
 
     @Override
@@ -91,7 +91,7 @@ public class ClaimsCommand extends RootCommand {
                 if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
                     if (isClaimPanelOpen(claim) == false) {
                         new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                            claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
+                            plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
                             return true;
                         });
                         return;
@@ -129,7 +129,7 @@ public class ClaimsCommand extends RootCommand {
             // ...
             if (isClaimPanelOpen(claim) == false) {
                 new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                    claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
+                    plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
                     return true;
                 });
                 return;
@@ -229,7 +229,7 @@ public class ClaimsCommand extends RootCommand {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (sender.hasPermission(this.getPermission() + ".reload") == true) {
-            if (claims.reloadConfiguration() == true) {
+            if (plugin.reloadConfiguration() == true) {
                 Message.of(PluginLocale.RELOAD_SUCCESS).send(sender);
                 return;
             }
@@ -316,9 +316,9 @@ public class ClaimsCommand extends RootCommand {
                                 blockDisplay.setVisibleByDefault(false);
                                 blockDisplay.setPersistent(false);
                                 // ...
-                                sender.showEntity(claims, entity);
+                                sender.showEntity(plugin, entity);
                             }
-                            claims.getBedrockScheduler().run(300L, (task) -> entity.remove());
+                            plugin.getBedrockScheduler().run(300L, (task) -> entity.remove());
                         });
                     }
                     return;

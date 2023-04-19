@@ -1,18 +1,17 @@
 package cloud.grabsky.claims.waypoints;
 
+import com.squareup.moshi.Json;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
 @RequiredArgsConstructor(access = AccessLevel.PACKAGE)
 public final class Waypoint {
 
-    public enum Source {
-        COMMAND,
-        BLOCK
-    }
+    public enum Source { COMMAND, BLOCK }
 
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull String name;
@@ -20,11 +19,16 @@ public final class Waypoint {
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull Source source;
 
-    @Getter(AccessLevel.PUBLIC)
+    @Getter(AccessLevel.PUBLIC) @Json(name = "created_on")
+    private final long createdOn;
+
     private final @NotNull Location location;
 
-    public Waypoint(final @NotNull Source source, final @NotNull Location location) {
-        this("x" + location.blockX() + "y" + location.blockY() + "z" + location.blockZ(), source, location);
+    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
+    private transient boolean isStale = false;
+
+    public @NotNull Location getLocation() {
+        return location.clone();
     }
 
 }

@@ -29,7 +29,13 @@
         "claims_find_entry": "<dark_gray>›    <hover:show_text:'<gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <claim>'><gold><claim></click>",
         // Claims > Restore
         "claims_restore_usage": "<dark_gray>› <gray>Użycie: <gold>/claims restore <white>(claim)",
-        "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce."
+        "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
+        // Waypoints > Create
+        "waypoints_create_success": "",
+        "waypoints_create_failure_already_exists": "",
+        // Waypoints > Remove
+        "waypoints_remove_success": "",
+        "waypoints_remove_failure_not_existent": "",
     },
     // ...
     "interface": {
