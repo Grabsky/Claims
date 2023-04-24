@@ -4,7 +4,6 @@ import com.squareup.moshi.Json;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.Location;
 import org.jetbrains.annotations.NotNull;
 
@@ -23,9 +22,6 @@ public final class Waypoint {
     private final long createdOn;
 
     private final @NotNull Location location;
-
-    @Getter(AccessLevel.PACKAGE) @Setter(AccessLevel.PACKAGE)
-    private transient boolean isStale = false;
 
     public @NotNull Location getLocation() {
         return location.clone();

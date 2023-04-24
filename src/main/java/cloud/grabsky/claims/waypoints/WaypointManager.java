@@ -3,20 +3,23 @@ package cloud.grabsky.claims.waypoints;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.waypoints.adapter.LocationAdapter;
 import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
+import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
+import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
-import okio.BufferedSink;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
@@ -31,149 +34,164 @@ import static okio.Okio.source;
 public final class WaypointManager {
 
     private final Claims plugin;
-    private final Moshi moshi;
-    private final File waypointsDirectory;
+    private final File dataDirectory;
     private final ConcurrentMap<UUID, List<Waypoint>> cache;
+
+    private final JsonAdapter<Object> adapter; // JsonAdapter<List<Waypoint>>
 
     private static final Type TYPE_LIST_OF_WAYPOINTS = newParameterizedType(List.class, Waypoint.class);
 
-    public WaypointManager(final Claims plugin) {
+    public WaypointManager(final @NotNull Claims plugin) {
         this.plugin = plugin;
-        this.moshi = new Moshi.Builder()
-                .add(NamespacedKey.class, NamespacedKeyAdapter.INSTANCE)
-                .add(LocationAdapter.INSTANCE)
-                .build();
-        this.waypointsDirectory = new File(plugin.getDataFolder(), "waypoints");
+        this.dataDirectory = new File(plugin.getDataFolder(), "waypoints");
         this.cache = new ConcurrentHashMap<>();
         // ...
-        this.loadCache();
-    }
-
-    public List<Waypoint> getWaypoints(final @NotNull UUID uniqueId) {
-        return cache.getOrDefault(uniqueId, new ArrayList<>());
+        this.adapter = new Moshi.Builder()
+                .add(NamespacedKey.class, NamespacedKeyAdapter.INSTANCE)
+                .add(LocationAdapter.INSTANCE)
+                .build().adapter(TYPE_LIST_OF_WAYPOINTS).indent("  "); // JsonAdapter<List<Waypoint>>
+        // Caching waypoints.
+        this.cacheWaypoints();
     }
 
     @Internal
-    public void loadCache() {
-        ensureCacheDirectoryExists();
+    public void cacheWaypoints() throws IllegalStateException {
+        // Creating data directory if does not exist.
+        ensureDataDirectoryExists();
+        // Getting list of the files within the cache directory. Non-recursive.
+        final File[] files = dataDirectory.listFiles();
         // ...
-        final File[] files = waypointsDirectory.listFiles();
-        // ...
-        if (files == null) {
-            plugin.getLogger().info("No waypoints were loaded: " + waypointsDirectory.getPath() + " is empty.");
-            return;
-        }
-        int count = 0;
-        // ...
-        for (final File file : files) {
+        int loadedPlayersCount = 0;
+        int loadedWaypointsCount = 0;
+        // Iterating over each file...
+        for (final File file : (files != null) ? files : new File[0]) {
+            // Skipping non-JSON files.
             if (file.getName().endsWith(".json") == true) {
-                final UUID uniqueId = UUID.fromString(file.getName().split("\\.")[0]);
-                // ...
-                final List<Waypoint> waypoints = this.loadFile(file);
-                // ...
-                cache.put(uniqueId, waypoints);
-                // ...
-                count += waypoints.size();
+                try {
+                    // Unboxing file name to (owner) UUID object.
+                    final UUID uniqueId = UUID.fromString(file.getName().split("\\.")[0]);
+                    // Increasing number of total players.
+                    // Loading list of waypoints from the file.
+                    final List<Waypoint> waypoints = this.readFile(file);
+                    // Increasing number of loaded players.
+                    loadedPlayersCount++;
+                    // Adding to the cache...
+                    cache.put(uniqueId, waypoints);
+                    // Increasing number of loaded waypoints.
+                    loadedWaypointsCount += waypoints.size();
+                } catch (final IOException | IllegalStateException e) {
+                    plugin.getLogger().warning("Waypoint(s) cannot be loaded. (FILE = " + file.getPath() + ")");
+                    e.printStackTrace();
+                }
             }
         }
-        // ...
-        plugin.getLogger().info(count + " waypoints were loaded from cache.");
+        // Printing "summary" message to the console.
+        plugin.getLogger().info("Successfully loaded " + loadedWaypointsCount + " waypoint(s) owned by " + loadedPlayersCount + " player(s) total.");
     }
 
-    @SuppressWarnings("UnstableApiUsage")
-    private static @NotNull BlockPosition toChunkPosition(final Position position) {
-        return Position.block((position.blockX() & 0xF), position.blockY(), (position.blockZ() & 0xF));
+    @SuppressWarnings("unchecked")
+    private @NotNull List<Waypoint> readFile(final @NotNull File file) throws IOException, IllegalStateException {
+        // Creating a JsonReader from provided file.
+        final JsonReader reader = JsonReader.of(buffer(source(file)));
+        // Reading the JSON file.
+        final List<Waypoint> waypoints = (List<Waypoint>) adapter.fromJson(reader);
+        // Closing the reader.
+        reader.close();
+        // Throwing exception in case List<Waypoint> ended up being null. Unlikely to happen, but possible.
+        if (waypoints == null)
+            throw new IllegalArgumentException("Deserialization of " + file.getPath() + " failed: " + null);
+        // ...
+        return waypoints;
     }
 
-    public boolean hasWaypoint(final @NotNull UUID uniqueId, final @NotNull String name) {
-        if (cache.containsKey(uniqueId) == false)
-            return false;
-        // ...
-        for (final Waypoint waypoint : cache.get(uniqueId))
-            if (waypoint.getName().equals(name) == true)
-                return true;
-        // ...
-        return false;
-    }
-
-    public @NotNull CompletableFuture<Boolean> createWaypoint(final @NotNull UUID uuid, final @NotNull String name, final @NotNull Waypoint.Source source, final @NotNull Location location) throws IllegalArgumentException {
-        // Returning 'false' when waypoint with similar name is found.
-        if (this.hasWaypoint(uuid, name) == true)
-            throw new IllegalArgumentException("Player " + uuid + " already has a waypoint named " + name + ".");
-        // ...
+    public @NotNull CompletableFuture<Boolean> createWaypoint(final @NotNull UUID uniqueId, final @NotNull String name, final @NotNull Waypoint.Source source, final @NotNull Location location) throws IllegalArgumentException {
+        // Throwing exception in case waypoint with specified name already exists.
+        if (this.hasWaypoint(uniqueId, name) == true)
+            throw new IllegalArgumentException("Player " + uniqueId + " already has a waypoint named " + name + ".");
+        // Creating Waypoint object using provided values.
         final Waypoint waypoint = new Waypoint(name, source, System.currentTimeMillis(), location);
-        // ...
-        cache.computeIfAbsent(uuid, (u) -> new ArrayList<>()).add(waypoint);
-        // ...
-        return this.save(uuid);
+        // Adding waypoint to the cache.
+        cache.computeIfAbsent(uniqueId, (___) -> new ArrayList<>()).add(waypoint);
+        // Saving and returning the result.
+        return this.save(uniqueId);
     }
 
-    public CompletableFuture<Boolean> removeWaypoint(final @NotNull UUID uuid, final @NotNull Location location) {
-        final List<Waypoint> waypointsCopy = (cache.containsKey(uuid) == true) ? new ArrayList<>(cache.get(uuid)) : new ArrayList<>();
-        // ...
-        waypointsCopy.removeIf((waypoint) -> waypoint.getLocation().equals(location) == true);
-        // ...
-        if (cache.getOrDefault(uuid, new ArrayList<>()).size() == waypointsCopy.size())
-            return CompletableFuture.completedFuture(false);
-        // ...
-        cache.put(uuid, waypointsCopy);
-        // ...
-        return this.save(uuid);
+    public @NotNull CompletableFuture<Boolean> removeWaypoint(final @NotNull UUID uniqueId, final @NotNull Location location) throws IllegalArgumentException {
+        // Creating a copy of waypoints owned by specified player.
+        final List<Waypoint> waypointsCopy = (cache.containsKey(uniqueId) == true) ? new ArrayList<>(cache.get(uniqueId)) : new ArrayList<>();
+        // Removing waypoint(s) matching provided location.
+        waypointsCopy.removeIf(waypoint -> waypoint.getLocation().equals(location) == true);
+        // Returning "failed" CompletableFuture in case nothing was removed from the list.
+        if ((cache.containsKey(uniqueId) == true ? cache.get(uniqueId).size() : 0) == waypointsCopy.size())
+            throw new IllegalArgumentException("Waypoint does not exist"); // TO-DO: Improve message.
+        // Updating the cache.
+        cache.put(uniqueId, waypointsCopy);
+        // Saving and returning the result.
+        return this.save(uniqueId);
     }
 
-    public @NotNull CompletableFuture<Boolean> save(final @NotNull UUID uuid) {
-        ensureCacheDirectoryExists();
+    public @NotNull CompletableFuture<Boolean> save(final @NotNull UUID uniqueId) {
+        ensureDataDirectoryExists();
         // ...
-        final File file = new File(waypointsDirectory, uuid + ".json");
-        // ...
+        final File file = new File(dataDirectory, uniqueId + ".json");
+        // Returning CompletableFuture which saves the file asynchronously.
         return CompletableFuture.supplyAsync(() -> {
-            // Non-existent data does not need to be saved...
-            if (cache.containsKey(uuid) == false)
+            // Returning 'true' in case there is no data to save.
+            if (cache.containsKey(uniqueId) == false)
                 return true;
+            // Getting data currently held in cache.
+            final List<Waypoint> waypoints = cache.get(uniqueId);
             // ...
-            final List<Waypoint> waypoints = cache.get(uuid);
-            // ...
-            try (final BufferedSink buffer = buffer(sink(file))) {
-                // ...
-                moshi.adapter(TYPE_LIST_OF_WAYPOINTS).indent("  ").toJson(buffer, waypoints);
-                // ...
+            try (final JsonWriter writer = JsonWriter.of(buffer(sink(file)))) {
+                // Writing data to the file.
+                adapter.toJson(writer, waypoints);
+                // Returning 'true' assuming data was written.
                 return true;
             } catch (final IOException e) {
                 e.printStackTrace();
                 return false;
             }
+        }).exceptionally(thr -> {
+            thr.printStackTrace();
+            return false;
         });
     }
 
-    @SuppressWarnings("unchecked")
-    private @NotNull List<Waypoint> loadFile(final @NotNull File file) {
-        // ...
-        if (file.exists() == false)
-            return new ArrayList<>();
-        // ...
-        try (final JsonReader reader = JsonReader.of(buffer(source(file)))) {
-            final List<Waypoint> waypoints = (List<Waypoint>) moshi.adapter(TYPE_LIST_OF_WAYPOINTS).fromJson(reader);
-            // ...
-            reader.close();
-            // ...
-            if (waypoints == null)
-                return new ArrayList<>();
-            // ...
-            return waypoints;
-        } catch (final IOException e) {
-            plugin.getLogger().warning("Waypoint cannot be loaded. (FILE = " + file.getPath() + ")");
-            e.printStackTrace();
-        }
-        return new ArrayList<>();
+    public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull UUID uniqueId) {
+        return (cache.containsKey(uniqueId) == true) ? Collections.unmodifiableList(cache.get(uniqueId)) : Collections.emptyList();
     }
 
-    private void ensureCacheDirectoryExists() throws IllegalStateException {
+    public boolean hasWaypoint(final @NotNull UUID uniqueId, final @NotNull String name) {
+        for (final Waypoint waypoint : (cache.containsKey(uniqueId) == true) ? cache.get(uniqueId) : new ArrayList<Waypoint>())
+            if (waypoint.getName().equals(name) == true)
+                return true;
+        // No waypoints found. Returning false.
+        return false;
+    }
+
+
+    /**
+     * Returns {@link BlockPosition} containing chunk position of provided {@link Position}.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    private static @NotNull BlockPosition toChunkPosition(final Position position) {
+        return Position.block((position.blockX() & 0xF), position.blockY(), (position.blockZ() & 0xF));
+    }
+
+    /**
+     * Ensures that cache directory exists. In case file is not a directory - it gets deleted and a directory is created in its place.
+     */
+    private void ensureDataDirectoryExists() throws IllegalStateException {
         // Creating directory in case it does not exist.
-        if (waypointsDirectory.exists() == false)
-            waypointsDirectory.mkdirs();
-        // Throwing an exception in case file is not a directory.
-        if (waypointsDirectory.isDirectory() == false)
-            throw new IllegalStateException(waypointsDirectory.getPath() + " is not a directory.");
+        if (dataDirectory.exists() == false)
+            dataDirectory.mkdirs();
+        // Deleting and re-creating in case file is not a directory.
+        if (dataDirectory.isDirectory() == false) {
+            if (dataDirectory.delete() == false)
+                throw new IllegalStateException("File " + dataDirectory.getPath() + " is not a directory and could not be deleted. Please delete or rename it manually.");
+            // Calling (self) after deleting non-directory file. This should not lead to inifnite recursion.
+            ensureDataDirectoryExists();
+        }
     }
 
 }

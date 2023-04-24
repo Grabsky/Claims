@@ -56,13 +56,16 @@ public final class WaypointListener implements Listener {
             if (waypointManager.hasWaypoint(uniqueId, name) == false) {
                 event.getBlockPlaced().getChunk().getPersistentDataContainer().set(key, PersistentDataType.STRING, uniqueId.toString());
                 // ...
-                waypointManager.createWaypoint(uniqueId, name, Waypoint.Source.BLOCK, location).thenAccept(isSuccess -> {
-                    if (isSuccess == true) {
-                        location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.0F, 1.0F);
-                        player.setCooldown(WAYPOINT_BLOCK_TYPE, 5 * 20);
-                    }
-                });
-                return;
+                try {
+                    waypointManager.createWaypoint(uniqueId, name, Waypoint.Source.BLOCK, location).thenAccept(isSuccess -> {
+                        if (isSuccess == true) {
+                            location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.0F, 1.0F);
+                            player.setCooldown(WAYPOINT_BLOCK_TYPE, 5 * 20);
+                        }
+                        // TO-DO: Error message suggesting to destroy and place one more time.
+                    });
+                    return;
+                } catch (final IllegalArgumentException ___) { /* HANDLED BELOW */ }
             }
             event.setCancelled(true);
             Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS).placeholder("name", name).send(player);
@@ -91,13 +94,16 @@ public final class WaypointListener implements Listener {
             // ...
             final UUID ownerUniqueId = UUID.fromString(owner);
             // ...
-            waypointManager.removeWaypoint(ownerUniqueId, location).thenAccept(isSuccess -> {
-               if (isSuccess == true) {
-                   location.getChunk().getPersistentDataContainer().remove(key);
-                   location.getWorld().spawnParticle(Particle.DRAGON_BREATH, location, 80, 0.25, 0.25, 0.25, 0.03);
-                   location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1.0F, 1.0F);
-               }
-            });
+            try {
+                waypointManager.removeWaypoint(ownerUniqueId, location).thenAccept(isSuccess -> {
+                    if (isSuccess == true) {
+                        location.getChunk().getPersistentDataContainer().remove(key);
+                        location.getWorld().spawnParticle(Particle.DRAGON_BREATH, location, 80, 0.25, 0.25, 0.25, 0.03);
+                        location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1.0F, 1.0F);
+                    }
+                    // TO-DO: Error message suggesting to place and destroy one more time.
+                });
+            } catch (final IllegalArgumentException ___) { /* IGNORED */ }
         }
     }
 
