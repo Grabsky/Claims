@@ -1,4 +1,4 @@
-package cloud.grabsky.claims.panel.views;
+package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.inventory.Panel;
@@ -26,7 +26,7 @@ import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
-public enum SettingsView implements Consumer<Panel> {
+public enum BrowseSettings implements Consumer<Panel> {
     /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
@@ -46,7 +46,7 @@ public enum SettingsView implements Consumer<Panel> {
         // ...
         cPanel.clear();
         // Button: FLAGS
-        cPanel.setItem(11, PluginItems.UI_CATEGORY_FLAGS, event -> cPanel.applyTemplate(FlagsView.INSTANCE, true));
+        cPanel.setItem(11, PluginItems.UI_CATEGORY_FLAGS, event -> cPanel.applyTemplate(BrowseFlags.INSTANCE, true));
         // Teleport location button
         cPanel.setItem(13, PluginItems.UI_ICON_SET_TELEPORT, (event) -> {
             viewer.closeInventory();
@@ -87,7 +87,7 @@ public enum SettingsView implements Consumer<Panel> {
             }
         });
         // Return button
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(MainView.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
     }
 
     private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {

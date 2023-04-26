@@ -8,7 +8,7 @@ import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.panel.views.MainView;
+import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -176,7 +176,7 @@ public final class RegionListener implements Listener {
             if (claim != null && (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claims") == true|| claim.isOwner(claimPlayer) == true) == true) {
                 if (isClaimPanelOpen(claim) == false) {
                     new ClaimPanel(claimManager, claim).open(event.getPlayer(), (panel) -> {
-                        claims.getBedrockScheduler().run(1L, (it) -> panel.applyTemplate(MainView.INSTANCE, false));
+                        claims.getBedrockScheduler().run(1L, (it) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
                         return true;
                     });
                     return;

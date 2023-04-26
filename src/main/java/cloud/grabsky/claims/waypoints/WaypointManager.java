@@ -174,7 +174,7 @@ public final class WaypointManager {
      * Returns {@link BlockPosition} containing chunk position of provided {@link Position}.
      */
     @SuppressWarnings("UnstableApiUsage")
-    private static @NotNull BlockPosition toChunkPosition(final Position position) {
+    public static @NotNull BlockPosition toChunkPosition(final Position position) {
         return Position.block((position.blockX() & 0xF), position.blockY(), (position.blockZ() & 0xF));
     }
 

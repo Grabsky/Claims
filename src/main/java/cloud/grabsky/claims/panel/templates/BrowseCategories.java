@@ -1,4 +1,4 @@
-package cloud.grabsky.claims.panel.views;
+package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
@@ -12,7 +12,7 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public enum MainView implements Consumer<Panel> {
+public enum BrowseCategories implements Consumer<Panel> {
     /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
@@ -28,13 +28,13 @@ public enum MainView implements Consumer<Panel> {
         cPanel.setItem(11, PluginItems.UI_CATEGORY_HOMES, (event) -> {
             switch (event.getClick()) {
                 case LEFT, SHIFT_LEFT -> {
-                    cPanel.applyTemplate(new TeleportView(cPanel.getManager().getPlugin()), true);
+                    cPanel.applyTemplate(new BrowseWaypoints(cPanel.getManager().getPlugin()), true);
                     // viewer.teleportAsync(cPanel.getClaim().getHome());
                 }
             }
         });
-        cPanel.setItem(13, new ItemBuilder(PluginItems.UI_CATEGORY_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyTemplate(MembersView.INSTANCE, true));
-        cPanel.setItem(15, PluginItems.UI_CATEGORY_SETTINGS, (event) -> cPanel.applyTemplate(SettingsView.INSTANCE, true));
+        cPanel.setItem(13, new ItemBuilder(PluginItems.UI_CATEGORY_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
+        cPanel.setItem(15, PluginItems.UI_CATEGORY_SETTINGS, (event) -> cPanel.applyTemplate(BrowseSettings.INSTANCE, true));
         cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> viewer.closeInventory());
     }
 

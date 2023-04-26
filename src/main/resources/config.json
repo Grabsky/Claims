@@ -39,8 +39,6 @@
         },
         // ...
         "waypoints_limit": 5
-        // ...
-
     },
 
     // Logging format.

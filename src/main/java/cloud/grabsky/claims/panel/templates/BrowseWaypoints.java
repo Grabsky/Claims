@@ -1,4 +1,4 @@
-package cloud.grabsky.claims.panel.views;
+package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
@@ -12,9 +12,7 @@ import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -23,14 +21,13 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 import java.util.ListIterator;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static java.util.Comparator.comparingLong;
 import static net.kyori.adventure.text.Component.text;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
-public final class TeleportView implements Consumer<Panel> {
+public final class BrowseWaypoints implements Consumer<Panel> {
 
     private final Claims plugin;
 
@@ -56,24 +53,19 @@ public final class TeleportView implements Consumer<Panel> {
         // ...
         final var slotsIterator = UI_SLOTS.iterator();
         final var waypointsIterator = moveIterator(waypoints.listIterator(), (pageToDisplay * maxOnPage) - maxOnPage);
-        // ...
-        final CompletableFuture<Chunk> queue = CompletableFuture.completedFuture(null); // Initial is not processed and can be null.
-        // ...
+        // Rendering PREVIOUS PAGE button.
+        if (waypointsIterator.hasPrevious() == true)
+            panel.setItem(28, PluginItems.UI_NAVIGATION_PREVIOUS, (event) -> renderWaypoints(panel, viewer, pageToDisplay - 1, maxOnPage));
+        // Rendering waypoints.
         while (waypointsIterator.hasNext() == true && slotsIterator.hasNext() == true) {
             final Waypoint waypoint = waypointsIterator.next();
             final Location location = waypoint.getLocation().clone();
             // ...
             final int slot = slotsIterator.next();
             // ...
-            final ItemStack loading = new ItemBuilder(PluginItems.UI_ICON_WAYPOINT_LOADING)
-                    .setName(text(waypoint.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
-                    .build();
-            // ...
             final ItemStack ready = new ItemBuilder(PluginItems.UI_ICON_WAYPOINT_READY)
                     .setName(text(waypoint.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                     .build();
-            // ...
-            panel.setItem(slot, loading, null);
             // ...
             if (waypoint.getSource() == Waypoint.Source.COMMAND) {
                 panel.setItem(slot, ready, (event) -> {
@@ -82,36 +74,31 @@ public final class TeleportView implements Consumer<Panel> {
                                 if (success == true) {
                                     // [SEND MESSAGE]
                                     // Spawning particles...
-                                    spawnParticles(location.add(0.0F, 1.0F, 0.0F));
+                                    //spawnParticles(location.add(0.0F, 1.0F, 0.0F));
                                 }
                             });
                 });
                 continue;
             }
-            // ...
-            queue.thenComposeAsync(___ -> {
-                // System.out.println("Chaining " + waypoint.getName() + "...");
-                return location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
-                    // System.out.println("  LOADED (" + location.x() + ", " + location.y() + ", " + location.z() + ")");
-                    if (viewer.getOpenInventory().getTopInventory().getHolder() == panel) {
-                        // ...
-                        final Block block = chunk.getBlock((location.getBlockX() & 0xF), location.getBlockY(), (location.getBlockZ() & 0xF));
-                        // ...
-                        if (block.getType() == PluginConfig.WAYPOINT_BLOCK.getType()) {
-                            chunk.unload();
-                            panel.setItem(slot, ready, (event) -> {
-                                viewer.teleportAsync(location.add(0.0F, 0.5F, 0.0F), TeleportCause.PLUGIN)
-                                        .thenAccept(success -> {
-                                            if (success == true) {
-                                                // [SEND MESSAGE]
-                                                // Spawning particles...
-                                                spawnParticles(location.add(0.0F, 1.0F, 0.0F));
-                                            }
-                                        });
-                            });
-                        }
+            location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
+                if (viewer.getOpenInventory().getTopInventory().getHolder() == panel) {
+                    // ...
+                    final Block block = chunk.getBlock((location.getBlockX() & 0xF), location.getBlockY(), (location.getBlockZ() & 0xF));
+                    // ...
+                    if (block.getType() == PluginConfig.WAYPOINT_BLOCK.getType()) {
+                        chunk.unload();
+                        panel.setItem(slot, ready, (event) -> {
+                            viewer.teleportAsync(location.add(0.0F, 0.5F, 0.0F), TeleportCause.PLUGIN)
+                                    .thenAccept(success -> {
+                                        if (success == true) {
+                                            // [SEND MESSAGE]
+                                            // Spawning particles...
+                                            //spawnParticles(location.add(0.0F, 1.0F, 0.0F));
+                                        }
+                                    });
+                        });
                     }
-                });
+                }
             });
         }
         // ...
@@ -130,15 +117,11 @@ public final class TeleportView implements Consumer<Panel> {
         // RETURN
         panel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> {
             if (panel instanceof ClaimPanel cPanel) {
-                cPanel.applyTemplate(MainView.INSTANCE, true);
+                cPanel.applyTemplate(BrowseCategories.INSTANCE, true);
                 return;
             }
             panel.close();
         });
-    }
-
-    private static void spawnParticles(final Location location) {
-        location.getWorld().spawnParticle(Particle.END_ROD, location, 150, 0.25, 0.5, 0.25, 0.05);
     }
 
     private static <T> ListIterator<T> moveIterator(final ListIterator<T> iterator, final int nextIndex) {

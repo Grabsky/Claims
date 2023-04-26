@@ -5,9 +5,10 @@ import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
-import cloud.grabsky.claims.panel.views.TeleportView;
+import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.WaypointManager;
+import io.papermc.paper.math.BlockPosition;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
@@ -78,8 +79,9 @@ public final class WaypointListener implements Listener {
             return;
         // ...
         final Location location = event.getBlock().getLocation().toCenterLocation();
+        final BlockPosition position = WaypointManager.toChunkPosition(location);
         // ...
-        final NamespacedKey key = new NamespacedKey("claims", "waypoint_" + (location.blockX() & 0xF) + "_" + location.blockY() + "_" + (location.blockZ() & 0xF));
+        final NamespacedKey key = new NamespacedKey("claims", "waypoint_" + position.blockX() + "_" + position.blockY() + "_" + position.blockZ());
         // ...
         if (location.getChunk().getPersistentDataContainer().has(key, PersistentDataType.STRING) == true) {
             event.setDropItems(false);
@@ -114,7 +116,7 @@ public final class WaypointListener implements Listener {
         // ...
         if (event.getClickedBlock().getType() == WAYPOINT_BLOCK_TYPE) {
             event.setCancelled(true);
-            new Panel(TeleportView.INVENTORY_TITLE, 54, null).open(event.getPlayer(), null).applyTemplate(new TeleportView(plugin), false);
+            new Panel(BrowseWaypoints.INVENTORY_TITLE, 54, null).open(event.getPlayer(), null).applyTemplate(new BrowseWaypoints(plugin), false);
         }
     }
 

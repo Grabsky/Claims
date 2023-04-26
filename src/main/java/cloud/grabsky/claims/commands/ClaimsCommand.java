@@ -8,7 +8,7 @@ import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.exception.ClaimProcessException;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.panel.views.MainView;
+import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.commands.ArgumentQueue;
 import cloud.grabsky.commands.RootCommand;
 import cloud.grabsky.commands.RootCommandContext;
@@ -91,7 +91,7 @@ public class ClaimsCommand extends RootCommand {
                 if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
                     if (isClaimPanelOpen(claim) == false) {
                         new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                            plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
+                            plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
                             return true;
                         });
                         return;
@@ -129,7 +129,7 @@ public class ClaimsCommand extends RootCommand {
             // ...
             if (isClaimPanelOpen(claim) == false) {
                 new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                    plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
+                    plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
                     return true;
                 });
                 return;
