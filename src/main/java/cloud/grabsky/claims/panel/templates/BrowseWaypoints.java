@@ -1,31 +1,42 @@
 package cloud.grabsky.claims.panel.templates;
 
+import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.Claims;
-import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.waypoints.Waypoint;
+import cloud.grabsky.claims.waypoints.Waypoint.Source;
+import io.papermc.paper.math.BlockPosition;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
+import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.function.Consumer;
 
+import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
+import static java.lang.String.valueOf;
 import static java.util.Comparator.comparingLong;
 import static net.kyori.adventure.text.Component.text;
 
+// TO-DO: Clean up the mess.
+// TO-DO: Figure out the best constructor.
+@SuppressWarnings("UnstableApiUsage")
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class BrowseWaypoints implements Consumer<Panel> {
 
@@ -33,7 +44,8 @@ public final class BrowseWaypoints implements Consumer<Panel> {
 
     private List<Waypoint> waypoints;
 
-    public static final Component INVENTORY_TITLE = text("\u7000\u7300", NamedTextColor.WHITE);
+    private static final Component INVENTORY_TITLE = text("\u7000\u7300", NamedTextColor.WHITE);
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm");
     private static final List<Integer> UI_SLOTS = List.of(29, 30, 31, 32, 33);
 
     @Override
@@ -63,48 +75,36 @@ public final class BrowseWaypoints implements Consumer<Panel> {
             // ...
             final int slot = slotsIterator.next();
             // ...
-            final ItemStack ready = new ItemBuilder(PluginItems.UI_ICON_WAYPOINT_READY)
-                    .setName(text(waypoint.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
-                    .build();
+            final ItemBuilder icon = (waypoint.getSource() == Source.BLOCK)
+                    ? new ItemBuilder(PluginItems.UI_ICON_WAYPOINT_BLOCK_SOURCE)
+                    : new ItemBuilder(PluginItems.UI_ICON_WAYPOINT_COMMAND_SOURCE);
             // ...
-            if (waypoint.getSource() == Waypoint.Source.COMMAND) {
-                panel.setItem(slot, ready, (event) -> {
-                    viewer.teleportAsync(location, TeleportCause.PLUGIN)
-                            .thenAccept(success -> {
-                                if (success == true) {
-                                    // [SEND MESSAGE]
-                                    // Spawning particles...
-                                    //spawnParticles(location.add(0.0F, 1.0F, 0.0F));
-                                }
-                            });
-                });
-                continue;
-            }
-            location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
-                if (viewer.getOpenInventory().getTopInventory().getHolder() == panel) {
-                    // ...
-                    final Block block = chunk.getBlock((location.getBlockX() & 0xF), location.getBlockY(), (location.getBlockZ() & 0xF));
-                    // ...
-                    if (block.getType() == PluginConfig.WAYPOINT_BLOCK.getType()) {
-                        chunk.unload();
-                        panel.setItem(slot, ready, (event) -> {
-                            viewer.teleportAsync(location.add(0.0F, 0.5F, 0.0F), TeleportCause.PLUGIN)
-                                    .thenAccept(success -> {
-                                        if (success == true) {
-                                            // [SEND MESSAGE]
-                                            // Spawning particles...
-                                            //spawnParticles(location.add(0.0F, 1.0F, 0.0F));
-                                        }
-                                    });
-                        });
-                    }
-                }
+            icon.edit(meta -> {
+                final @Nullable Component name = meta.displayName();
+                if (name != null)
+                    meta.displayName(Message.of(name).replace("[WAYPOINY_NAME]", waypoint.getName()).replace("[NUMBER]", valueOf(waypointsIterator.nextIndex())).getMessage());
+                // ...
+                final @Nullable List<Component> lore = meta.lore();
+                if (lore != null)
+                    meta.lore(lore.stream().map(line -> Message.of(line)
+                            .replace("[LOCATION]", location.blockX() + ", " + location.blockY() + ", " + location.blockZ())
+                            .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
+                            .getMessage()).toList());
             });
+            // ...
+            if (waypoint.getSource() == Source.COMMAND) {
+                panel.setItem(slot, icon.build(), (event) -> {
+                    location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
+                        final BlockPosition position = toChunkPosition(location);
+                        final NamespacedKey key = new NamespacedKey("claims", "waypoint_" + position.blockX() + "_" + position.blockY() + "_" + position.blockZ());
+                        if (viewer.getUniqueId().toString().equals(chunk.getPersistentDataContainer().get(key, PersistentDataType.STRING)) == true) {
+                            viewer.teleport(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
+                        }
+                    });
+                });
+            }
         }
-        // ...
-        if (pageToDisplay > 1)
-            panel.setItem(28, PluginItems.UI_NAVIGATION_PREVIOUS, (event) -> renderWaypoints(panel, viewer, pageToDisplay - 1, maxOnPage));
-        // ...
+        // Rendering NEXT PAGE button.
         if (waypointsIterator.hasNext() == true)
             panel.setItem(34, PluginItems.UI_NAVIGATION_NEXT, (event) -> renderWaypoints(panel, viewer, pageToDisplay + 1, maxOnPage));
     }

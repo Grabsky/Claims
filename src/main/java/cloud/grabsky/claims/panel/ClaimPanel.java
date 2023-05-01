@@ -8,6 +8,7 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
@@ -42,7 +43,26 @@ public final class ClaimPanel extends Panel {
             event.getWhoClicked().playSound(PluginConfig.UI_CLICK_SOUND);
     };
 
-    public ClaimPanel(final ClaimManager manager, final Claim claim) {
+    public static final class Builder extends Panel.Builder<ClaimPanel> {
+
+        private @Nullable Claim claim;
+
+        public Builder setClaim(final @NotNull Claim claim) {
+            this.claim = claim; return this.self();
+        }
+
+        @Override
+        protected @NotNull Builder self() {
+            return this;
+        }
+
+        @Override
+        public @NotNull ClaimPanel build() {
+            return null;
+        }
+    }
+
+    public ClaimPanel(final @Nullable Claim claim, final @NotNull final ClaimManager manager, final Claim claim) {
         super(INVENTORY_TITLE, 54, ACTION_PLAY_SOUND);
         // ...
         this.manager = manager;

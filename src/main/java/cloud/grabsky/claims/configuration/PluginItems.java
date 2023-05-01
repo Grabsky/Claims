@@ -44,11 +44,11 @@ public final class PluginItems implements JsonConfiguration {
     @JsonPath("interface.icon_browse_relative_claims")
     public static ItemStack UI_ICON_BROWSE_RELATIVE_CLAIMS;
 
-    @JsonPath("interface.icon_waypoint_loading")
-    public static ItemStack UI_ICON_WAYPOINT_LOADING;
+    @JsonPath("interface.icon_waypoint_block_source")
+    public static ItemStack UI_ICON_WAYPOINT_BLOCK_SOURCE;
 
-    @JsonPath("interface.icon_waypoint_ready")
-    public static ItemStack UI_ICON_WAYPOINT_READY;
+    @JsonPath("interface.icon_waypoint_command_source")
+    public static ItemStack UI_ICON_WAYPOINT_COMMAND_SOURCE;
 
     @JsonPath("interface.navigation_previous")
     public static ItemStack UI_NAVIGATION_PREVIOUS;
