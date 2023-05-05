@@ -175,10 +175,14 @@ public final class RegionListener implements Listener {
             // ...
             if (claim != null && (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claims") == true|| claim.isOwner(claimPlayer) == true) == true) {
                 if (isClaimPanelOpen(claim) == false) {
-                    new ClaimPanel(claimManager, claim).open(event.getPlayer(), (panel) -> {
-                        claims.getBedrockScheduler().run(1L, (it) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
-                        return true;
-                    });
+                    new ClaimPanel.Builder()
+                            .setClaimManager(claimManager)
+                            .setClaim(claim)
+                            .build()
+                            .open(event.getPlayer(), (panel) -> {
+                                claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
+                                return true;
+                            });
                     return;
                 }
                 Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(event.getPlayer());

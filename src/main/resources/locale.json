@@ -35,7 +35,7 @@
         "waypoints_create_failure_already_exists": "",
         // Waypoints > Remove
         "waypoints_remove_success": "",
-        "waypoints_remove_failure_not_existent": "",
+        "waypoints_remove_failure_not_existent": ""
     },
     // ...
     "interface": {

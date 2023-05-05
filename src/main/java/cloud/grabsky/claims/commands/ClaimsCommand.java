@@ -90,10 +90,14 @@ public class ClaimsCommand extends RootCommand {
             if (claim != null) {
                 if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
                     if (isClaimPanelOpen(claim) == false) {
-                        new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                            plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
-                            return true;
-                        });
+                        new ClaimPanel.Builder()
+                                .setClaimManager(claimManager)
+                                .setClaim(claim)
+                                .build()
+                                .open(sender, (panel) -> {
+                                    plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
+                                    return true;
+                                });
                         return;
                     }
                     Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
@@ -128,10 +132,14 @@ public class ClaimsCommand extends RootCommand {
             final Claim claim = arguments.next(Claim.class).asRequired(CLAIMS_EDIT_USAGE);
             // ...
             if (isClaimPanelOpen(claim) == false) {
-                new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                    plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
-                    return true;
-                });
+                new ClaimPanel.Builder()
+                        .setClaimManager(claimManager)
+                        .setClaim(claim)
+                        .build()
+                        .open(sender, (panel) -> {
+                            plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
+                            return true;
+                        });
                 return;
             }
             Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);

@@ -1,11 +1,12 @@
 package cloud.grabsky.claims.listeners;
 
 import cloud.grabsky.bedrock.components.Message;
-import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
-import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
+import cloud.grabsky.claims.panel.ClaimPanel;
+import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.WaypointManager;
 import io.papermc.paper.math.BlockPosition;
@@ -32,12 +33,15 @@ import java.util.UUID;
 public final class WaypointListener implements Listener {
 
     private final Claims plugin;
+
+    private final ClaimManager claimManager;
     private final WaypointManager waypointManager;
 
     public static Material WAYPOINT_BLOCK_TYPE = PluginConfig.WAYPOINT_BLOCK.getType();
 
     public WaypointListener(final Claims plugin) {
         this.plugin = plugin;
+        this.claimManager = plugin.getClaimManager();
         this.waypointManager = plugin.getWaypointManager();
     }
 
@@ -116,7 +120,13 @@ public final class WaypointListener implements Listener {
         // ...
         if (event.getClickedBlock().getType() == WAYPOINT_BLOCK_TYPE) {
             event.setCancelled(true);
-            new Panel(BrowseWaypoints.INVENTORY_TITLE, 54, null).open(event.getPlayer(), null).applyTemplate(new BrowseWaypoints(plugin), false);
+            new ClaimPanel.Builder()
+                    .setClaimManager(claimManager)
+                    .build()
+                    .open(event.getPlayer(), (panel) -> {
+                        plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
+                        return true;
+                    });
         }
     }
 

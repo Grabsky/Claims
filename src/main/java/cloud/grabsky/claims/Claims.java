@@ -88,7 +88,8 @@ public final class Claims extends BedrockPlugin {
         this.claimManager = new ClaimManager(this, regionManager);
         this.waypointManager = new WaypointManager(this);
         // Registering events
-        Panel.registerListener(this);
+        Panel.registerDefaultListeners(this);
+        // ...
         this.getServer().getPluginManager().registerEvents(new RegionListener(this, claimManager), this);
         this.getServer().getPluginManager().registerEvents(new WaypointListener(this), this);
         // Setting-up RootCommandManager... (applying templates, registering commands)
