@@ -49,7 +49,7 @@ public class ClaimsCommand extends RootCommand {
     private final ClaimManager claimManager;
 
     public ClaimsCommand(final Claims plugin) {
-        super("claims", new String[]{"claim"}, "claims.command.claims", null, null);
+        super("claims", null, "claims.command.claims", null, null);
         this.plugin = plugin;
         this.claimManager = plugin.getClaimManager();
     }

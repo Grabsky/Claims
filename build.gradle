@@ -29,7 +29,7 @@ dependencies {
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
     // Dependencies
     implementation("cloud.grabsky:bedrock:41b2c9b")
-    implementation("cloud.grabsky:commands:14366de")
+    implementation("cloud.grabsky:commands:1.0")
     implementation("cloud.grabsky:configuration-paper:1ccfb9c")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
