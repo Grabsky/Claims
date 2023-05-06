@@ -23,9 +23,9 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Consumer;
 
+import static cloud.grabsky.claims.util.Iterators.moveIterator;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
 import static java.lang.String.valueOf;
 import static java.util.Comparator.comparingLong;
@@ -80,7 +80,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 final @Nullable Component name = meta.displayName();
                 if (name != null) {
                     final Component finalName = Message.of(name)
-                            .replace("[WAYPOINY_NAME]", waypoint.getName())
+                            .replace("[WAYPOINT_NAME]", waypoint.getName())
                             .replace("[NUMBER]", valueOf(waypointsIterator.nextIndex()))
                             .getMessage();
                     // ...
@@ -98,12 +98,20 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             });
             // ...
             cPanel.setItem(slot, icon.build(), (event) -> {
-                location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
-                    final NamespacedKey key = WaypointManager.toChunkDataKey(toChunkPosition(location));
-                    if (chunk.getPersistentDataContainer().getOrDefault(key, STRING, "").equals(viewer.getUniqueId().toString()) == true) {
-                        viewer.teleport(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
-                    }
-                });
+                // Perform some additional checks for waypoints created by placing a block.
+                if (waypoint.getSource() == Source.BLOCK) {
+                    location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
+                        final NamespacedKey key = WaypointManager.toChunkDataKey(toChunkPosition(location));
+                        if (chunk.getPersistentDataContainer().getOrDefault(key, STRING, "").equals(viewer.getUniqueId().toString()) == true) {
+                            viewer.teleport(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
+                            return;
+                        }
+                        Message.of("Waypoint does not exist anymore.").send(viewer);
+                    });
+                    return;
+                }
+                // Just teleport otherwise...
+                viewer.teleport(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
             });
         }
         // Rendering NEXT PAGE button.
@@ -124,16 +132,6 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             }
             cPanel.close();
         });
-    }
-
-    private static <T> ListIterator<T> moveIterator(final ListIterator<T> iterator, final int nextIndex) {
-        while (iterator.nextIndex() != nextIndex) {
-            if (iterator.nextIndex() < nextIndex)
-                iterator.next();
-            else if (iterator.nextIndex() > nextIndex)
-                iterator.previous();
-        }
-        return iterator;
     }
 
 }

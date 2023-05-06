@@ -20,9 +20,9 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Consumer;
 
+import static cloud.grabsky.claims.util.Iterators.moveIterator;
 import static net.kyori.adventure.text.Component.text;
 
 public final class BrowseOnlinePlayers implements Consumer<Panel> {
@@ -91,16 +91,6 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
             cPanel.setItem(26, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> this.render(cPanel, pageToDisplay + 1, maxOnPage));
         // ...
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
-    }
-
-    private static <T> ListIterator<T> moveIterator(final ListIterator<T> iterator, final int nextIndex) {
-        while (iterator.nextIndex() != nextIndex) {
-            if (iterator.nextIndex() < nextIndex)
-                iterator.next();
-            else if (iterator.nextIndex() > nextIndex)
-                iterator.previous();
-        }
-        return iterator;
     }
 
 }
