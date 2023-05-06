@@ -25,17 +25,16 @@ public enum BrowseCategories implements Consumer<Panel> {
         // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateClientTitle(INVENTORY_TITLE);
         // Setting menu items
-        cPanel.setItem(11, PluginItems.UI_CATEGORY_HOMES, (event) -> {
+        cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_TELEPORTS, (event) -> {
             switch (event.getClick()) {
-                case LEFT, SHIFT_LEFT -> {
-                    cPanel.applyTemplate(new BrowseWaypoints(cPanel.getManager().getPlugin()), true);
-                    // viewer.teleportAsync(cPanel.getClaim().getHome());
-                }
+                case LEFT, SHIFT_LEFT -> viewer.teleportAsync(cPanel.getClaim().getHome());
+                case RIGHT, SHIFT_RIGHT -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
             }
         });
-        cPanel.setItem(13, new ItemBuilder(PluginItems.UI_CATEGORY_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
-        cPanel.setItem(15, PluginItems.UI_CATEGORY_SETTINGS, (event) -> cPanel.applyTemplate(BrowseSettings.INSTANCE, true));
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> viewer.closeInventory());
+        cPanel.setItem(13, new ItemBuilder(PluginItems.INTERFACE_CATEGORIES_BROWSE_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
+        cPanel.setItem(15, PluginItems.INTERFACE_CATEGORIES_BROWSE_SETTINGS, (event) -> cPanel.applyTemplate(BrowseSettings.INSTANCE, true));
+        // ...
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> viewer.closeInventory());
     }
 
 }

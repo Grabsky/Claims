@@ -47,10 +47,10 @@ public enum BrowseMembers implements Consumer<Panel> {
             final User user = member.toUser();
             // ...
             final ItemStack head = (user == null)
-                    ? new ItemBuilder(PluginItems.UI_ICON_REMOVE_MEMBER)
+                    ? new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_REMOVE_MEMBER)
                             .setName(text(member.getUniqueId().toString(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                             .build()
-                    : new ItemBuilder(PluginItems.UI_ICON_REMOVE_MEMBER)
+                    : new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_REMOVE_MEMBER)
                             .setName(text(user.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                             .setSkullTexture(user.getTextures())
                             .build();
@@ -67,8 +67,8 @@ public enum BrowseMembers implements Consumer<Panel> {
         }
         // Displaying [ICON_BROWSE_PLAYERS] button.
         if (slotsIterator.hasNext() == true)
-            cPanel.setItem(slotsIterator.next(), PluginItems.UI_ICON_BROWSE_PLAYERS, event -> cPanel.applyTemplate(new BrowseOnlinePlayers(), true));
+            cPanel.setItem(slotsIterator.next(), PluginItems.INTERFACE_CATEGORIES_BROWSE_ONLINE_PLAYERS, event -> cPanel.applyTemplate(new BrowseOnlinePlayers(), true));
         // return
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
     }
 }

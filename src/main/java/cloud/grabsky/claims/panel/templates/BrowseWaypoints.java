@@ -2,15 +2,13 @@ package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
-import cloud.grabsky.bedrock.inventory.Panel;
-import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
-import io.papermc.paper.math.BlockPosition;
+import cloud.grabsky.claims.waypoints.WaypointManager;
 import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
+import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -18,7 +16,6 @@ import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -33,14 +30,13 @@ import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
 import static java.lang.String.valueOf;
 import static java.util.Comparator.comparingLong;
 import static net.kyori.adventure.text.Component.text;
+import static org.bukkit.persistence.PersistentDataType.STRING;
 
 // TO-DO: Clean up the mess.
-// TO-DO: Figure out the best constructor.
 @SuppressWarnings("UnstableApiUsage")
-@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
-public final class BrowseWaypoints implements Consumer<Panel> {
-
-    private final Claims plugin;
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class BrowseWaypoints implements Consumer<ClaimPanel> {
+    /* SINGLETON */ public static final BrowseWaypoints INSTANCE = new BrowseWaypoints();
 
     private List<Waypoint> waypoints;
 
@@ -49,25 +45,26 @@ public final class BrowseWaypoints implements Consumer<Panel> {
     private static final List<Integer> UI_SLOTS = List.of(29, 30, 31, 32, 33);
 
     @Override
-    public void accept(final @NotNull Panel panel) {
-        final Player viewer = (Player) panel.getInventory().getViewers().get(0);
+    public void accept(final @NotNull ClaimPanel cPanel) {
+        final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
         // ...
-        this.waypoints = plugin.getWaypointManager().getWaypoints(viewer.getUniqueId()).stream().sorted(comparingLong(Waypoint::getCreatedOn)).toList();
+        this.waypoints = cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(viewer.getUniqueId()).stream().sorted(comparingLong(Waypoint::getCreatedOn)).toList();
         // ...
-        if (panel instanceof ClaimPanel cPanel)
-            cPanel.updateClientTitle(INVENTORY_TITLE);
+        cPanel.updateClientTitle(INVENTORY_TITLE);
         // ...
-        this.renderWaypoints(panel, viewer, 1, UI_SLOTS.size());
+        this.renderWaypoints(cPanel, viewer, 1, UI_SLOTS.size());
     }
 
-    public void renderWaypoints(final @NotNull Panel panel, final Player viewer, final int pageToDisplay, final int maxOnPage) {
-        panel.clear();
+    public void renderWaypoints(final @NotNull ClaimPanel cPanel, final Player viewer, final int pageToDisplay, final int maxOnPage) {
+        cPanel.clear();
         // ...
         final var slotsIterator = UI_SLOTS.iterator();
         final var waypointsIterator = moveIterator(waypoints.listIterator(), (pageToDisplay * maxOnPage) - maxOnPage);
+        // ...
+        this.renderCommonButtons(cPanel);
         // Rendering PREVIOUS PAGE button.
         if (waypointsIterator.hasPrevious() == true)
-            panel.setItem(28, PluginItems.UI_NAVIGATION_PREVIOUS, (event) -> renderWaypoints(panel, viewer, pageToDisplay - 1, maxOnPage));
+            cPanel.setItem(28, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> renderWaypoints(cPanel, viewer, pageToDisplay - 1, maxOnPage));
         // Rendering waypoints.
         while (waypointsIterator.hasNext() == true && slotsIterator.hasNext() == true) {
             final Waypoint waypoint = waypointsIterator.next();
@@ -76,51 +73,56 @@ public final class BrowseWaypoints implements Consumer<Panel> {
             final int slot = slotsIterator.next();
             // ...
             final ItemBuilder icon = (waypoint.getSource() == Source.BLOCK)
-                    ? new ItemBuilder(PluginItems.UI_ICON_WAYPOINT_BLOCK_SOURCE)
-                    : new ItemBuilder(PluginItems.UI_ICON_WAYPOINT_COMMAND_SOURCE);
+                    ? new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT_BLOCK)
+                    : new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT_COMMAND);
             // ...
             icon.edit(meta -> {
                 final @Nullable Component name = meta.displayName();
-                if (name != null)
-                    meta.displayName(Message.of(name).replace("[WAYPOINY_NAME]", waypoint.getName()).replace("[NUMBER]", valueOf(waypointsIterator.nextIndex())).getMessage());
+                if (name != null) {
+                    final Component finalName = Message.of(name)
+                            .replace("[WAYPOINY_NAME]", waypoint.getName())
+                            .replace("[NUMBER]", valueOf(waypointsIterator.nextIndex()))
+                            .getMessage();
+                    // ...
+                    meta.displayName(finalName);
+                }
                 // ...
                 final @Nullable List<Component> lore = meta.lore();
                 if (lore != null)
-                    meta.lore(lore.stream().map(line -> Message.of(line)
-                            .replace("[LOCATION]", location.blockX() + ", " + location.blockY() + ", " + location.blockZ())
-                            .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
-                            .getMessage()).toList());
+                    meta.lore(lore.stream().map(line -> {
+                        return Message.of(line)
+                                .replace("[LOCATION]", location.blockX() + ", " + location.blockY() + ", " + location.blockZ())
+                                .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
+                                .getMessage();
+                    }).toList());
             });
             // ...
-            if (waypoint.getSource() == Source.COMMAND) {
-                panel.setItem(slot, icon.build(), (event) -> {
-                    location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
-                        final BlockPosition position = toChunkPosition(location);
-                        final NamespacedKey key = new NamespacedKey("claims", "waypoint_" + position.blockX() + "_" + position.blockY() + "_" + position.blockZ());
-                        if (viewer.getUniqueId().toString().equals(chunk.getPersistentDataContainer().get(key, PersistentDataType.STRING)) == true) {
-                            viewer.teleport(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
-                        }
-                    });
+            cPanel.setItem(slot, icon.build(), (event) -> {
+                location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
+                    final NamespacedKey key = WaypointManager.toChunkDataKey(toChunkPosition(location));
+                    if (chunk.getPersistentDataContainer().getOrDefault(key, STRING, "").equals(viewer.getUniqueId().toString()) == true) {
+                        viewer.teleport(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
+                    }
                 });
-            }
+            });
         }
         // Rendering NEXT PAGE button.
         if (waypointsIterator.hasNext() == true)
-            panel.setItem(34, PluginItems.UI_NAVIGATION_NEXT, (event) -> renderWaypoints(panel, viewer, pageToDisplay + 1, maxOnPage));
+            cPanel.setItem(34, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> renderWaypoints(cPanel, viewer, pageToDisplay + 1, maxOnPage));
     }
 
-    private void renderCommonButtons(final Panel panel) {
-        panel.setItem(10, new ItemStack(PluginItems.UI_ICON_TELEPORT_TO_SPAWN), null);
-        panel.setItem(12, new ItemStack(PluginItems.UI_ICON_BROWSE_WAYPOINTS), null);
-        panel.setItem(14, new ItemStack(PluginItems.UI_ICON_BROWSE_OWNED_CLAIMS), null);
-        panel.setItem(16, new ItemStack(PluginItems.UI_ICON_BROWSE_RELATIVE_CLAIMS), null);
+    private void renderCommonButtons(final ClaimPanel cPanel) {
+        cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), null);
+        cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), null);
+        cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), null);
+        cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), null);
         // RETURN
-        panel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> {
-            if (panel instanceof ClaimPanel cPanel) {
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> {
+            if (cPanel.getClaim() != null) {
                 cPanel.applyTemplate(BrowseCategories.INSTANCE, true);
                 return;
             }
-            panel.close();
+            cPanel.close();
         });
     }
 

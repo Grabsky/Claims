@@ -40,11 +40,6 @@ public final class ClaimPanel extends Panel {
 
     public static final Component INVENTORY_TITLE = text("\u7000\u7100", NamedTextColor.WHITE);
 
-    public static final ClickAction ACTION_PLAY_SOUND = (event) -> {
-        if (PluginConfig.UI_CLICK_SOUND != null)
-            event.getWhoClicked().playSound(PluginConfig.UI_CLICK_SOUND);
-    };
-
     public static final class Builder extends Panel.Builder<ClaimPanel> {
 
         private Claim claim;
@@ -66,7 +61,7 @@ public final class ClaimPanel extends Panel {
 
         @Override
         public @NotNull ClaimPanel build() {
-            return new ClaimPanel(INVENTORY_TITLE, InventoryType.CHEST, 5,
+            return new ClaimPanel(INVENTORY_TITLE, InventoryType.CHEST, 6,
                     // OPEN ACTION
                     (event) -> {
                         if (event.getInventory().getViewers().size() != 1)
@@ -99,7 +94,7 @@ public final class ClaimPanel extends Panel {
 
     private ClaimPanel(@NotNull final Component title,
                        final @NotNull InventoryType type,
-                       final @Range(from = 0L, to = 5L) int rows,
+                       final @Range(from = 0, to = 6) int rows,
                        final @NotNull Consumer<InventoryOpenEvent> onInventoryOpen,
                        final @NotNull Consumer<InventoryCloseEvent> onInventoryClose,
                        final @NotNull Consumer<InventoryClickEvent> onInventoryClick,

@@ -13,6 +13,7 @@ import cloud.grabsky.commands.RootCommandContext;
 import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.exception.CommandLogicException;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -40,10 +41,8 @@ public final class WaypointCommand extends RootCommand {
             return CompletionsProvider.EMPTY;
         // ...
         return switch (literal) {
-            case "create" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
-            case "remove" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.of("...");
-            case "list" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
-            case "teleport" -> switch (index) {
+            case "create", "list" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
+            case "teleport", "remove" -> switch (index) {
                 case 1 -> CompletionsProvider.of(Player.class);
                 case 2 -> {
                     final String value = context.getInput().at(index);
@@ -108,7 +107,27 @@ public final class WaypointCommand extends RootCommand {
     }
 
     private void onWaypointRemove(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
+        final Player sender = context.getExecutor().asPlayer();
         // ...
+        if (sender.hasPermission(this.getPermission() + ".create") == true) {
+            // ...
+            final OfflinePlayer offlinePlayer = arguments.next(Player.class).asRequired();
+            final String name = arguments.next(String.class).asRequired();
+            // ...
+            if (offlinePlayer != sender && sender.hasPermission(this.getPermission() + ".remove.others") == false) {
+                Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
+                return;
+            }
+            // ...
+            try {
+                waypointManager.removeWaypoint(offlinePlayer.getUniqueId(), (waypoint) -> waypoint.getName().equals(name) == true);
+                Message.of("Waypoint named " + name + " has been removed.").send(sender);
+            } catch (final IllegalArgumentException ___) {
+                Message.of("Waypoint named " + name + " does not exist.").send(sender);
+            }
+            return;
+        }
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
     private void onWaypointList(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {

@@ -59,7 +59,7 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
         // ...
         // Rendering PREVIOUS PAGE button.
         if (onlineClaimPlayersIterator.hasPrevious() == true)
-            cPanel.setItem(18, PluginItems.UI_NAVIGATION_PREVIOUS, (event) -> this.render(cPanel, pageToDisplay - 1, maxOnPage));
+            cPanel.setItem(18, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> this.render(cPanel, pageToDisplay - 1, maxOnPage));
         // ...
         final Player viewer = cPanel.getViewer();
         final Claim claim = cPanel.getClaim();
@@ -68,7 +68,7 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
             final ClaimPlayer claimPlayer = onlineClaimPlayersIterator.next();
             final User user = claimPlayer.toUser();
             // ...
-            final ItemStack head = new ItemBuilder(PluginItems.UI_ICON_ADD_MEMBER)
+            final ItemStack head = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_ADD_MEMBER)
                     .setName(text(user.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                     .setSkullTexture(user.getTextures())
                     .build();
@@ -88,9 +88,9 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
         }
         // Rendering NEXT PAGE button.
         if (onlineClaimPlayersIterator.hasNext() == true)
-            cPanel.setItem(26, PluginItems.UI_NAVIGATION_NEXT, (event) -> this.render(cPanel, pageToDisplay + 1, maxOnPage));
+            cPanel.setItem(26, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> this.render(cPanel, pageToDisplay + 1, maxOnPage));
         // ...
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
     }
 
     private static <T> ListIterator<T> moveIterator(final ListIterator<T> iterator, final int nextIndex) {

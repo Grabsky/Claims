@@ -25,6 +25,7 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.function.Predicate;
 
 import static com.squareup.moshi.Types.newParameterizedType;
 import static okio.Okio.buffer;
@@ -116,11 +117,11 @@ public final class WaypointManager {
         return this.save(uniqueId);
     }
 
-    public @NotNull CompletableFuture<Boolean> removeWaypoint(final @NotNull UUID uniqueId, final @NotNull Location location) throws IllegalArgumentException {
+    public @NotNull CompletableFuture<Boolean> removeWaypoint(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) throws IllegalArgumentException {
         // Creating a copy of waypoints owned by specified player.
         final List<Waypoint> waypointsCopy = (cache.containsKey(uniqueId) == true) ? new ArrayList<>(cache.get(uniqueId)) : new ArrayList<>();
         // Removing waypoint(s) matching provided location.
-        waypointsCopy.removeIf(waypoint -> waypoint.getLocation().equals(location) == true);
+        waypointsCopy.removeIf(predicate);
         // Returning "failed" CompletableFuture in case nothing was removed from the list.
         if ((cache.containsKey(uniqueId) == true ? cache.get(uniqueId).size() : 0) == waypointsCopy.size())
             throw new IllegalArgumentException("Waypoint does not exist"); // TO-DO: Improve message.
@@ -176,6 +177,11 @@ public final class WaypointManager {
     @SuppressWarnings("UnstableApiUsage")
     public static @NotNull BlockPosition toChunkPosition(final Position position) {
         return Position.block((position.blockX() & 0xF), position.blockY(), (position.blockZ() & 0xF));
+    }
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static @NotNull NamespacedKey toChunkDataKey(final @NotNull BlockPosition chunkPosition) {
+        return new NamespacedKey("claims", "waypoint_" + chunkPosition.blockX() + "_" + chunkPosition.blockY() + "_" + chunkPosition.blockZ());
     }
 
     /**

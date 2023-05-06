@@ -46,16 +46,7 @@ public enum BrowseSettings implements Consumer<Panel> {
         // ...
         cPanel.clear();
         // Button: FLAGS
-        cPanel.setItem(11, PluginItems.UI_CATEGORY_FLAGS, event -> cPanel.applyTemplate(BrowseFlags.INSTANCE, true));
-        // Teleport location button
-        cPanel.setItem(13, PluginItems.UI_ICON_SET_TELEPORT, (event) -> {
-            viewer.closeInventory();
-            // ...
-            Message.of(claim.setHome(viewer.getLocation()) == true
-                    ? PluginLocale.UI_SET_HOME_SUCCESS
-                    : PluginLocale.UI_SET_HOME_FAILURE
-            ).send(viewer);
-        });
+        cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_FLAGS, event -> cPanel.applyTemplate(BrowseFlags.INSTANCE, true));
         // Getting object of CURRENT upgrade level
         final Claim.Type type = claim.getType();
         // ...
@@ -87,7 +78,7 @@ public enum BrowseSettings implements Consumer<Panel> {
             }
         });
         // Return button
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
     }
 
     private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {
