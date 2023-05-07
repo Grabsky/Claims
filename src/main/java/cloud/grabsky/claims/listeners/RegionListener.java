@@ -9,6 +9,7 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.templates.BrowseCategories;
+import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -171,19 +172,33 @@ public final class RegionListener implements Listener {
             final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(event.getPlayer());
             final Claim claim = claimManager.getClaim(id);
             // ...
-            if (claim != null && (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claims") == true|| claim.isOwner(claimPlayer) == true) == true) {
-                if (isClaimPanelOpen(claim) == false) {
-                    new ClaimPanel.Builder()
-                            .setClaimManager(claimManager)
-                            .setClaim(claim)
-                            .build()
+            if (claim != null) {
+                // Opening FULL panel
+                if (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claims") == true || claim.isOwner(claimPlayer) == true) {
+                    // Cancelling in case panel is already in use.
+                    if (isClaimPanelOpen(claim) == true) {
+                        Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(event.getPlayer());
+                        return;
+                    }
+                    // Otherwise, creating and opening the panel.
+                    new ClaimPanel.Builder().setClaimManager(claimManager).setClaim(claim).build()
                             .open(event.getPlayer(), (panel) -> {
-                                claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
-                                return true;
+                                if (panel instanceof ClaimPanel cPanel) {
+                                    claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, false));
+                                    return true;
+                                }
+                                return false;
                             });
-                    return;
+                } else if (claim.isMember(claimPlayer) == true) {
+                    new ClaimPanel.Builder().setClaimManager(claimManager).build()
+                            .open(event.getPlayer(), (panel) -> {
+                                if (panel instanceof ClaimPanel cPanel) {
+                                    claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                                    return true;
+                                }
+                                return false;
+                            });
                 }
-                Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(event.getPlayer());
             }
         }
     }
