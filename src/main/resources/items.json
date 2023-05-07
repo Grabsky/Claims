@@ -63,7 +63,8 @@
                 "amount": 1,
                 "meta": {
                     "name": "<yellow>Posiadane Tereny",
-                    "lore": ["<gray>Kliknij, aby przeglądać."]
+                    "lore": ["<gray>Kliknij, aby przeglądać."],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTgyYjBiN2M2OGU4ODgwMDAzMGU2NzQ1MjJhYWI0MDM5NmZhNTQzMDcyYjk0OWMwNjAwZTY2YzJlZDM1MmZmMCJ9fX0="
                 }
             },
             "browse_relative_claims": {
@@ -71,7 +72,8 @@
                 "amount": 1,
                 "meta": {
                     "name": "<yellow>Współdzielone Tereny",
-                    "lore": ["<gray>Kliknij, aby przeglądać."]
+                    "lore": ["<gray>Kliknij, aby przeglądać."],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDdkZjNjMjhlZjY2NWI1YjEyOGY0MDkwZGY2ZTRiYmNhMjRlZjQ0NGI1N2YyMTVkZTkxNWQ4OGQ1YzQyZmUxOCJ9fX0="
                 }
             }
         },
@@ -104,7 +106,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Kamień Teleportacji <gray>[NUMBER]",
+                    "name": "<yellow>Kamień Teleportacji <gray>([NUMBER])",
                     "lore": [
                         "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
                         "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
@@ -128,8 +130,31 @@
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
                 }
             },
-            "icon_owned_claim": { /* ... */ },
-            "icon_relative_claim": { /* ... */ }
+            "icon_owned_claim": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Teren",
+                    "lore": [
+                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "",
+                        "<gray>Kliknij, aby się teleportować."
+                    ]
+                }
+            },
+            "icon_relative_claim": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Teren",
+                    "lore": [
+                        "<dark_gray>› <gray>Właściciel: <yellow>[OWNER]",
+                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "",
+                        "<gray>Kliknij, aby się teleportować."
+                    ]
+                }
+            }
         },
         // Items representing navigation buttons.
         "navigation": {

@@ -58,9 +58,9 @@ public enum BrowseSettings implements Consumer<Panel> {
             if (type.isUpgradeable() == false)
                 return;
             // ...
-            if (viewer.hasPermission("claims.bypass.upgrade_cost") == true || hasUpgradeCost(viewer, type) == true) {
+            if (viewer.hasPermission("claims.bypass.ignore_upgrade_cost") == true || hasUpgradeCost(viewer, type) == true) {
                 // Removing upgrade cost from Player unless it has bypass permission
-                if (viewer.hasPermission("claims.bypass.upgrade_cost") == false)
+                if (viewer.hasPermission("claims.bypass.ignore_upgrade_cost") == false)
                     removeSimilarItems(viewer, type.getUpgradeCost());
                 // Trying to upgrade the claim...
                 if (cPanel.getManager().upgradeClaim(claim) == true) {
@@ -83,7 +83,7 @@ public enum BrowseSettings implements Consumer<Panel> {
 
     private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {
         final Component statusComponent = (type.isUpgradeable() == true)
-                ? (player.hasPermission("claims.bypass.upgrade_cost") == true || hasUpgradeCost(player, type) == true)
+                ? (player.hasPermission("claims.bypass.ignore_upgrade_cost") == true || hasUpgradeCost(player, type) == true)
                         ? PluginLocale.UPGRADE_ICON_UPGRADE_READY
                         : PluginLocale.UPGRADE_ICON_UPGRADE_MISSING_ITEMS
                 : PluginLocale.UPGRADE_ICON_UPGRADE_NOT_UPGRADEABLE;

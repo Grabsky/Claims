@@ -62,8 +62,8 @@ public final class PluginItems implements JsonConfiguration {
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_WAYPOINT_COMMAND;
 
     // Interface > Functional > Icon Claim (Owned)
-    //  @JsonPath("interface.functional.icon_owned_claim")
-    //  public static ItemStack INTERFACE_FUNCTIONAL_ICON_OWNED_CLAIM;
+    @JsonPath("interface.functional.icon_owned_claim")
+    public static ItemStack INTERFACE_FUNCTIONAL_ICON_OWNED_CLAIM;
 
     // Interface > Functional > Icon Claim (Relative)
     //  @JsonPath("interface.functional.icon_relative_claim")

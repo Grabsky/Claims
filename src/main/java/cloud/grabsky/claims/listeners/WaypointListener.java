@@ -7,14 +7,9 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
-import cloud.grabsky.claims.waypoints.Waypoint;
+import cloud.grabsky.claims.waypoints.Waypoint.Source;
 import cloud.grabsky.claims.waypoints.WaypointManager;
-import org.bukkit.Color;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
+import org.bukkit.*;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -59,39 +54,46 @@ public final class WaypointListener implements Listener {
             return;
         // ...
         if (event.getBlockPlaced().getType() == WAYPOINT_BLOCK_TYPE) {
+            // ...
             final Player player = event.getPlayer();
             final UUID uniqueId = player.getUniqueId();
-            final Location location = event.getBlock().getLocation().toCenterLocation();
-            // ...
-            final String name = location.x() + "_" + location.y() + "_" + location.z();
-            // ...
-            final NamespacedKey key = toChunkDataKey(toChunkPosition(location));
-            // ...
-            if (waypointManager.hasWaypoint(uniqueId, name) == false) {
-                event.getBlockPlaced().getChunk().getPersistentDataContainer().set(key, PersistentDataType.STRING, uniqueId.toString());
+            if (waypointManager.getWaypoints(uniqueId).stream().filter(waypoint -> waypoint.getSource() == Source.BLOCK).count() < PluginConfig.WAYPOINTS_LIMIT || player.hasPermission("claims.bypass.ignore_waypoints_limit") == true) {
+                final Location location = event.getBlock().getLocation().toCenterLocation();
                 // ...
-                try {
-                    waypointManager.createWaypoint(uniqueId, name, Waypoint.Source.BLOCK, location).thenAccept(isSuccess -> {
-                        if (isSuccess == true) /* MUST BE RUN ON MAIN THREAD */ plugin.getBedrockScheduler().run(1L, (task) -> {
-                            location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.0F, 1.0F);
-                            event.getPlayer().setCooldown(WAYPOINT_BLOCK_TYPE, 5 * 20);
-                            // ...
-                            final TextDisplay display = (TextDisplay) location.getWorld().spawnEntity(location.clone().add(0F, 0.75F, 0F), EntityType.TEXT_DISPLAY);
-                            // Setting PDC to easily distinguish from other entities.
-                            display.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
-                            display.text(player.name());
-                            display.setBillboard(Display.Billboard.CENTER);
-                            display.setShadowed(true);
-                            display.setBackgroundColor(TRANSPARENT);
-                            display.setViewRange(0.2F);
+                final String name = location.x() + "_" + location.y() + "_" + location.z();
+                // ...
+                final NamespacedKey key = toChunkDataKey(toChunkPosition(location));
+                // ...
+                if (waypointManager.hasWaypoint(uniqueId, name) == false) {
+                    event.getBlockPlaced().getChunk().getPersistentDataContainer().set(key, PersistentDataType.STRING, uniqueId.toString());
+                    // ...
+                    try {
+                        waypointManager.createWaypoint(uniqueId, name, Source.BLOCK, location).thenAccept(isSuccess -> {
+                            if (isSuccess == true) /* MUST BE RUN ON MAIN THREAD */
+                                plugin.getBedrockScheduler().run(1L, (task) -> {
+                                    location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.0F, 1.0F);
+                                    event.getPlayer().setCooldown(WAYPOINT_BLOCK_TYPE, 5 * 20);
+                                    // ...
+                                    final TextDisplay display = (TextDisplay) location.getWorld().spawnEntity(location.clone().add(0F, 0.75F, 0F), EntityType.TEXT_DISPLAY);
+                                    // Setting PDC to easily distinguish from other entities.
+                                    display.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
+                                    display.text(player.name());
+                                    display.setBillboard(Display.Billboard.CENTER);
+                                    display.setShadowed(true);
+                                    display.setBackgroundColor(TRANSPARENT);
+                                    display.setViewRange(0.2F);
+                                });
+                            // TO-DO: Error message suggesting to destroy and place one more time.
                         });
-                        // TO-DO: Error message suggesting to destroy and place one more time.
-                    });
-                    return;
-                } catch (final IllegalArgumentException ___) { /* HANDLED BELOW */ }
+                        return;
+                    } catch (final IllegalArgumentException ___) { /* HANDLED BELOW */ }
+                }
+                event.setCancelled(true);
+                Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS).placeholder("name", name).send(player);
+                return;
             }
             event.setCancelled(true);
-            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS).placeholder("name", name).send(player);
+            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT).send(player);
         }
     }
 
@@ -137,10 +139,10 @@ public final class WaypointListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onWaypointInteract(final PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY || event.getClickedBlock() == null)
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.getItem() != null || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
             return;
-        // ...
-        if (event.getClickedBlock().getType() == WAYPOINT_BLOCK_TYPE) {
+        //  ...
+        if (event.getClickedBlock() != null && event.getClickedBlock().getType() == WAYPOINT_BLOCK_TYPE) {
             event.setCancelled(true);
             new ClaimPanel.Builder()
                     .setClaimManager(claimManager)

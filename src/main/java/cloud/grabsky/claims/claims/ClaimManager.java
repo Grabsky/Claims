@@ -7,16 +7,7 @@ import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.configuration.adapter.ClaimTypeAdapterFactory;
 import cloud.grabsky.claims.exception.ClaimProcessException;
-import cloud.grabsky.configuration.paper.adapter.ComponentAdapter;
-import cloud.grabsky.configuration.paper.adapter.EnchantmentAdapterFactory;
-import cloud.grabsky.configuration.paper.adapter.EnchantmentEntryAdapterFactory;
-import cloud.grabsky.configuration.paper.adapter.EntityTypeAdapterFactory;
-import cloud.grabsky.configuration.paper.adapter.ItemFlagAdapter;
-import cloud.grabsky.configuration.paper.adapter.ItemStackAdapterFactory;
-import cloud.grabsky.configuration.paper.adapter.MaterialAdapterFactory;
-import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
-import cloud.grabsky.configuration.paper.adapter.PersistentDataEntryAdapterFactory;
-import cloud.grabsky.configuration.paper.adapter.PersistentDataTypeAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.*;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
@@ -40,14 +31,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.sk89q.worldedit.bukkit.BukkitAdapter.adapt;
 import static java.lang.Math.abs;
@@ -174,12 +158,6 @@ public final class ClaimManager {
                 continue;
             }
             final Claim claim = new Claim(id, this, region, claimType);
-            // ...
-            region.getOwners().getUniqueIds().forEach(uuid -> {
-                final ClaimPlayer claimOwner = this.getClaimPlayer(uuid);
-                // ...
-                claimOwner.addClaim(claim);
-            });
             // Adding claim to the cache.
             claimsCache.put(id, claim);
             // ...
@@ -265,8 +243,6 @@ public final class ClaimManager {
         // ...
         final Claim claim = new Claim(id, this, region, type);
         claimsCache.put(id, claim);
-        // Making a connection between player and newly created claim
-        claimOwner.addClaim(claim);
         // ...
         return true;
     }
@@ -276,8 +252,6 @@ public final class ClaimManager {
      */
     public void deleteClaim(final Claim claim) {
         final String id = claim.getRegion().getId();
-        // Removing reference to the claim from owners
-        claim.getOwners().forEach(owner -> owner.removeClaim(claim));
         // Removing claim from cache
         claimsCache.remove(id);
         // Removing claim from the world
