@@ -1,6 +1,6 @@
 package cloud.grabsky.claims.claims;
 
-import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.Claims.CustomFlag;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.exception.ClaimProcessException;
@@ -19,6 +19,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+
+import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
+import static cloud.grabsky.claims.util.Utilities.getNumberOrDefault;
 
 /**
  * Claim container that stores underlaying {@link ProtectedRegion} instance.
@@ -43,7 +46,7 @@ public final class Claim {
         if (manager.containsClaim(this) == false)
             throw new ClaimProcessException(PluginLocale.CLAIM_DOES_NOT_EXIST);
         // ...
-        final com.sk89q.worldedit.util.Location center = region.getFlag(Claims.CustomFlag.CLAIM_CENTER);
+        final com.sk89q.worldedit.util.Location center = region.getFlag(CustomFlag.CLAIM_CENTER);
         // ...
         if (center == null)
             throw new ClaimProcessException(PluginLocale.CLAIM_NO_CENTER_DEFINED);
@@ -61,6 +64,15 @@ public final class Claim {
             return this.getCenter();
         // ...
         return BukkitAdapter.adapt(location);
+    }
+
+    public Long getCreatedOn() throws ClaimProcessException {
+        if (manager.containsClaim(this) == false)
+            throw new ClaimProcessException(PluginLocale.CLAIM_DOES_NOT_EXIST);
+        // ...
+        final String value = requirePresent(region.getFlag(CustomFlag.CLAIM_CREATED), "");
+        // ...
+        return getNumberOrDefault(() -> Long.parseLong(value), null);
     }
 
     public boolean setHome(final Location location) throws ClaimProcessException {

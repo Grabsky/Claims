@@ -148,6 +148,7 @@ public final class Claims extends BedrockPlugin {
      */
     public static final class CustomFlag {
 
+        public static final Flag<String> CLAIM_CREATED = new StringFlag("claim-created");
         public static final Flag<String> CLAIM_TYPE = new StringFlag("claim-type");
         public static final Flag<Location> CLAIM_CENTER = new LocationFlag("claim-home");
         public static final Flag<String> ENTER_ACTIONBAR = new StringFlag("enter-actionbar");
@@ -158,6 +159,7 @@ public final class Claims extends BedrockPlugin {
         public static void registerFlags() {
             final FlagRegistry flagRegistry = WorldGuard.getInstance().getFlagRegistry();
             // ...
+            flagRegistry.register(CLAIM_CREATED);
             flagRegistry.register(CLAIM_TYPE);
             flagRegistry.register(CLAIM_CENTER);
             flagRegistry.register(ENTER_ACTIONBAR);

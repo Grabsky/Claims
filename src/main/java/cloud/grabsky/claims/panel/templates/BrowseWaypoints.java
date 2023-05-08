@@ -25,7 +25,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static cloud.grabsky.claims.util.Iterators.moveIterator;
+import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
 import static java.lang.String.valueOf;
 import static java.util.Comparator.comparingLong;

@@ -17,10 +17,15 @@ import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static cloud.grabsky.claims.util.Iterators.moveIterator;
+import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
+import static cloud.grabsky.claims.util.Utilities.moveIterator;
+import static java.util.Comparator.comparingLong;
 import static net.kyori.adventure.text.Component.text;
 
 // TO-DO: Clean up the mess.
@@ -33,11 +38,15 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
     private static final Component INVENTORY_TITLE = text("\u7000\u7301", NamedTextColor.WHITE);
     private static final List<Integer> UI_SLOTS = List.of(29, 30, 31, 32, 33);
 
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+
     @Override
     public void accept(final @NotNull ClaimPanel cPanel) {
         final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
         // ...
-        this.claims = cPanel.getManager().getClaimPlayer(viewer).getClaims().stream().toList();
+        this.claims = cPanel.getManager().getClaimPlayer(viewer).getClaims().stream()
+                .sorted(comparingLong(claim -> requirePresent(claim.getCreatedOn(), 0L)))
+                .toList();
         // ...
         cPanel.updateClientTitle(INVENTORY_TITLE);
         // ...
@@ -64,12 +73,16 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
             final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_OWNED_CLAIM);
             // ...
             final @Nullable List<Component> lore = icon.getMeta().lore();
-            if (lore != null)
+            if (lore != null) {
+                final Long createdOn = claim.getCreatedOn();
+                // ...
                 icon.getMeta().lore(lore.stream().map(line -> {
                     return Message.of(line)
-                               .replace("[LOCATION]", location.blockX() + ", " + location.blockY() + ", " + location.blockZ())
-                               .getMessage();
+                            .replace("[LOCATION]", location.blockX() + ", " + location.blockY() + ", " + location.blockZ())
+                            .replace("[CREATED_ON]", (createdOn != null) ? DATE_FORMAT.format(new Date(createdOn)) : "N/A")
+                            .getMessage();
                 }).toList());
+            }
             // ...
             if (claim.getType().getUpgradeButton().getItemMeta() instanceof SkullMeta upgradeSkullMeta) {
                 icon.edit(SkullMeta.class, (meta) -> {

@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static cloud.grabsky.claims.util.Iterators.moveIterator;
+import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static net.kyori.adventure.text.Component.text;
 
 public final class BrowseOnlinePlayers implements Consumer<Panel> {

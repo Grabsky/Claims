@@ -137,6 +137,7 @@
                     "name": "<yellow>Teren",
                     "lore": [
                         "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
                         "",
                         "<gray>Kliknij, aby się teleportować."
                     ]
@@ -150,6 +151,7 @@
                     "lore": [
                         "<dark_gray>› <gray>Właściciel: <yellow>[OWNER]",
                         "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
                         "",
                         "<gray>Kliknij, aby się teleportować."
                     ]

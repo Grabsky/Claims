@@ -67,7 +67,7 @@ public final class EnhancedLodestoneListener implements Listener {
                 final NamespacedKey key = toChunkDataKey(toChunkPosition(location));
                 // ...
                 this.create(key, player, location);
-                    // TO-DO: Error message suggesting to destroy and place one more time.
+                // TO-DO: Error message suggesting to destroy and place one more time.
                 return;
             }
             event.setCancelled(true);

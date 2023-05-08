@@ -7,7 +7,16 @@ import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.configuration.adapter.ClaimTypeAdapterFactory;
 import cloud.grabsky.claims.exception.ClaimProcessException;
-import cloud.grabsky.configuration.paper.adapter.*;
+import cloud.grabsky.configuration.paper.adapter.ComponentAdapter;
+import cloud.grabsky.configuration.paper.adapter.EnchantmentAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.EnchantmentEntryAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.EntityTypeAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.ItemFlagAdapter;
+import cloud.grabsky.configuration.paper.adapter.ItemStackAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.MaterialAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
+import cloud.grabsky.configuration.paper.adapter.PersistentDataEntryAdapterFactory;
+import cloud.grabsky.configuration.paper.adapter.PersistentDataTypeAdapterFactory;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
@@ -31,10 +40,19 @@ import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import static com.sk89q.worldedit.bukkit.BukkitAdapter.adapt;
 import static java.lang.Math.abs;
+import static java.lang.String.valueOf;
+import static java.lang.System.currentTimeMillis;
 import static java.util.Arrays.stream;
 import static java.util.Comparator.comparing;
 import static okio.Okio.buffer;
@@ -352,6 +370,7 @@ public final class ClaimManager {
         region.setFlag(CustomFlag.CLIENT_TIME,    PluginFlags.CLIENT_TIME.getDefaultValue());
         region.setFlag(CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER.getDefaultValue());
         // Setting center location (not modifiable)
+        region.setFlag(CustomFlag.CLAIM_CREATED, valueOf(currentTimeMillis()));
         region.setFlag(CustomFlag.CLAIM_CENTER, regionCenter);
         // Setting default home location (modifiable)
         region.setFlag(Flags.TELE_LOC, regionCenter.setY(regionCenter.getY() + 0.5F));
