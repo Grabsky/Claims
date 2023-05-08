@@ -1,4 +1,4 @@
-package cloud.grabsky.claims.panel.views;
+package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.azure.api.user.User;
 import cloud.grabsky.bedrock.components.Message;
@@ -20,12 +20,12 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 import java.util.function.Consumer;
 
+import static cloud.grabsky.claims.util.Iterators.moveIterator;
 import static net.kyori.adventure.text.Component.text;
 
-public final class MembersAddView implements Consumer<Panel> {
+public final class BrowseOnlinePlayers implements Consumer<Panel> {
 
     private List<ClaimPlayer> onlineClaimPlayers = new ArrayList<>();
 
@@ -57,6 +57,10 @@ public final class MembersAddView implements Consumer<Panel> {
         final var onlineClaimPlayersIterator = moveIterator(onlineClaimPlayers.listIterator(), (pageToDisplay * maxOnPage) - maxOnPage);
         final var uiSlotsIterator = UI_SLOTS.iterator();
         // ...
+        // Rendering PREVIOUS PAGE button.
+        if (onlineClaimPlayersIterator.hasPrevious() == true)
+            cPanel.setItem(18, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> this.render(cPanel, pageToDisplay - 1, maxOnPage));
+        // ...
         final Player viewer = cPanel.getViewer();
         final Claim claim = cPanel.getClaim();
         // ...
@@ -64,7 +68,7 @@ public final class MembersAddView implements Consumer<Panel> {
             final ClaimPlayer claimPlayer = onlineClaimPlayersIterator.next();
             final User user = claimPlayer.toUser();
             // ...
-            final ItemStack head = new ItemBuilder(PluginItems.UI_ICON_ADD_MEMBER)
+            final ItemStack head = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_ADD_MEMBER)
                     .setName(text(user.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                     .setSkullTexture(user.getTextures())
                     .build();
@@ -72,7 +76,7 @@ public final class MembersAddView implements Consumer<Panel> {
             cPanel.setItem(uiSlotsIterator.next(), head, (event) -> {
                 // Trying to add player to the claim.
                 if (claim.addMember(claimPlayer) == true) {
-                    cPanel.applyTemplate(MembersView.INSTANCE, true);
+                    cPanel.applyTemplate(BrowseMembers.INSTANCE, true);
                     return;
                 }
                 // Closing inventory and sending error message members limit has been reached.
@@ -82,24 +86,11 @@ public final class MembersAddView implements Consumer<Panel> {
                         .send(viewer);
             });
         }
-        // If player is not on the first page - displaying previous page button
-        if (pageToDisplay > 1)
-            cPanel.setItem(18, PluginItems.UI_NAVIGATION_PREVIOUS, (event) -> render(cPanel, pageToDisplay - 1, maxOnPage));
-        // If there is more players to be displayed, showing next page button
+        // Rendering NEXT PAGE button.
         if (onlineClaimPlayersIterator.hasNext() == true)
-            cPanel.setItem(26, PluginItems.UI_NAVIGATION_NEXT, (event) -> render(cPanel, pageToDisplay + 1, maxOnPage));
+            cPanel.setItem(26, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> this.render(cPanel, pageToDisplay + 1, maxOnPage));
         // ...
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(MembersView.INSTANCE, true));
-    }
-
-    private static <T> ListIterator<T> moveIterator(final ListIterator<T> iterator, final int nextIndex) {
-        while (iterator.nextIndex() != nextIndex) {
-            if (iterator.nextIndex() < nextIndex)
-                iterator.next();
-            else if (iterator.nextIndex() > nextIndex)
-                iterator.previous();
-        }
-        return iterator;
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
     }
 
 }

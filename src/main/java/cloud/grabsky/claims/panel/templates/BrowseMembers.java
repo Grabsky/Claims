@@ -1,4 +1,4 @@
-package cloud.grabsky.claims.panel.views;
+package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.azure.api.user.User;
 import cloud.grabsky.bedrock.components.Message;
@@ -19,7 +19,7 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public enum MembersView implements Consumer<Panel> {
+public enum BrowseMembers implements Consumer<Panel> {
     /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7104", NamedTextColor.WHITE);
@@ -47,10 +47,10 @@ public enum MembersView implements Consumer<Panel> {
             final User user = member.toUser();
             // ...
             final ItemStack head = (user == null)
-                    ? new ItemBuilder(PluginItems.UI_ICON_REMOVE_MEMBER)
+                    ? new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_REMOVE_MEMBER)
                             .setName(text(member.getUniqueId().toString(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                             .build()
-                    : new ItemBuilder(PluginItems.UI_ICON_REMOVE_MEMBER)
+                    : new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_REMOVE_MEMBER)
                             .setName(text(user.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
                             .setSkullTexture(user.getTextures())
                             .build();
@@ -67,8 +67,8 @@ public enum MembersView implements Consumer<Panel> {
         }
         // Displaying [ICON_BROWSE_PLAYERS] button.
         if (slotsIterator.hasNext() == true)
-            cPanel.setItem(slotsIterator.next(), PluginItems.UI_ICON_BROWSE_PLAYERS, event -> cPanel.applyTemplate(new MembersAddView(), true));
+            cPanel.setItem(slotsIterator.next(), PluginItems.INTERFACE_CATEGORIES_BROWSE_ONLINE_PLAYERS, event -> cPanel.applyTemplate(new BrowseOnlinePlayers(), true));
         // return
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(MainView.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
     }
 }

@@ -45,6 +45,14 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonNullable @JsonPath("claim_settings.interface_click_sound")
     public static Sound UI_CLICK_SOUND;
 
+    // Waypoint Settings
+
+    @JsonPath("waypoint_settings.enhanced_lodestone_blocks")
+    public static Boolean WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS;
+
+    @JsonPath("waypoint_settings.enhanced_lodestone_blocks_limit")
+    public static int WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT;
+
     // Logging Format
 
     @JsonPath("logging_format.claim_placed")

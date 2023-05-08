@@ -161,6 +161,17 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("placement.destroy_failure_not_sneaking")
     public static Component PLACEMENT_DESTROY_FAILURE_NOT_SNEAKING;
 
+    // Waypoints
+
+    @JsonPath("waypoints.place_success")
+    public static String WAYPOINT_PLACE_SUCCESS;
+
+    @JsonPath("waypoints.place_failure_already_exists")
+    public static String WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS;
+
+    @JsonPath("waypoints.place_failure_reached_waypoints_limit")
+    public static String WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT;
+
     // Flags
 
     @JsonPath("flags.default_claim_enter")

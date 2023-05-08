@@ -1,4 +1,4 @@
-package cloud.grabsky.claims.panel.views;
+package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.inventory.Panel;
@@ -26,7 +26,7 @@ import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
-public enum SettingsView implements Consumer<Panel> {
+public enum BrowseSettings implements Consumer<Panel> {
     /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
@@ -46,16 +46,7 @@ public enum SettingsView implements Consumer<Panel> {
         // ...
         cPanel.clear();
         // Button: FLAGS
-        cPanel.setItem(11, PluginItems.UI_CATEGORY_FLAGS, event -> cPanel.applyTemplate(FlagsView.INSTANCE, true));
-        // Teleport location button
-        cPanel.setItem(13, PluginItems.UI_ICON_SET_TELEPORT, (event) -> {
-            viewer.closeInventory();
-            // ...
-            Message.of(claim.setHome(viewer.getLocation()) == true
-                    ? PluginLocale.UI_SET_HOME_SUCCESS
-                    : PluginLocale.UI_SET_HOME_FAILURE
-            ).send(viewer);
-        });
+        cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_FLAGS, event -> cPanel.applyTemplate(BrowseFlags.INSTANCE, true));
         // Getting object of CURRENT upgrade level
         final Claim.Type type = claim.getType();
         // ...
@@ -67,9 +58,9 @@ public enum SettingsView implements Consumer<Panel> {
             if (type.isUpgradeable() == false)
                 return;
             // ...
-            if (viewer.hasPermission("claims.bypass.upgrade_cost") == true || hasUpgradeCost(viewer, type) == true) {
+            if (viewer.hasPermission("claims.bypass.ignore_upgrade_cost") == true || hasUpgradeCost(viewer, type) == true) {
                 // Removing upgrade cost from Player unless it has bypass permission
-                if (viewer.hasPermission("claims.bypass.upgrade_cost") == false)
+                if (viewer.hasPermission("claims.bypass.ignore_upgrade_cost") == false)
                     removeSimilarItems(viewer, type.getUpgradeCost());
                 // Trying to upgrade the claim...
                 if (cPanel.getManager().upgradeClaim(claim) == true) {
@@ -87,12 +78,12 @@ public enum SettingsView implements Consumer<Panel> {
             }
         });
         // Return button
-        cPanel.setItem(49, PluginItems.UI_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(MainView.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
     }
 
     private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {
         final Component statusComponent = (type.isUpgradeable() == true)
-                ? (player.hasPermission("claims.bypass.upgrade_cost") == true || hasUpgradeCost(player, type) == true)
+                ? (player.hasPermission("claims.bypass.ignore_upgrade_cost") == true || hasUpgradeCost(player, type) == true)
                         ? PluginLocale.UPGRADE_ICON_UPGRADE_READY
                         : PluginLocale.UPGRADE_ICON_UPGRADE_MISSING_ITEMS
                 : PluginLocale.UPGRADE_ICON_UPGRADE_NOT_UPGRADEABLE;

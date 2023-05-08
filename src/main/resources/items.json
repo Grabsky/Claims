@@ -1,111 +1,186 @@
 {
     "interface": {
-        "category_homes": {
-            "material": "minecraft:player_head",
-            "amount": 1,
-            "meta": {
-                "name": "<yellow><b>Teren",
-                "lore": [
-                    "<gray>Kliknij <yellow>LPM<gray>, aby teleportować się na teren.",
-                    "<gray>Kliknij <yellow>PPM<gray>, aby otworzyć menu telpeortacji."
-                ],
-                "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0="
+        // Items representing specific category.
+        "categories": {
+            "browse_teleports": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Teleporty",
+                    "lore": [
+                        "<gray>Kliknij <yellow>LPM<gray>, aby teleportować się na teren.",
+                        "<gray>Kliknij <yellow>PPM<gray>, aby otworzyć menu telpeortacji."
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0="
+                }
+            },
+            "browse_settings": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Ustawienia",
+                    "lore": ["<gray>Kliknij, aby zmienić ustawienia."],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzZiY2I1OWFkNGIyNjExM2IxYTIwMGE5MDNhNTMxYWRjMzI1MjJjMWJlMTc1N2E1NjZkYjhjOGIifX19"
+                }
+            },
+            "browse_flags": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow><b>Flagi",
+                    "lore": ["<gray>Kliknij, aby zarządzać flagami."],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWNiYTcyNzdmYzg5NWJmM2I2NzM2OTQxNTk4NjRiODMzNTFhNGQxNDcxN2U0NzZlYmRhMWMzYmYzOGZjZjM3In19fQ=="
+                }
+            },
+            "browse_members": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Członkowie",
+                    "lore": ["<gray>Kliknij, aby zarządzać członkami terenu."]
+                }
+            },
+            "browse_online_players": {
+                "material": "minecraft:structure_void",
+                "amount": 1,
+                "meta": {
+                    "name": "<white>Dodaj",
+                    "lore": ["<gray>Kliknij, aby przeglądać listę graczy."],
+                    "custom_model_data": 3
+                }
+            },
+            "browse_waypoints": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Kamienie Teleportacji",
+                    "lore": ["<gray>Kliknij, aby przeglądać."],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
+                }
+            },
+            "browse_owned_claims": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Posiadane Tereny",
+                    "lore": ["<gray>Kliknij, aby przeglądać."],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTgyYjBiN2M2OGU4ODgwMDAzMGU2NzQ1MjJhYWI0MDM5NmZhNTQzMDcyYjk0OWMwNjAwZTY2YzJlZDM1MmZmMCJ9fX0="
+                }
+            },
+            "browse_relative_claims": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Współdzielone Tereny",
+                    "lore": ["<gray>Kliknij, aby przeglądać."],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDdkZjNjMjhlZjY2NWI1YjEyOGY0MDkwZGY2ZTRiYmNhMjRlZjQ0NGI1N2YyMTVkZTkxNWQ4OGQ1YzQyZmUxOCJ9fX0="
+                }
             }
         },
-        "category_settings": {
-            "material": "minecraft:player_head",
-            "amount": 1,
-            "meta": {
-                "name": "<yellow><b>Ustawienia",
-                "lore": [
-                    "<gray>Kliknij, aby zmienić ustawienia."
-                ],
-                "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzZiY2I1OWFkNGIyNjExM2IxYTIwMGE5MDNhNTMxYWRjMzI1MjJjMWJlMTc1N2E1NjZkYjhjOGIifX19"
+        // Functional items.
+        "functional": {
+            "icon_add_member": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "lore": ["<gray>Kliknij, aby <green>dodać<gray> tego gracza do terenu."]
+                }
+            },
+            "icon_remove_member": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "lore": ["<gray>Kliknij, aby <red>usunąć<gray> tego gracza z terenu."]
+                }
+            },
+            "icon_spawn": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Spawn",
+                    "lore": ["<gray>Kliknij, aby się teleportować."],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDM4Y2YzZjhlNTRhZmMzYjNmOTFkMjBhNDlmMzI0ZGNhMTQ4NjAwN2ZlNTQ1Mzk5MDU1NTI0YzE3OTQxZjRkYyJ9fX0="
+                }
+            },
+            "icon_waypoint_block": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Kamień Teleportacji <gray>([NUMBER])",
+                    "lore": [
+                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "",
+                        "<gray>Kliknij, aby się teleportować."
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
+                }
+            },
+            "icon_waypoint_command": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>[WAYPOINT_NAME]",
+                    "lore": [
+                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "",
+                        "<gray>Kliknij, aby się teleportować."
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
+                }
+            },
+            "icon_owned_claim": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Teren",
+                    "lore": [
+                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "",
+                        "<gray>Kliknij, aby się teleportować."
+                    ]
+                }
+            },
+            "icon_relative_claim": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "name": "<yellow>Teren",
+                    "lore": [
+                        "<dark_gray>› <gray>Właściciel: <yellow>[OWNER]",
+                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "",
+                        "<gray>Kliknij, aby się teleportować."
+                    ]
+                }
             }
         },
-        "category_members": {
-            "material": "minecraft:player_head",
-            "amount": 1,
-            "meta": {
-                "name": "<yellow><b>Członkowie",
-                "lore": [
-                    "<gray>Kliknij, aby zarządzać członkami terenu."
-                ]
-            }
-        },
-        "category_flags": {
-            "material": "minecraft:player_head",
-            "amount": 1,
-            "meta": {
-                "name": "<yellow><b>Flagi",
-                "lore": [
-                    "<gray>Kliknij, aby zarządzać flagami."
-                ],
-                "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWNiYTcyNzdmYzg5NWJmM2I2NzM2OTQxNTk4NjRiODMzNTFhNGQxNDcxN2U0NzZlYmRhMWMzYmYzOGZjZjM3In19fQ=="
-            }
-        },
-        "icon_browse_players": {
-            "material": "minecraft:structure_void",
-            "amount": 1,
-            "meta": {
-                "name": "<gray><b>Dodaj",
-                "lore": [
-                    "<gray>Kliknij, aby przeglądać listę graczy."
-                ],
-                "custom_model_data": 3
-            }
-        },
-        "icon_add_member": {
-            "material": "minecraft:player_head",
-            "amount": 1,
-            "meta": {
-                "lore": [
-                    "<gray>Kliknij, aby <green>dodać<gray> tego gracza do terenu."
-                ]
-            }
-        },
-        "icon_remove_member": {
-            "material": "minecraft:player_head",
-            "amount": 1,
-            "meta": {
-                "lore": [
-                    "<gray>Kliknij, aby <red>usunąć<gray> tego gracza z terenu."
-                ]
-            }
-        },
-        "icon_set_teleport": {
-            "material": "minecraft:red_bed",
-            "amount": 1,
-            "meta": {
-                "name": "<yellow><b>Teleport",
-                "lore": [
-                    "<gray>Ustaw teleport na teren",
-                    "<gray>na miejsce, w którym stoisz."
-                ]
-            }
-        },
-        "navigation_previous": {
-            "material": "minecraft:structure_void",
-            "amount": 1,
-            "meta": {
-                "name": "<gray>Poprzednia Strona",
-                "custom_model_data": 1
-            }
-        },
-        "navigation_next": {
-            "material": "minecraft:structure_void",
-            "amount": 1,
-            "meta": {
-                "name": "<gray>Następna Strona",
-                "custom_model_data": 2
-            }
-        },
-        "navigation_return": {
-            "material": "minecraft:barrier",
-            "amount": 1,
-            "meta": {
-                "name": "<red>Powrót",
-                "custom_model_data": 1
+        // Items representing navigation buttons.
+        "navigation": {
+            "next_page": {
+                "material": "minecraft:structure_void",
+                "amount": 1,
+                "meta": {
+                    "name": "<gray>Następna Strona",
+                    "custom_model_data": 2
+                }
+            },
+            "previous_page": {
+                "material": "minecraft:structure_void",
+                "amount": 1,
+                "meta": {
+                    "name": "<gray>Poprzednia Strona",
+                    "custom_model_data": 1
+                }
+            },
+            "return": {
+                "material": "minecraft:barrier",
+                "amount": 1,
+                "meta": {
+                    "name": "<red>Powrót",
+                    "custom_model_data": 1
+                }
             }
         }
     }

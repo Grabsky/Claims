@@ -1,12 +1,10 @@
 package cloud.grabsky.claims.panel;
 
-import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
-import cloud.grabsky.claims.exception.ClaimProcessException;
 import io.papermc.paper.adventure.AdventureComponent;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -17,20 +15,17 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import org.bukkit.Bukkit;
 import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.InventoryView;
-import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Range;
 
-import java.util.HashMap;
-import java.util.UUID;
-import java.util.function.Predicate;
+import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
@@ -45,49 +40,77 @@ public final class ClaimPanel extends Panel {
 
     public static final Component INVENTORY_TITLE = text("\u7000\u7100", NamedTextColor.WHITE);
 
-    public static final ClickAction ACTION_PLAY_SOUND = (event) -> {
-        if (PluginConfig.UI_CLICK_SOUND != null)
-            event.getWhoClicked().playSound(PluginConfig.UI_CLICK_SOUND);
-    };
+    public static final class Builder extends Panel.Builder<ClaimPanel> {
 
-    public ClaimPanel(final ClaimManager manager, final Claim claim) {
-        super(INVENTORY_TITLE, 54, ACTION_PLAY_SOUND);
-        // ...
-        this.manager = manager;
-        this.claim = claim;
+        private Claim claim;
+
+        public @NotNull Builder setClaim(final @NotNull Claim claim) {
+            this.claim = claim; return this.self();
+        }
+
+        private ClaimManager claimManager;
+
+        public @NotNull Builder setClaimManager(final @NotNull ClaimManager claimManager) {
+            this.claimManager = claimManager; return this.self();
+        }
+
+        @Override
+        protected @NotNull Builder self() {
+            return this;
+        }
+
+        @Override
+        public @NotNull ClaimPanel build() {
+            return new ClaimPanel(INVENTORY_TITLE, InventoryType.CHEST, 6,
+                    // OPEN ACTION
+                    (event) -> {
+                        if (event.getInventory().getViewers().size() != 1)
+                            event.setCancelled(true);
+                    },
+                    // NO CLOSE ACTION
+                    (event) -> {},
+                    // CLICK ACTION
+                    (event) -> {
+                        if (PluginConfig.UI_CLICK_SOUND != null)
+                            event.getWhoClicked().playSound(PluginConfig.UI_CLICK_SOUND);
+                    },
+                    claimManager,
+                    claim
+            );
+        }
     }
 
     public Player getViewer() {
         return (Player) this.getInventory().getViewers().get(0);
     }
 
-    @Override
-    public @NotNull Inventory getInventory() {
-        // ...not sure if needed but just in case
-        if (super.getInventory().getViewers().size() > 1)
-            throw new IllegalStateException("Only one player can view the same instance of claim panel at one time.");
-        // ...
-        return super.getInventory();
+    public void applyClaimTemplate(@NotNull final Consumer<ClaimPanel> template, final boolean clearCurrent) {
+        // Clearing inventory before applying template (if requested)
+        if (clearCurrent == true)
+            this.clear();
+        // Applying the template.
+        template.accept(this);
     }
 
-    @Override
-    public ClaimPanel open(final HumanEntity human, @Nullable final Predicate<Panel> onPreOpen) {
-        // ...not sure if needed but just in case
-        if (this.getInventory().getViewers().size() > 1)
-            throw new IllegalStateException("Only one player can view the same instance of claim panel at one time.");
-        // Cancelling if PreOpenAction returns null
-        if (onPreOpen != null && onPreOpen.test(this) == false)
-            return this;
-        // Opening inventory to the HumanEntity
-        human.openInventory(this.getInventory());
+    private ClaimPanel(@NotNull final Component title,
+                       final @NotNull InventoryType type,
+                       final @Range(from = 0, to = 6) int rows,
+                       final @NotNull Consumer<InventoryOpenEvent> onInventoryOpen,
+                       final @NotNull Consumer<InventoryCloseEvent> onInventoryClose,
+                       final @NotNull Consumer<InventoryClickEvent> onInventoryClick,
+                       final @NotNull ClaimManager claimManager,
+                       final @Nullable Claim claim
+    ) {
+        super(title, type, rows, onInventoryOpen, onInventoryClose, onInventoryClick);
         // ...
-        return this;
+        this.manager = claimManager;
+        this.claim = claim;
     }
 
     public void updateClientTitle(final Component title) {
         final ClaimPlayer editor = manager.getClaimPlayer(this.getViewer());
         // adding '*' to the title if modifying unowned claim
-        final Component finalTitle = (editor.isOwnerOf(claim) == false) ? empty().append(title).append(text("\u7001*")) : title;
+        final Component finalTitle = (claim != null && editor.isOwnerOf(claim) == false) ? empty().append(title).append(text("\u7001*")) : title;
         final ServerPlayer handle = ((CraftPlayer) this.getViewer()).getHandle();
         final ClientboundOpenScreenPacket packet = new ClientboundOpenScreenPacket(
                 handle.containerMenu.containerId, // Active container id
@@ -106,45 +129,6 @@ public final class ClaimPanel extends Panel {
         return Bukkit.getOnlinePlayers().stream()
                 .map(Player::getOpenInventory)
                 .anyMatch((it) -> it.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim().equals(claim) == true);
-    }
-
-    public static void registerListener(final Plugin plugin) {
-        plugin.getServer().getPluginManager().registerEvents(new Listener() {
-
-            private final HashMap<UUID, Long> cooldowns = new HashMap<>();
-
-            @EventHandler
-            public void onPanelInventoryClick(final InventoryClickEvent event) {
-                // Ignoring clicks outside inventory
-                if (event.getClickedInventory() == null) return;
-                // Ignoring non-panel inventories
-                if (event.getWhoClicked().getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel panel) {
-                    try {
-                        // Since we're dealing with a custom inventory, cancelling the event is necessary
-                        event.setCancelled(true);
-                        // Ignoring clicks outside of the Panel inventory
-                        if (event.getClickedInventory().getHolder() != panel) return;
-                        // Returning if no acction is associated with clicked slot
-                        if (panel.getActions().get(event.getSlot()) == null) return;
-                        // Handling cooldown
-                        final long lastClick = cooldowns.getOrDefault(event.getWhoClicked().getUniqueId(), 0L);
-                        if (lastClick != 0L && (System.currentTimeMillis() - lastClick) < 150L) return;
-                        // Updating cooldown
-                        cooldowns.put(event.getWhoClicked().getUniqueId(), System.currentTimeMillis());
-                        // PLaying sound if allowed
-                        if (panel.getClickAction() != null) {
-                            panel.getClickAction().accept(event);
-                        }
-                        // Executing action associated with clicked slot (aka clicked item)
-                        panel.getActions().get(event.getSlot()).accept(event);
-                    } catch (final ClaimProcessException e) {
-                        Message.of(e.getErrorMessage()).send(event.getWhoClicked());
-                        panel.close();
-                    }
-                }
-            }
-
-        }, plugin);
     }
 
 }

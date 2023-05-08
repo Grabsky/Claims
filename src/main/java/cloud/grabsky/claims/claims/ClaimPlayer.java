@@ -7,10 +7,8 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
-import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,28 +22,16 @@ public final class ClaimPlayer {
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull UUID uniqueId;
 
-    private final LinkedHashSet<Claim> claims = new LinkedHashSet<>();
-
     /**
      * Returns {@code true} if (this) {@link ClaimPlayer} is owner of <i>any</i> {@link Claim}.
      */
     public boolean hasClaim() {
-        return claims.stream().anyMatch(claimManager::containsClaim);
+        return this.getClaims().isEmpty() == false;
     }
 
     // ...
     public Set<Claim> getClaims() {
-        return claims.stream().filter(claimManager::containsClaim).collect(Collectors.toUnmodifiableSet());
-    }
-
-    @Internal
-    /* package */ void addClaim(final Claim claim) {
-        claims.add(claim);
-    }
-
-    @Internal
-    /* package */ boolean removeClaim(final Claim claim) {
-        return claims.remove(claim);
+        return claimManager.getClaims().stream().filter(this::isOwnerOf).collect(Collectors.toUnmodifiableSet());
     }
 
     public Set<Claim> getRelativeClaims() {

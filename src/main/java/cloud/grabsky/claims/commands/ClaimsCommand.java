@@ -8,7 +8,7 @@ import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.exception.ClaimProcessException;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.panel.views.MainView;
+import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.commands.ArgumentQueue;
 import cloud.grabsky.commands.RootCommand;
 import cloud.grabsky.commands.RootCommandContext;
@@ -45,13 +45,13 @@ import static java.util.Comparator.comparingInt;
 
 public class ClaimsCommand extends RootCommand {
 
-    private final Claims claims;
+    private final Claims plugin;
     private final ClaimManager claimManager;
 
-    public ClaimsCommand(final Claims claims) {
+    public ClaimsCommand(final Claims plugin) {
         super("claims", null, "claims.command.claims", null, null);
-        this.claims = claims;
-        this.claimManager = claims.getClaimManager();
+        this.plugin = plugin;
+        this.claimManager = plugin.getClaimManager();
     }
 
     @Override
@@ -90,10 +90,14 @@ public class ClaimsCommand extends RootCommand {
             if (claim != null) {
                 if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
                     if (isClaimPanelOpen(claim) == false) {
-                        new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                            claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
-                            return true;
-                        });
+                        new ClaimPanel.Builder()
+                                .setClaimManager(claimManager)
+                                .setClaim(claim)
+                                .build()
+                                .open(sender, (panel) -> {
+                                    plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
+                                    return true;
+                                });
                         return;
                     }
                     Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
@@ -128,10 +132,14 @@ public class ClaimsCommand extends RootCommand {
             final Claim claim = arguments.next(Claim.class).asRequired(CLAIMS_EDIT_USAGE);
             // ...
             if (isClaimPanelOpen(claim) == false) {
-                new ClaimPanel(claimManager, claim).open(sender, (panel) -> {
-                    claims.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(MainView.INSTANCE, false));
-                    return true;
-                });
+                new ClaimPanel.Builder()
+                        .setClaimManager(claimManager)
+                        .setClaim(claim)
+                        .build()
+                        .open(sender, (panel) -> {
+                            plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
+                            return true;
+                        });
                 return;
             }
             Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
@@ -229,7 +237,7 @@ public class ClaimsCommand extends RootCommand {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (sender.hasPermission(this.getPermission() + ".reload") == true) {
-            if (claims.reloadConfiguration() == true) {
+            if (plugin.reloadConfiguration() == true) {
                 Message.of(PluginLocale.RELOAD_SUCCESS).send(sender);
                 return;
             }
@@ -316,9 +324,9 @@ public class ClaimsCommand extends RootCommand {
                                 blockDisplay.setVisibleByDefault(false);
                                 blockDisplay.setPersistent(false);
                                 // ...
-                                sender.showEntity(claims, entity);
+                                sender.showEntity(plugin, entity);
                             }
-                            claims.getBedrockScheduler().run(300L, (task) -> entity.remove());
+                            plugin.getBedrockScheduler().run(300L, (task) -> entity.remove());
                         });
                     }
                     return;

@@ -8,7 +8,8 @@ import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.panel.views.MainView;
+import cloud.grabsky.claims.panel.templates.BrowseCategories;
+import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -21,12 +22,7 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockExplodeEvent;
-import org.bukkit.event.block.BlockPistonExtendEvent;
-import org.bukkit.event.block.BlockPistonRetractEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.*;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
@@ -70,14 +66,14 @@ public final class RegionListener implements Listener {
                     final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(uuid);
                     final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
                     // Making sure player does not exceed claim limit.
-                    if (player.hasPermission("claims.bypass.claim_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIMS_LIMIT) {
+                    if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIMS_LIMIT) {
                         // Making sure that placed region is far enough from spawn
                         if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
                             final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING));
                             // ...
                             if (type != null) {
                                 // Checking if player has all existing claims fully upgraded.
-                                if (player.hasPermission("claims.bypass.claim_limit") == true || type.isUpgradeable() == false || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
+                                if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || type.isUpgradeable() == false || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
                                     // Finally, trying to create a claim.
                                     if (claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type) == true) {
                                         Message.of(PluginLocale.PLACEMENT_PLACE_SUCCESS).send(player);
@@ -162,7 +158,10 @@ public final class RegionListener implements Listener {
     // TO-DO: Make sure none else has the claim panel open.
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onClaimInteract(final PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY || event.getClickedBlock() == null)
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.getItem() != null || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
+            return;
+        // Following check is (most likely) redundant because of the action check.
+        if (event.getClickedBlock() == null)
             return;
         // ...
         final String id = Claim.createId(event.getClickedBlock().getLocation());
@@ -173,15 +172,33 @@ public final class RegionListener implements Listener {
             final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(event.getPlayer());
             final Claim claim = claimManager.getClaim(id);
             // ...
-            if (claim != null && (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claims") == true|| claim.isOwner(claimPlayer) == true) == true) {
-                if (isClaimPanelOpen(claim) == false) {
-                    new ClaimPanel(claimManager, claim).open(event.getPlayer(), (panel) -> {
-                        claims.getBedrockScheduler().run(1L, (it) -> panel.applyTemplate(MainView.INSTANCE, false));
-                        return true;
-                    });
-                    return;
+            if (claim != null) {
+                // Opening FULL panel
+                if (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claims") == true || claim.isOwner(claimPlayer) == true) {
+                    // Cancelling in case panel is already in use.
+                    if (isClaimPanelOpen(claim) == true) {
+                        Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(event.getPlayer());
+                        return;
+                    }
+                    // Otherwise, creating and opening the panel.
+                    new ClaimPanel.Builder().setClaimManager(claimManager).setClaim(claim).build()
+                            .open(event.getPlayer(), (panel) -> {
+                                if (panel instanceof ClaimPanel cPanel) {
+                                    claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, false));
+                                    return true;
+                                }
+                                return false;
+                            });
+                } else if (claim.isMember(claimPlayer) == true) {
+                    new ClaimPanel.Builder().setClaimManager(claimManager).build()
+                            .open(event.getPlayer(), (panel) -> {
+                                if (panel instanceof ClaimPanel cPanel) {
+                                    claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                                    return true;
+                                }
+                                return false;
+                            });
                 }
-                Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(event.getPlayer());
             }
         }
     }
