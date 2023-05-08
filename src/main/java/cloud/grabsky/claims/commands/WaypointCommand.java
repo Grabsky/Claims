@@ -3,7 +3,6 @@ package cloud.grabsky.claims.commands;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.commands.argument.WaypointArgument;
-import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.WaypointManager;
@@ -86,11 +85,6 @@ public final class WaypointCommand extends RootCommand {
             // ...
             if (target != sender && sender.hasPermission(this.getPermission() + ".create.others") == false) {
                 Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
-                return;
-            }
-            // ...
-            if (waypointManager.getWaypoints(target.getUniqueId()).size() >= PluginConfig.WAYPOINTS_LIMIT) {
-                Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT).send(sender);
                 return;
             }
             // ...

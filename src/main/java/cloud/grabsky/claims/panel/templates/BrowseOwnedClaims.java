@@ -41,10 +41,10 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
         // ...
         cPanel.updateClientTitle(INVENTORY_TITLE);
         // ...
-        this.renderWaypoints(cPanel, viewer, 1, UI_SLOTS.size());
+        this.render(cPanel, viewer, 1, UI_SLOTS.size());
     }
 
-    public void renderWaypoints(final @NotNull ClaimPanel cPanel, final Player viewer, final int pageToDisplay, final int maxOnPage) {
+    public void render(final @NotNull ClaimPanel cPanel, final Player viewer, final int pageToDisplay, final int maxOnPage) {
         cPanel.clear();
         // ...
         final var slotsIterator = UI_SLOTS.iterator();
@@ -53,7 +53,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
         this.renderCommonButtons(cPanel);
         // Rendering PREVIOUS PAGE button.
         if (claimsIterator.hasPrevious() == true)
-            cPanel.setItem(28, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> renderWaypoints(cPanel, viewer, pageToDisplay - 1, maxOnPage));
+            cPanel.setItem(28, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> render(cPanel, viewer, pageToDisplay - 1, maxOnPage));
         // Rendering waypoints.
         while (claimsIterator.hasNext() == true && slotsIterator.hasNext() == true) {
             final Claim claim = claimsIterator.next();
@@ -85,7 +85,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
         }
         // Rendering NEXT PAGE button.
         if (claimsIterator.hasNext() == true)
-            cPanel.setItem(34, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> renderWaypoints(cPanel, viewer, pageToDisplay + 1, maxOnPage));
+            cPanel.setItem(34, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> render(cPanel, viewer, pageToDisplay + 1, maxOnPage));
     }
 
     private void renderCommonButtons(final ClaimPanel cPanel) {

@@ -66,8 +66,8 @@ public final class PluginItems implements JsonConfiguration {
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_OWNED_CLAIM;
 
     // Interface > Functional > Icon Claim (Relative)
-    //  @JsonPath("interface.functional.icon_relative_claim")
-    //  public static ItemStack INTERFACE_FUNCTIONAL_ICON_RELATIVE_CLAIM;
+    @JsonPath("interface.functional.icon_relative_claim")
+    public static ItemStack INTERFACE_FUNCTIONAL_ICON_RELATIVE_CLAIM;
 
 
     // Interface > Navigation > Next Page

@@ -1,12 +1,10 @@
 package cloud.grabsky.claims.configuration;
 
-import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
 import net.kyori.adventure.sound.Sound;
 import org.bukkit.World;
-import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
 @Internal
@@ -49,11 +47,11 @@ public final class PluginConfig implements JsonConfiguration {
 
     // Waypoint Settings
 
-    @JsonPath("waypoint_settings.waypoint_block")
-    public static ItemStack WAYPOINT_BLOCK;
+    @JsonPath("waypoint_settings.enhanced_lodestone_blocks")
+    public static Boolean WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS;
 
-    @JsonPath("waypoint_settings.waypoints_limit")
-    public static int WAYPOINTS_LIMIT;
+    @JsonPath("waypoint_settings.enhanced_lodestone_blocks_limit")
+    public static int WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT;
 
     // Logging Format
 
@@ -72,8 +70,4 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("logging_format.claim_member_removed")
     public static String LOG_FORMAT_MEMBER_REMOVED;
 
-    @Override
-    public void onReload() {
-        WaypointListener.WAYPOINT_BLOCK_TYPE = WAYPOINT_BLOCK.getType();
-    }
 }

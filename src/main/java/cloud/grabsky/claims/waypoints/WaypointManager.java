@@ -11,6 +11,7 @@ import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Unmodifiable;
@@ -105,12 +106,11 @@ public final class WaypointManager {
         return waypoints;
     }
 
-    public @NotNull CompletableFuture<Boolean> createWaypoint(final @NotNull UUID uniqueId, final @NotNull String name, final @NotNull Waypoint.Source source, final @NotNull Location location) throws IllegalArgumentException {
-        // Throwing exception in case waypoint with specified name already exists.
-        if (this.hasWaypoint(uniqueId, name) == true)
-            throw new IllegalArgumentException("Player " + uniqueId + " already has a waypoint named " + name + ".");
-        // Creating Waypoint object using provided values.
-        final Waypoint waypoint = new Waypoint(name, source, System.currentTimeMillis(), location);
+    public @NotNull CompletableFuture<Boolean> createWaypoint(final @NotNull UUID uniqueId, final @NotNull String name, final @NotNull Waypoint.Source source, final @NotNull Location location) {
+        // Creating Waypoint object using provided values, or overriding existing one.
+        final Waypoint waypoint = cache.getOrDefault(uniqueId, new ArrayList<>()).stream()
+                .filter(w -> w.getName().equalsIgnoreCase(name) == true)
+                .findFirst().orElse(new Waypoint(name, source, System.currentTimeMillis(), location));
         // Adding waypoint to the cache.
         cache.computeIfAbsent(uniqueId, (___) -> new ArrayList<>()).add(waypoint);
         // Saving and returning the result.
@@ -124,7 +124,7 @@ public final class WaypointManager {
         waypointsCopy.removeIf(predicate);
         // Returning "failed" CompletableFuture in case nothing was removed from the list.
         if ((cache.containsKey(uniqueId) == true ? cache.get(uniqueId).size() : 0) == waypointsCopy.size())
-            throw new IllegalArgumentException("Waypoint does not exist"); // TO-DO: Improve message.
+            throw new IllegalArgumentException("No waypoints matching predicate were removed"); // TO-DO: Improve message.
         // Updating the cache.
         cache.put(uniqueId, waypointsCopy);
         // Saving and returning the result.
@@ -160,6 +160,10 @@ public final class WaypointManager {
 
     public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull UUID uniqueId) {
         return (cache.containsKey(uniqueId) == true) ? Collections.unmodifiableList(cache.get(uniqueId)) : Collections.emptyList();
+    }
+
+    public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull Player player) {
+        return this.getWaypoints(player.getUniqueId());
     }
 
     public boolean hasWaypoint(final @NotNull UUID uniqueId, final @NotNull String name) {
