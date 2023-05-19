@@ -8,6 +8,7 @@ import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import io.papermc.paper.math.Position;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -148,12 +149,13 @@ public final class Claim {
     /* Utility Methods */
 
     // 'Generates' region ID for specified location
-    public static String createId(final Location location) {
+    @SuppressWarnings("UnstableApiUsage")
+    public static String createId(final Position position) {
         return new StringBuilder()
                 .append(PluginConfig.REGION_PREFIX)
-                .append("x").append(location.getBlockX())
-                .append("y").append(location.getBlockY())
-                .append("z").append(location.getBlockZ())
+                .append("x").append(position.blockX())
+                .append("y").append(position.blockY())
+                .append("z").append(position.blockZ())
                 .toString();
     }
 

@@ -22,8 +22,14 @@ import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.block.*;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockExplodeEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
+import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
 import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
@@ -40,6 +46,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
+import static cloud.grabsky.claims.util.Utilities.getAroundPosition;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class RegionListener implements Listener {
@@ -277,6 +284,26 @@ public final class RegionListener implements Listener {
             event.setResult(null);
         if (event.getInventory().getInputMineral() != null && containsClaimType(event.getInventory().getInputMineral()) == true)
             event.setResult(null);
+    }
+
+    // Preventing block from being used to summon entity(-ies) like Iron Golem, Snow Golem or Wither.
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerSummonEntity(final EntitySpawnEvent event) {
+        switch (event.getEntity().getEntitySpawnReason()) {
+            case BUILD_IRONGOLEM, BUILD_SNOWMAN, BUILD_WITHER -> {
+                // ................................. This checks 3x3x3 area around the entity. "Normal" cases should be fully covered.
+                final boolean isAnyClaimSuperClose = getAroundPosition(event.getLocation().toBlock(), 1).anyMatch((pos) -> {
+                    // Generating the claim identifier from given position.
+                    final String id = Claim.createId(pos);
+                    // ...
+                    return claimManager.containsClaim(id);
+                });
+                // ...
+                if (isAnyClaimSuperClose == true) {
+                    event.setCancelled(true);
+                }
+            }
+        }
     }
 
     private static boolean containsClaimType(final @NotNull ItemStack item) {
