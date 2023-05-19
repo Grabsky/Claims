@@ -1,7 +1,7 @@
 plugins {
     id("java-library")
     id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.papermc.paperweight.userdev") version "1.5.4"
+    id("io.papermc.paperweight.userdev") version "1.5.5"
 }
 
 final buildsDirectory = (System.getenv("JVM_BUILDS") ?: null)
@@ -28,13 +28,13 @@ dependencies {
     // Paper
     paperweight.paperDevBundle("1.19.4-R0.1-SNAPSHOT")
     // Dependencies
-    implementation("cloud.grabsky:bedrock:b8370d4")
+    implementation("cloud.grabsky:bedrock:28ec987")
     implementation("cloud.grabsky:commands:1.0")
     implementation("cloud.grabsky:configuration-paper:1ccfb9c")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.7")
     // Azure
-    compileOnly("cloud.grabsky:azure-api:ddf4518")
+    compileOnly("cloud.grabsky:azure-api:8f937b9")
 }
 
 tasks.register("deploy") {
@@ -47,4 +47,8 @@ tasks.register("deploy") {
         if (pluginsDirectory != null)
             copy { from(reobfJar) into(pluginsDirectory) }
     }
+}
+
+tasks.withType(JavaCompile).configureEach {
+    options.fork = true
 }
