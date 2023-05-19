@@ -26,6 +26,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -196,15 +197,18 @@ public final class EnhancedLodestoneListener implements Listener {
                 // Setting place cooldown.
                 owner.setCooldown(Material.LODESTONE, 5 * 20);
                 // Creating TextDisplay above placed block.
-                final TextDisplay display = (TextDisplay) location.getWorld().spawnEntity(location.clone().add(0F, 0.75F, 0F), EntityType.TEXT_DISPLAY);
-                // Setting PDC to easily distinguish from other entities.
-                display.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
-                // Setting other visual properties.
-                display.text(owner.name());
-                display.setBillboard(Display.Billboard.CENTER);
-                display.setShadowed(true);
-                display.setBackgroundColor(TRANSPARENT); // DRAFT API, NOTHING TO WORRY ABOUT
-                display.setViewRange(0.2F);
+                location.getWorld().spawnEntity(location.clone().add(0F, 0.75F, 0F), EntityType.TEXT_DISPLAY, SpawnReason.CUSTOM, (entity) -> {
+                    if (entity instanceof TextDisplay display) {
+                        // Setting PDC to easily distinguish from other entities.
+                        display.getPersistentDataContainer().set(key, PersistentDataType.BYTE, (byte) 1);
+                        // Setting other visual properties.
+                        display.text(owner.name());
+                        display.setBillboard(Display.Billboard.CENTER);
+                        display.setShadowed(true);
+                        display.setBackgroundColor(TRANSPARENT); // DRAFT API; NOTHING TO WORRY ABOUT
+                        display.setViewRange(0.2F);
+                    }
+                });
             });
             return true;
         });
