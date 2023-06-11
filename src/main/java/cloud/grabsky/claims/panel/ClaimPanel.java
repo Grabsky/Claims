@@ -80,8 +80,8 @@ public final class ClaimPanel extends Panel {
                     // CLICK ACTION
                     (event) -> {
                         // Playing interface click sound, if set.
-                        if (PluginConfig.UI_CLICK_SOUND != null)
-                            event.getWhoClicked().playSound(PluginConfig.UI_CLICK_SOUND);
+                        if (PluginConfig.CLAIMS_SETTINGS_UI_CLICK_SOUND != null)
+                            event.getWhoClicked().playSound(PluginConfig.CLAIMS_SETTINGS_UI_CLICK_SOUND);
                     },
                     claimManager,
                     claim

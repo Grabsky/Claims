@@ -253,8 +253,8 @@ public final class EnhancedLodestoneListener implements Listener {
                 location.getBlock().getChunk().getPersistentDataContainer().set(key, PersistentDataType.STRING, owner.getUniqueId().toString());
                 // Playing place sound.
                 location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.0F, 1.0F);
-                // Setting place cooldown.
-                owner.setCooldown(Material.LODESTONE, 5 * 20);
+                // Setting cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
+                owner.setCooldown(Material.LODESTONE, PluginConfig.WAYPOINT_SETTINGS_PLACE_COOLDOWN * 20);
                 // Creating TextDisplay above placed block.
                 location.getWorld().spawnEntity(location.clone().add(0F, 0.75F, 0F), EntityType.TEXT_DISPLAY, SpawnReason.CUSTOM, (entity) -> {
                     if (entity instanceof TextDisplay display) {

@@ -26,25 +26,25 @@ public final class PluginConfig implements JsonConfiguration {
     // Claim Settings
 
     @JsonPath("claim_settings.claims_limit")
-    public static int CLAIMS_LIMIT;
+    public static int CLAIM_SETTINGS_CLAIMS_LIMIT;
 
     @JsonPath("claim_settings.place_attempt_cooldown")
-    public static int PLACE_ATTEMPT_COOLDOWN;
+    public static int CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN;
 
     @JsonPath("claim_settings.teleport_delay")
-    public static int TELEPORT_DELAY;
+    public static int CLAIM_SETTINGS_TELEPORT_DELAY;
 
     @JsonPath("claim_settings.members_limit")
-    public static int MEMBERS_LIMIT;
+    public static int CLAIM_SETTINGS_MEMBERS_LIMIT;
 
     @JsonPath("claim_settings.minimum_distance_from_spawn")
-    public static int MINIMUM_DISTANCE_FROM_SPAWN;
+    public static int CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN;
 
     @JsonNullable @JsonPath("claim_settings.interface_upgrade_sound")
-    public static Sound UI_UPGRADE_SOUND;
+    public static Sound CLAIMS_SETTINGS_UI_UPGRADE_SOUND;
 
     @JsonNullable @JsonPath("claim_settings.interface_click_sound")
-    public static Sound UI_CLICK_SOUND;
+    public static Sound CLAIMS_SETTINGS_UI_CLICK_SOUND;
 
     // Claim Settings > Rename Prompt
 
@@ -64,6 +64,9 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("waypoint_settings.enhanced_lodestone_blocks_limit")
     public static int WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT;
+
+    @JsonPath("waypoint_settings.place_cooldown")
+    public static int WAYPOINT_SETTINGS_PLACE_COOLDOWN;
 
     // Waypoint Settings > Rename Prompt
 

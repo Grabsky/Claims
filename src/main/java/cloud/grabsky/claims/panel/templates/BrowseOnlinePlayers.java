@@ -82,7 +82,7 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
                 // Closing inventory and sending error message members limit has been reached.
                 viewer.closeInventory();
                 Message.of(PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT)
-                        .placeholder("limit", PluginConfig.MEMBERS_LIMIT)
+                        .placeholder("limit", PluginConfig.CLAIM_SETTINGS_MEMBERS_LIMIT)
                         .send(viewer);
             });
         }

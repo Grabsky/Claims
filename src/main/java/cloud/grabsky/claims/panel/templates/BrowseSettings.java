@@ -64,8 +64,8 @@ public enum BrowseSettings implements Consumer<Panel> {
                     removeSimilarItems(viewer, type.getUpgradeCost());
                 // Trying to upgrade the claim...
                 if (cPanel.getManager().upgradeClaim(claim) == true) {
-                    if (PluginConfig.UI_UPGRADE_SOUND != null)
-                        viewer.playSound(PluginConfig.UI_UPGRADE_SOUND);
+                    if (PluginConfig.CLAIMS_SETTINGS_UI_UPGRADE_SOUND != null)
+                        viewer.playSound(PluginConfig.CLAIMS_SETTINGS_UI_UPGRADE_SOUND);
                     // ...
                     Message.of(PluginLocale.UI_UPGRADE_SUCCESS)
                             .placeholder("size", claim.getType().getRadius() * 2 + 1)

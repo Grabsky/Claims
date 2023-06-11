@@ -64,8 +64,6 @@ public final class RegionListener implements Listener {
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
         if (data.has(Claims.Key.CLAIM_TYPE, STRING) == true) {
             final Player player = event.getPlayer();
-            // Setting 5 second cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
-            event.getPlayer().setCooldown(event.getItemInHand().getType(), PluginConfig.PLACE_ATTEMPT_COOLDOWN * 20);
             // Checking if player has permission to create a claim.
             if (player.hasPermission("claims.plugin.place") == true) {
                 // Checking if player can create claim in that world
@@ -74,9 +72,11 @@ public final class RegionListener implements Listener {
                     final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(uuid);
                     final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
                     // Making sure player does not exceed claim limit.
-                    if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIMS_LIMIT) {
+                    if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIM_SETTINGS_CLAIMS_LIMIT) {
+                        // Setting 5 second cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
+                        event.getPlayer().setCooldown(event.getItemInHand().getType(), PluginConfig.CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN * 20);
                         // Making sure that placed region is far enough from spawn
-                        if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
+                        if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN) == false) {
                             final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, STRING));
                             // ...
                             if (type != null) {

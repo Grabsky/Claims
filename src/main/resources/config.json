@@ -34,6 +34,8 @@
         "enhanced_lodestone_blocks": true,
         // Limit of lodestones that can be placed by a single player.
         "enhanced_lodestone_blocks_limit": 5,
+        // Place cooldown. (in seconds)
+        "place_cooldown": 5,
         // Rename prompt.
         "rename_prompt": { "duration": 15, "title": "<yellow>Zmień Nazwę", "subtitle": "<gray>Podaj nową nazwę na czacie..." }
     },
