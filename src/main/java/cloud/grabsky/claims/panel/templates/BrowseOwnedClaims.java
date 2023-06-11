@@ -3,12 +3,16 @@ package cloud.grabsky.claims.panel.templates;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.claims.Claim;
+import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
+import cloud.grabsky.claims.session.Session;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
@@ -19,13 +23,13 @@ import org.jetbrains.annotations.Nullable;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
 
-import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
-import static java.util.Comparator.comparingLong;
 import static net.kyori.adventure.text.Component.text;
 
 // TO-DO: Clean up the mess.
@@ -45,7 +49,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
         final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
         // ...
         this.claims = cPanel.getManager().getClaimPlayer(viewer).getClaims().stream()
-                .sorted(comparingLong(claim -> requirePresent(claim.getCreatedOn(), 0L)))
+                .sorted(Comparator.comparing(Claim::getDisplayName))
                 .toList();
         // ...
         cPanel.updateTitle(INVENTORY_TITLE);
@@ -72,6 +76,8 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
             // ...
             final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_OWNED_CLAIM);
             // ...
+            icon.setName(Component.text(claim.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+            // ...
             final @Nullable List<Component> lore = icon.getMeta().lore();
             if (lore != null) {
                 final Long createdOn = claim.getCreatedOn();
@@ -91,9 +97,31 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
             }
             // ...
             cPanel.setItem(slot, icon.build(), (event) -> {
-                // ...
-                viewer.teleportAsync(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
-                //Message.of("Teleported to claim " + claim.getId()).send(viewer);
+                switch (event.getClick()) {
+                    case LEFT, SHIFT_LEFT -> {
+                        viewer.teleportAsync(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
+                    }
+                    case RIGHT, SHIFT_RIGHT -> {
+                        // Overriding previous session(s).
+                        Session.Listener.CURRENT_EDIT_SESSIONS.put(event.getWhoClicked().getUniqueId(), new Session.ClaimRenameSession(claim, cPanel));
+                        // ...
+                        claim.setPendingRename(true);
+                        // Creating a title.
+                        final Title title = Title.title(
+                                PluginConfig.CLAIM_SETTINGS_RENAME_PROMPT_TITLE,
+                                PluginConfig.CLAIM_SETTINGS_RENAME_PROMPT_SUBTITLE,
+                                Title.Times.times(
+                                        Duration.ofMillis(200),
+                                        Duration.ofMillis((PluginConfig.CLAIM_SETTINGS_RENAME_PROMPT_DURATION * 1000) - 400),
+                                        Duration.ofMillis(200)
+                                )
+                        );
+                        // Closing panel for viewer(s).
+                        cPanel.close();
+                        // Showing title to the player.
+                        viewer.showTitle(title);
+                    }
+                }
             });
         }
         // Rendering NEXT PAGE button.

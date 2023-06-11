@@ -10,7 +10,6 @@ import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.paper.math.Position;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
@@ -21,27 +20,37 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
+import static cloud.grabsky.bedrock.helpers.Conditions.inRange;
 import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.claims.util.Utilities.getNumberOrDefault;
+import static org.jetbrains.annotations.ApiStatus.Internal;
 
 /**
  * Claim container that stores underlaying {@link ProtectedRegion} instance.
  * Most methods can throw {@link ClaimProcessException} because region can be modified/removed externally using API or commands.
  */
-@AllArgsConstructor(access = AccessLevel.PUBLIC)
+@RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class Claim {
 
     @Getter(AccessLevel.PUBLIC)
-    private final String id;
+    private final @NotNull String id;
 
     @Getter(AccessLevel.PUBLIC)
-    private final ClaimManager manager;
+    private final @NotNull ClaimManager manager;
 
-    @Getter(AccessLevel.MODULE) @Setter(AccessLevel.MODULE)
-    private ProtectedRegion region;
+    @Getter(AccessLevel.MODULE) @Setter(value = AccessLevel.MODULE, onMethod = @__({@Internal}))
+    private @NotNull ProtectedRegion region;
 
-    @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.MODULE)
-    private Claim.Type type;
+    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.MODULE, onMethod = @__({@Internal}))
+    private @NotNull Claim.Type type;
+
+    /* FIELDS BELOW ARE EXCLUDED FROM COONSTRUCTOR */
+
+    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
+    private boolean isBeingEdited = false;
+
+    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
+    private boolean isPendingRename = false;
 
     public Location getCenter() throws ClaimProcessException {
         if (manager.containsClaim(this) == false)
@@ -74,6 +83,20 @@ public final class Claim {
         final String value = requirePresent(region.getFlag(CustomFlag.CLAIM_CREATED), "");
         // ...
         return getNumberOrDefault(() -> Long.parseLong(value), null);
+    }
+
+    public @NotNull String getDisplayName() {
+        return requirePresent(this.getFlag(CustomFlag.CLAIM_NAME), this.getId());
+    }
+
+    public boolean setDisplayName(final @NotNull String name) {
+        final String transformed = name.trim().replace("  ", " ");
+        if (inRange(transformed.length(), 1, 32) == true) {
+            this.setFlag(CustomFlag.CLAIM_NAME, transformed);
+            return true;
+        }
+        // ...
+        return false;
     }
 
     public boolean setHome(final Location location) throws ClaimProcessException {

@@ -171,7 +171,7 @@ public final class ClaimManager {
             final String claimTypeId = region.getFlag(CustomFlag.CLAIM_TYPE);
             final @Nullable Claim.Type claimType = claimTypes.get(claimTypeId);
             // Skipping claims with non-existent or invalid type.
-            if (claimTypeId == null || claimTypes.containsKey(claimTypeId) == false) {
+            if (claimType == null || claimTypes.containsKey(claimTypeId) == false) {
                 plugin.getLogger().warning("Claim cannot be loaded because it's TYPE is not defined. (CLAIM_ID = " + id + ", CLAIM_TYPE_ID = " + claimTypeId + ")");
                 continue;
             }
@@ -211,7 +211,7 @@ public final class ClaimManager {
      * Tries to create {@link Claim} (and {@link ProtectedRegion} it relies on) at the following location.
      * Returns {@code true} if {@link Claim} and all its components were successfully created.
      */
-    public boolean createClaim(final @NotNull Location location, final @NotNull Player owner, final @NotNull Claim.Type type) {
+    public @Nullable Claim createClaim(final @NotNull Location location, final @NotNull Player owner, final @NotNull Claim.Type type) {
         // ...
         final int x = location.getBlockX();
         final int z = location.getBlockZ();
@@ -235,7 +235,7 @@ public final class ClaimManager {
                 });
         // Returning null if region is colliding with a region nearby.
         if (isColliding == true)
-            return false;
+            return null;
         // ...
         final int radius = type.getRadius();
         // ...
@@ -262,7 +262,7 @@ public final class ClaimManager {
         final Claim claim = new Claim(id, this, region, type);
         claimsCache.put(id, claim);
         // ...
-        return true;
+        return claim;
     }
 
     /**

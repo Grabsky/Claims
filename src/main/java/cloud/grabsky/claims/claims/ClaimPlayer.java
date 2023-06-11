@@ -5,8 +5,10 @@ import cloud.grabsky.azure.api.user.User;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -21,6 +23,9 @@ public final class ClaimPlayer {
 
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull UUID uniqueId;
+
+    @Internal @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.PUBLIC)
+    private boolean isChangingClaimName = false;
 
     /**
      * Returns {@code true} if (this) {@link ClaimPlayer} is owner of <i>any</i> {@link Claim}.

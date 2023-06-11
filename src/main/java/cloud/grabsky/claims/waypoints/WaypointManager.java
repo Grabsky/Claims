@@ -9,11 +9,14 @@ import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
+import lombok.AccessLevel;
+import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
@@ -28,6 +31,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
+import static cloud.grabsky.bedrock.helpers.Conditions.inRange;
 import static com.squareup.moshi.Types.newParameterizedType;
 import static okio.Okio.buffer;
 import static okio.Okio.sink;
@@ -35,7 +39,9 @@ import static okio.Okio.source;
 
 public final class WaypointManager {
 
+    @Getter(AccessLevel.PUBLIC)
     private final Claims plugin;
+
     private final File dataDirectory;
     private final ConcurrentMap<UUID, List<Waypoint>> cache;
 
@@ -110,14 +116,28 @@ public final class WaypointManager {
         // Creating Waypoint object using provided values, or overriding existing one.
         final Waypoint waypoint = cache.getOrDefault(uniqueId, new ArrayList<>()).stream()
                 .filter(w -> w.getName().equalsIgnoreCase(name) == true)
-                .findFirst().orElse(new Waypoint(name, source, System.currentTimeMillis(), location));
+                .findFirst().orElse(new Waypoint(this, name, name, uniqueId, source, System.currentTimeMillis(), location));
         // Adding waypoint to the cache.
         cache.computeIfAbsent(uniqueId, (___) -> new ArrayList<>()).add(waypoint);
         // Saving and returning the result.
         return this.save(uniqueId);
     }
 
-    public @NotNull CompletableFuture<Boolean> removeWaypoint(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) throws IllegalArgumentException {
+    public @NotNull CompletableFuture<Boolean> removeWaypoint(final @NotNull UUID uniqueId, final @NotNull Waypoint waypoint) throws IllegalArgumentException {
+        // Creating a copy of waypoints owned by specified player.
+        final List<Waypoint> waypointsCopy = (cache.containsKey(uniqueId) == true) ? new ArrayList<>(cache.get(uniqueId)) : new ArrayList<>();
+        // Removing waypoint matching provided object.
+        waypointsCopy.remove(waypoint);
+        // Returning "failed" CompletableFuture in case nothing was removed from the list.
+        if ((cache.containsKey(uniqueId) == true ? cache.get(uniqueId).size() : 0) == waypointsCopy.size())
+            throw new IllegalArgumentException("No waypoints matching predicate were removed"); // TO-DO: Improve message.
+        // Updating the cache.
+        cache.put(uniqueId, waypointsCopy);
+        // Saving and returning the result.
+        return this.save(uniqueId);
+    }
+
+    public @NotNull CompletableFuture<Boolean> removeAllWaypoints(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) throws IllegalArgumentException {
         // Creating a copy of waypoints owned by specified player.
         final List<Waypoint> waypointsCopy = (cache.containsKey(uniqueId) == true) ? new ArrayList<>(cache.get(uniqueId)) : new ArrayList<>();
         // Removing waypoint(s) matching provided location.
@@ -166,12 +186,32 @@ public final class WaypointManager {
         return this.getWaypoints(player.getUniqueId());
     }
 
-    public boolean hasWaypoint(final @NotNull UUID uniqueId, final @NotNull String name) {
+    public @Nullable Waypoint getFirstWaypoint(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) {
+        // Iterating over list of cached waypoints.
         for (final Waypoint waypoint : (cache.containsKey(uniqueId) == true) ? cache.get(uniqueId) : new ArrayList<Waypoint>())
-            if (waypoint.getName().equals(name) == true)
-                return true;
-        // No waypoints found. Returning false.
-        return false;
+            // Returning first Waypoint that matches given Predicate.
+            if (predicate.test(waypoint) == true) return waypoint;
+        // No waypoints found. Returning null.
+        return null;
+    }
+
+    public boolean hasWaypoint(final @NotNull UUID uniqueId, final @NotNull String name) {
+        return this.getFirstWaypoint(uniqueId, (waypoint) -> waypoint.getName().equals(name) == true) != null;
+    }
+
+    public @NotNull CompletableFuture<Boolean> renameWaypoint(final UUID uniqueId, final Waypoint waypoint, final @NotNull String newDisplayName) {
+        final String transformed = newDisplayName.trim().replace("  ", " ");
+        // Validating...
+        if (inRange(transformed.length(), 1, 32) == true) {
+            // Making sure currently "edited" waypoint still exists...
+            if (this.hasWaypoint(uniqueId, waypoint.getName()) == true) {
+                waypoint.setDisplayName(transformed);
+                // Saving...
+                return this.save(uniqueId);
+            }
+        }
+        // Returning false...
+        return CompletableFuture.completedFuture(false);
     }
 
 

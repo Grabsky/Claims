@@ -9,6 +9,12 @@
     "claim_does_not_exist": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie istnieje.",
     "claim_no_center_defined": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie został poprawnie zdefiniowany.",
     // ...
+    "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <yellow><name>",
+    "claim_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
+    // ...
+    "waypoint_rename_success": "<dark_gray>› <gray>Nazwa teleportu została zaktualizowana: <yellow><name>",
+    "waypoint_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
+    // ...
     "command_arguments": {
         "argument_claim_not_found": "<dark_gray>› <red>Teren <gold><claim><red> nie istnieje.",
         "argument_claim_not_in_claimed_area": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie."

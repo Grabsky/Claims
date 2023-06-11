@@ -155,7 +155,7 @@ public class ClaimsCommand extends RootCommand {
         return null;
     };
 
-    @Experimental
+    @Experimental // TO-DO: Fix UUID arguments reporting invalid players for new players (may have something to do with #hasPlayedBefore check)
     private void onClaimsFind(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...

@@ -23,7 +23,9 @@
         // Upgrade sound that is played upon claim upgrade
         "interface_upgrade_sound": { "key": "minecraft:entity.player.levelup", "source": "master", "volume": 1.0, "pitch": 1.0 },
         // Click sound inside claim panel interface
-        "interface_click_sound": { "key": "block.note_block.hat", "source": "master", "volume": 1.0, "pitch": 1.5 }
+        "interface_click_sound": { "key": "block.note_block.hat", "source": "master", "volume": 1.0, "pitch": 1.5 },
+        // Rename prompt.
+        "rename_prompt": { "duration": 15, "title": "<yellow>Zmień Nazwę", "subtitle": "<gray>Podaj nową nazwę na czacie..." }
     },
 
     // Waypoints settings.
@@ -31,7 +33,9 @@
         // Determines whether waypoints can be created by placing a LODESTONE block.
         "enhanced_lodestone_blocks": true,
         // Limit of lodestones that can be placed by a single player.
-        "enhanced_lodestone_blocks_limit": 5
+        "enhanced_lodestone_blocks_limit": 5,
+        // Rename prompt.
+        "rename_prompt": { "duration": 15, "title": "<yellow>Zmień Nazwę", "subtitle": "<gray>Podaj nową nazwę na czacie..." }
     },
 
     // Logging format.

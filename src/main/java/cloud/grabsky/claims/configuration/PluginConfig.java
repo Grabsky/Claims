@@ -4,6 +4,7 @@ import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
@@ -45,6 +46,17 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonNullable @JsonPath("claim_settings.interface_click_sound")
     public static Sound UI_CLICK_SOUND;
 
+    // Claim Settings > Rename Prompt
+
+    @JsonPath("claim_settings.rename_prompt.duration")
+    public static long CLAIM_SETTINGS_RENAME_PROMPT_DURATION;
+
+    @JsonPath("claim_settings.rename_prompt.title")
+    public static Component CLAIM_SETTINGS_RENAME_PROMPT_TITLE;
+
+    @JsonPath("claim_settings.rename_prompt.subtitle")
+    public static Component CLAIM_SETTINGS_RENAME_PROMPT_SUBTITLE;
+
     // Waypoint Settings
 
     @JsonPath("waypoint_settings.enhanced_lodestone_blocks")
@@ -52,6 +64,17 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("waypoint_settings.enhanced_lodestone_blocks_limit")
     public static int WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT;
+
+    // Waypoint Settings > Rename Prompt
+
+    @JsonPath("waypoint_settings.rename_prompt.duration")
+    public static long WAYPOINT_SETTINGS_RENAME_PROMPT_DURATION;
+
+    @JsonPath("waypoint_settings.rename_prompt.title")
+    public static Component WAYPOINT_SETTINGS_RENAME_PROMPT_TITLE;
+
+    @JsonPath("waypoint_settings.rename_prompt.subtitle")
+    public static Component WAYPOINT_SETTINGS_RENAME_PROMPT_SUBTITLE;
 
     // Logging Format
 

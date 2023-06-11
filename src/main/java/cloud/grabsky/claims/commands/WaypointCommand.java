@@ -114,7 +114,7 @@ public final class WaypointCommand extends RootCommand {
             }
             // ...
             try {
-                waypointManager.removeWaypoint(offlinePlayer.getUniqueId(), (waypoint) -> waypoint.getName().equals(name) == true);
+                waypointManager.removeAllWaypoints(offlinePlayer.getUniqueId(), (waypoint) -> waypoint.getName().equals(name) == true);
                 Message.of("Waypoint named " + name + " has been removed.").send(sender);
             } catch (final IllegalArgumentException ___) {
                 Message.of("Waypoint named " + name + " does not exist.").send(sender);

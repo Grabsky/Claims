@@ -10,12 +10,15 @@ import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
+import cloud.grabsky.claims.session.Session;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -39,7 +42,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -47,12 +49,16 @@ import java.util.UUID;
 
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 import static cloud.grabsky.claims.util.Utilities.getAroundPosition;
+import static org.bukkit.persistence.PersistentDataType.STRING;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class RegionListener implements Listener {
 
     private final Claims claims;
     private final ClaimManager claimManager;
+
+    private static final Color TRANSPARENT = Color.fromARGB(0, 0, 0, 0);
+    private static final NamespacedKey KEY = new NamespacedKey("claims", "display_of");
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) // TO-DO: Some sort of cooldown? Perhaps allow collision between owned regions?
     public void onClaimPlace(final BlockPlaceEvent event) {
@@ -61,7 +67,7 @@ public final class RegionListener implements Listener {
             return;
         // Checking if placed block is a claim block.
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
-        if (data.has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true) {
+        if (data.has(Claims.Key.CLAIM_TYPE, STRING) == true) {
             final Player player = event.getPlayer();
             // Setting 5 second cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
             event.getPlayer().setCooldown(event.getItemInHand().getType(), PluginConfig.PLACE_ATTEMPT_COOLDOWN * 20);
@@ -76,14 +82,19 @@ public final class RegionListener implements Listener {
                     if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIMS_LIMIT) {
                         // Making sure that placed region is far enough from spawn
                         if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.MINIMUM_DISTANCE_FROM_SPAWN) == false) {
-                            final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING));
+                            final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, STRING));
                             // ...
                             if (type != null) {
                                 // Checking if player has all existing claims fully upgraded.
                                 if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || type.isUpgradeable() == false || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
                                     // Finally, trying to create a claim.
-                                    if (claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type) == true) {
+                                    final @Nullable Claim claim = claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type);
+                                    // Post creation actions...
+                                    if (claim != null) {
+                                        // Sending success message.
                                         Message.of(PluginLocale.PLACEMENT_PLACE_SUCCESS).send(player);
+                                        // Creating TextDisplay above placed block.
+                                        // createDisplay(claim);
                                         return;
                                     }
                                     event.setCancelled(true);
@@ -140,6 +151,20 @@ public final class RegionListener implements Listener {
                         Bukkit.getOnlinePlayers().stream().map(Player::getOpenInventory)
                                 .filter((it) -> (it.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim().equals(claim) == true))
                                 .forEach(InventoryView::close);
+                        // Cancelling sessions in case any is present.
+                        if (claim.isPendingRename() == true) { // should not be null.
+                            // Invalidating the session.
+                            Session.Listener.CURRENT_EDIT_SESSIONS.asMap().forEach((uuid, session) -> {
+                                // Skipping unrelated sessions.
+                                if (session.getSubject() != claim)
+                                    return;
+                                // ...
+                                final @Nullable Player sessionOperator = Bukkit.getPlayer(uuid);
+                                // Clearing the title.
+                                if (sessionOperator != null && sessionOperator.isOnline() == true)
+                                    sessionOperator.clearTitle();
+                            });
+                        }
                         // Deleting the claim and associated region.
                         claimManager.deleteClaim(claim);
                         // Dropping claim block item if player is not in creative mode.
@@ -209,6 +234,35 @@ public final class RegionListener implements Listener {
             }
         }
     }
+
+//    private static void createDisplay(final Claim claim) {
+//        final Location center = claim.getCenter();
+//        // ...
+//        final @Nullable TextDisplay display = (TextDisplay) claim.getCenter().getNearbyEntities(1.0d, 1.0d, 1.0d).stream()
+//                .filter((it) -> (it instanceof TextDisplay && it.getPersistentDataContainer().getOrDefault(KEY, STRING, "NONE").equals(claim.getId()) == true))
+//                .findFirst().orElseGet(() -> {
+//                    return center.getWorld().spawnEntity(center.clone().add(0F, 0.75F, 0F), EntityType.TEXT_DISPLAY, CreatureSpawnEvent.SpawnReason.CUSTOM);
+//                });
+//        // Setting PDC to easily distinguish from other entities.
+//        display.getPersistentDataContainer().set(KEY, PersistentDataType.BYTE, (byte) 1);
+//        // ...
+//        final Component text = Message.of(PluginConfig.CLAIM_BLOCK_DISPLAY)
+//                .replace("[OWNER_NAME]", claim.getOwners().get(0).toUser().getName())
+//                .replace("[CLAIM_NAME]", "Test")
+//                .getMessage();
+//        // Setting other visual properties.
+//        final Transformation transformation = display.getTransformation();
+//        // ...
+//        transformation.getScale().set(0.5F);
+//        // ...
+//        display.text(text);
+//        display.setBillboard(Display.Billboard.CENTER);
+//        display.setTransformation(transformation);
+//        display.setShadowed(true);
+//        display.setAlignment(TextDisplay.TextAlignment.LEFT);
+//        display.setBackgroundColor(TRANSPARENT); // DRAFT API; NOTHING TO WORRY ABOUT
+//        display.setViewRange(0.2F);
+//    }
 
     // Prevents block from being pushed by a piston.
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -307,7 +361,7 @@ public final class RegionListener implements Listener {
     }
 
     private static boolean containsClaimType(final @NotNull ItemStack item) {
-        return item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING) == true;
+        return item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, STRING) == true;
     }
 
 }

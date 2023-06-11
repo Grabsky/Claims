@@ -5,6 +5,7 @@ import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
+import cloud.grabsky.claims.session.Session;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
@@ -59,13 +60,26 @@ public final class ClaimPanel extends Panel {
             return new ClaimPanel(INVENTORY_TITLE, InventoryType.CHEST, 6,
                     // OPEN ACTION
                     (event) -> {
+                        // Cancelling the even in case other Player is currently viewing this inventory instance.
                         if (event.getInventory().getViewers().size() != 1)
                             event.setCancelled(true);
+                        // Cancelling sessions. See comments in Session.Listener.class for more details.
+                        Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(event.getPlayer().getUniqueId());
+                        // Removing title that may (or may not) be associated with the session.
+                        event.getPlayer().clearTitle();
+                        // Changing edit state of associated Claim, if present.
+                        if (claim != null)
+                            claim.setBeingEdited(true);
                     },
-                    // NO CLOSE ACTION
-                    (event) -> {},
+                    // CLOSE ACTION
+                    (event) -> {
+                        // Changing edit state of associated Claim, if present.
+                        if (claim != null && claim.isPendingRename() == false)
+                            claim.setBeingEdited(false);
+                    },
                     // CLICK ACTION
                     (event) -> {
+                        // Playing interface click sound, if set.
                         if (PluginConfig.UI_CLICK_SOUND != null)
                             event.getWhoClicked().playSound(PluginConfig.UI_CLICK_SOUND);
                     },
@@ -115,6 +129,7 @@ public final class ClaimPanel extends Panel {
         return view.getTopInventory().getHolder() instanceof ClaimPanel;
     }
 
+    // TO-DO: Replace with Claim#isBeingEdited check, but first make sure it works properly.
     public static boolean isClaimPanelOpen(final @NotNull Claim claim) {
         return Bukkit.getOnlinePlayers().stream()
                 .map(Player::getOpenInventory)

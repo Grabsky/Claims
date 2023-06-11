@@ -31,6 +31,21 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("claim_no_center_defined")
     public static Component CLAIM_NO_CENTER_DEFINED;
 
+    @JsonPath("claim_rename_success")
+    public static String CLAIM_RENAME_SUCCESS;
+
+    @JsonPath("claim_rename_failure_invalid_string")
+    public static Component CLAIM_RENAME_FAILURE_INVALID_STRING;
+
+    @JsonPath("waypoint_rename_success")
+    public static String WAYPOINT_RENAME_SUCCESS;
+
+    @JsonPath("waypoint_rename_failure_invalid_string")
+    public static Component WAYPOINT_RENAME_FAILURE_INVALID_STRING;
+
+    @JsonPath("waypoints_destroy_failure_unknown")
+    public static Component WAYPOINTS_DESTROY_FAILURE_UNKNOWN;
+
     // Command Arguments
 
     @JsonPath("command_arguments.argument_claim_not_found")

@@ -36,6 +36,10 @@ dependencies {
     compileOnly("cloud.grabsky:azure-api:8f937b9")
 }
 
+tasks {
+    shadowJar { archiveFileName = "${rootProject.name}-${project.version}.jar" }
+}
+
 tasks.register("deploy") {
     dependsOn(shadowJar)
     doLast {

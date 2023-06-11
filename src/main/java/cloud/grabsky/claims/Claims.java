@@ -21,6 +21,7 @@ import cloud.grabsky.claims.flags.object.FixedTime;
 import cloud.grabsky.claims.flags.object.FixedWeather;
 import cloud.grabsky.claims.listeners.EnhancedLodestoneListener;
 import cloud.grabsky.claims.listeners.RegionListener;
+import cloud.grabsky.claims.session.Session;
 import cloud.grabsky.claims.waypoints.WaypointManager;
 import cloud.grabsky.commands.RootCommandManager;
 import cloud.grabsky.configuration.ConfigurationHolder;
@@ -92,6 +93,7 @@ public final class Claims extends BedrockPlugin {
         // ...
         this.getServer().getPluginManager().registerEvents(new RegionListener(this, claimManager), this);
         this.getServer().getPluginManager().registerEvents(new EnhancedLodestoneListener(this), this);
+        this.getServer().getPluginManager().registerEvents(Session.Listener.INSTANCE, this);
         // Setting-up RootCommandManager... (applying templates, registering commands)
         this.commandManager = new RootCommandManager(this)
                 .apply(new CommandArgumentTemplate(this))
@@ -149,6 +151,7 @@ public final class Claims extends BedrockPlugin {
     public static final class CustomFlag {
 
         public static final Flag<String> CLAIM_CREATED = new StringFlag("claim-created");
+        public static final Flag<String> CLAIM_NAME = new StringFlag("claim-name");
         public static final Flag<String> CLAIM_TYPE = new StringFlag("claim-type");
         public static final Flag<Location> CLAIM_CENTER = new LocationFlag("claim-home");
         public static final Flag<String> ENTER_ACTIONBAR = new StringFlag("enter-actionbar");
@@ -159,6 +162,7 @@ public final class Claims extends BedrockPlugin {
         public static void registerFlags() {
             final FlagRegistry flagRegistry = WorldGuard.getInstance().getFlagRegistry();
             // ...
+            flagRegistry.register(CLAIM_NAME);
             flagRegistry.register(CLAIM_CREATED);
             flagRegistry.register(CLAIM_TYPE);
             flagRegistry.register(CLAIM_CENTER);
