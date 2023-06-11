@@ -48,7 +48,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
                 .sorted(comparingLong(claim -> requirePresent(claim.getCreatedOn(), 0L)))
                 .toList();
         // ...
-        cPanel.updateClientTitle(INVENTORY_TITLE);
+        cPanel.updateTitle(INVENTORY_TITLE);
         // ...
         this.render(cPanel, viewer, 1, UI_SLOTS.size());
     }

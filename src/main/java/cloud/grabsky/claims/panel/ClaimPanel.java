@@ -5,16 +5,11 @@ import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
-import io.papermc.paper.adventure.AdventureComponent;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
-import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.MenuType;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -27,8 +22,8 @@ import org.jetbrains.annotations.Range;
 
 import java.util.function.Consumer;
 
-import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection;
 
 public final class ClaimPanel extends Panel {
 
@@ -107,19 +102,13 @@ public final class ClaimPanel extends Panel {
         this.claim = claim;
     }
 
-    @Deprecated(forRemoval = true) // TO-DO: Can (probably) be replaced by upcoming InventoryView#setTitle (1.20)
-    public void updateClientTitle(final Component title) {
+    public void updateTitle(final @NotNull Component title) {
         final ClaimPlayer editor = manager.getClaimPlayer(this.getViewer());
-        // adding '*' to the title if modifying unowned claim
-        final Component finalTitle = (claim != null && editor.isOwnerOf(claim) == false) ? empty().append(title).append(text("\u7001*")) : title;
-        final ServerPlayer handle = ((CraftPlayer) this.getViewer()).getHandle();
-        final ClientboundOpenScreenPacket packet = new ClientboundOpenScreenPacket(
-                handle.containerMenu.containerId, // Active container id
-                MenuType.GENERIC_9x6, // GENERIC_9x6 (54 slots)
-                new AdventureComponent(finalTitle)
-        );
-        handle.connection.send(packet);
-        this.getViewer().updateInventory();
+        // Parsing the title to legacy String. Workaround until Paper adds InventoryView#title(Component).
+        final String legacyTitle = legacySection().serialize(title);
+        // Setting the title. '*' is appended when modifying not-self-owned claim.
+        if (editor.toPlayer().getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel)
+            editor.toPlayer().getOpenInventory().setTitle((claim != null && editor.isOwnerOf(claim) == false) ? legacyTitle + "\u7001*" : legacyTitle);
     }
 
     public static boolean isClaimPanel(final InventoryView view) {

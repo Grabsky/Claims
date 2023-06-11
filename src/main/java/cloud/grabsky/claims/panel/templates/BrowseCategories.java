@@ -23,7 +23,7 @@ public enum BrowseCategories implements Consumer<Panel> {
         // ...
         final Player viewer = cPanel.getViewer();
         // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
-        cPanel.updateClientTitle(INVENTORY_TITLE);
+        cPanel.updateTitle(INVENTORY_TITLE);
         // Setting menu items
         cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_TELEPORTS, (event) -> {
             switch (event.getClick()) {

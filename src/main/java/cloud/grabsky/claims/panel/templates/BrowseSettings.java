@@ -35,7 +35,7 @@ public enum BrowseSettings implements Consumer<Panel> {
     public void accept(final Panel panel) {
         final ClaimPanel cPanel = (ClaimPanel) panel;
         // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
-        cPanel.updateClientTitle(INVENTORY_TITLE);
+        cPanel.updateTitle(INVENTORY_TITLE);
         // "Rendering" the inventory contents.
         this.render(cPanel);
     }
