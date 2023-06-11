@@ -15,10 +15,8 @@ import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
-import org.bukkit.Color;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
@@ -57,10 +55,7 @@ public final class RegionListener implements Listener {
     private final Claims claims;
     private final ClaimManager claimManager;
 
-    private static final Color TRANSPARENT = Color.fromARGB(0, 0, 0, 0);
-    private static final NamespacedKey KEY = new NamespacedKey("claims", "display_of");
-
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) // TO-DO: Some sort of cooldown? Perhaps allow collision between owned regions?
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) // TO-DO: Perhaps allow for collisions between owned regions?
     public void onClaimPlace(final BlockPlaceEvent event) {
         // Not sure if that covers all possible cases including building in WorldGuard regions, but it's better than nothing.
         if (event.canBuild() == false)
@@ -93,8 +88,6 @@ public final class RegionListener implements Listener {
                                     if (claim != null) {
                                         // Sending success message.
                                         Message.of(PluginLocale.PLACEMENT_PLACE_SUCCESS).send(player);
-                                        // Creating TextDisplay above placed block.
-                                        // createDisplay(claim);
                                         return;
                                     }
                                     event.setCancelled(true);
@@ -234,35 +227,6 @@ public final class RegionListener implements Listener {
             }
         }
     }
-
-//    private static void createDisplay(final Claim claim) {
-//        final Location center = claim.getCenter();
-//        // ...
-//        final @Nullable TextDisplay display = (TextDisplay) claim.getCenter().getNearbyEntities(1.0d, 1.0d, 1.0d).stream()
-//                .filter((it) -> (it instanceof TextDisplay && it.getPersistentDataContainer().getOrDefault(KEY, STRING, "NONE").equals(claim.getId()) == true))
-//                .findFirst().orElseGet(() -> {
-//                    return center.getWorld().spawnEntity(center.clone().add(0F, 0.75F, 0F), EntityType.TEXT_DISPLAY, CreatureSpawnEvent.SpawnReason.CUSTOM);
-//                });
-//        // Setting PDC to easily distinguish from other entities.
-//        display.getPersistentDataContainer().set(KEY, PersistentDataType.BYTE, (byte) 1);
-//        // ...
-//        final Component text = Message.of(PluginConfig.CLAIM_BLOCK_DISPLAY)
-//                .replace("[OWNER_NAME]", claim.getOwners().get(0).toUser().getName())
-//                .replace("[CLAIM_NAME]", "Test")
-//                .getMessage();
-//        // Setting other visual properties.
-//        final Transformation transformation = display.getTransformation();
-//        // ...
-//        transformation.getScale().set(0.5F);
-//        // ...
-//        display.text(text);
-//        display.setBillboard(Display.Billboard.CENTER);
-//        display.setTransformation(transformation);
-//        display.setShadowed(true);
-//        display.setAlignment(TextDisplay.TextAlignment.LEFT);
-//        display.setBackgroundColor(TRANSPARENT); // DRAFT API; NOTHING TO WORRY ABOUT
-//        display.setViewRange(0.2F);
-//    }
 
     // Prevents block from being pushed by a piston.
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
