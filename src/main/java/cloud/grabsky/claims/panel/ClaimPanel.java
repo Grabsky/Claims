@@ -14,7 +14,7 @@ import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.MenuType;
 import org.bukkit.Bukkit;
-import org.bukkit.craftbukkit.v1_19_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -107,6 +107,7 @@ public final class ClaimPanel extends Panel {
         this.claim = claim;
     }
 
+    @Deprecated(forRemoval = true) // TO-DO: Can (probably) be replaced by upcoming InventoryView#setTitle (1.20)
     public void updateClientTitle(final Component title) {
         final ClaimPlayer editor = manager.getClaimPlayer(this.getViewer());
         // adding '*' to the title if modifying unowned claim
