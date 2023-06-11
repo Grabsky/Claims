@@ -86,16 +86,21 @@ public final class Claim {
     }
 
     public @NotNull String getDisplayName() {
+        if (manager.containsClaim(this) == false)
+            throw new ClaimProcessException(PluginLocale.CLAIM_DOES_NOT_EXIST);
+        // Returns custom name or id if not set.
         return requirePresent(this.getFlag(CustomFlag.CLAIM_NAME), this.getId());
     }
 
     public boolean setDisplayName(final @NotNull String name) {
+        if (manager.containsClaim(this) == false)
+            throw new ClaimProcessException(PluginLocale.CLAIM_DOES_NOT_EXIST);
+        // ...
         final String transformed = name.trim().replace("  ", " ");
         if (inRange(transformed.length(), 1, 32) == true) {
             this.setFlag(CustomFlag.CLAIM_NAME, transformed);
             return true;
         }
-        // ...
         return false;
     }
 

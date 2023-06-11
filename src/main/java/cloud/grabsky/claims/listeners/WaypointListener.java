@@ -43,7 +43,7 @@ import java.util.concurrent.CompletableFuture;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
 
-public final class EnhancedLodestoneListener implements Listener {
+public final class WaypointListener implements Listener {
 
     private final Claims plugin;
 
@@ -52,7 +52,7 @@ public final class EnhancedLodestoneListener implements Listener {
 
     private static final Color TRANSPARENT = Color.fromARGB(0, 0, 0, 0);
 
-    public EnhancedLodestoneListener(final Claims plugin) {
+    public WaypointListener(final Claims plugin) {
         this.plugin = plugin;
         this.claimManager = plugin.getClaimManager();
         this.waypointManager = plugin.getWaypointManager();
@@ -146,7 +146,6 @@ public final class EnhancedLodestoneListener implements Listener {
     private void onBlockExplode(final @NotNull BlockExplodeEvent event) {
         if (PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS == false)
             return;
-        // ...
         // Removing entries from this list, makes them NOT BEING DESTROYED by the explosion.
         event.blockList().removeIf(block -> {
             // Skippin
