@@ -1,15 +1,10 @@
-name: 'Claims'
-version: '0.9.1-pre'
-api-version: '1.20'
-main: 'cloud.grabsky.claims.Claims'
-# loader: 'cloud.grabsky.claims.ClaimsPluginLoader'
+name: Claims
+version: 0.9.1-pre
+api-version: 1.20
+main: cloud.grabsky.claims.Claims
 dependencies:
-  - name: WorldGuard
-    required: true
-  - name: Azure
-    required: true
+  - { name: WorldGuard, required: true }
+  - { name: Azure,      required: true }
 load-after:
-  - name: WorldGuard
-    bootstrap: false
-  - name: Azure
-    bootstrap: false
+  - { name: WorldGuard, bootstrap: false }
+  - { name: Azure,      bootstrap: false }
