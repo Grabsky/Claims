@@ -43,9 +43,6 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("waypoint_rename_failure_invalid_string")
     public static Component WAYPOINT_RENAME_FAILURE_INVALID_STRING;
 
-    @JsonPath("waypoints_destroy_failure_unknown")
-    public static Component WAYPOINTS_DESTROY_FAILURE_UNKNOWN;
-
     // Command Arguments
 
     @JsonPath("command_arguments.argument_claim_not_found")
