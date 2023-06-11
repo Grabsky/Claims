@@ -37,7 +37,6 @@ import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
 import org.jetbrains.annotations.NotNull;
@@ -140,24 +139,31 @@ public final class RegionListener implements Listener {
                         // Removing drops. Item is dropped independently.
                         event.setExpToDrop(0);
                         event.setDropItems(false);
-                        // Closing claim management interface in case anyone has it open.
-                        Bukkit.getOnlinePlayers().stream().map(Player::getOpenInventory)
-                                .filter((it) -> (it.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim().equals(claim) == true))
-                                .forEach(InventoryView::close);
-                        // Cancelling sessions in case any is present.
-                        if (claim.isPendingRename() == true) { // should not be null.
-                            // Invalidating the session.
-                            Session.Listener.CURRENT_EDIT_SESSIONS.asMap().forEach((uuid, session) -> {
+                        // ...
+                        final Location location = event.getBlock().getLocation();
+                        // Invalidating sessions and closing inventories.
+                        Bukkit.getOnlinePlayers().forEach((onlinePlayer) -> {
+                            final UUID onlineUniqueId = onlinePlayer.getUniqueId();
+                            final @Nullable Session<?> session = Session.Listener.CURRENT_EDIT_SESSIONS.getIfPresent(onlineUniqueId);
+                            if (session != null) {
+                                final @Nullable Location sessionAccessBlockLocation = session.getAssociatedPanel().getAccessBlockLocation();
                                 // Skipping unrelated sessions.
-                                if (session.getSubject() != claim)
-                                    return;
-                                // ...
-                                final @Nullable Player sessionOperator = Bukkit.getPlayer(uuid);
-                                // Clearing the title.
-                                if (sessionOperator != null && sessionOperator.isOnline() == true)
-                                    sessionOperator.clearTitle();
-                            });
-                        }
+                                if (sessionAccessBlockLocation != null && (location.equals(sessionAccessBlockLocation) == true || session.getSubject().equals(claim) == true)) {
+                                    final @Nullable Player sessionOperator = Bukkit.getPlayer(onlineUniqueId);
+                                    // Invalidating and clearing the title.
+                                    if (sessionOperator != null && sessionOperator.isOnline() == true) {
+                                        Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(onlineUniqueId);
+                                        sessionOperator.clearTitle();
+                                    }
+                                }
+                            }
+                            // Closing open panels.
+                            if (onlinePlayer.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel) {
+                                if (cPanel.getClaim() != null && cPanel.getClaim().equals(claim) == true) {
+                                    onlinePlayer.closeInventory();
+                                }
+                            }
+                        });
                         // Deleting the claim and associated region.
                         claimManager.deleteClaim(claim);
                         // Dropping claim block item if player is not in creative mode.
@@ -185,11 +191,13 @@ public final class RegionListener implements Listener {
     public void onClaimInteract(final PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.getItem() != null || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
             return;
+        // ...
+        final @Nullable Block block = event.getClickedBlock();
         // Following check is (most likely) redundant because of the action check.
-        if (event.getClickedBlock() == null)
+        if (block == null)
             return;
         // ...
-        final String id = Claim.createId(event.getClickedBlock().getLocation());
+        final String id = Claim.createId(block.getLocation());
         // ...
         if (claimManager.containsClaim(id) == true) {
             event.setCancelled(true);
@@ -206,8 +214,11 @@ public final class RegionListener implements Listener {
                         return;
                     }
                     // Otherwise, creating and opening the panel.
-                    new ClaimPanel.Builder().setClaimManager(claimManager).setClaim(claim).build()
-                            .open(event.getPlayer(), (panel) -> {
+                    new ClaimPanel.Builder()
+                            .setClaimManager(claimManager)
+                            .setClaim(claim)
+                            .setAccessBlockLocation(block.getLocation())
+                            .build().open(event.getPlayer(), (panel) -> {
                                 if (panel instanceof ClaimPanel cPanel) {
                                     claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, false));
                                     return true;
@@ -215,8 +226,10 @@ public final class RegionListener implements Listener {
                                 return false;
                             });
                 } else if (claim.isMember(claimPlayer) == true) {
-                    new ClaimPanel.Builder().setClaimManager(claimManager).build()
-                            .open(event.getPlayer(), (panel) -> {
+                    new ClaimPanel.Builder()
+                            .setClaimManager(claimManager)
+                            .setAccessBlockLocation(block.getLocation())
+                            .build().open(event.getPlayer(), (panel) -> {
                                 if (panel instanceof ClaimPanel cPanel) {
                                     claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
                                     return true;

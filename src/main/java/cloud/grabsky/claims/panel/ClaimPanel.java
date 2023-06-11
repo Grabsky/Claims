@@ -11,6 +11,7 @@ import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -29,25 +30,32 @@ import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializ
 public final class ClaimPanel extends Panel {
 
     @Getter(AccessLevel.PUBLIC)
-    public final ClaimManager manager;
+    public final @NotNull ClaimManager manager;
 
     @Getter(AccessLevel.PUBLIC)
-    private final Claim claim;
+    private final @Nullable Claim claim;
+
+    @Getter(AccessLevel.PUBLIC)
+    private final @Nullable Location accessBlockLocation;
 
     public static final Component INVENTORY_TITLE = text("\u7000\u7100", NamedTextColor.WHITE);
 
     public static final class Builder extends Panel.Builder<ClaimPanel> {
 
-        private Claim claim;
-
-        public @NotNull Builder setClaim(final @NotNull Claim claim) {
-            this.claim = claim; return this.self();
-        }
-
         private ClaimManager claimManager;
+        private Claim claim;
+        private Location accessBlockLocation;
 
         public @NotNull Builder setClaimManager(final @NotNull ClaimManager claimManager) {
             this.claimManager = claimManager; return this.self();
+        }
+
+        public @NotNull Builder setClaim(final @Nullable Claim claim) {
+            this.claim = claim; return this.self();
+        }
+
+        public @NotNull Builder setAccessBlockLocation(final @Nullable Location accessBlockLocation) {
+            this.accessBlockLocation = accessBlockLocation; return this.self();
         }
 
         @Override
@@ -84,7 +92,8 @@ public final class ClaimPanel extends Panel {
                             event.getWhoClicked().playSound(PluginConfig.CLAIMS_SETTINGS_UI_CLICK_SOUND);
                     },
                     claimManager,
-                    claim
+                    claim,
+                    accessBlockLocation
             );
         }
     }
@@ -108,12 +117,14 @@ public final class ClaimPanel extends Panel {
                        final @NotNull Consumer<InventoryCloseEvent> onInventoryClose,
                        final @NotNull Consumer<InventoryClickEvent> onInventoryClick,
                        final @NotNull ClaimManager claimManager,
-                       final @Nullable Claim claim
+                       final @Nullable Claim claim,
+                       final @Nullable Location accessBlockLocation
     ) {
         super(title, type, rows, onInventoryOpen, onInventoryClose, onInventoryClick);
         // ...
         this.manager = claimManager;
         this.claim = claim;
+        this.accessBlockLocation = accessBlockLocation;
     }
 
     public void updateTitle(final @NotNull Component title) {

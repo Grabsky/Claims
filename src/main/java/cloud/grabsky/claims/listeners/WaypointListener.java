@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
 import org.bukkit.Particle;
 import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Display;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -87,14 +88,25 @@ public final class WaypointListener implements Listener {
     public void onWaypointInteract(final @NotNull PlayerInteractEvent event) {
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.getItem() != null || event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY)
             return;
+        // ...
+        final @Nullable Block block = event.getClickedBlock();
         //  ...
-        if (PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS == true && event.getClickedBlock() != null && event.getClickedBlock().getType() == Material.LODESTONE) {
+        if (PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS == true && block != null && block.getType() == Material.LODESTONE) {
+            final Location location = block.getLocation().toCenterLocation();
+            final NamespacedKey key = toChunkDataKey(toChunkPosition(location));
+            // Preventing non-owners from opening the menu.
+            if (location.getChunk().getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, "INVALID_UUID").equals(event.getPlayer().getUniqueId().toString()) == false)
+                return;
+            // Cancelling the click.
             event.setCancelled(true);
-            // ...
-            new ClaimPanel.Builder().setClaimManager(claimManager).build().open(event.getPlayer(), (panel) -> {
-                plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
-                return true;
-            });
+            // Opening the panel.
+            new ClaimPanel.Builder()
+                    .setClaimManager(claimManager)
+                    .setAccessBlockLocation(location)
+                    .build().open(event.getPlayer(), (panel) -> {
+                        plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                        return true;
+                    });
         }
     }
 
@@ -118,20 +130,6 @@ public final class WaypointListener implements Listener {
             if (waypoint == null) {
                 plugin.getLogger().warning("Lodestone destroyed at [" + location.x() + ", " + location.y() + ", " + location.z() + " in " + location.getWorld() + "] but no waypoint has been found at this location.");
                 return;
-            }
-            // Cancelling sessions in case any is present.
-            if (waypoint.isPendingRename() == true) {
-                // Invalidating the session.
-                Session.Listener.CURRENT_EDIT_SESSIONS.asMap().forEach((uuid, session) -> {
-                    // Skipping unrelated sessions.
-                    if (session.getSubject() != waypoint)
-                        return;
-                    // ...
-                    final @Nullable Player sessionOperator = Bukkit.getPlayer(uuid);
-                    // Clearing the title.
-                    if (sessionOperator != null && sessionOperator.isOnline() == true)
-                        sessionOperator.clearTitle();
-                });
             }
             // Trying to "destroy" the waypoint.
             this.destroy(key, ownerUniqueId, waypoint).whenComplete((isSuccess, e) -> {
@@ -168,20 +166,6 @@ public final class WaypointListener implements Listener {
                 plugin.getLogger().warning("Lodestone destroyed at [" + location.x() + ", " + location.y() + ", " + location.z() + " in " + location.getWorld() + "] but no waypoint has been found at this location.");
                 return false;
             }
-            // Cancelling sessions in case any is present.
-            if (waypoint.isPendingRename() == true) {
-                // Invalidating the session.
-                Session.Listener.CURRENT_EDIT_SESSIONS.asMap().forEach((uuid, session) -> {
-                    // Skipping unrelated sessions.
-                    if (session.getSubject() != waypoint)
-                        return;
-                    // ...
-                    final @Nullable Player sessionOperator = Bukkit.getPlayer(uuid);
-                    // Clearing the title.
-                    if (sessionOperator != null && sessionOperator.isOnline() == true)
-                        sessionOperator.clearTitle();
-                });
-            }
             // Trying to "destroy" the waypoint.
             this.destroy(key, ownerUniqueId, waypoint).whenComplete((isSuccess, e) -> {
                 // Printing stack trace in case some exception occurred during the method invocation.
@@ -217,20 +201,6 @@ public final class WaypointListener implements Listener {
                 plugin.getLogger().warning("Lodestone destroyed at [" + location.x() + ", " + location.y() + ", " + location.z() + " in " + location.getWorld() + "] but no waypoint has been found at this location.");
                 return false;
             }
-            // Cancelling sessions in case any is present.
-            if (waypoint.isPendingRename() == true) {
-                // Invalidating the session.
-                Session.Listener.CURRENT_EDIT_SESSIONS.asMap().forEach((uuid, session) -> {
-                    // Skipping unrelated sessions.
-                    if (session.getSubject() != waypoint)
-                        return;
-                    // ...
-                    final @Nullable Player sessionOperator = Bukkit.getPlayer(uuid);
-                    // Clearing the title.
-                    if (sessionOperator != null && sessionOperator.isOnline() == true)
-                        sessionOperator.clearTitle();
-                });
-            }
             // Trying to "destroy" the waypoint.
             this.destroy(key, ownerUniqueId, waypoint).whenComplete((isSuccess, e) -> {
                 // Printing stack trace in case some exception occurred during the method invocation.
@@ -242,13 +212,12 @@ public final class WaypointListener implements Listener {
 
     private CompletableFuture<Boolean> create(final @NotNull NamespacedKey key, final @NotNull Player owner, final @NotNull Location location) {
         final String name = Waypoint.createDefaultName(location);
-        // ...
+        // Trying to create the waypoint...
         return waypointManager.createWaypoint(owner.getUniqueId(), name, Source.BLOCK, location).thenApply(isSuccess -> {
-            if (isSuccess == false)
-                return false;
+            // Returning 'false' as soon as creation failed.
+            if (isSuccess == false) return false;
             // This stuff have to be scheduled onto the main thread.
             plugin.getBedrockScheduler().run(1L, (task) -> {
-                // ...
                 location.getBlock().getChunk().getPersistentDataContainer().set(key, PersistentDataType.STRING, owner.getUniqueId().toString());
                 // Playing place sound.
                 location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.0F, 1.0F);
@@ -273,9 +242,32 @@ public final class WaypointListener implements Listener {
     }
 
     private CompletableFuture<Boolean> destroy(final @NotNull NamespacedKey key, final @NotNull UUID uniqueId, final @NotNull Waypoint waypoint) {
+        // Invalidating sessions and closing inventories.
+        Bukkit.getOnlinePlayers().forEach((player) -> {
+            final UUID onlineUniqueId = player.getUniqueId();
+            final @Nullable Session<?> session = Session.Listener.CURRENT_EDIT_SESSIONS.getIfPresent(onlineUniqueId);
+            if (session != null) {
+                final @Nullable Location sessionAccessBlockLocation = session.getAssociatedPanel().getAccessBlockLocation();
+                // Skipping unrelated sessions.
+                if (sessionAccessBlockLocation != null && (waypoint.getLocation().equals(sessionAccessBlockLocation) == true || session.getSubject().equals(waypoint) == true)) {
+                    final @Nullable Player sessionOperator = Bukkit.getPlayer(onlineUniqueId);
+                    // Invalidating and clearing the title.
+                    if (sessionOperator != null && sessionOperator.isOnline() == true) {
+                        Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(onlineUniqueId);
+                        sessionOperator.clearTitle();
+                    }
+                }
+            }
+            // Closing open panels.
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel) {
+                if (waypoint.getLocation().equals(cPanel.getAccessBlockLocation()) == true)
+                    player.closeInventory();
+            }
+        });
+        // Trying to remove the waypoint...
         return waypointManager.removeWaypoint(uniqueId, waypoint).thenApply(isSuccess -> {
-            if (isSuccess == false)
-                return false;
+            // Returning 'false' as soon as removal failed.
+            if (isSuccess == false) return false;
             // This stuff have to be scheduled onto the main thread.
             plugin.getBedrockScheduler().run(1L, (task) -> {
                 final Location location = waypoint.getLocation();

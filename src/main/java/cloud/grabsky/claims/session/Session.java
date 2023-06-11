@@ -18,6 +18,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -38,7 +39,7 @@ public abstract class Session<T> {
     private final @NotNull T subject;
 
     @Getter(AccessLevel.PUBLIC)
-    private final @Nullable ClaimPanel associatedPanel;
+    private final @NotNull ClaimPanel associatedPanel;
 
 
     public static final class WaypointRenameSession extends Session<Waypoint> {
@@ -70,13 +71,13 @@ public abstract class Session<T> {
                         session.getSubject().setPendingRename(false);
                         // Marking claim as no longer being edited upon session expire. This means that user took too long to choose a new name and interface has not been re-opened.
                         // To make sure this is not called when user decides to open panel during the rename session, any session should be removed whenever it gets opened.
-                        if (notification.getCause() == RemovalCause.EXPIRED && session.getAssociatedPanel() != null && session.getAssociatedPanel().getClaim() != null)
+                        if (notification.getCause() == RemovalCause.EXPIRED && session.getAssociatedPanel().getClaim() != null)
                             session.getAssociatedPanel().getClaim().setBeingEdited(false);
                     } else if (notification.getValue() instanceof WaypointRenameSession session) {
                         session.getSubject().setPendingRename(false);
                         // Marking claim as no longer being edited upon session expire. This means that user took too long to choose a new name and interface has not been re-opened.
                         // To make sure this is not called when user decides to open panel during the rename session, any session should be removed whenever it gets opened.
-                        if (notification.getCause() == RemovalCause.EXPIRED && session.getAssociatedPanel() != null && session.getAssociatedPanel().getClaim() != null)
+                        if (notification.getCause() == RemovalCause.EXPIRED && session.getAssociatedPanel().getClaim() != null)
                             session.getAssociatedPanel().getClaim().setBeingEdited(false);
                     }
                 })
@@ -104,7 +105,8 @@ public abstract class Session<T> {
                     // Converting Component message to a String
                     final String message = PlainTextComponentSerializer.plainText().serialize(event.message());
                     // ...
-                    final @Nullable Claim associatedClaim = (abstractSession.getAssociatedPanel() != null) ? abstractSession.getAssociatedPanel().getClaim() : null;
+                    final @Nullable Claim associatedClaim = abstractSession.getAssociatedPanel().getClaim();
+                    final @Nullable Location accessedBlock = abstractSession.getAssociatedPanel().getAccessBlockLocation();
                     // ...
                     if (abstractSession instanceof WaypointRenameSession session) {
                         final Waypoint waypoint = session.getSubject(); // Cannot be null in that context.
@@ -125,15 +127,14 @@ public abstract class Session<T> {
                                     // Clearing the title.
                                     player.clearTitle();
                                     // Opening (new) inventory to the player.
-                                    final ClaimPanel.Builder builder = new ClaimPanel.Builder().setClaimManager(session.getPlugin().getClaimManager());
-                                    // ...
-                                    if (associatedClaim != null)
-                                        builder.setClaim(associatedPanel.getClaim());
-                                    // ...
-                                    builder.build().open(player, (panel) -> {
-                                        session.getPlugin().getBedrockScheduler().run(1L, (___) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
-                                        return true;
-                                    });
+                                    new ClaimPanel.Builder()
+                                            .setClaimManager(session.getPlugin().getClaimManager())
+                                            .setClaim(associatedClaim)
+                                            .setAccessBlockLocation(accessedBlock)
+                                            .build().open(player, (panel) -> {
+                                                session.getPlugin().getBedrockScheduler().run(1L, (___) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+                                                return true;
+                                            });
                                 });
                                 // Sending success message.
                                 Message.of(PluginLocale.WAYPOINT_RENAME_SUCCESS).placeholder("name", waypoint.getDisplayName()).send(player);
@@ -158,6 +159,7 @@ public abstract class Session<T> {
                                 new ClaimPanel.Builder()
                                         .setClaimManager(claim.getManager())
                                         .setClaim(claim)
+                                        .setAccessBlockLocation(accessedBlock)
                                         .build().open(player, (panel) -> {
                                             session.getPlugin().getBedrockScheduler().run(1L, (___) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseOwnedClaims.INSTANCE, true));
                                             return true;
