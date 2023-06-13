@@ -1,5 +1,6 @@
 package cloud.grabsky.claims.configuration;
 
+import cloud.grabsky.claims.configuration.object.Particles;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
@@ -7,6 +8,8 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 import org.jetbrains.annotations.ApiStatus.Internal;
+
+import java.util.List;
 
 @Internal
 public final class PluginConfig implements JsonConfiguration {
@@ -33,6 +36,9 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("claim_settings.teleport_delay")
     public static int CLAIM_SETTINGS_TELEPORT_DELAY;
+
+    @JsonPath("claim_settings.teleport_effects")
+    public static List<Particles> CLAIM_SETTINGS_TELEPORT_EFFECTS;
 
     @JsonPath("claim_settings.members_limit")
     public static int CLAIM_SETTINGS_MEMBERS_LIMIT;

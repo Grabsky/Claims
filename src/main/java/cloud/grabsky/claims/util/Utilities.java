@@ -1,10 +1,17 @@
 package cloud.grabsky.claims.util;
 
+import cloud.grabsky.bedrock.components.Message;
+import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.configuration.PluginConfig;
+import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.commands.exception.NumberParseException;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import org.bukkit.Location;
+import org.bukkit.entity.HumanEntity;
+import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -52,6 +59,55 @@ public final class Utilities {
                 }
             }
         }}.stream();
+    }
+
+    public static void teleport(final @NotNull HumanEntity source, final @NotNull Location destination, final int delay, final @Nullable String bypassPermission, final boolean showEffects) {
+        // Teleporting with no delay.
+        if (bypassPermission != null && source.hasPermission(bypassPermission) == true) {
+            source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
+                if (isSuccess == true) {
+                    Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
+                    // ...
+                    if (showEffects == true) Claims.getInstance().getBedrockScheduler().run(1L, (task) -> {
+                        PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                            destination.getWorld().spawnParticle(it.getParticle(), source.getLocation().add(0.0, (source.getHeight() / 2.0), 0.0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                        });
+                    });
+                    return;
+                }
+                Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
+            });
+            return;
+        }
+        // Teleporting with specified delay.
+        final Location sourceInitialLocation = source.getLocation();
+        // ...
+        Message.of(PluginLocale.TELEPORT_IN_PROGRESS).placeholder("delay", delay).sendActionBar(source);
+        // Scheduling the task.
+        Claims.getInstance().getBedrockScheduler().repeat(20L, 20L, (delay - 1), (cycle) -> {
+            Message.of(PluginLocale.TELEPORT_IN_PROGRESS).placeholder("delay", delay - cycle).sendActionBar(source);
+            // Checking the location.
+            if (source.getLocation().distanceSquared(sourceInitialLocation) > 1.0) {
+                Message.of(PluginLocale.TELEPORT_FAILURE_MOVED).sendActionBar(source);
+                return false;
+            } else if (cycle == delay) {
+                source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
+                    if (isSuccess == true) {
+                        Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
+                        if (showEffects == true) Claims.getInstance().getBedrockScheduler().run(1L, (task) -> {
+                            PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                destination.getWorld().spawnParticle(it.getParticle(), source.getLocation().add(0.0, (source.getHeight() / 2.0), 0.0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                            });
+                        });
+                        return;
+                    }
+                    Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
+                });
+                return true;
+            }
+            return true;
+        });
+
     }
 
 }

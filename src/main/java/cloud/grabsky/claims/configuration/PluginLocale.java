@@ -19,6 +19,21 @@ public final class PluginLocale implements JsonConfiguration {
 
     // ...
 
+    @JsonPath("teleport_in_progress")
+    public static String TELEPORT_IN_PROGRESS;
+
+    @JsonPath("teleport_success")
+    public static Component TELEPORT_SUCCESS;
+
+    @JsonPath("teleport_failure_moved")
+    public static Component TELEPORT_FAILURE_MOVED;
+
+    @JsonPath("teleport_failure_unknown")
+    public static Component TELEPORT_FAILURE_UNKNOWN;
+
+
+    // ...
+
     @JsonPath("claims_not_in_claimed_area")
     public static Component NOT_IN_CLAIMED_AREA;
 

@@ -2,6 +2,11 @@
     "missing_permissions": "<dark_gray>› <red>Nie masz uprawnień aby to zrobić.",
     "reload_success": "<dark_gray>› <gray>Plugin <gold>Claims<gray> został pomyślnie załadowany.",
     "reload_failure": "<dark_gray>› <red>Plugin <gold>Claims<red> nie został pomyślnie załadowany.",
+    // Teleport messages are displayed in action bar.
+    "teleport_in_progress": "<gray>Zostaniesz przeniesiony za <gold><delay><gray> sekund...",
+    "teleport_success": "<gray>Zostałeś przeniesiony w miejsce docelowe.",
+    "teleport_failure_moved": "<red>Teleportacja przerwana. Poruszyłeś się.",
+    "teleport_failure_unknown": "<red>Teleportacja przerwana. Spróbuj ponownie.",
     // ...
     "claims_not_in_claimed_area": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie.",
     "claims_not_owner": "<dark_gray>› <red>Tylko właściciel terenu ma do tego uprawnienia.",

@@ -14,6 +14,12 @@
         "claims_limit": 5,
         // Delay before player is teleported to a claim (in seconds)
         "teleport_delay": 5,
+        // Teleport effect.
+        "teleport_effects": [
+            { "particle": "WAX_OFF", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
+            { "particle": "WAX_ON", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
+            { "particle": "TOWN_AURA", "amount": 120, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 }
+        ],
         // Claim block place attempt cooldown. Cooldown is applied to all blocks of the same type, no matter whether it is a claim block or not, so try to keep it low. (in seconds)
         "place_attempt_cooldown": 5,
         // Limit of players that can be added to a single claim

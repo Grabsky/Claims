@@ -9,6 +9,7 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
 import cloud.grabsky.claims.waypoints.WaypointManager;
@@ -108,7 +109,8 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                             location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
                                 final NamespacedKey key = WaypointManager.toChunkDataKey(toChunkPosition(location));
                                 if (chunk.getPersistentDataContainer().getOrDefault(key, STRING, "").equals(viewer.getUniqueId().toString()) == true) {
-                                    viewer.teleport(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
+                                    viewer.closeInventory();
+                                    Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", true);
                                     return;
                                 }
                                 Message.of("Waypoint does not exist anymore.").send(viewer);
