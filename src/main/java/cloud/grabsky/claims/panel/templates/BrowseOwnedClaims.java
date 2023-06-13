@@ -7,6 +7,7 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.util.Utilities;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
@@ -15,7 +16,6 @@ import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
@@ -99,7 +99,8 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
             cPanel.setItem(slot, icon.build(), (event) -> {
                 switch (event.getClick()) {
                     case LEFT, SHIFT_LEFT -> {
-                        viewer.teleportAsync(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
+                        cPanel.close();
+                        Utilities.teleport(event.getWhoClicked(), location, PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS);
                     }
                     case RIGHT, SHIFT_RIGHT -> {
                         // Overriding previous session(s).

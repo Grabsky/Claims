@@ -1,32 +1,30 @@
 {
-    // Determines if file logging is enabled or not
-    "logs": true,
-    // World used to fetch all regions from. Default world defined in server.properties is always minecraft:overworld
+    // World used to fetch all regions from. Default world defined in server.properties is always 'minecraft:overworld'.
     "claims_world": "minecraft:overworld",
-    // Prefix used to distinguish Claims from regular WorldGuard region
+    // Prefix used to distinguish claims from regular WorldGuard regions.
     "region_prefix": "claims_",
-    // Priority of WorldGuard region
+    // Priority of underlying region.
     "region_priority": 0,
 
     // Claims settings.
     "claim_settings": {
         // Limit of claims that can be placed by a single player. Another one can be placed if previous is fully upgraded.
         "claims_limit": 5,
-        // Delay before player is teleported to a claim (in seconds)
+        // Claim block place attempt cooldown. Cooldown is applied to all blocks of the same type, no matter whether it is a claim block or not, so try to keep it low. (in seconds)
+        "place_attempt_cooldown": 5,
+        // Limit of players that can be added to a single claim
+        "members_limit": 10,
+        // Minimum block distance from spawn before claims can be placed.
+        "minimum_distance_from_spawn": 300,
+        // Delay before player is teleported to the claim. (in seconds)
         "teleport_delay": 5,
-        // Teleport effect.
+        // Teleport effects.
         "teleport_effects": [
             { "particle": "WAX_OFF", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
             { "particle": "WAX_ON", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
             { "particle": "TOWN_AURA", "amount": 120, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 }
         ],
-        // Claim block place attempt cooldown. Cooldown is applied to all blocks of the same type, no matter whether it is a claim block or not, so try to keep it low. (in seconds)
-        "place_attempt_cooldown": 5,
-        // Limit of players that can be added to a single claim
-        "members_limit": 10,
-        // Minimum distance from spawn required to create a protected claim (in blocks)
-        "minimum_distance_from_spawn": 300,
-        // Upgrade sound that is played upon claim upgrade
+        // Claim upgrade sound.
         "interface_upgrade_sound": { "key": "minecraft:entity.player.levelup", "source": "master", "volume": 1.0, "pitch": 1.0 },
         // Click sound inside claim panel interface
         "interface_click_sound": { "key": "block.note_block.hat", "source": "master", "volume": 1.0, "pitch": 1.5 },
@@ -42,17 +40,15 @@
         "enhanced_lodestone_blocks_limit": 5,
         // Place cooldown. (in seconds)
         "place_cooldown": 5,
+        // Delay before player is teleported to the waypoint. (in seconds)
+        "teleport_delay": 5,
+        // Teleport effects.
+        "teleport_effects": [
+            { "particle": "WAX_OFF", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
+            { "particle": "WAX_ON", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
+            { "particle": "TOWN_AURA", "amount": 120, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 }
+        ],
         // Rename prompt.
         "rename_prompt": { "duration": 15, "title": "<yellow>Zmień Nazwę", "subtitle": "<gray>Podaj nową nazwę na czacie..." }
-    },
-
-    // Logging format.
-    "logging_format": {
-        "claim_placed": "Claim ({claim-id}:{claim-level}) has been PLACED by {issuer-name} ({issuer-uuid}) at {location}",
-        "claim_destroyed": "Claim ({claim-id}:{claim-level}) owned by {owner-name} ({owner-uuid}) has been DESTROYED by {issuer-name} ({issuer-uuid})",
-        "claim_upgraded": "Claim ({claim-id}:{claim-level}) has been UPGRADED by {issuer-name} ({issuer-uuid})",
-        "claim_member_added": "Player {member-name} ({member-uuid}) has been ADDED to claim ({claim-id}:{claim-level}) by {issuer-name} ({issuer-uuid})",
-        "claim_member_removed": "Player {member-name} ({member-uuid}) has been REMOVED from claim ({claim-id}:{claim-level}) by {issuer-name} ({issuer-uuid})"
     }
-
 }

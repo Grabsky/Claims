@@ -22,7 +22,6 @@ import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.Player;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -109,16 +108,17 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                             location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
                                 final NamespacedKey key = WaypointManager.toChunkDataKey(toChunkPosition(location));
                                 if (chunk.getPersistentDataContainer().getOrDefault(key, STRING, "").equals(viewer.getUniqueId().toString()) == true) {
-                                    viewer.closeInventory();
-                                    Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", true);
+                                    cPanel.close();
+                                    Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS);
                                     return;
                                 }
-                                Message.of("Waypoint does not exist anymore.").send(viewer);
+                                Message.of("Waypoint does not exist anymore.").send(viewer); // TO-DO: Replace with a configuration entry.
                             });
                             return;
                         }
                         // Just teleport otherwise...
-                        viewer.teleport(location.add(0.0, 0.5, 0.0), TeleportCause.PLUGIN);
+                        cPanel.close();
+                        Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS);
                     }
                     // Changing name...
                     case RIGHT, SHIFT_RIGHT -> {

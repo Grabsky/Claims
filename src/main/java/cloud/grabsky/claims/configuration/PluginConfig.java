@@ -14,9 +14,6 @@ import java.util.List;
 @Internal
 public final class PluginConfig implements JsonConfiguration {
 
-    @JsonPath("logs")
-    public static boolean LOGS;
-
     @JsonPath("claims_world")
     public static World DEFAULT_WORLD;
 
@@ -34,17 +31,17 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("claim_settings.place_attempt_cooldown")
     public static int CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN;
 
-    @JsonPath("claim_settings.teleport_delay")
-    public static int CLAIM_SETTINGS_TELEPORT_DELAY;
-
-    @JsonPath("claim_settings.teleport_effects")
-    public static List<Particles> CLAIM_SETTINGS_TELEPORT_EFFECTS;
-
     @JsonPath("claim_settings.members_limit")
     public static int CLAIM_SETTINGS_MEMBERS_LIMIT;
 
     @JsonPath("claim_settings.minimum_distance_from_spawn")
     public static int CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN;
+
+    @JsonPath("claim_settings.teleport_delay")
+    public static int CLAIM_SETTINGS_TELEPORT_DELAY;
+
+    @JsonPath("claim_settings.teleport_effects")
+    public static List<Particles> CLAIM_SETTINGS_TELEPORT_EFFECTS;
 
     @JsonNullable @JsonPath("claim_settings.interface_upgrade_sound")
     public static Sound CLAIMS_SETTINGS_UI_UPGRADE_SOUND;
@@ -74,6 +71,12 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("waypoint_settings.place_cooldown")
     public static int WAYPOINT_SETTINGS_PLACE_COOLDOWN;
 
+    @JsonPath("waypoint_settings.teleport_delay")
+    public static int WAYPOINT_SETTINGS_TELEPORT_DELAY;
+
+    @JsonPath("waypoint_settings.teleport_effects")
+    public static List<Particles> WAYPOINT_SETTINGS_TELEPORT_EFFECTS;
+
     // Waypoint Settings > Rename Prompt
 
     @JsonPath("waypoint_settings.rename_prompt.duration")
@@ -84,22 +87,5 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("waypoint_settings.rename_prompt.subtitle")
     public static Component WAYPOINT_SETTINGS_RENAME_PROMPT_SUBTITLE;
-
-    // Logging Format
-
-    @JsonPath("logging_format.claim_placed")
-    public static String LOG_FORMAT_PLACED;
-
-    @JsonPath("logging_format.claim_destroyed")
-    public static String LOG_FORMAT_DESTROYED;
-
-    @JsonPath("logging_format.claim_upgraded")
-    public static String LOG_FORMAT_UPGRADED;
-
-    @JsonPath("logging_format.claim_member_added")
-    public static String LOG_FORMAT_MEMBER_ADDED;
-
-    @JsonPath("logging_format.claim_member_removed")
-    public static String LOG_FORMAT_MEMBER_REMOVED;
 
 }
