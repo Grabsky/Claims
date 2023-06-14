@@ -2,9 +2,6 @@ package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
-import cloud.grabsky.claims.Claims;
-import cloud.grabsky.claims.claims.Claim;
-import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
@@ -72,10 +69,6 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
         // Rendering PREVIOUS PAGE button.
         if (waypointsIterator.hasPrevious() == true)
             cPanel.setItem(28, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> render(cPanel, viewer, pageToDisplay - 1, maxOnPage));
-        // Getting variables.
-        final ClaimManager manager = cPanel.getManager();
-        final Claims plugin = manager.getPlugin();
-        final @Nullable Claim claim = cPanel.getClaim();
         // Rendering waypoints.
         while (waypointsIterator.hasNext() == true && slotsIterator.hasNext() == true) {
             final Waypoint waypoint = waypointsIterator.next();
@@ -83,11 +76,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             // ...
             final int slot = slotsIterator.next();
             // ...
-            final ItemBuilder icon = (waypoint.getSource() == Source.BLOCK)
-                    ? new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT_BLOCK)
-                    : new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT_COMMAND);
-            // ...
-            icon.edit(meta -> {
+            final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT).edit(meta -> {
                 meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
                 // ...
                 final @Nullable List<Component> lore = meta.lore();

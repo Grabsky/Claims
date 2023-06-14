@@ -102,31 +102,16 @@
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDM4Y2YzZjhlNTRhZmMzYjNmOTFkMjBhNDlmMzI0ZGNhMTQ4NjAwN2ZlNTQ1Mzk5MDU1NTI0YzE3OTQxZjRkYyJ9fX0="
                 }
             },
-            "icon_waypoint_block": {
+            "icon_waypoint": {
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Kamień Teleportacji <gray>([NUMBER])",
                     "lore": [
                         "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
                         "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
                         "",
                         "<gray>Kliknij <yellow>LPM<gray>, aby się teleportować.",
                         "<gray>Kliknij <yellow>PPM<gray>, aby zmienić nazwę."
-                    ],
-                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
-                }
-            },
-            "icon_waypoint_command": {
-                "material": "minecraft:player_head",
-                "amount": 1,
-                "meta": {
-                    "name": "<yellow>[WAYPOINT_NAME]",
-                    "lore": [
-                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
-                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
-                        "",
-                        "<gray>Kliknij, aby się teleportować."
                     ],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
                 }
