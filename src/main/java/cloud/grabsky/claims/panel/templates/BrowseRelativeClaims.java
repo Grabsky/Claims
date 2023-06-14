@@ -1,5 +1,6 @@
 package cloud.grabsky.claims.panel.templates;
 
+import cloud.grabsky.azure.api.AzureProvider;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.claims.Claim;
@@ -26,6 +27,7 @@ import java.util.function.Consumer;
 
 import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
+import static cloud.grabsky.claims.util.Utilities.teleport;
 import static java.util.Comparator.comparingLong;
 import static net.kyori.adventure.text.Component.text;
 
@@ -102,7 +104,10 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
     }
 
     private void renderCommonButtons(final ClaimPanel cPanel) {
-        cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), null);
+        cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
+            cPanel.close();
+            teleport(event.getWhoClicked(), AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD), PluginConfig.SPAWN_TELEPORT_DELAY, "claims.bypass.teleport_delay", null);
+        });
         cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
         cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseOwnedClaims.INSTANCE, true));
         cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), null);

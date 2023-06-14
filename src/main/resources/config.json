@@ -5,6 +5,8 @@
     "region_prefix": "claims_",
     // Priority of underlying region.
     "region_priority": 0,
+    // Delay before player is teleported to the spawn. (in seconds)
+    "spawn_teleport_delay": 5,
 
     // Claims settings.
     "claim_settings": {

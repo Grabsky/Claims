@@ -33,7 +33,7 @@ dependencies {
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-SNAPSHOT")
     // Azure
-    compileOnly("cloud.grabsky:azure-api:58bbfc4")
+    compileOnly("cloud.grabsky:azure-api:dca57d0")
 }
 
 tasks {

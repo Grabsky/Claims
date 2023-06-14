@@ -23,6 +23,9 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("region_priority")
     public static int REGION_PRIORITY;
 
+    @JsonPath("spawn_teleport_delay")
+    public static int SPAWN_TELEPORT_DELAY;
+
     // Claim Settings
 
     @JsonPath("claim_settings.claims_limit")
