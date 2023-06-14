@@ -236,6 +236,7 @@ public final class WaypointListener implements Listener {
                         display.setViewRange(0.2F);
                     }
                 });
+                Message.of(PluginLocale.WAYPOINT_PLACE_SUCCESS).send(owner);
             });
             return true;
         });
@@ -259,10 +260,9 @@ public final class WaypointListener implements Listener {
                 }
             }
             // Closing open panels.
-            if (player.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel) {
+            if (player.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel)
                 if (waypoint.getLocation().equals(cPanel.getAccessBlockLocation()) == true)
                     player.closeInventory();
-            }
         });
         // Trying to remove the waypoint...
         return waypointManager.removeWaypoint(uniqueId, waypoint).thenApply(isSuccess -> {

@@ -40,6 +40,8 @@
         "enhanced_lodestone_blocks": true,
         // Limit of lodestones that can be placed by a single player.
         "enhanced_lodestone_blocks_limit": 5,
+        // Default display name of a waypoint.
+        "default_display_name": "Bez nazwy",
         // Place cooldown. (in seconds)
         "place_cooldown": 5,
         // Delay before player is teleported to the waypoint. (in seconds)

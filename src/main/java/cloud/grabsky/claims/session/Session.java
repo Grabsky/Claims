@@ -137,12 +137,12 @@ public abstract class Session<T> {
                                             });
                                 });
                                 // Sending success message.
-                                Message.of(PluginLocale.WAYPOINT_RENAME_SUCCESS).placeholder("name", waypoint.getDisplayName()).send(player);
+                                Message.of(PluginLocale.UI_WAYPOINT_RENAME_SUCCESS).placeholder("name", waypoint.getDisplayName()).send(player);
                                 // Returning...
                                 return;
                             }
                             // Sending error message otherwise.
-                            Message.of(PluginLocale.WAYPOINT_RENAME_FAILURE_INVALID_STRING).send(player);
+                            Message.of(PluginLocale.UI_WAYPOINT_RENAME_FAILURE_INVALID_STRING).send(player);
                         });
                     } else if (abstractSession instanceof ClaimRenameSession session) {
                         final Claim claim = session.getSubject(); // Cannot be null in that context.
@@ -166,12 +166,12 @@ public abstract class Session<T> {
                                         });
                             });
                             // Sending success message.
-                            Message.of(PluginLocale.CLAIM_RENAME_SUCCESS).placeholder("name", claim.getDisplayName()).send(player);
+                            Message.of(PluginLocale.UI_CLAIM_RENAME_SUCCESS).placeholder("name", claim.getDisplayName()).send(player);
                             // Returning...
                             return;
                         }
                         // Sending error message otherwise.
-                        Message.of(PluginLocale.CLAIM_RENAME_FAILURE_INVALID_STRING).send(player);
+                        Message.of(PluginLocale.UI_CLAIM_RENAME_FAILURE_INVALID_STRING).send(player);
                     }
                 }
             }

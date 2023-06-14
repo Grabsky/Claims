@@ -71,6 +71,9 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("waypoint_settings.enhanced_lodestone_blocks_limit")
     public static int WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT;
 
+    @JsonPath("waypoint_settings.default_display_name")
+    public static String WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME;
+
     @JsonPath("waypoint_settings.place_cooldown")
     public static int WAYPOINT_SETTINGS_PLACE_COOLDOWN;
 

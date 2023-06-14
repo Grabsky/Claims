@@ -17,8 +17,6 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("reload_failure")
     public static Component RELOAD_FAILURE;
 
-    // ...
-
     @JsonPath("teleport_in_progress")
     public static String TELEPORT_IN_PROGRESS;
 
@@ -30,9 +28,6 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("teleport_failure_unknown")
     public static Component TELEPORT_FAILURE_UNKNOWN;
-
-
-    // ...
 
     @JsonPath("claims_not_in_claimed_area")
     public static Component NOT_IN_CLAIMED_AREA;
@@ -46,17 +41,6 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("claim_no_center_defined")
     public static Component CLAIM_NO_CENTER_DEFINED;
 
-    @JsonPath("claim_rename_success")
-    public static String CLAIM_RENAME_SUCCESS;
-
-    @JsonPath("claim_rename_failure_invalid_string")
-    public static Component CLAIM_RENAME_FAILURE_INVALID_STRING;
-
-    @JsonPath("waypoint_rename_success")
-    public static String WAYPOINT_RENAME_SUCCESS;
-
-    @JsonPath("waypoint_rename_failure_invalid_string")
-    public static Component WAYPOINT_RENAME_FAILURE_INVALID_STRING;
 
     // Command Arguments
 
@@ -65,6 +49,7 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("command_arguments.argument_claim_not_in_claimed_area")
     public static Component ARGUMENT_CLAIM_NOT_IN_CLAIMED_AREA;
+
 
     // Commands > Claims > Edit
 
@@ -109,6 +94,7 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("commands.claims_restore_success")
     public static Component COMMAND_CLAIMS_RESTORE_SUCCESS;
+
 
     // Interface > Upgrade
 
@@ -157,47 +143,72 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("interface.members_remove_failure_not_a_member")
     public static Component UI_MEMBERS_REMOVE_FAILURE_NOT_A_MEMBER;
 
-    // Placement > Place
+    // Interface > Browse Waypoints
 
-    @JsonPath("placement.place_success")
+    @JsonPath("interface.waypoint_teleport_failure_not_existent")
+    public static String UI_WAYPOINT_TELEPORT_FAILURE_NOT_EXISTENT;
+
+    @JsonPath("interface.waypoint_rename_success")
+    public static String UI_WAYPOINT_RENAME_SUCCESS;
+
+    @JsonPath("interface.waypoint_rename_failure_invalid_string")
+    public static Component UI_WAYPOINT_RENAME_FAILURE_INVALID_STRING;
+
+    // Interface > Browse Owned Claims
+
+    @JsonPath("interface.claim_rename_success")
+    public static String UI_CLAIM_RENAME_SUCCESS;
+
+    @JsonPath("interface.claim_rename_failure_invalid_string")
+    public static Component UI_CLAIM_RENAME_FAILURE_INVALID_STRING;
+
+    // Interface > Browse Relative Claims
+    // ...
+
+
+    // Claim Placement > Place
+
+    @JsonPath("claim_placement.place_success")
     public static Component PLACEMENT_PLACE_SUCCESS;
 
-    @JsonPath("placement.place_failure_overlaps")
+    @JsonPath("claim_placement.place_failure_overlaps")
     public static Component PLACEMENT_PLACE_FAILURE_OVERLAPS;
 
-    @JsonPath("placement.place_failure_blacklisted_world")
+    @JsonPath("claim_placement.place_failure_blacklisted_world")
     public static Component PLACEMENT_PLACE_FAILURE_BLACKLISTED_WORLD;
 
-    @JsonPath("placement.place_failure_too_close_to_spawn")
+    @JsonPath("claim_placement.place_failure_too_close_to_spawn")
     public static Component PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN;
 
-    @JsonPath("placement.place_failure_reached_claims_limit")
+    @JsonPath("claim_placement.place_failure_reached_claims_limit")
     public static Component PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT;
 
-    @JsonPath("placement.place_failure_invalid_claim_type")
+    @JsonPath("claim_placement.place_failure_invalid_claim_type")
     public static Component PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE;
 
-    @JsonPath("placement.place_failure_other_claims_must_be_upgraded")
+    @JsonPath("claim_placement.place_failure_other_claims_must_be_upgraded")
     public static Component PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED;
 
-    // Placement > Destroy
+    // Claim Placement > Destroy
 
-    @JsonPath("placement.destroy_success")
+    @JsonPath("claim_placement.destroy_success")
     public static Component PLACEMENT_DESTROY_SUCCESS;
 
-    @JsonPath("placement.destroy_failure_not_sneaking")
+    @JsonPath("claim_placement.destroy_failure_not_sneaking")
     public static Component PLACEMENT_DESTROY_FAILURE_NOT_SNEAKING;
 
-    // Waypoints
 
-    @JsonPath("waypoints.place_success")
+    // Waypoint Placement
+
+    @JsonPath("waypoint_placement.place_success")
     public static String WAYPOINT_PLACE_SUCCESS;
 
-    @JsonPath("waypoints.place_failure_already_exists")
-    public static String WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS;
+    @JsonPath("waypoint_placement.place_failure_already_exists")
+    public static Component WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS;
 
-    @JsonPath("waypoints.place_failure_reached_waypoints_limit")
-    public static String WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT;
+    @JsonPath("waypoint_placement.place_failure_reached_waypoints_limit")
+    public static Component WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT;
+
 
     // Flags
 

@@ -5,6 +5,7 @@ import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
+import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.session.Session;
 import cloud.grabsky.claims.util.Utilities;
@@ -103,7 +104,8 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                                     Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS);
                                     return;
                                 }
-                                Message.of("Waypoint does not exist anymore.").send(viewer); // TO-DO: Replace with a configuration entry.
+                                cPanel.close();
+                                Message.of(PluginLocale.UI_WAYPOINT_TELEPORT_FAILURE_NOT_EXISTENT).sendActionBar(viewer);
                             });
                             return;
                         }

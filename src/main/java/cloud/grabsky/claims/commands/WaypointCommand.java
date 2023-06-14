@@ -93,7 +93,7 @@ public final class WaypointCommand extends RootCommand {
                     Message.of(PluginLocale.WAYPOINT_PLACE_SUCCESS).placeholder("name", name).send(sender);
                     return;
                 }
-                Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS).placeholder("name", name).send(sender);
+                Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS).send(sender);
             });
             return;
         }

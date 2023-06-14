@@ -14,12 +14,6 @@
     "claim_does_not_exist": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie istnieje.",
     "claim_no_center_defined": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie został poprawnie zdefiniowany.",
     // ...
-    "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <yellow><name>",
-    "claim_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
-    // ...
-    "waypoint_rename_success": "<dark_gray>› <gray>Nazwa teleportu została zaktualizowana: <yellow><name>",
-    "waypoint_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
-    // ...
     "command_arguments": {
         "argument_claim_not_found": "<dark_gray>› <red>Teren <gold><claim><red> nie istnieje.",
         "argument_claim_not_in_claimed_area": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie."
@@ -42,11 +36,11 @@
         "claims_restore_usage": "<dark_gray>› <gray>Użycie: <gold>/claims restore <white>(claim)",
         "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
         // Waypoints > Create
-        "waypoints_create_success": "",
-        "waypoints_create_failure_already_exists": "",
+        "waypoints_create_success": "<dark_gray>› <gray>Waypoint o nazwie <gold><name><gray> został utworzony.",
+        "waypoints_create_failure_already_exists": "<dark_gray>› <red>Waypoint o nazwie <gold><name><red> już istnieje.",
         // Waypoints > Remove
-        "waypoints_remove_success": "",
-        "waypoints_remove_failure_not_existent": ""
+        "waypoints_remove_success": "<dark_gray>› <gray>Waypoint o nazwie <gold><name><gray> został usunięty.",
+        "waypoints_remove_failure_not_existent": "<dark_gray>› <red>Waypoint o nazwie <gold><name><red> nie istnieje."
     },
     // ...
     "interface": {
@@ -66,9 +60,18 @@
         "members_add_failure_reached_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) graczy dodanych do terenu.",
         // Interface > Members > Remove
         "members_remove_success": "<dark_gray>› <gray>Gracz <gold><player><gray> został usunięty do terenu.",
-        "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu."
+        "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu.",
+        // Interface > Browse Waypoints
+        "waypoint_teleport_failure_not_existent": "<red>Nie odnaleziono docelowej lokalizacji.", // (actionbar)
+        "waypoint_rename_success": "<dark_gray>› <gray>Nazwa teleportu została zaktualizowana: <yellow><name>",
+        "waypoint_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
+        // Interface > Browse Owned Claims
+        "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <yellow><name>",
+        "claim_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków."
+        // Interface > Browse Relative Claims
+        // ...
     },
-    "placement": {
+    "claim_placement": {
         "place_success": "<dark_gray>› <gray>Chroniony teren został utworzony.",
         "place_failure_overlaps": "<dark_gray>› <red>Za blisko innego terenu.",
         "place_failure_blacklisted_world": "<dark_gray>› <red>Nie możesz postawić terenu w tym świecie.",
@@ -79,8 +82,8 @@
         "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
         "destroy_failure_not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając."
     },
-    "waypoints": {
-        "place_success": "<dark_gray>› <gray>Teleport <gold><name><gray> został utworzony.",
+    "waypoint_placement": {
+        "place_success": "<dark_gray>› <gray>Nowy teleport został utworzony.",
         "place_failure_already_exists": "<dark_gray>› <red>Teleport o tej nazwie już istnieje.",
         "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś limit teleportów."
     },

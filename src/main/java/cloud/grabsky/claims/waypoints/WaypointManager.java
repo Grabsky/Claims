@@ -1,6 +1,7 @@
 package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.waypoints.adapter.LocationAdapter;
 import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
 import com.squareup.moshi.JsonAdapter;
@@ -116,7 +117,7 @@ public final class WaypointManager {
         // Creating Waypoint object using provided values, or overriding existing one.
         final Waypoint waypoint = cache.getOrDefault(uniqueId, new ArrayList<>()).stream()
                 .filter(w -> w.getName().equalsIgnoreCase(name) == true)
-                .findFirst().orElse(new Waypoint(this, name, name, uniqueId, source, System.currentTimeMillis(), location));
+                .findFirst().orElse(new Waypoint(name, PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, uniqueId, source, System.currentTimeMillis(), location));
         // Adding waypoint to the cache.
         cache.computeIfAbsent(uniqueId, (___) -> new ArrayList<>()).add(waypoint);
         // Saving and returning the result.
@@ -130,7 +131,7 @@ public final class WaypointManager {
         waypointsCopy.remove(waypoint);
         // Returning "failed" CompletableFuture in case nothing was removed from the list.
         if ((cache.containsKey(uniqueId) == true ? cache.get(uniqueId).size() : 0) == waypointsCopy.size())
-            throw new IllegalArgumentException("No waypoints matching predicate were removed"); // TO-DO: Improve message.
+            throw new IllegalArgumentException("Waypoint (OWNER = " + waypoint.getOwner() + ", NAME = " + waypoint.getName() + ") does not exist or belong to " + uniqueId + ".");
         // Updating the cache.
         cache.put(uniqueId, waypointsCopy);
         // Saving and returning the result.
@@ -144,7 +145,7 @@ public final class WaypointManager {
         waypointsCopy.removeIf(predicate);
         // Returning "failed" CompletableFuture in case nothing was removed from the list.
         if ((cache.containsKey(uniqueId) == true ? cache.get(uniqueId).size() : 0) == waypointsCopy.size())
-            throw new IllegalArgumentException("No waypoints matching predicate were removed"); // TO-DO: Improve message.
+            throw new IllegalArgumentException("No waypoints matching predicate were removed.");
         // Updating the cache.
         cache.put(uniqueId, waypointsCopy);
         // Saving and returning the result.

@@ -16,7 +16,6 @@ public final class Waypoint {
     public enum Source { COMMAND, BLOCK }
 
     public Waypoint(
-            final @NotNull WaypointManager manager,
             final @NotNull String id,
             final @NotNull String displayName,
             final @NotNull UUID owner,
@@ -26,6 +25,7 @@ public final class Waypoint {
     ) {
         this.name = id;
         this.displayName = displayName;
+        this.owner = owner;
         this.source = source;
         this.createdOn = createdOn;
         this.location = location;
@@ -36,6 +36,9 @@ public final class Waypoint {
 
     @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
     private String displayName;
+
+    @Getter(AccessLevel.PUBLIC)
+    private transient final UUID owner;
 
     @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
     private transient boolean isPendingRename = false;
@@ -52,7 +55,7 @@ public final class Waypoint {
         return location.clone();
     }
 
-    @Experimental // Experimental status inherited from Paper's Position API.
+    @Experimental @SuppressWarnings("UnstableApiUsage") // Experimental status inherited from Paper's Position API.
     public static @NotNull String createDefaultName(final @NotNull Position position) {
         return position.x() + "_" + position.y() + "_" + position.z();
     }

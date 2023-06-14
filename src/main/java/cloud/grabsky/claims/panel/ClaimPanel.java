@@ -38,6 +38,45 @@ public final class ClaimPanel extends Panel {
     @Getter(AccessLevel.PUBLIC)
     private final @Nullable Location accessBlockLocation;
 
+    private ClaimPanel(@NotNull final Component title,
+                       final @NotNull InventoryType type,
+                       final @Range(from = 0, to = 6) int rows,
+                       final @NotNull Consumer<InventoryOpenEvent> onInventoryOpen,
+                       final @NotNull Consumer<InventoryCloseEvent> onInventoryClose,
+                       final @NotNull Consumer<InventoryClickEvent> onInventoryClick,
+                       final @NotNull ClaimManager claimManager,
+                       final @Nullable Claim claim,
+                       final @Nullable Location accessBlockLocation
+    ) {
+        super(title, type, rows, onInventoryOpen, onInventoryClose, onInventoryClick);
+        // ...
+        this.manager = claimManager;
+        this.claim = claim;
+        this.accessBlockLocation = accessBlockLocation;
+    }
+
+    public Player getViewer() {
+        return (Player) this.getInventory().getViewers().get(0);
+    }
+
+    public void applyClaimTemplate(final @NotNull Consumer<ClaimPanel> template, final boolean clearCurrent) {
+        // Clearing inventory before applying template (if requested)
+        if (clearCurrent == true)
+            this.clear();
+        // Applying the template.
+        template.accept(this);
+    }
+
+    public void updateTitle(final @NotNull Component title) {
+        final ClaimPlayer editor = manager.getClaimPlayer(this.getViewer());
+        // Parsing the title to legacy String. Workaround until Paper adds InventoryView#title(Component).
+        final String legacyTitle = legacySection().serialize(title);
+        // Setting the title. '*' is appended when modifying not-self-owned claim.
+        if (editor.toPlayer().getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel)
+            editor.toPlayer().getOpenInventory().setTitle((claim != null && editor.isOwnerOf(claim) == false) ? legacyTitle + "\u7001*" : legacyTitle);
+    }
+
+
     public static final Component INVENTORY_TITLE = text("\u7000\u7100", NamedTextColor.WHITE);
 
     public static final class Builder extends Panel.Builder<ClaimPanel> {
@@ -98,45 +137,7 @@ public final class ClaimPanel extends Panel {
         }
     }
 
-    public Player getViewer() {
-        return (Player) this.getInventory().getViewers().get(0);
-    }
-
-    public void applyClaimTemplate(@NotNull final Consumer<ClaimPanel> template, final boolean clearCurrent) {
-        // Clearing inventory before applying template (if requested)
-        if (clearCurrent == true)
-            this.clear();
-        // Applying the template.
-        template.accept(this);
-    }
-
-    private ClaimPanel(@NotNull final Component title,
-                       final @NotNull InventoryType type,
-                       final @Range(from = 0, to = 6) int rows,
-                       final @NotNull Consumer<InventoryOpenEvent> onInventoryOpen,
-                       final @NotNull Consumer<InventoryCloseEvent> onInventoryClose,
-                       final @NotNull Consumer<InventoryClickEvent> onInventoryClick,
-                       final @NotNull ClaimManager claimManager,
-                       final @Nullable Claim claim,
-                       final @Nullable Location accessBlockLocation
-    ) {
-        super(title, type, rows, onInventoryOpen, onInventoryClose, onInventoryClick);
-        // ...
-        this.manager = claimManager;
-        this.claim = claim;
-        this.accessBlockLocation = accessBlockLocation;
-    }
-
-    public void updateTitle(final @NotNull Component title) {
-        final ClaimPlayer editor = manager.getClaimPlayer(this.getViewer());
-        // Parsing the title to legacy String. Workaround until Paper adds InventoryView#title(Component).
-        final String legacyTitle = legacySection().serialize(title);
-        // Setting the title. '*' is appended when modifying not-self-owned claim.
-        if (editor.toPlayer().getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel)
-            editor.toPlayer().getOpenInventory().setTitle((claim != null && editor.isOwnerOf(claim) == false) ? legacyTitle + "\u7001*" : legacyTitle);
-    }
-
-    public static boolean isClaimPanel(final InventoryView view) {
+    public static boolean isClaimPanel(final @NotNull InventoryView view) {
         return view.getTopInventory().getHolder() instanceof ClaimPanel;
     }
 

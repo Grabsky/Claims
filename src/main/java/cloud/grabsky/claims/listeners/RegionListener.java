@@ -158,11 +158,9 @@ public final class RegionListener implements Listener {
                                 }
                             }
                             // Closing open panels.
-                            if (onlinePlayer.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel) {
-                                if (cPanel.getClaim() != null && cPanel.getClaim().equals(claim) == true) {
+                            if (onlinePlayer.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel)
+                                if (cPanel.getClaim() != null && cPanel.getClaim().equals(claim) == true)
                                     onlinePlayer.closeInventory();
-                                }
-                            }
                         });
                         // Deleting the claim and associated region.
                         claimManager.deleteClaim(claim);
