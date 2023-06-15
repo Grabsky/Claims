@@ -3,6 +3,7 @@ package cloud.grabsky.claims.panel.templates;
 import cloud.grabsky.azure.api.AzureProvider;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
+import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
@@ -12,16 +13,25 @@ import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
 import cloud.grabsky.claims.waypoints.WaypointManager;
+import io.papermc.paper.math.BlockPosition;
 import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
+import org.bukkit.Particle;
+import org.bukkit.Sound;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -30,10 +40,13 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static cloud.grabsky.claims.util.Utilities.teleport;
+import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
 import static java.util.Comparator.comparing;
 import static net.kyori.adventure.text.Component.text;
@@ -115,7 +128,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                     }
                     // Changing name...
                     case RIGHT, SHIFT_RIGHT -> {
-                        // Overriding previous session(s).
+                        // Craeting new (or overriding previous) session.
                         Session.Listener.CURRENT_EDIT_SESSIONS.put(event.getWhoClicked().getUniqueId(), new Session.WaypointRenameSession(waypoint, cPanel));
                         // ...
                         waypoint.setPendingRename(true);
@@ -134,12 +147,114 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                         // Showing title to the player.
                         viewer.showTitle(title);
                     }
+                    case MIDDLE -> {
+                        // ...
+                        cPanel.applyClaimTemplate(new Confirmation(waypoint), true);
+                    }
                 }
             });
         }
         // Rendering NEXT PAGE button.
         if (waypointsIterator.hasNext() == true)
             cPanel.setItem(34, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> render(cPanel, viewer, pageToDisplay + 1, maxOnPage));
+    }
+
+    @AllArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class Confirmation implements Consumer<ClaimPanel> {
+
+        private final Waypoint waypoint;
+
+        private static final Component INVENTORY_TITLE = text("\u7000\u7108", NamedTextColor.WHITE);
+
+        @Override
+        public void accept(final @NotNull ClaimPanel cPanel) {
+            cPanel.updateTitle(INVENTORY_TITLE);
+            // ...
+            final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
+            // ...
+            final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_DELETE_WAYPOINT).edit(meta -> {
+                meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+                // ...
+                final @Nullable List<Component> lore = meta.lore();
+                if (lore != null)
+                    meta.lore(lore.stream().map(line -> {
+                        return Message.of(line)
+                                .replace("[LOCATION]", waypoint.getLocation().blockX() + ", " + waypoint.getLocation().blockY() + ", " + waypoint.getLocation().blockZ())
+                                .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
+                                .getMessage();
+                    }).toList());
+            });
+            // ...
+            cPanel.setItem(13, icon.build(), (event) -> {
+                this.destroy(event.getWhoClicked().getUniqueId(), waypoint).thenAccept(isSuccess -> {
+                    cPanel.getManager().getPlugin().getBedrockScheduler().run(1L, (task) -> {
+                        // Re-opening panel if access block still exists.
+                        if (waypoint.getLocation().equals(cPanel.getAccessBlockLocation()) == false) {
+                            cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
+                            return;
+                        }
+                        // Closing the panel otherwise.
+                        cPanel.close();
+                    });
+                });
+            });
+            // RETURN
+            cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+        }
+
+        private CompletableFuture<Boolean> destroy(final UUID owner, final @NotNull Waypoint waypoint) {
+            // Invalidating sessions and closing inventories.
+            Bukkit.getOnlinePlayers().forEach(player -> {
+                final UUID onlineUniqueId = player.getUniqueId();
+                final @Nullable Session<?> session = Session.Listener.CURRENT_EDIT_SESSIONS.getIfPresent(onlineUniqueId);
+                if (session != null) {
+                    final @Nullable Location sessionAccessBlockLocation = session.getAssociatedPanel().getAccessBlockLocation();
+                    // Skipping unrelated sessions.
+                    if (sessionAccessBlockLocation != null && (waypoint.getLocation().equals(sessionAccessBlockLocation) == true || session.getSubject().equals(waypoint) == true)) {
+                        final @Nullable Player sessionOperator = Bukkit.getPlayer(onlineUniqueId);
+                        // Invalidating and clearing the title.
+                        if (sessionOperator != null && sessionOperator.isOnline() == true) {
+                            Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(onlineUniqueId);
+                            sessionOperator.clearTitle();
+                        }
+                    }
+                }
+                // Closing open panels.
+                if (player.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel)
+                    if (waypoint.getLocation().equals(cPanel.getAccessBlockLocation()) == true)
+                        player.closeInventory();
+            });
+            final Claims plugin = Claims.getInstance();
+            final Location location = waypoint.getLocation();
+            final NamespacedKey key = toChunkDataKey(toChunkPosition(location));
+            // Trying to remove the waypoint...
+            return plugin.getWaypointManager().removeWaypoint(owner, waypoint).thenCombine(location.getWorld().getChunkAtAsync(location), (isSuccess, chunk) -> {
+                // Returning 'false' as soon as removal failed.
+                if (isSuccess == false) return false;
+                // ...
+                final BlockPosition pos = toChunkPosition(location);
+                // This stuff have to be scheduled onto the main thread.
+                plugin.getBedrockScheduler().run(1L, (task) -> {
+                    // ...
+                    final Block block = chunk.getBlock(pos.blockX(), pos.blockY(), pos.blockZ());
+                    // ...
+                    if (block.getType() == Material.LODESTONE)
+                        block.setType(Material.AIR);
+                    // ...
+                    location.getChunk().getPersistentDataContainer().remove(key);
+                    // Displaying visual effects.
+                    location.getWorld().spawnParticle(Particle.DRAGON_BREATH, location, 80, 0.25, 0.25, 0.25, 0.03);
+                    location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1.0F, 1.0F);
+                    // Removing TextDisplay above the block.
+                    location.getNearbyEntities(2, 2, 2).stream().filter(TextDisplay.class::isInstance).forEach(entity -> {
+                        if (entity.getPersistentDataContainer().has(key, PersistentDataType.BYTE) == true)
+                            entity.remove();
+                    });
+                });
+                return true;
+            });
+        }
+
     }
 
     private void renderCommonButtons(final ClaimPanel cPanel) {

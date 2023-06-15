@@ -65,6 +65,11 @@ public final class PluginItems implements JsonConfiguration {
     @JsonPath("interface.functional.icon_relative_claim")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_RELATIVE_CLAIM;
 
+    // Interface > Functional > Icon Delete Waypoint
+    // Interface > Functional > Icon Waypoint
+    @JsonPath("interface.functional.icon_delete_waypoint")
+    public static ItemStack INTERFACE_FUNCTIONAL_ICON_DELETE_WAYPOINT;
+
 
     // Interface > Navigation > Next Page
     @JsonPath("interface.navigation.next_page")

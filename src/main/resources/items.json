@@ -111,7 +111,8 @@
                         "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
                         "",
                         "<gray>Kliknij <yellow>LPM<gray>, aby się teleportować.",
-                        "<gray>Kliknij <yellow>PPM<gray>, aby zmienić nazwę."
+                        "<gray>Kliknij <yellow>PPM<gray>, aby zmienić nazwę.",
+                        "<gray>Kliknij <yellow>ŚPM<gray>, aby usunąć."
                     ],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
                 }
@@ -142,6 +143,19 @@
                         "",
                         "<gray>Kliknij, aby się teleportować."
                     ]
+                }
+            },
+            "icon_delete_waypoint": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "lore": [
+                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "",
+                        "<red>Kliknij, aby potwierdzić usunięcie."
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
                 }
             }
         },

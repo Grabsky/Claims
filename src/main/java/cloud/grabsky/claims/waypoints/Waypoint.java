@@ -9,8 +9,6 @@ import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.UUID;
-
 public final class Waypoint {
 
     public enum Source { COMMAND, BLOCK }
@@ -18,14 +16,12 @@ public final class Waypoint {
     public Waypoint(
             final @NotNull String id,
             final @NotNull String displayName,
-            final @NotNull UUID owner,
             final @NotNull Source source,
             final @NotNull Long createdOn,
             final @NotNull Location location
     ) {
         this.name = id;
         this.displayName = displayName;
-        this.owner = owner;
         this.source = source;
         this.createdOn = createdOn;
         this.location = location;
@@ -36,9 +32,6 @@ public final class Waypoint {
 
     @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
     private String displayName;
-
-    @Getter(AccessLevel.PUBLIC)
-    private transient final UUID owner;
 
     @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
     private transient boolean isPendingRename = false;

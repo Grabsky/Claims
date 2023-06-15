@@ -117,7 +117,7 @@ public final class WaypointManager {
         // Creating Waypoint object using provided values, or overriding existing one.
         final Waypoint waypoint = cache.getOrDefault(uniqueId, new ArrayList<>()).stream()
                 .filter(w -> w.getName().equalsIgnoreCase(name) == true)
-                .findFirst().orElse(new Waypoint(name, PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, uniqueId, source, System.currentTimeMillis(), location));
+                .findFirst().orElse(new Waypoint(name, PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, source, System.currentTimeMillis(), location));
         // Adding waypoint to the cache.
         cache.computeIfAbsent(uniqueId, (___) -> new ArrayList<>()).add(waypoint);
         // Saving and returning the result.
@@ -131,7 +131,7 @@ public final class WaypointManager {
         waypointsCopy.remove(waypoint);
         // Returning "failed" CompletableFuture in case nothing was removed from the list.
         if ((cache.containsKey(uniqueId) == true ? cache.get(uniqueId).size() : 0) == waypointsCopy.size())
-            throw new IllegalArgumentException("Waypoint (OWNER = " + waypoint.getOwner() + ", NAME = " + waypoint.getName() + ") does not exist or belong to " + uniqueId + ".");
+            throw new IllegalArgumentException("Waypoint (OWNER = " + uniqueId + ", NAME = " + waypoint.getName() + ") does not exist or belong to " + uniqueId + ".");
         // Updating the cache.
         cache.put(uniqueId, waypointsCopy);
         // Saving and returning the result.
