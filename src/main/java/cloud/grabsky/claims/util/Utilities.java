@@ -79,10 +79,15 @@ public final class Utilities {
                 // Sending success message through action bar.
                 Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
                 // Returning if no effects were provided or player is vanished. (vanish checks compatible only with Azure)
-                if (then == null /* || effects.isEmpty() == true || source.getPersistentDataContainer().getOrDefault(IS_VANISHED, PersistentDataType.BYTE, (byte) 0) == (byte) 1 */)
+                if (then == null)
                     return;
                 // Scheduling task that spawns provided effects.
-                Claims.getInstance().getBedrockScheduler().run(1L, (task) -> then.accept(old, destination));
+                Claims.getInstance().getBedrockScheduler().run(1L, (task) -> {
+                    // Making player invulnerable for next 5 seconds.
+                    source.setNoDamageTicks(100);
+                    // Executing provided task.
+                    then.accept(old, destination);
+                });
             });
             return;
         }
@@ -108,13 +113,19 @@ public final class Utilities {
                         Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
                         return;
                     }
+
                     // Sending success message through action bar.
                     Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
                     // Returning if no effects were provided.
                     if (then == null)
                         return;
                     // Scheduling task that spawns provided effects.
-                    Claims.getInstance().getBedrockScheduler().run(1L, (task) -> then.accept(old, destination));
+                    Claims.getInstance().getBedrockScheduler().run(1L, (task) -> {
+                        // Making player invulnerable for next 5 seconds.
+                        source.setNoDamageTicks(100);
+                        // Executing provided task.
+                        then.accept(old, destination);
+                    });
                 });
             }
             return true;
