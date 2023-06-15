@@ -26,6 +26,11 @@
             { "particle": "WAX_ON", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
             { "particle": "TOWN_AURA", "amount": 120, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 }
         ],
+        // Teleport sounds.
+        "teleport_sounds": {
+            "out": { "key": "firedot:teleport.out", "source": "player", "volume": 1.0, "pitch": 1.0 },
+            "in": { "key": "firedot:teleport.in", "source": "player", "volume": 1.0, "pitch": 1.0 }
+        },
         // Claim upgrade sound.
         "interface_upgrade_sound": { "key": "minecraft:entity.player.levelup", "source": "master", "volume": 1.0, "pitch": 1.0 },
         // Click sound inside claim panel interface
@@ -52,6 +57,11 @@
             { "particle": "WAX_ON", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
             { "particle": "TOWN_AURA", "amount": 120, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 }
         ],
+        // Teleport sounds.
+        "teleport_sounds": {
+            "out": { "key": "firedot:teleport.out", "source": "player", "volume": 1.0, "pitch": 1.0 },
+            "in": { "key": "firedot:teleport.in", "source": "player", "volume": 1.0, "pitch": 1.0 }
+        },
         // Rename prompt.
         "rename_prompt": { "duration": 15, "title": "<yellow>Zmień Nazwę", "subtitle": "<gray>Podaj nową nazwę na czacie..." }
     }

@@ -31,7 +31,6 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
-import static cloud.grabsky.claims.util.Utilities.teleport;
 import static net.kyori.adventure.text.Component.text;
 
 // TO-DO: Clean up the mess.
@@ -101,8 +100,22 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
             cPanel.setItem(slot, icon.build(), (event) -> {
                 switch (event.getClick()) {
                     case LEFT, SHIFT_LEFT -> {
+                        // Closing the panel.
                         cPanel.close();
-                        Utilities.teleport(event.getWhoClicked(), location, PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS);
+                        // Teleporting...
+                        Utilities.teleport(viewer, location, PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                            // Displaying particles. NOTE: This can expose vanished players.
+                            if (PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS != null) {
+                                PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                    location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                });
+                            }
+                            // Playing sounds. NOTE: This can expose vanished players.
+                            if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                                old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                            if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                                current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                        });
                     }
                     case RIGHT, SHIFT_RIGHT -> {
                         // Overriding previous session(s).
@@ -134,8 +147,25 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
 
     private void renderCommonButtons(final ClaimPanel cPanel) {
         cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
+            // Closing the panel.
             cPanel.close();
-            teleport(event.getWhoClicked(), AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD), PluginConfig.SPAWN_TELEPORT_DELAY, "claims.bypass.teleport_delay", null);
+            // ...
+            final Player viewer = cPanel.getViewer();
+            final Location location = AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD);
+            // Teleporting...
+            Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                // Displaying particles. NOTE: This can expose vanished players.
+                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                    PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                        location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                    });
+                }
+                // Playing sounds. NOTE: This can expose vanished players.
+                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                    old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                    current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+            });
         });
         cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
         cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), null);

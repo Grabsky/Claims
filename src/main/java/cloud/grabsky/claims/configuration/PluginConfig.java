@@ -8,6 +8,7 @@ import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -46,6 +47,12 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("claim_settings.teleport_effects")
     public static List<Particles> CLAIM_SETTINGS_TELEPORT_EFFECTS;
 
+    @JsonNullable @JsonPath("claim_settings.teleport_sounds.in")
+    public static @Nullable Sound CLAIM_SETTINGS_TELEPORT_SOUNDS_IN;
+
+    @JsonNullable @JsonPath("claim_settings.teleport_sounds.out")
+    public static @Nullable Sound CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT;
+
     @JsonNullable @JsonPath("claim_settings.interface_upgrade_sound")
     public static Sound CLAIMS_SETTINGS_UI_UPGRADE_SOUND;
 
@@ -82,6 +89,12 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("waypoint_settings.teleport_effects")
     public static List<Particles> WAYPOINT_SETTINGS_TELEPORT_EFFECTS;
+
+    @JsonNullable @JsonPath("waypoint_settings.teleport_sounds.in")
+    public static @Nullable Sound WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN;
+
+    @JsonNullable @JsonPath("waypoint_settings.teleport_sounds.out")
+    public static @Nullable Sound WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT;
 
     // Waypoint Settings > Rename Prompt
 

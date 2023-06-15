@@ -45,7 +45,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
-import static cloud.grabsky.claims.util.Utilities.teleport;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
 import static java.util.Comparator.comparing;
@@ -113,8 +112,22 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                             location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
                                 final NamespacedKey key = WaypointManager.toChunkDataKey(toChunkPosition(location));
                                 if (chunk.getPersistentDataContainer().getOrDefault(key, STRING, "").equals(viewer.getUniqueId().toString()) == true) {
+                                    // Closing the panel.
                                     cPanel.close();
-                                    Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS);
+                                    // Teleporting...
+                                    Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                                        // Displaying particles. NOTE: This can expose vanished players.
+                                        if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                                            PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                                current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                            });
+                                        }
+                                        // Playing sounds. NOTE: This can expose vanished players.
+                                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                                            old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                                            current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                                    });
                                     return;
                                 }
                                 cPanel.close();
@@ -122,9 +135,10 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                             });
                             return;
                         }
-                        // Just teleport otherwise...
+                        // Just teleport otherwise... (non BLOCK source waypoints)
                         cPanel.close();
-                        Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS);
+                        // Teleporting...
+                        Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", null);
                     }
                     // Changing name...
                     case RIGHT, SHIFT_RIGHT -> {
@@ -147,16 +161,48 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                         // Showing title to the player.
                         viewer.showTitle(title);
                     }
-                    case MIDDLE -> {
-                        // ...
-                        cPanel.applyClaimTemplate(new Confirmation(waypoint), true);
-                    }
+                    case MIDDLE -> cPanel.applyClaimTemplate(new Confirmation(waypoint), true);
                 }
             });
         }
         // Rendering NEXT PAGE button.
         if (waypointsIterator.hasNext() == true)
             cPanel.setItem(34, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> render(cPanel, viewer, pageToDisplay + 1, maxOnPage));
+    }
+
+    private void renderCommonButtons(final ClaimPanel cPanel) {
+        cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
+            // Closing the panel.
+            cPanel.close();
+            // ...
+            final Player viewer = cPanel.getViewer();
+            final Location location = AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD);
+            // Teleporting...
+            Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                // Displaying particles. NOTE: This can expose vanished players.
+                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                    PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                        current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                    });
+                }
+                // Playing sounds. NOTE: This can expose vanished players.
+                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                    old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                    current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+            });
+        });
+        cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), null);
+        cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseOwnedClaims.INSTANCE, true));
+        cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseRelativeClaims.INSTANCE, true));
+        // RETURN
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> {
+            if (cPanel.getClaim() != null) {
+                cPanel.applyTemplate(BrowseCategories.INSTANCE, true);
+                return;
+            }
+            cPanel.close();
+        });
     }
 
     @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -255,24 +301,6 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             });
         }
 
-    }
-
-    private void renderCommonButtons(final ClaimPanel cPanel) {
-        cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
-            cPanel.close();
-            teleport(event.getWhoClicked(), AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD), PluginConfig.SPAWN_TELEPORT_DELAY, "claims.bypass.teleport_delay", null);
-        });
-        cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), null);
-        cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseOwnedClaims.INSTANCE, true));
-        cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseRelativeClaims.INSTANCE, true));
-        // RETURN
-        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> {
-            if (cPanel.getClaim() != null) {
-                cPanel.applyTemplate(BrowseCategories.INSTANCE, true);
-                return;
-            }
-            cPanel.close();
-        });
     }
 
 }

@@ -2,8 +2,10 @@ package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
+import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
+import cloud.grabsky.claims.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.entity.Player;
@@ -27,7 +29,24 @@ public enum BrowseCategories implements Consumer<Panel> {
         // Setting menu items
         cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_TELEPORTS, (event) -> {
             switch (event.getClick()) {
-                case LEFT, SHIFT_LEFT -> viewer.teleportAsync(cPanel.getClaim().getHome());
+                case LEFT, SHIFT_LEFT -> {
+                    // Closing the panel.
+                    cPanel.close();
+                    // Teleporting...
+                    Utilities.teleport(viewer, cPanel.getClaim().getHome(), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                        // Displaying particles. NOTE: This can expose vanished players.
+                        if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                            PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                viewer.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                            });
+                        }
+                        // Playing sounds. NOTE: This can expose vanished players.
+                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                            old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                            current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                    });
+                }
                 case RIGHT, SHIFT_RIGHT -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
             }
         });
