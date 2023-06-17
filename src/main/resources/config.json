@@ -16,6 +16,8 @@
         "place_attempt_cooldown": 5,
         // Limit of players that can be added to a single claim
         "members_limit": 10,
+        // Default display name of a claim.
+        "default_display_name": "Bez nazwy",
         // Minimum block distance from spawn before claims can be placed.
         "minimum_distance_from_spawn": 300,
         // Delay before player is teleported to the claim. (in seconds)

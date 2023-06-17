@@ -89,7 +89,7 @@ public final class Claim {
         if (manager.containsClaim(this) == false)
             throw new ClaimProcessException(PluginLocale.CLAIM_DOES_NOT_EXIST);
         // Returns custom name or id if not set.
-        return requirePresent(this.getFlag(CustomFlag.CLAIM_NAME), this.getId());
+        return requirePresent(this.getFlag(CustomFlag.CLAIM_NAME), PluginConfig.CLAIM_SETTINGS_DEFAULT_DISPLAY_NAME);
     }
 
     public boolean setDisplayName(final @NotNull String name) {

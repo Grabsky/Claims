@@ -38,6 +38,9 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("claim_settings.members_limit")
     public static int CLAIM_SETTINGS_MEMBERS_LIMIT;
 
+    @JsonPath("claim_settings.default_display_name")
+    public static String CLAIM_SETTINGS_DEFAULT_DISPLAY_NAME;
+
     @JsonPath("claim_settings.minimum_distance_from_spawn")
     public static int CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN;
 
