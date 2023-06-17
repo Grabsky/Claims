@@ -64,8 +64,7 @@ public final class Utilities {
 
     private static final NamespacedKey IS_VANISHED = new NamespacedKey("azure", "is_vanished");
 
-    // TO-DO: Safe teleports? Medium priority.
-    // TO-DO: Sounds? Low priority.
+    // NOTE: Safe teleports may (and probably should) be introduced in the future. Teleport invulnerability is a temporary solution.
     public static void teleport(final @NotNull HumanEntity source, final @NotNull Location destination, final int delay, final @Nullable String bypassPermission, final @Nullable BiConsumer<Location, Location> then) {
         // Handling teleports with no (or bypassed) delay.
         if (bypassPermission != null && source.hasPermission(bypassPermission) == true) {
@@ -113,7 +112,6 @@ public final class Utilities {
                         Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
                         return;
                     }
-
                     // Sending success message through action bar.
                     Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
                     // Returning if no effects were provided.
