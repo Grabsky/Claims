@@ -12,7 +12,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Interakcja</b><gray> (bloki użytkowe)",
+                    "name": "<yellow>Interakcja<gray> (bloki użytkowe)",
                     "lore": [
                         "<gray>Interakcja z blokami użytkowymi.",
                         "",
@@ -33,7 +33,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Interakcja</b><gray> (kontenery)",
+                    "name": "<yellow>Interakcja<gray> (kontenery)",
                     "lore": [
                         "<gray>Interakcja z kontenerami na przedmioty.",
                         "",
@@ -52,13 +52,15 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Wybuch TNT",
+                    "name": "<yellow>Wybuch TNT",
                     "lore": [
                         "<gray>Niszczenie terenu przez TNT.",
                         "",
                         "<gray>Zakres: <yellow>Środowisko",
                         "",
-                        "[OPTIONS]"
+                        "[OPTIONS]",
+                        "",
+                        "<red>Włączenie tej flagi może być niebezpieczne."
                     ],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGQ3NGQyOGQwOTdlNTNkYjExMTJlMzkwYTdkNGZmODJkZjcxODg2NmFlYThmMTY1MGQ5NDY2NTdhOTM2OTY5OSJ9fX0="
                 }
@@ -71,13 +73,15 @@
                 "material": "minecraft:creeper_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Wybuch Creeperów",
+                    "name": "<yellow>Wybuch Creeperów",
                     "lore": [
                         "<gray>Niszczenie terenu przez creepery.",
                         "",
                         "<gray>Zakres: <yellow>Środowisko",
                         "",
-                        "[OPTIONS]"
+                        "[OPTIONS]",
+                        "",
+                        "<red>Włączenie tej flagi może być niebezpieczne."
                     ]
                 }
             }
@@ -89,7 +93,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Topnienie Śniegu",
+                    "name": "<yellow>Topnienie Śniegu",
                     "lore": [
                         "<gray>Topnienie śniegu na terenie.",
                         "",
@@ -108,7 +112,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Topnienie Lodu",
+                    "name": "<yellow>Topnienie Lodu",
                     "lore": [
                         "<gray>Topnienie lodu na terenie.",
                         "",
@@ -127,7 +131,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Rozprzestrzenianie Ognia",
+                    "name": "<yellow>Rozprzestrzenianie Ognia",
                     "lore": [
                         "<gray>Rozprzestrzenianie się ognia na terenie.",
                         "",
@@ -146,7 +150,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Spawn Mobów",
+                    "name": "<yellow>Spawn Mobów",
                     "lore": [
                         "<gray>Spawn mobów na terenie.",
                         "",
@@ -165,7 +169,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Pogoda",
+                    "name": "<yellow>Pogoda",
                     "lore": [
                         "<gray>Pogoda widoczna na terenie.",
                         "",
@@ -186,7 +190,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Czas",
+                    "name": "<yellow>Czas",
                     "lore": [
                         "<gray>Godzina widoczna na terenie.",
                         "",

@@ -27,7 +27,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow><b>Flagi",
+                    "name": "<yellow>Flagi",
                     "lore": ["<gray>Kliknij, aby zarządzać flagami."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWNiYTcyNzdmYzg5NWJmM2I2NzM2OTQxNTk4NjRiODMzNTFhNGQxNDcxN2U0NzZlYmRhMWMzYmYzOGZjZjM3In19fQ=="
                 }
