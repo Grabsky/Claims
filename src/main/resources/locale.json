@@ -52,8 +52,8 @@
         "upgrade_icon_upgrade_not_upgradeable": "<red>Osiągnąłeś maksymalny poziom terenu.",
         "upgrade_icon_upgrade_missing_items": "<red>Nie posiadasz wymaganych przedmiotów.",
         // Interface > Set Home
-        "set_home_success": "<dark_gray>› <gray>Teleport na teren został nadpisany.",
-        "set_home_failure": "<dark_gray>› <red>Teleport nie może zostać ustawiony poza terenem.",
+        "set_home_success": "<dark_gray>› <gray>Miejsce teleportu zostało nadpisane.",
+        "set_home_failure": "<dark_gray>› <red>Miejsce teleportu musi znajdować się w granicach terenu.",
         // Interface > Members > Add
         "members_add_success": "<dark_gray>› <gray>Gracz <gold><player><gray> został dodany do terenu.",
         "members_add_failure_already_added": "<dark_gray>› <red>Ten gracz jest już dodany do terenu.",

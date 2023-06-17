@@ -50,6 +50,10 @@ public final class PluginItems implements JsonConfiguration {
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_REMOVE_MEMBER;
 
     // Interface > Functional > Icon Spawn
+    @JsonPath("interface.functional.icon_set_home")
+    public static ItemStack INTERFACE_FUNCTIONAL_ICON_SET_HOME;
+
+    // Interface > Functional > Icon Spawn
     @JsonPath("interface.functional.icon_spawn")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_SPAWN;
 
@@ -66,7 +70,6 @@ public final class PluginItems implements JsonConfiguration {
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_RELATIVE_CLAIM;
 
     // Interface > Functional > Icon Delete Waypoint
-    // Interface > Functional > Icon Waypoint
     @JsonPath("interface.functional.icon_delete_waypoint")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_DELETE_WAYPOINT;
 

@@ -10,6 +10,7 @@ import cloud.grabsky.claims.panel.ClaimPanel;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.ApiStatus.Experimental;
@@ -47,6 +48,16 @@ public enum BrowseSettings implements Consumer<Panel> {
         cPanel.clear();
         // Button: FLAGS
         cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_FLAGS, event -> cPanel.applyTemplate(BrowseFlags.INSTANCE, true));
+        // Button: SET HOME
+        cPanel.setItem(13, PluginItems.INTERFACE_FUNCTIONAL_ICON_SET_HOME, (event) -> {
+            cPanel.close();
+            // ...
+            final Location location = viewer.getLocation();
+            // ...
+            final boolean isSuccess = claim.setHome(location);
+            // ...
+            Message.of(isSuccess == true ? PluginLocale.UI_SET_HOME_SUCCESS : PluginLocale.UI_SET_HOME_FAILURE).send(viewer);
+        });
         // Getting object of CURRENT upgrade level
         final Claim.Type type = claim.getType();
         // ...
