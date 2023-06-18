@@ -162,9 +162,6 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("interface.claim_rename_failure_invalid_string")
     public static Component UI_CLAIM_RENAME_FAILURE_INVALID_STRING;
 
-    // Interface > Browse Relative Claims
-    // ...
-
 
     // Claim Placement > Place
 
@@ -178,10 +175,10 @@ public final class PluginLocale implements JsonConfiguration {
     public static Component PLACEMENT_PLACE_FAILURE_BLACKLISTED_WORLD;
 
     @JsonPath("claim_placement.place_failure_too_close_to_spawn")
-    public static Component PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN;
+    public static String PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN;
 
     @JsonPath("claim_placement.place_failure_reached_claims_limit")
-    public static Component PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT;
+    public static String PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT;
 
     @JsonPath("claim_placement.place_failure_invalid_claim_type")
     public static Component PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE;
@@ -207,7 +204,7 @@ public final class PluginLocale implements JsonConfiguration {
     public static Component WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS;
 
     @JsonPath("waypoint_placement.place_failure_reached_waypoints_limit")
-    public static Component WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT;
+    public static String WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT;
 
 
     // Flags

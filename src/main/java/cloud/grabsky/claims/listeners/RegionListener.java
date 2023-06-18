@@ -102,11 +102,11 @@ public final class RegionListener implements Listener {
                             return;
                         }
                         event.setCancelled(true);
-                        Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN).send(player);
+                        Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN).placeholder("distance", PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN).send(player);
                         return;
                     }
                     event.setCancelled(true);
-                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT).send(player);
+                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT).placeholder("limit", PluginConfig.CLAIM_SETTINGS_CLAIMS_LIMIT).send(player);
                     return;
                 }
                 event.setCancelled(true);

@@ -69,21 +69,27 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
             final User user = claimPlayer.toUser();
             // ...
             final ItemStack head = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_ADD_MEMBER)
-                    .setName(text(user.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
+                    .setName(text(user.getName(), NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
                     .setSkullTexture(user.getTextures())
                     .build();
             // ...
             cPanel.setItem(uiSlotsIterator.next(), head, (event) -> {
-                // Trying to add player to the claim.
-                if (claim.addMember(claimPlayer) == true) {
-                    cPanel.applyTemplate(BrowseMembers.INSTANCE, true);
-                    return;
+                // Making sure not to exceed the members limit.
+                if (claim.getMembers().size() < PluginConfig.CLAIM_SETTINGS_MEMBERS_LIMIT) {
+                    // Trying to add player to the claim. This method fails if player is already member of that claim.
+                    if (claim.addMember(claimPlayer) == true) {
+                        cPanel.applyTemplate(BrowseMembers.INSTANCE, true);
+                        return;
+                    }
+                    // Closing the panel.
+                    viewer.closeInventory();
+                    // Sending error message that claim members limit has been reached.
+                    Message.of(PluginLocale.UI_MEMBERS_ADD_FAILURE_ALREADY_ADDED).send(viewer);
                 }
-                // Closing inventory and sending error message members limit has been reached.
+                // Closing the panel.
                 viewer.closeInventory();
-                Message.of(PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT)
-                        .placeholder("limit", PluginConfig.CLAIM_SETTINGS_MEMBERS_LIMIT)
-                        .send(viewer);
+                // Sending error message that claim members limit has been reached.
+                Message.of(PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT).placeholder("limit", PluginConfig.CLAIM_SETTINGS_MEMBERS_LIMIT).send(viewer);
             });
         }
         // Rendering NEXT PAGE button.

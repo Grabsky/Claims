@@ -72,12 +72,20 @@
         // ...
     },
     "claim_placement": {
-        "place_success": "<dark_gray>› <gray>Chroniony teren został utworzony.",
+        "place_success": [
+            "",
+            "<dark_gray>› <gray>Chroniony teren został utworzony.",
+            "",
+            "<dark_gray>› <gray>Aby otworzyć panel zarządzania terenem:",
+            "<dark_gray>›  - <gray>Naciśnij <yellow>PPM<gray> na blok terenu nie trzymając nic w ręce.",
+            "<dark_gray>›  - <gray>Użyj komendy <yellow>/claims<gray> znajdując się w jego granicach.",
+            ""
+        ],
         "place_failure_overlaps": "<dark_gray>› <red>Za blisko innego terenu.",
         "place_failure_blacklisted_world": "<dark_gray>› <red>Nie możesz postawić terenu w tym świecie.",
-        "place_failure_too_close_to_spawn": "<dark_gray>› <red>Minimalna odległość od spawnu to 300 kratek.",
-        "place_failure_reached_claims_limit": "<dark_gray>› <red>Osiągnąłeś limit terenów.",
-        "place_failure_invalid_claim_type": "<dark_gray>› <red>Typ terenu, który próbujesz postawić jest nieprawidłowy. Skontaktuj się z administracją.",
+        "place_failure_too_close_to_spawn": "<dark_gray>› <red>Minimalna odległość od spawnu to <distance> kratek.",
+        "place_failure_reached_claims_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) terenów.",
+        "place_failure_invalid_claim_type": "<dark_gray>› <red>Teren, który próbujesz postawić jest nieprawidłowy. Skontaktuj się z administracją.",
         "place_failure_other_claims_must_be_upgraded": "<dark_gray>› <red>Poprzednie tereny muszą być ulepszone od maksymalnego poziomu.",
         "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
         "destroy_failure_not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając."
@@ -85,7 +93,7 @@
     "waypoint_placement": {
         "place_success": "<dark_gray>› <gray>Nowy teleport został utworzony.",
         "place_failure_already_exists": "<dark_gray>› <red>Teleport o tej nazwie już istnieje.",
-        "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś limit teleportów."
+        "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) teleportów."
     },
     // NOTE: Changing those values will NOT update enter/leave messages in existing claims.
     "flags": {

@@ -80,7 +80,7 @@ public final class WaypointListener implements Listener {
                 return;
             }
             event.setCancelled(true);
-            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT).send(player);
+            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT).placeholder("limit", PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT).send(player);
         }
     }
 
