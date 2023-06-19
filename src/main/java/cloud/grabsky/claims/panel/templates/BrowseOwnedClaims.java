@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
@@ -50,7 +49,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
         final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
         // ...
         this.claims = cPanel.getManager().getClaimPlayer(viewer).getClaims().stream()
-                .sorted(Comparator.comparing(Claim::getDisplayName))
+                .sorted((s1, s2) -> s1.getDisplayName().compareToIgnoreCase(s2.getDisplayName()))
                 .toList();
         // ...
         cPanel.updateTitle(INVENTORY_TITLE);

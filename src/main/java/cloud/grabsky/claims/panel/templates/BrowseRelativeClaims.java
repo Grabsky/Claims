@@ -27,7 +27,6 @@ import java.util.function.Consumer;
 
 import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
-import static java.util.Comparator.comparingLong;
 import static net.kyori.adventure.text.Component.text;
 
 // TO-DO: Clean up the mess.
@@ -47,7 +46,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
         final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
         // ...
         this.claims = cPanel.getManager().getClaimPlayer(viewer).getRelativeClaims().stream()
-                .sorted(comparingLong(claim -> requirePresent(claim.getCreatedOn(), 0L)))
+                .sorted((s1, s2) -> s1.getDisplayName().compareToIgnoreCase(s2.getDisplayName()))
                 .toList();
         // ...
         cPanel.updateTitle(INVENTORY_TITLE);

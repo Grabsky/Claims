@@ -47,7 +47,6 @@ import java.util.function.Consumer;
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
-import static java.util.Comparator.comparing;
 import static net.kyori.adventure.text.Component.text;
 import static org.bukkit.persistence.PersistentDataType.STRING;
 
@@ -67,7 +66,9 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
     public void accept(final @NotNull ClaimPanel cPanel) {
         final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
         // ...
-        this.waypoints = cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(viewer.getUniqueId()).stream().sorted(comparing(Waypoint::getDisplayName)).toList();
+        this.waypoints = cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(viewer.getUniqueId()).stream()
+                .sorted((s1, s2) -> s1.getDisplayName().compareToIgnoreCase(s2.getDisplayName()))
+                .toList();
         // ...
         cPanel.updateTitle(INVENTORY_TITLE);
         // ...
