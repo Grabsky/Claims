@@ -95,7 +95,7 @@ public class ClaimsCommand extends RootCommand {
                                 .setClaim(claim)
                                 .build()
                                 .open(sender, (panel) -> {
-                                    plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
+                                    plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseCategories.INSTANCE, false));
                                     return true;
                                 });
                         return;
@@ -137,7 +137,7 @@ public class ClaimsCommand extends RootCommand {
                         .setClaim(claim)
                         .build()
                         .open(sender, (panel) -> {
-                            plugin.getBedrockScheduler().run(1L, (task) -> panel.applyTemplate(BrowseCategories.INSTANCE, false));
+                            plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseCategories.INSTANCE, false));
                             return true;
                         });
                 return;

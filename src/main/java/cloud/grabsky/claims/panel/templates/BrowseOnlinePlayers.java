@@ -3,7 +3,6 @@ package cloud.grabsky.claims.panel.templates;
 import cloud.grabsky.azure.api.user.User;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
-import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
@@ -25,7 +24,7 @@ import java.util.function.Consumer;
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static net.kyori.adventure.text.Component.text;
 
-public final class BrowseOnlinePlayers implements Consumer<Panel> {
+public final class BrowseOnlinePlayers implements Consumer<ClaimPanel> {
 
     private List<ClaimPlayer> onlineClaimPlayers = new ArrayList<>();
 
@@ -33,8 +32,7 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
     private static final List<Integer> UI_SLOTS = List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34);
 
     @Override
-    public void accept(final Panel panel) {
-        final ClaimPanel cPanel = (ClaimPanel) panel;
+    public void accept(final ClaimPanel cPanel) {
         // ...
         final ClaimManager claimManager = cPanel.getClaim().getManager();
         final Claim claim = cPanel.getClaim();
@@ -78,7 +76,7 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
                 if (claim.getMembers().size() < PluginConfig.CLAIM_SETTINGS_MEMBERS_LIMIT) {
                     // Trying to add player to the claim. This method fails if player is already member of that claim.
                     if (claim.addMember(claimPlayer) == true) {
-                        cPanel.applyTemplate(BrowseMembers.INSTANCE, true);
+                        cPanel.applyClaimTemplate(BrowseMembers.INSTANCE, true);
                         return;
                     }
                     // Closing the panel.
@@ -96,7 +94,7 @@ public final class BrowseOnlinePlayers implements Consumer<Panel> {
         if (onlineClaimPlayersIterator.hasNext() == true)
             cPanel.setItem(26, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> this.render(cPanel, pageToDisplay + 1, maxOnPage));
         // ...
-        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseMembers.INSTANCE, true));
     }
 
 }

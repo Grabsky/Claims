@@ -3,7 +3,6 @@ package cloud.grabsky.claims.panel.templates;
 import cloud.grabsky.azure.api.user.User;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
-import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
@@ -19,15 +18,14 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public enum BrowseMembers implements Consumer<Panel> {
+public enum BrowseMembers implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7104", NamedTextColor.WHITE);
     private static final List<Integer> UI_SLOTS = List.of(11, 12, 13, 14, 15,  21, 22, 23, 24, 25);
 
     @Override
-    public void accept(final Panel panel) {
-        final ClaimPanel cPanel = (ClaimPanel) panel;
+    public void accept(final ClaimPanel cPanel) {
         // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
         // "Rendering" the inventory contents.
@@ -67,8 +65,8 @@ public enum BrowseMembers implements Consumer<Panel> {
         }
         // Displaying [ICON_BROWSE_PLAYERS] button.
         if (slotsIterator.hasNext() == true)
-            cPanel.setItem(slotsIterator.next(), PluginItems.INTERFACE_CATEGORIES_BROWSE_ONLINE_PLAYERS, event -> cPanel.applyTemplate(new BrowseOnlinePlayers(), true));
+            cPanel.setItem(slotsIterator.next(), PluginItems.INTERFACE_CATEGORIES_BROWSE_ONLINE_PLAYERS, event -> cPanel.applyClaimTemplate(new BrowseOnlinePlayers(), true));
         // return
-        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true));
     }
 }

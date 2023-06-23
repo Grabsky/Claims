@@ -1,7 +1,6 @@
 package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.components.Message;
-import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
@@ -27,14 +26,13 @@ import static net.kyori.adventure.text.Component.empty;
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
-public enum BrowseSettings implements Consumer<Panel> {
+public enum BrowseSettings implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
 
     @Override
-    public void accept(final Panel panel) {
-        final ClaimPanel cPanel = (ClaimPanel) panel;
+    public void accept(final ClaimPanel cPanel) {
         // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
         // "Rendering" the inventory contents.
@@ -47,7 +45,7 @@ public enum BrowseSettings implements Consumer<Panel> {
         // ...
         cPanel.clear();
         // Button: FLAGS
-        cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_FLAGS, event -> cPanel.applyTemplate(BrowseFlags.INSTANCE, true));
+        cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_FLAGS, event -> cPanel.applyClaimTemplate(BrowseFlags.INSTANCE, true));
         // Button: SET HOME
         cPanel.setItem(13, PluginItems.INTERFACE_FUNCTIONAL_ICON_SET_HOME, (event) -> {
             cPanel.close();
@@ -89,7 +87,7 @@ public enum BrowseSettings implements Consumer<Panel> {
             }
         });
         // Return button
-        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyTemplate(BrowseCategories.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true));
     }
 
     private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {

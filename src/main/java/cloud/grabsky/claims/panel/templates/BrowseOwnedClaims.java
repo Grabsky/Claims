@@ -172,7 +172,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
         // RETURN
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> {
             if (cPanel.getClaim() != null) {
-                cPanel.applyTemplate(BrowseCategories.INSTANCE, true);
+                cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true);
                 return;
             }
             cPanel.close();

@@ -44,7 +44,7 @@ public final class Claim {
     @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.MODULE, onMethod = @__({@Internal}))
     private @NotNull Claim.Type type;
 
-    /* FIELDS BELOW ARE EXCLUDED FROM COONSTRUCTOR */
+    /* FIELDS BELOW ARE EXCLUDED FROM CONSTRUCTOR */
 
     @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
     private boolean isBeingEdited = false;

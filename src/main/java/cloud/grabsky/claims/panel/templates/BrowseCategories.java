@@ -1,7 +1,6 @@
 package cloud.grabsky.claims.panel.templates;
 
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
-import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
@@ -14,15 +13,13 @@ import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
 
-public enum BrowseCategories implements Consumer<Panel> {
+public enum BrowseCategories implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
 
     @Override
-    public void accept(final Panel panel) {
-        final ClaimPanel cPanel = (ClaimPanel) panel;
-        // ...
+    public void accept(final ClaimPanel cPanel) {
         final Player viewer = cPanel.getViewer();
         // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
@@ -50,8 +47,8 @@ public enum BrowseCategories implements Consumer<Panel> {
                 case RIGHT, SHIFT_RIGHT -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
             }
         });
-        cPanel.setItem(13, new ItemBuilder(PluginItems.INTERFACE_CATEGORIES_BROWSE_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyTemplate(BrowseMembers.INSTANCE, true));
-        cPanel.setItem(15, PluginItems.INTERFACE_CATEGORIES_BROWSE_SETTINGS, (event) -> cPanel.applyTemplate(BrowseSettings.INSTANCE, true));
+        cPanel.setItem(13, new ItemBuilder(PluginItems.INTERFACE_CATEGORIES_BROWSE_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyClaimTemplate(BrowseMembers.INSTANCE, true));
+        cPanel.setItem(15, PluginItems.INTERFACE_CATEGORIES_BROWSE_SETTINGS, (event) -> cPanel.applyClaimTemplate(BrowseSettings.INSTANCE, true));
         // ...
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> viewer.closeInventory());
     }
