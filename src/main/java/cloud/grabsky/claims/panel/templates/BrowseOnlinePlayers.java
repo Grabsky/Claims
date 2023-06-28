@@ -33,6 +33,8 @@ public final class BrowseOnlinePlayers implements Consumer<ClaimPanel> {
 
     @Override
     public void accept(final ClaimPanel cPanel) {
+        // Returning in case there is no Claim object associated with this ClaimPanel.
+        if (cPanel.getClaim() == null) { cPanel.close(); return; }
         // ...
         final ClaimManager claimManager = cPanel.getClaim().getManager();
         final Claim claim = cPanel.getClaim();

@@ -25,6 +25,9 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
 
     @Override
     public void accept(final ClaimPanel cPanel) {
+        // Returning in case there is no Claim object associated with this ClaimPanel.
+        if (cPanel.getClaim() == null) { cPanel.close(); return; }
+        // ...
         final Claim claim = cPanel.getClaim();
         // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
