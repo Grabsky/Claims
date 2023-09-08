@@ -4,12 +4,9 @@ import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -17,6 +14,9 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Set;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 import static com.squareup.moshi.Types.getRawType;
 
@@ -30,7 +30,7 @@ public enum LocationAdapter implements JsonAdapter.Factory {
         // ...
         final var adapter = moshi.adapter(LocationSurrogate.class);
         // ...
-        return new JsonAdapter<>() {
+        return new JsonAdapter<Location>() {
 
             @Override
             public @Nullable Location fromJson(final @NotNull JsonReader in) throws IOException {
@@ -48,7 +48,6 @@ public enum LocationAdapter implements JsonAdapter.Factory {
             }
 
         };
-
     }
 
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
@@ -65,13 +64,8 @@ public enum LocationAdapter implements JsonAdapter.Factory {
             return new LocationSurrogate(location.getWorld().getKey(), location.x(), location.y(), location.z(), location.getYaw(), location.getPitch());
         }
 
-        public Location toLocation() throws IllegalArgumentException {
-            final World bWorld = Bukkit.getServer().getWorld(world);
-            // ...
-            if (bWorld == null)
-                throw new IllegalArgumentException("World " + world.asString() + " is not loaded.");
-            // ...
-            return new Location(bWorld, x, y, z, yaw, pitch);
+        public @NotNull Location toLocation() {
+            return new Location(Bukkit.getServer().getWorld(world), x, y, z, yaw, pitch);
         }
 
     }
