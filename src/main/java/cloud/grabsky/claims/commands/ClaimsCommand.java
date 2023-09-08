@@ -12,6 +12,7 @@ import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.commands.ArgumentQueue;
 import cloud.grabsky.commands.RootCommand;
 import cloud.grabsky.commands.RootCommandContext;
+import cloud.grabsky.commands.annotation.Command;
 import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.component.ExceptionHandler;
 import cloud.grabsky.commands.exception.CommandLogicException;
@@ -43,16 +44,12 @@ import java.util.stream.Stream;
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 import static java.util.Comparator.comparingInt;
 
+@Command(name = "claims", aliases = {"claim"}, permission = "claims.command.claims", usage = "/claims (...)")
 public class ClaimsCommand extends RootCommand {
 
-    private final Claims plugin;
-    private final ClaimManager claimManager;
-
-    public ClaimsCommand(final Claims plugin) {
-        super("claims", null, "claims.command.claims", null, null);
-        this.plugin = plugin;
-        this.claimManager = plugin.getClaimManager();
-    }
+    // TO-DO: Replace with @Dependency.
+    private final Claims plugin = Claims.getInstance();
+    private final ClaimManager claimManager = Claims.getInstance().getClaimManager();
 
     @Override
     public @NotNull CompletionsProvider onTabComplete(final @NotNull RootCommandContext context, final int index) throws CommandLogicException {

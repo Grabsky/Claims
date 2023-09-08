@@ -19,8 +19,8 @@ import cloud.grabsky.claims.flags.EnterActionBarFlag;
 import cloud.grabsky.claims.flags.LeaveActionBarFlag;
 import cloud.grabsky.claims.flags.object.FixedTime;
 import cloud.grabsky.claims.flags.object.FixedWeather;
-import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.claims.listeners.RegionListener;
+import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.claims.session.Session;
 import cloud.grabsky.claims.waypoints.WaypointManager;
 import cloud.grabsky.commands.RootCommandManager;
@@ -40,13 +40,14 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.session.SessionManager;
 import com.sk89q.worldguard.session.handler.ExitFlag;
-import lombok.AccessLevel;
-import lombok.Getter;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
 
 import java.io.File;
 import java.io.IOException;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import static cloud.grabsky.configuration.paper.util.Resources.ensureResourceExistence;
 
@@ -60,9 +61,6 @@ public final class Claims extends BedrockPlugin {
 
     @Getter(AccessLevel.PUBLIC)
     private WaypointManager waypointManager;
-
-    @Getter(AccessLevel.PUBLIC)
-    private RootCommandManager commandManager;
 
     private ConfigurationMapper mapper;
 
@@ -95,12 +93,17 @@ public final class Claims extends BedrockPlugin {
         this.getServer().getPluginManager().registerEvents(new WaypointListener(this), this);
         this.getServer().getPluginManager().registerEvents(Session.Listener.INSTANCE, this);
         // Setting-up RootCommandManager... (applying templates, registering commands)
-        this.commandManager = new RootCommandManager(this)
+        new RootCommandManager(this)
+                // Registering templates...
                 .apply(new CommandArgumentTemplate(this))
                 .apply(CommandExceptionTemplate.INSTANCE)
-                .registerCommand(new ClaimsCommand(this))
-                .registerCommand(new WaypointCommand(this));
-        // TO-DO: API?
+                // Registering dependencies...
+                .registerDependency(Claims.class, instance)
+                .registerDependency(ClaimManager.class, claimManager)
+                .registerDependency(WaypointManager.class, waypointManager)
+                // Registering commands...
+                .registerCommand(ClaimsCommand.class)
+                .registerCommand(WaypointCommand.class);
     }
 
     @Override

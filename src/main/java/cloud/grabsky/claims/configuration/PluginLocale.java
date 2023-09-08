@@ -1,7 +1,9 @@
 package cloud.grabsky.claims.configuration;
 
+import cloud.grabsky.configuration.JsonAdapter;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonPath;
+import cloud.grabsky.configuration.paper.adapter.StringComponentAdapter;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.ApiStatus.Internal;
 
@@ -94,6 +96,57 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("commands.claims_restore_success")
     public static Component COMMAND_CLAIMS_RESTORE_SUCCESS;
+
+    // Commands > Waypoints
+
+    @JsonPath("commands.waypoints_usage")
+    public static Component COMMAND_WAYPOINTS_USAGE;
+
+    // Commands > Waypoints > Create
+
+    @JsonPath("commands.waypoints_create_usage")
+    public static Component COMMAND_WAYPOINTS_CREATE_USAGE;
+
+    @JsonPath("commands.waypoints_create_success")
+    public static String COMMAND_WAYPOINTS_CREATE_SUCCESS;
+
+    @JsonPath("commands.waypoints_create_failure_already_exists")
+    public static String COMMAND_WAYPOINTS_CREATE_FAILURE_ALREADY_EXISTS;
+
+    // Commands > Waypoints > Remove
+
+    @JsonPath("commands.waypoints_remove_usage")
+    public static Component COMMAND_WAYPOINTS_REMOVE_USAGE;
+
+    @JsonPath("commands.waypoints_remove_success")
+    public static String COMMAND_WAYPOINTS_REMOVE_SUCCESS;
+
+    @JsonPath("commands.waypoints_remove_failure_not_found")
+    public static String COMMAND_WAYPOINTS_REMOVE_FAILURE_NOT_FOUND;
+
+    // Commands > Waypoints > List
+
+    @JsonPath("commands.waypoints_list_usage")
+    public static Component COMMAND_WAYPOINTS_LIST_USAGE;
+
+    @JsonPath("commands.waypoints_list_header")
+    @JsonAdapter(fromJson = StringComponentAdapter.class)
+    public static String COMMAND_WAYPOINTS_LIST_HEADER;
+
+    @JsonPath("commands.waypoints_list_footer")
+    @JsonAdapter(fromJson = StringComponentAdapter.class)
+    public static String COMMAND_WAYPOINTS_LIST_FOOTER;
+
+    @JsonPath("commands.waypoints_list_empty")
+    public static Component COMMAND_WAYPOINTS_LIST_EMPTY;
+
+    @JsonPath("commands.waypoints_list_entry")
+    public static String COMMAND_WAYPOINTS_LIST_ENTRY;
+
+    // Commands > Waypoints > Teleport
+
+    @JsonPath("commands.waypoints_teleport_usage")
+    public static Component COMMAND_WAYPOINTS_TELEPORT_USAGE;
 
 
     // Interface > Upgrade
