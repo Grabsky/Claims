@@ -13,6 +13,7 @@ import cloud.grabsky.commands.ArgumentQueue;
 import cloud.grabsky.commands.RootCommand;
 import cloud.grabsky.commands.RootCommandContext;
 import cloud.grabsky.commands.annotation.Command;
+import cloud.grabsky.commands.annotation.Dependency;
 import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.component.ExceptionHandler;
 import cloud.grabsky.commands.exception.CommandLogicException;
@@ -33,6 +34,7 @@ import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.UnknownNullability;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -48,15 +50,18 @@ import static java.util.Comparator.comparingInt;
 public class ClaimsCommand extends RootCommand {
 
     // TO-DO: Replace with @Dependency.
-    private final Claims plugin = Claims.getInstance();
-    private final ClaimManager claimManager = Claims.getInstance().getClaimManager();
+    @Dependency
+    private @UnknownNullability Claims plugin = Claims.getInstance();
+
+    @Dependency
+    private @UnknownNullability ClaimManager claimManager = Claims.getInstance().getClaimManager();
 
     @Override
     public @NotNull CompletionsProvider onTabComplete(final @NotNull RootCommandContext context, final int index) throws CommandLogicException {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (index == 0)
-            return CompletionsProvider.of(Stream.of("border", "edit", "find", "get", "reload", "restore").filter(it -> sender.hasPermission(this.getPermission() + "." + it)).toList());
+            return CompletionsProvider.of(Stream.of("border", "edit", "list", "get", "reload", "restore").filter(it -> sender.hasPermission(this.getPermission() + "." + it)).toList());
         // ...
         final String literal = context.getInput().at(1).toLowerCase();
         if (sender.hasPermission(this.getPermission() + "." + literal) == false)
@@ -68,7 +73,7 @@ public class ClaimsCommand extends RootCommand {
                 case 2 -> CompletionsProvider.of("--force");
                 default -> CompletionsProvider.EMPTY;
             };
-            case "find" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
+            case "list" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
             case "restore" -> (index == 1) ? CompletionsProvider.of(Claim.class) : CompletionsProvider.EMPTY;
             default -> CompletionsProvider.EMPTY;
         };
@@ -107,7 +112,7 @@ public class ClaimsCommand extends RootCommand {
         } else switch (arguments.next(String.class).asOptional(null).toLowerCase()) {
             case "border" -> this.onClaimsBorder(context, arguments);
             case "edit" -> this.onClaimsEdit(context, arguments);
-            case "find" -> this.onClaimsFind(context, arguments);
+            case "list" -> this.onClaimsList(context, arguments);
             case "get" -> this.onClaimsGet(context, arguments);
             case "reload" -> this.onClaimsReload(context, arguments);
             case "restore" -> this.onClaimsRestore(context, arguments);
@@ -117,10 +122,9 @@ public class ClaimsCommand extends RootCommand {
     /* CLAIMS EDIT */
 
     private static final ExceptionHandler.Factory CLAIMS_EDIT_USAGE = (exception) -> {
-        if (exception instanceof MissingInputException)
-            return (ExceptionHandler<CommandLogicException>) (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_USAGE).send(context.getExecutor().asCommandSender());
-        // Let other exceptions be handled internally.
-        return null;
+        return (exception instanceof MissingInputException)
+                ? (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_USAGE).send(context.getExecutor())
+                : null; // Let other exceptions be handled internally.
     };
 
     private void onClaimsEdit(final RootCommandContext context, final ArgumentQueue arguments) {
@@ -147,23 +151,24 @@ public class ClaimsCommand extends RootCommand {
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
-    /* CLAIMS FIND */
+    /* CLAIMS LIST */
 
-    private static final ExceptionHandler.Factory CLAIMS_FIND_USAGE = (exception) -> {
-        if (exception instanceof MissingInputException)
-            return (ExceptionHandler<CommandLogicException>) (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_FIND_USAGE).send(context.getExecutor().asCommandSender());
-        // Let other exceptions be handled internally.
-        return null;
+    private static final ExceptionHandler.Factory CLAIMS_LIST_USAGE = (exception) -> {
+        return (exception instanceof MissingInputException)
+                ? (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_LIST_USAGE).send(context.getExecutor())
+                : null; // Let other exceptions be handled internally.
     };
 
     @Experimental // TO-DO: Fix UUID arguments reporting invalid players for new players (may have something to do with #hasPlayedBefore check)
-    private void onClaimsFind(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
+    private void onClaimsList(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
-        if (sender.hasPermission(this.getPermission() + ".find") == true) {
-            final OfflinePlayer target = arguments.next(OfflinePlayer.class).asRequired(CLAIMS_FIND_USAGE);
+        if (sender.hasPermission(this.getPermission() + ".list") == true) {
+            final OfflinePlayer target = (sender instanceof Player senderPlayer)
+                    ? arguments.next(OfflinePlayer.class).asOptional(senderPlayer)
+                    : arguments.next(OfflinePlayer.class).asRequired(CLAIMS_LIST_USAGE);
             // In case specified target is not sender, checking permissions.
-            if (sender.equals(target) == false && sender.hasPermission(this.getPermission() + ".find.others") == false) {
+            if (sender.equals(target) == false && sender.hasPermission(this.getPermission() + ".list.others") == false) {
                 Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
                 return;
             }
@@ -173,24 +178,24 @@ public class ClaimsCommand extends RootCommand {
             final Set<Claim> ownedClaims = cTarget.getClaims();
             // Sending specialized message in case target is not owner of any claim.
             if (ownedClaims.isEmpty() == true)
-                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF_NONE).placeholder("player", target.getName()).send(sender);
+                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_OWNER_OF_NONE).placeholder("player", target.getName()).send(sender);
             // Otherwise, listing whatever was found...
             else {
                 // Sending output header to the sender.
-                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF_HEADER)
+                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_OWNER_OF_HEADER)
                         .placeholder("player", target.getName())
                         .placeholder("count", ownedClaims.size())
                         .send(sender);
                 // Iterating over claims and listing each of them to the sender.
                 ownedClaims.forEach(claim -> {
-                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_ENTRY)
+                    Message.of(PluginLocale.COMMAND_CLAIMS_LIST_ENTRY)
                             .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
                             .placeholder("claim_displayname", claim.getDisplayName())
                             .placeholder("claim_location", claim.getCenter())
                             .send(sender);
                 });
                 // Sending output footer to the sender.
-                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF_FOOTER)
+                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_OWNER_OF_FOOTER)
                         .placeholder("player", target.getName())
                         .placeholder("count", ownedClaims.size())
                         .send(sender);
@@ -199,24 +204,24 @@ public class ClaimsCommand extends RootCommand {
             final Set<Claim> relativeClaims = cTarget.getRelativeClaims();
             // Sending specialized message in case target is not member of any claim.
             if (relativeClaims.isEmpty() == true)
-                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF_NONE).placeholder("player", target.getName()).send(sender);
+                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_MEMBER_OF_NONE).placeholder("player", target.getName()).send(sender);
             // Otherwise, listing whatever was found...
             else {
                 // Sending output header to the sender.
-                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF_HEADER)
+                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_MEMBER_OF_HEADER)
                         .placeholder("player", target.getName())
                         .placeholder("count", relativeClaims.size())
                         .send(sender);
                 // Iterating over claims and listing each of them to the sender.
                 relativeClaims.forEach(claim -> {
-                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_ENTRY)
+                    Message.of(PluginLocale.COMMAND_CLAIMS_LIST_ENTRY)
                             .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
                             .placeholder("claim_displayname", claim.getDisplayName())
                             .placeholder("claim_location", claim.getCenter())
                             .send(sender);
                 });
                 // Sending output footer to the sender.
-                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF_FOOTER)
+                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_MEMBER_OF_FOOTER)
                         .placeholder("player", target.getName())
                         .placeholder("count", relativeClaims.size())
                         .send(sender);
@@ -271,10 +276,9 @@ public class ClaimsCommand extends RootCommand {
     /* CLAIMS RESTORE */
 
     private static final ExceptionHandler.Factory CLAIMS_RESTORE_USAGE = (exception) -> {
-        if (exception instanceof MissingInputException)
-            return (ExceptionHandler<CommandLogicException>) (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_RESTORE_USAGE).send(context.getExecutor().asCommandSender());
-        // Let other exceptions be handled internally.
-        return null;
+        return (exception instanceof MissingInputException)
+                ? (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_RESTORE_USAGE).send(context.getExecutor())
+                : null; // Let other exceptions be handled internally.
     };
 
     private void onClaimsRestore(final RootCommandContext context, final ArgumentQueue arguments) {

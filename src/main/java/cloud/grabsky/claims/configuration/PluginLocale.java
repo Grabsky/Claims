@@ -69,35 +69,35 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("commands.claims_get_failure")
     public static Component COMMAND_CLAIMS_GET_FAILURE;
 
-    // Commands > Claims > Find
+    // Commands > Claims > List
 
-    @JsonPath("commands.claims_find_usage")
-    public static String COMMAND_CLAIMS_FIND_USAGE;
+    @JsonPath("commands.claims_list_usage")
+    public static String COMMAND_CLAIMS_LIST_USAGE;
 
-    @JsonPath("commands.claims_find_owner_of_header")
+    @JsonPath("commands.claims_list_owner_of_header")
     @JsonAdapter(fromJson = StringComponentAdapter.class)
-    public static String COMMAND_CLAIMS_FIND_OWNER_OF_HEADER;
+    public static String COMMAND_CLAIMS_LIST_OWNER_OF_HEADER;
 
-    @JsonPath("commands.claims_find_owner_of_footer")
+    @JsonPath("commands.claims_list_owner_of_footer")
     @JsonAdapter(fromJson = StringComponentAdapter.class)
-    public static String COMMAND_CLAIMS_FIND_OWNER_OF_FOOTER;
+    public static String COMMAND_CLAIMS_LIST_OWNER_OF_FOOTER;
 
-    @JsonPath("commands.claims_find_owner_of_none")
-    public static String COMMAND_CLAIMS_FIND_OWNER_OF_NONE;
+    @JsonPath("commands.claims_list_owner_of_none")
+    public static String COMMAND_CLAIMS_LIST_OWNER_OF_NONE;
 
-    @JsonPath("commands.claims_find_member_of_header")
+    @JsonPath("commands.claims_list_member_of_header")
     @JsonAdapter(fromJson = StringComponentAdapter.class)
-    public static String COMMAND_CLAIMS_FIND_MEMBER_OF_HEADER;
+    public static String COMMAND_CLAIMS_LIST_MEMBER_OF_HEADER;
 
-    @JsonPath("commands.claims_find_member_of_footer")
+    @JsonPath("commands.claims_list_member_of_footer")
     @JsonAdapter(fromJson = StringComponentAdapter.class)
-    public static String COMMAND_CLAIMS_FIND_MEMBER_OF_FOOTER;
+    public static String COMMAND_CLAIMS_LIST_MEMBER_OF_FOOTER;
 
-    @JsonPath("commands.claims_find_member_of_none")
-    public static String COMMAND_CLAIMS_FIND_MEMBER_OF_NONE;
+    @JsonPath("commands.claims_list_member_of_none")
+    public static String COMMAND_CLAIMS_LIST_MEMBER_OF_NONE;
 
-    @JsonPath("commands.claims_find_entry")
-    public static String COMMAND_CLAIMS_FIND_ENTRY;
+    @JsonPath("commands.claims_list_entry")
+    public static String COMMAND_CLAIMS_LIST_ENTRY;
 
     // Commands > Claims > Restore
 

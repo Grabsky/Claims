@@ -10,11 +10,9 @@ import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
-import lombok.AccessLevel;
-import lombok.Getter;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,6 +29,9 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import static cloud.grabsky.bedrock.helpers.Conditions.inRange;
 import static com.squareup.moshi.Types.newParameterizedType;
@@ -183,7 +184,7 @@ public final class WaypointManager {
         return (cache.containsKey(uniqueId) == true) ? Collections.unmodifiableList(cache.get(uniqueId)) : Collections.emptyList();
     }
 
-    public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull Player player) {
+    public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull OfflinePlayer player) {
         return this.getWaypoints(player.getUniqueId());
     }
 

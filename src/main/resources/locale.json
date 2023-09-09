@@ -26,21 +26,21 @@
         "claims_get_success": "<dark_gray>› <gray>Bloki terenu zostały dodane do twojego ekwipunku.",
         "claims_get_failure": "<dark_gray>› <red>Nie zdefiniowano żadnego typu terenu.",
         // Claims > Find
-        "claims_find_usage": "<dark_gray>› <gray>Użycie: <gold>/claims find <white>(player)",
-        "claims_find_owner_of_header": [
+        "claims_list_usage": "<dark_gray>› <gray>Użycie: <gold>/claims find <white>(player)",
+        "claims_list_owner_of_header": [
             "<dark_gray>› <gold><player><gray> jest właścicielem <gold><count><gray> terenów:",
             " "
         ],
-        "claims_find_owner_of_footer": " ",
-        "claims_find_owner_of_none": "<dark_gray>› <gold><player><gray> nie jest właścicielem żadnego terenu.",
+        "claims_list_owner_of_footer": " ",
+        "claims_list_owner_of_none": "<dark_gray>› <gold><player><gray> nie jest właścicielem żadnego terenu.",
 
-        "claims_find_member_of_header": [
+        "claims_list_member_of_header": [
             "<dark_gray>› <gold><player><gray> jest członkiem <gold><count><gray> terenów:",
             " "
         ],
-        "claims_find_member_of_footer": " ",
-        "claims_find_member_of_none": "<dark_gray>› <gold><player><gray> nie jest członkiem żadnego terenu.",
-        "claims_find_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Pozycja: <gold><claim_location><newline><newline><gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <claim>'><gray>瘀 <gold><claim></click>",
+        "claims_list_member_of_footer": " ",
+        "claims_list_member_of_none": "<dark_gray>› <gold><player><gray> nie jest członkiem żadnego terenu.",
+        "claims_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Pozycja: <gold><claim_location><newline><newline><gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <claim>'><gray>瘀 <gold><claim></click>",
         // Claims > Restore
         "claims_restore_usage": "<dark_gray>› <gray>Użycie: <gold>/claims restore <white>(claim)",
         "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
