@@ -114,6 +114,8 @@ public class ClaimsCommand extends RootCommand {
         }
     }
 
+    /* CLAIMS EDIT */
+
     private static final ExceptionHandler.Factory CLAIMS_EDIT_USAGE = (exception) -> {
         if (exception instanceof MissingInputException)
             return (ExceptionHandler<CommandLogicException>) (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_USAGE).send(context.getExecutor().asCommandSender());
@@ -145,6 +147,8 @@ public class ClaimsCommand extends RootCommand {
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
+    /* CLAIMS FIND */
+
     private static final ExceptionHandler.Factory CLAIMS_FIND_USAGE = (exception) -> {
         if (exception instanceof MissingInputException)
             return (ExceptionHandler<CommandLogicException>) (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_FIND_USAGE).send(context.getExecutor().asCommandSender());
@@ -153,59 +157,77 @@ public class ClaimsCommand extends RootCommand {
     };
 
     @Experimental // TO-DO: Fix UUID arguments reporting invalid players for new players (may have something to do with #hasPlayedBefore check)
-    private void onClaimsFind(final RootCommandContext context, final ArgumentQueue arguments) {
-        final Player sender = context.getExecutor().asPlayer();
+    private void onClaimsFind(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
+        final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (sender.hasPermission(this.getPermission() + ".find") == true) {
-            final OfflinePlayer offlinePlayer = arguments.next(OfflinePlayer.class).asRequired(CLAIMS_FIND_USAGE);
-            // ...
-            if (offlinePlayer.hasPlayedBefore() == true) {
-                // ...
-                final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(offlinePlayer.getUniqueId());
-                // ...
-                final Set<Claim> ownedClaims = claimPlayer.getClaims();
-                // Sending appropriate message when
-                if (ownedClaims.isEmpty() == true)
-                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF_NONE).placeholder("player", offlinePlayer.getName()).send(sender);
-                // ...
-                else {
-                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF)
-                            .placeholder("player", offlinePlayer.getName())
-                            .placeholder("count", ownedClaims.size())
-                            .send(sender);
-                    // ...
-                    ownedClaims.forEach(claim -> {
-                        Message.of(PluginLocale.COMMAND_CLAIMS_FIND_ENTRY)
-                                .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
-                                .send(sender);
-                    });
-                }
-                // ...
-                final Set<Claim> relativeClaims = claimPlayer.getRelativeClaims();
-                // ...
-                if (relativeClaims.isEmpty() == true)
-                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF_NONE).placeholder("player", offlinePlayer.getName()).send(sender);
-                else {
-                    sender.sendPlainMessage("");
-                    // ...
-                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF)
-                            .placeholder("player", offlinePlayer.getName())
-                            .placeholder("count", relativeClaims.size())
-                            .send(sender);
-                    // ...
-                    relativeClaims.forEach(claim -> {
-                        Message.of(PluginLocale.COMMAND_CLAIMS_FIND_ENTRY)
-                                .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
-                                .send(sender);
-                    });
-                }
+            final OfflinePlayer target = arguments.next(OfflinePlayer.class).asRequired(CLAIMS_FIND_USAGE);
+            // In case specified target is not sender, checking permissions.
+            if (sender.equals(target) == false && sender.hasPermission(this.getPermission() + ".find.others") == false) {
+                Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
                 return;
             }
-            Message.of(PluginLocale.Commands.INVALID_OFFLINE_PLAYER).placeholder("input", offlinePlayer.getUniqueId()).send(sender);
+            // Getting ClaimPlayer instance of specified player.
+            final ClaimPlayer cTarget = claimManager.getClaimPlayer(target.getUniqueId());
+            // Getting list of claims owned by specified player.
+            final Set<Claim> ownedClaims = cTarget.getClaims();
+            // Sending specialized message in case target is not owner of any claim.
+            if (ownedClaims.isEmpty() == true)
+                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF_NONE).placeholder("player", target.getName()).send(sender);
+            // Otherwise, listing whatever was found...
+            else {
+                // Sending output header to the sender.
+                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF_HEADER)
+                        .placeholder("player", target.getName())
+                        .placeholder("count", ownedClaims.size())
+                        .send(sender);
+                // Iterating over claims and listing each of them to the sender.
+                ownedClaims.forEach(claim -> {
+                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_ENTRY)
+                            .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
+                            .placeholder("claim_displayname", claim.getDisplayName())
+                            .placeholder("claim_location", claim.getCenter())
+                            .send(sender);
+                });
+                // Sending output footer to the sender.
+                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_OWNER_OF_FOOTER)
+                        .placeholder("player", target.getName())
+                        .placeholder("count", ownedClaims.size())
+                        .send(sender);
+            }
+            // Getting list of claims specified player is member of.
+            final Set<Claim> relativeClaims = cTarget.getRelativeClaims();
+            // Sending specialized message in case target is not member of any claim.
+            if (relativeClaims.isEmpty() == true)
+                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF_NONE).placeholder("player", target.getName()).send(sender);
+            // Otherwise, listing whatever was found...
+            else {
+                // Sending output header to the sender.
+                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF_HEADER)
+                        .placeholder("player", target.getName())
+                        .placeholder("count", relativeClaims.size())
+                        .send(sender);
+                // Iterating over claims and listing each of them to the sender.
+                relativeClaims.forEach(claim -> {
+                    Message.of(PluginLocale.COMMAND_CLAIMS_FIND_ENTRY)
+                            .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
+                            .placeholder("claim_displayname", claim.getDisplayName())
+                            .placeholder("claim_location", claim.getCenter())
+                            .send(sender);
+                });
+                // Sending output footer to the sender.
+                Message.of(PluginLocale.COMMAND_CLAIMS_FIND_MEMBER_OF_FOOTER)
+                        .placeholder("player", target.getName())
+                        .placeholder("count", relativeClaims.size())
+                        .send(sender);
+            }
             return;
         }
+        // Sending error message to the sender.
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
+
+    /* CLAIMS GET */
 
     private void onClaimsGet(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
@@ -230,6 +252,8 @@ public class ClaimsCommand extends RootCommand {
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
+    /* CLAIMS RELOAD */
+
     private void onClaimsReload(final RootCommandContext context, final ArgumentQueue arguments) {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
@@ -243,6 +267,8 @@ public class ClaimsCommand extends RootCommand {
         }
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
+
+    /* CLAIMS RESTORE */
 
     private static final ExceptionHandler.Factory CLAIMS_RESTORE_USAGE = (exception) -> {
         if (exception instanceof MissingInputException)
@@ -271,6 +297,8 @@ public class ClaimsCommand extends RootCommand {
         }
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
+
+    /* CLAIMS BORDER */
 
     @Experimental
     private void onClaimsBorder(final RootCommandContext context, final ArgumentQueue arguments) {

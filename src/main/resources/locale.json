@@ -27,11 +27,20 @@
         "claims_get_failure": "<dark_gray>› <red>Nie zdefiniowano żadnego typu terenu.",
         // Claims > Find
         "claims_find_usage": "<dark_gray>› <gray>Użycie: <gold>/claims find <white>(player)",
-        "claims_find_owner_of": "<dark_gray>› <gold><player><gray> jest właścicielem <gold><count><gray> terenów:",
+        "claims_find_owner_of_header": [
+            "<dark_gray>› <gold><player><gray> jest właścicielem <gold><count><gray> terenów:",
+            " "
+        ],
+        "claims_find_owner_of_footer": " ",
         "claims_find_owner_of_none": "<dark_gray>› <gold><player><gray> nie jest właścicielem żadnego terenu.",
-        "claims_find_member_of": "<dark_gray>› <gold><player><gray> jest członkiem <gold><count><gray> terenów:",
+
+        "claims_find_member_of_header": [
+            "<dark_gray>› <gold><player><gray> jest członkiem <gold><count><gray> terenów:",
+            " "
+        ],
+        "claims_find_member_of_footer": " ",
         "claims_find_member_of_none": "<dark_gray>› <gold><player><gray> nie jest członkiem żadnego terenu.",
-        "claims_find_entry": "<dark_gray>›    <hover:show_text:'<gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <claim>'><gold><claim></click>",
+        "claims_find_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Pozycja: <gold><claim_location><newline><newline><gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <claim>'><gray>瘀 <gold><claim></click>",
         // Claims > Restore
         "claims_restore_usage": "<dark_gray>› <gray>Użycie: <gold>/claims restore <white>(claim)",
         "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
@@ -59,8 +68,8 @@
             " "
         ],
         "waypoints_list_footer": " ",
-        "waypoints_list_empty": "<dark_gray>› <gray>Gracz <gold><player><gray> nie ma aktywnych żadnych teleportów.",
-        "waypoints_list_entry": "<dark_gray>›   <hover:show_text:'<gray>Nazwa: <gold><waypoint_displayname><newline><gray>Pozycja: <gold><waypoint_location><gray><newline><newline><gray>Kliknij, aby się teleportować.'><click:run_command:'/waypoints teleport <target> <waypoint_name>'><gray>瘀 <gold><waypoint_name></click>",
+        "waypoints_list_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie ma aktywnych żadnych teleportów.",
+        "waypoints_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><waypoint_displayname><newline><gray>Pozycja: <gold><waypoint_location><newline><newline><gray>Kliknij, aby się teleportować.'><click:run_command:'/waypoints teleport <target> <waypoint_name>'><gray>瘀 <gold><waypoint_name></click>",
         // Waypoints > Teleport
         "waypoints_teleport_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints teleport <white>(player) (name)"
     },

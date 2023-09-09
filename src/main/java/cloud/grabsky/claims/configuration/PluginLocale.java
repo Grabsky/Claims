@@ -74,14 +74,24 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("commands.claims_find_usage")
     public static String COMMAND_CLAIMS_FIND_USAGE;
 
-    @JsonPath("commands.claims_find_owner_of")
-    public static String COMMAND_CLAIMS_FIND_OWNER_OF;
+    @JsonPath("commands.claims_find_owner_of_header")
+    @JsonAdapter(fromJson = StringComponentAdapter.class)
+    public static String COMMAND_CLAIMS_FIND_OWNER_OF_HEADER;
+
+    @JsonPath("commands.claims_find_owner_of_footer")
+    @JsonAdapter(fromJson = StringComponentAdapter.class)
+    public static String COMMAND_CLAIMS_FIND_OWNER_OF_FOOTER;
 
     @JsonPath("commands.claims_find_owner_of_none")
     public static String COMMAND_CLAIMS_FIND_OWNER_OF_NONE;
 
-    @JsonPath("commands.claims_find_member_of")
-    public static String COMMAND_CLAIMS_FIND_MEMBER_OF;
+    @JsonPath("commands.claims_find_member_of_header")
+    @JsonAdapter(fromJson = StringComponentAdapter.class)
+    public static String COMMAND_CLAIMS_FIND_MEMBER_OF_HEADER;
+
+    @JsonPath("commands.claims_find_member_of_footer")
+    @JsonAdapter(fromJson = StringComponentAdapter.class)
+    public static String COMMAND_CLAIMS_FIND_MEMBER_OF_FOOTER;
 
     @JsonPath("commands.claims_find_member_of_none")
     public static String COMMAND_CLAIMS_FIND_MEMBER_OF_NONE;
@@ -137,8 +147,8 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonAdapter(fromJson = StringComponentAdapter.class)
     public static String COMMAND_WAYPOINTS_LIST_FOOTER;
 
-    @JsonPath("commands.waypoints_list_empty")
-    public static Component COMMAND_WAYPOINTS_LIST_EMPTY;
+    @JsonPath("commands.waypoints_list_none")
+    public static Component COMMAND_WAYPOINTS_LIST_NONE;
 
     @JsonPath("commands.waypoints_list_entry")
     public static String COMMAND_WAYPOINTS_LIST_ENTRY;

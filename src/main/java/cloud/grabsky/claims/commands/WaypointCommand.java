@@ -176,7 +176,7 @@ public final class WaypointCommand extends RootCommand {
             final List<Waypoint> waypoints = waypointManager.getWaypoints(target);
             // Sending specialized message in case target does not have any waypoints.
             if (waypoints.isEmpty() == true) {
-                Message.of(PluginLocale.COMMAND_WAYPOINTS_LIST_EMPTY).send(sender);
+                Message.of(PluginLocale.COMMAND_WAYPOINTS_LIST_NONE).send(sender);
                 return;
             }
             // Sending output header to the sender.
