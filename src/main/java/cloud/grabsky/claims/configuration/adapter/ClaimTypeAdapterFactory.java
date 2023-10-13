@@ -9,9 +9,6 @@ import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonReader.Token;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -21,11 +18,15 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Type;
 import java.util.Set;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
 import static com.squareup.moshi.Types.getRawType;
 import static java.util.Objects.requireNonNull;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
-public class ClaimTypeAdapterFactory implements JsonAdapter.Factory {
+public final class ClaimTypeAdapterFactory implements JsonAdapter.Factory {
 
     @Getter(AccessLevel.PUBLIC)
     private final ClaimManager claimManager;
