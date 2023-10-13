@@ -120,11 +120,10 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
 
     private void renderCommonButtons(final ClaimPanel cPanel) {
         cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
-            // Closing the panel.
-            cPanel.close();
-            // ...
             final Player viewer = cPanel.getViewer();
             final Location location = AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD);
+            // Closing the panel.
+            cPanel.close();
             // Teleporting...
             Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
                 if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
