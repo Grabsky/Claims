@@ -6,11 +6,10 @@ import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.session.Session;
-import lombok.AccessLevel;
-import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
@@ -23,6 +22,9 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Range;
 
 import java.util.function.Consumer;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection;
@@ -73,7 +75,7 @@ public final class ClaimPanel extends Panel {
         final String legacyTitle = legacySection().serialize(title);
         // Setting the title. '*' is appended when modifying not-self-owned claim.
         if (editor.toPlayer().getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel)
-            editor.toPlayer().getOpenInventory().setTitle((claim != null && editor.isOwnerOf(claim) == false) ? legacyTitle + "\u7001*" : legacyTitle);
+            editor.toPlayer().getOpenInventory().setTitle((claim != null && editor.isOwnerOf(claim) == false) ? legacyTitle + ChatColor.BLACK + "\u7001*" : legacyTitle);
     }
 
 
