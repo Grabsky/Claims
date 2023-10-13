@@ -8,8 +8,6 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.util.Utilities;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
@@ -24,6 +22,9 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.function.Consumer;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
@@ -96,17 +97,19 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                 cPanel.close();
                 // Teleporting...
                 Utilities.teleport(viewer, location, PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
-                    // Displaying particles. NOTE: This can expose vanished players.
-                    if (PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS != null) {
-                        PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                            location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
-                        });
+                    if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
+                        // Displaying particles. NOTE: This can expose vanished players.
+                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS != null) {
+                            PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                            });
+                        }
+                        // Playing sounds. NOTE: This can expose vanished players.
+                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                            old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                            current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
                     }
-                    // Playing sounds. NOTE: This can expose vanished players.
-                    if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
-                        old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
-                    if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
-                        current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
                 });
             });
         }
@@ -124,17 +127,19 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
             final Location location = AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD);
             // Teleporting...
             Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
-                // Displaying particles. NOTE: This can expose vanished players.
-                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
-                    PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                        location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
-                    });
+                if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
+                    // Displaying particles. NOTE: This can expose vanished players.
+                    if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                        PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                            location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                        });
+                    }
+                    // Playing sounds. NOTE: This can expose vanished players.
+                    if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                        old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                    if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                        current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
                 }
-                // Playing sounds. NOTE: This can expose vanished players.
-                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
-                    old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
-                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
-                    current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
             });
         });
         cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));

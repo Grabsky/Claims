@@ -1,5 +1,6 @@
 package cloud.grabsky.claims.panel.templates;
 
+import cloud.grabsky.azure.api.AzureProvider;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
@@ -34,17 +35,19 @@ public enum BrowseCategories implements Consumer<ClaimPanel> {
                     cPanel.close();
                     // Teleporting...
                     Utilities.teleport(viewer, cPanel.getClaim().getHome(), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
-                        // Displaying particles. NOTE: This can expose vanished players.
-                        if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
-                            PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                                viewer.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
-                            });
+                        if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
+                            // Displaying particles. NOTE: This can expose vanished players.
+                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                                PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                    viewer.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                });
+                            }
+                            // Playing sounds. NOTE: This can expose vanished players.
+                            if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                                old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                            if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                                current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
                         }
-                        // Playing sounds. NOTE: This can expose vanished players.
-                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
-                            old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
-                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
-                            current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
                     });
                 }
                 case RIGHT, SHIFT_RIGHT -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
