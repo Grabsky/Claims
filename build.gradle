@@ -27,7 +27,7 @@ dependencies {
     // Paper
     compileOnly("io.papermc.paper:paper-api:1.20.1-R0.1-SNAPSHOT")
     // Dependencies
-    implementation("cloud.grabsky:bedrock:1.20.1-45")
+    implementation("cloud.grabsky:bedrock:1.20.1-46")
     implementation("cloud.grabsky:commands:1.20.1-35")
     implementation("cloud.grabsky:configuration-paper:1.20.1-42")
     // WorldEdit
