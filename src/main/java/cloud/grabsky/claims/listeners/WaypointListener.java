@@ -41,8 +41,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
+import static cloud.grabsky.claims.util.Utilities.toChunkPosition;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
-import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
 
 public final class WaypointListener implements Listener {
 

@@ -9,7 +9,6 @@ import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import io.papermc.paper.math.BlockPosition;
-import io.papermc.paper.math.Position;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
@@ -216,14 +215,6 @@ public final class WaypointManager {
         return CompletableFuture.completedFuture(false);
     }
 
-
-    /**
-     * Returns {@link BlockPosition} containing chunk position of provided {@link Position}.
-     */
-    @SuppressWarnings("UnstableApiUsage")
-    public static @NotNull BlockPosition toChunkPosition(final Position position) {
-        return Position.block((position.blockX() & 0xF), position.blockY(), (position.blockZ() & 0xF));
-    }
 
     @SuppressWarnings("UnstableApiUsage")
     public static @NotNull NamespacedKey toChunkDataKey(final @NotNull BlockPosition chunkPosition) {

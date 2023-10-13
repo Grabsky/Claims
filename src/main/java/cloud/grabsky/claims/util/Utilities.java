@@ -6,10 +6,7 @@ import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.commands.exception.NumberParseException;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.jetbrains.annotations.ApiStatus.Experimental;
@@ -22,6 +19,9 @@ import java.util.ListIterator;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Utilities {
@@ -61,8 +61,6 @@ public final class Utilities {
             }
         }}.stream();
     }
-
-    private static final NamespacedKey IS_VANISHED = new NamespacedKey("azure", "is_vanished");
 
     // NOTE: Safe teleports may (and probably should) be introduced in the future. Teleport invulnerability is a temporary solution.
     public static void teleport(final @NotNull HumanEntity source, final @NotNull Location destination, final int delay, final @Nullable String bypassPermission, final @Nullable BiConsumer<Location, Location> then) {
@@ -129,6 +127,14 @@ public final class Utilities {
             return true;
         });
 
+    }
+
+    /**
+     * Returns {@link BlockPosition} containing chunk position of provided {@link Position}.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    public static @NotNull BlockPosition toChunkPosition(final Position position) {
+        return Position.block((position.blockX() & 0xF), position.blockY(), (position.blockZ() & 0xF));
     }
 
 }

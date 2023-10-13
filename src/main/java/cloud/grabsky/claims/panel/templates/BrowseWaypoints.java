@@ -14,9 +14,6 @@ import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
 import cloud.grabsky.claims.waypoints.WaypointManager;
 import io.papermc.paper.math.BlockPosition;
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
@@ -44,9 +41,13 @@ import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
+import static cloud.grabsky.claims.util.Utilities.toChunkPosition;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
-import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkPosition;
 import static net.kyori.adventure.text.Component.text;
 import static org.bukkit.persistence.PersistentDataType.STRING;
 

@@ -1,6 +1,7 @@
 package cloud.grabsky.claims.commands;
 
 import cloud.grabsky.bedrock.components.Message;
+import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
@@ -18,6 +19,7 @@ import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.component.ExceptionHandler;
 import cloud.grabsky.commands.exception.CommandLogicException;
 import cloud.grabsky.commands.exception.MissingInputException;
+import io.papermc.paper.math.BlockPosition;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -41,15 +43,14 @@ import org.joml.Vector3f;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
+import static cloud.grabsky.claims.util.Utilities.toChunkPosition;
 import static java.util.Comparator.comparingInt;
 
 @Command(name = "claims", aliases = {"claim"}, permission = "claims.command.claims", usage = "/claims (...)")
 public class ClaimsCommand extends RootCommand {
 
-    // TO-DO: Replace with @Dependency.
     @Dependency
     private @UnknownNullability Claims plugin = Claims.getInstance();
 
@@ -58,40 +59,46 @@ public class ClaimsCommand extends RootCommand {
 
     @Override
     public @NotNull CompletionsProvider onTabComplete(final @NotNull RootCommandContext context, final int index) throws CommandLogicException {
-        final CommandSender sender = context.getExecutor().asCommandSender();
-        // ...
-        if (index == 0)
-            return CompletionsProvider.of(Stream.of("border", "edit", "list", "get", "reload", "restore").filter(it -> sender.hasPermission(this.getPermission() + "." + it)).toList());
-        // ...
-        final String literal = context.getInput().at(1).toLowerCase();
-        if (sender.hasPermission(this.getPermission() + "." + literal) == false)
-            return CompletionsProvider.EMPTY;
-        // ...
-        return switch (literal) {
-            case "edit" -> switch (index) {
-                case 1 -> CompletionsProvider.of(Claim.class);
-                case 2 -> CompletionsProvider.of("--force");
-                default -> CompletionsProvider.EMPTY;
-            };
-            case "list" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
-            case "restore" -> (index == 1) ? CompletionsProvider.of(Claim.class) : CompletionsProvider.EMPTY;
-            default -> CompletionsProvider.EMPTY;
-        };
+        // Getting the first argument (second input element) from command input.
+        final String argument = context.getInput().at(1, "").toLowerCase();
+        // Displaying list of sub-commands in case no argument has been provided.
+        if (argument.isEmpty() == true)
+            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "border", "edit", "list", "get", "reload", "restore");
+        // Otherwise, checking permissions and sending specialized permissions to the sender.
+        return (context.getExecutor().hasPermission(this.getPermission() + "." + argument) == true)
+                ? switch (argument) {
+                    case "edit" -> switch (index) {
+                        case 1 -> CompletionsProvider.of(Claim.class);
+                        case 2 -> CompletionsProvider.of("--force");
+                        // Displaying no completions for higher indexes.
+                        default -> CompletionsProvider.EMPTY;
+                    };
+                    case "list" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
+                    case "restore" -> (index == 1) ? CompletionsProvider.of(Claim.class) : CompletionsProvider.EMPTY;
+                    // Displaying no completions in case unrecognized argument has been provided.
+                    default -> CompletionsProvider.EMPTY;
+                }
+                // Displaying no completions in case command executor is not authorized to use that sub-command.
+                : CompletionsProvider.EMPTY;
     }
 
     @Override
     public void onCommand(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) throws CommandLogicException {
+        // Displaying help in case no arguments has been provided.
         if (arguments.hasNext() == false) {
             final Player sender = context.getExecutor().asPlayer();
             final ClaimPlayer claimSender = claimManager.getClaimPlayer(sender);
-            // ...
+            // Getting location of the command sender.
             final Location location = sender.getLocation();
-            // ...
+            // Getting Claim at location of the command sender.
             final @Nullable Claim claim = claimManager.getClaimAt(location);
             // ...
             if (claim != null) {
-                if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
+                // Checking whether sender is owner of that claim or has ability to edit claims of other players.
+                if (claimSender.isOwnerOf(claim) == true || sender.hasPermission(this.getPermission() + ".edit") == true) {
+                    // Checking whether the claim panel is already open.
                     if (isClaimPanelOpen(claim) == false) {
+                        // Building new instance of ClaimPanel and opening it to the command sender.
                         new ClaimPanel.Builder()
                                 .setClaimManager(claimManager)
                                 .setClaim(claim)
@@ -102,21 +109,33 @@ public class ClaimsCommand extends RootCommand {
                                 });
                         return;
                     }
+                    // Sending error message to command sender.
                     Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
                     return;
                 }
+                // Sending error message to command sender.
                 Message.of(PluginLocale.NOT_CLAIM_OWNER).send(sender);
                 return;
             }
+            // Sending error message to command sender.
             Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
-        } else switch (arguments.next(String.class).asOptional(null).toLowerCase()) {
+        // Otherwise, executing specialized sub-command logic.
+        } else switch (arguments.next(String.class).asRequired().toLowerCase()) {
             case "border" -> this.onClaimsBorder(context, arguments);
             case "edit" -> this.onClaimsEdit(context, arguments);
-            case "list" -> this.onClaimsList(context, arguments);
             case "get" -> this.onClaimsGet(context, arguments);
+            case "list" -> this.onClaimsList(context, arguments);
             case "reload" -> this.onClaimsReload(context, arguments);
             case "restore" -> this.onClaimsRestore(context, arguments);
+            // Displaying help in case unrecognized argument has been provided.
+            default -> this.onHelp(context);
         }
+    }
+
+    /* CLAIMS */
+
+    private void onHelp(final @NotNull RootCommandContext context) {
+        Message.of(PluginLocale.COMMAND_CLAIMS_USAGE).send(context.getExecutor());
     }
 
     /* CLAIMS EDIT */
@@ -178,12 +197,12 @@ public class ClaimsCommand extends RootCommand {
             final Set<Claim> ownedClaims = cTarget.getClaims();
             // Sending specialized message in case target is not owner of any claim.
             if (ownedClaims.isEmpty() == true)
-                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_OWNER_OF_NONE).placeholder("player", target.getName()).send(sender);
+                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_OWNER_OF_NONE).placeholder("player", target).send(sender);
             // Otherwise, listing whatever was found...
             else {
                 // Sending output header to the sender.
                 Message.of(PluginLocale.COMMAND_CLAIMS_LIST_OWNER_OF_HEADER)
-                        .placeholder("player", target.getName())
+                        .placeholder("player", target)
                         .placeholder("count", ownedClaims.size())
                         .send(sender);
                 // Iterating over claims and listing each of them to the sender.
@@ -196,7 +215,7 @@ public class ClaimsCommand extends RootCommand {
                 });
                 // Sending output footer to the sender.
                 Message.of(PluginLocale.COMMAND_CLAIMS_LIST_OWNER_OF_FOOTER)
-                        .placeholder("player", target.getName())
+                        .placeholder("player", target)
                         .placeholder("count", ownedClaims.size())
                         .send(sender);
             }
@@ -204,12 +223,12 @@ public class ClaimsCommand extends RootCommand {
             final Set<Claim> relativeClaims = cTarget.getRelativeClaims();
             // Sending specialized message in case target is not member of any claim.
             if (relativeClaims.isEmpty() == true)
-                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_MEMBER_OF_NONE).placeholder("player", target.getName()).send(sender);
+                Message.of(PluginLocale.COMMAND_CLAIMS_LIST_MEMBER_OF_NONE).placeholder("player", target).send(sender);
             // Otherwise, listing whatever was found...
             else {
                 // Sending output header to the sender.
                 Message.of(PluginLocale.COMMAND_CLAIMS_LIST_MEMBER_OF_HEADER)
-                        .placeholder("player", target.getName())
+                        .placeholder("player", target)
                         .placeholder("count", relativeClaims.size())
                         .send(sender);
                 // Iterating over claims and listing each of them to the sender.
@@ -239,21 +258,26 @@ public class ClaimsCommand extends RootCommand {
         // ...
         if (sender.hasPermission(this.getPermission() + ".get") == true) {
             if (claimManager.getClaimTypes().isEmpty() == false) {
-                // Claim blocks...
+                // Iterating over list of claims.
                 claimManager.getClaimTypes().values().stream().sorted(comparingInt(Claim.Type::getRadius)).forEach(type -> {
-                    final ItemStack item = type.getBlock();
-                    item.editMeta(meta -> {
-                        meta.getPersistentDataContainer().set(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, type.getId());
-                    });
-                    sender.getInventory().addItem(item);
+                    // Getting identifier of this claim type.
+                    final String id = type.getId();
+                    // Getting block item of this claim type.
+                    final ItemStack blockItem = type.getBlock();
+                    // Adding the block item to sender's inventory.
+                    sender.getInventory().addItem(
+                            new ItemBuilder(blockItem).setPersistentData(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, id).build()
+                    );
                 });
-                // ...
+                // Sending success message to the sender.
                 Message.of(PluginLocale.COMMAND_CLAIMS_GET_SUCCESS).send(sender);
                 return;
             }
+            // Sending error message to the sender.
             Message.of(PluginLocale.COMMAND_CLAIMS_GET_FAILURE).send(sender);
             return;
         }
+        // Sending error message to the sender.
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
@@ -263,13 +287,17 @@ public class ClaimsCommand extends RootCommand {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (sender.hasPermission(this.getPermission() + ".reload") == true) {
+            // Reloading the plugin...
             if (plugin.reloadConfiguration() == true) {
+                // Sending success message to the sender.
                 Message.of(PluginLocale.RELOAD_SUCCESS).send(sender);
                 return;
             }
+            // Sending error message to the sender.
             Message.of(PluginLocale.RELOAD_FAILURE).send(sender);
             return;
         }
+        // Sending error message to the sender.
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
@@ -285,17 +313,29 @@ public class ClaimsCommand extends RootCommand {
         final Player sender = context.getExecutor().asPlayer();
         // ...
         if (sender.hasPermission(this.getPermission() + ".restore") == true) {
+            // Getting next argument as Claim.
             final Claim claim = arguments.next(Claim.class).asRequired(CLAIMS_RESTORE_USAGE);
-            // ...
+            // Trying...
             try {
+                // Getting center location of the claim.
                 final Location center = claim.getCenter();
+                // Getting type of claim block of the claim.
                 final Material type = claim.getType().getBlock().getType();
+                // Getting chunk at claim center asynchronously...
                 center.getWorld().getChunkAtAsync(center).thenAccept(chunk -> {
-                    chunk.getBlock((center.getBlockX() & 0xF), center.getBlockY(), (center.getBlockZ() & 0xF)).setType(type);
+                    // Getting claim center position in chunk.
+                    final BlockPosition position = toChunkPosition(center);
+                    // Restoring claim block at center position of this claim.
+                    chunk.getBlock(position.blockX(), position.blockY(), position.blockZ()).setType(type);
+                    // Sending success message to the sender.
                     Message.of(PluginLocale.COMMAND_CLAIMS_RESTORE_SUCCESS).send(sender);
                 });
             } catch (final ClaimProcessException e) {
+                // Sending error message to the sender.
                 Message.of(e.getErrorMessage()).send(sender);
+                // Logging error message to the console
+                claimManager.getPlugin().getLogger().warning("An error occurred while trying to access claim:");
+                claimManager.getPlugin().getLogger().warning("   " + e.getMessage());
             }
             return;
         }

@@ -53,6 +53,11 @@ public final class PluginLocale implements JsonConfiguration {
     public static Component ARGUMENT_CLAIM_NOT_IN_CLAIMED_AREA;
 
 
+    // Commands > Claims
+
+    @JsonPath("commands.claims_usage")
+    public static Component COMMAND_CLAIMS_USAGE;
+
     // Commands > Claims > Edit
 
     @JsonPath("commands.claims_edit_usage")
