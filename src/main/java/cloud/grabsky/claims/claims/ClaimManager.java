@@ -25,8 +25,6 @@ import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedCuboidRegion;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import com.squareup.moshi.Moshi;
-import lombok.AccessLevel;
-import lombok.Getter;
 import net.kyori.adventure.text.Component;
 import okio.BufferedSource;
 import org.bukkit.Location;
@@ -48,13 +46,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
+
+import lombok.AccessLevel;
+import lombok.Getter;
 
 import static com.sk89q.worldedit.bukkit.BukkitAdapter.adapt;
 import static java.lang.Math.abs;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
-import static java.util.Arrays.stream;
-import static java.util.Comparator.comparing;
 import static okio.Okio.buffer;
 import static okio.Okio.source;
 
@@ -68,7 +70,7 @@ public final class ClaimManager {
     private final Map<UUID, ClaimPlayer> claimPlayerCache = new HashMap<>();
 
     @Getter(AccessLevel.PUBLIC)
-    private final Map<String, Claim.Type> claimTypes = new LinkedHashMap<>();
+    private final LinkedHashMap<String, Claim.Type> claimTypes = new LinkedHashMap<>();
 
     public ClaimManager(final Claims plugin, final RegionManager regionManager) {
         this.plugin = plugin;
@@ -81,30 +83,17 @@ public final class ClaimManager {
     /**
      * Loads and caches defined {@link Claim.Type} objects defined in configuration files.
      */
+    // TO-DO: TEST IF STILL WORKS
     private void cacheClaimTypes() throws IllegalStateException {
-        final File typesDirectory = new File(plugin.getDataFolder(), "types");
+        final File directory = new File(plugin.getDataFolder(), "types");
+        // Listing files inside directory. Can be null for non-existent or non-directory files.
+        final File @Nullable [] files = directory.listFiles();
         // Creating /plugins/Claims/types directory if does not exist.
-        if (typesDirectory.exists() == false)
-            typesDirectory.mkdirs();
-        // Throwing exception if /plugins/Claims/types is not a directory.
-        if (typesDirectory.isDirectory() == false)
-            throw new IllegalStateException(typesDirectory.getPath() + " is not a directory. Read documentation at [DOCS_LINK] to learn how to define claim types.");
-        // ...
-        final File[] files = typesDirectory.listFiles();
-        // Guiding to read docs if no claim types are defined.
-        if (files == null)
-            throw new IllegalStateException(typesDirectory.getPath() + " is not a directory. Read documentation at [DOCS_LINK] to learn how to define claim types.");
-        // Filtering and sorting
-        final List<File> sortedFiles = stream(files)
-                .filter(file -> file.getName().endsWith(".json"))
-                .sorted(comparing(File::getName).reversed())
-                .toList();
-        // ...
-        if (sortedFiles.isEmpty() == true) {
-            plugin.getLogger().warning("No claim types has been defined inside /plugins/Claims/types/ directory. Read documentation at [DOCS_LINK] to learn how.");
+        if (directory.mkdirs() == true || files == null || files.length == 0) {
+            plugin.getLogger().warning("No files found inside \"" + directory + "\" directory... Read documentation at [DOCS_LINK] for more information.");
             return;
         }
-        // ...
+        // Creating a new instance of Moshi.
         final Moshi moshi = new Moshi.Builder()
                 // Everything needed for ItemStack deserialization...
                 .add(Component.class, ComponentAdapter.INSTANCE)
@@ -117,74 +106,80 @@ public final class ClaimManager {
                 .add(MaterialAdapterFactory.INSTANCE)
                 .add(PersistentDataEntryAdapterFactory.INSTANCE)
                 .add(PersistentDataTypeAdapterFactory.INSTANCE)
-                // ClaimType deserialization...
+                // Claim.Type deserialization...
                 .add(new ClaimTypeAdapterFactory(this))
                 .build();
-        // ...
-        Claim.Type previous = null;
-        // ...
-        int totalClaimTypes = 0;
-        int loadedClaimTypes = 0;
-        for (final File file : sortedFiles) {
+        // Creating (empty) AtomicReference to keep track of previous Claim.Type instance.
+        final AtomicReference<Claim.Type> previous = new AtomicReference<>();
+        // Some numbers to be incremented and displayed later on...
+        final AtomicInteger totalClaimTypes = new AtomicInteger(0);
+        final AtomicInteger loadedClaimTypes = new AtomicInteger(0);
+        // Itering over sorted and filtered files.
+        // TO-DO: Lexicographical sort is going to fail for numbers greater than 10. Alternative sorting algorith must be used.
+        Stream.of(files).sorted().filter(file -> file.getName().endsWith(".json") == true).forEach(file -> {
+            // Incrementing total number of files as we're about to attempt loading.
+            totalClaimTypes.incrementAndGet();
+            // Trying...
             try (final BufferedSource buffer = buffer(source(file))) {
-                // ...
-                totalClaimTypes++;
-                // Reading
+                // Reading new Claim.Type instance from JSON.
                 final Claim.Type type = moshi.adapter(Claim.Type.class).lenient().fromJson(buffer);
-                // ...
+                // Logging error in case result ended up being null.
                 if (type == null) {
-                    plugin.getLogger().warning("Claim type cannot be loaded. (FILE = " + file.getPath() + ")");
-                    continue;
+                    plugin.getLogger().severe("Could not load claim type defined inside \"" + file + "\" file.");
+                    plugin.getLogger().severe("  null");
+                    // Continuing to the next file...
+                    return;
                 }
-                // ...
-                type.setNextType(previous);
-                // ...
+                final @Nullable Claim.Type previousClaimType = previous.get();
+                // Setting next type of
+                type.setNextType(previousClaimType);
+                // Adding new
                 claimTypes.put(type.getId(), type);
-                // ...
-                previous = type;
-                // ...
-                loadedClaimTypes++;
+                // Updating the reference.
+                previous.set(type);
+                // Incrementing number of files that were successfully loaded.
+                loadedClaimTypes.incrementAndGet();
             } catch (final IOException e) {
-                plugin.getLogger().warning("Claim type cannot be loaded. (FILE = " + file.getPath() + ")");
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not load claim type defined inside \"" + file + "\" file.");
+                plugin.getLogger().severe("  " + e.getMessage());
             }
-        }
-        // ...
+        });
+        // Printing numbers to the console.
         plugin.getLogger().info("Successfully loaded " + loadedClaimTypes + " out of " + totalClaimTypes + " claim types total.");
     }
 
     /**
      * Loads and caches {@link Claim} objects and related components.
      */
+    // TO-DO: CLEAN THAT UP
     private void cacheClaims() throws IllegalStateException {
-        int totalClaims = 0;
-        int loadedClaims = 0;
-        for (final var entry : regionManager.getRegions().entrySet()) {
-            final String id = entry.getKey();
-            final ProtectedRegion region = entry.getValue();
+        final AtomicInteger totalClaims = new AtomicInteger(0);
+        final AtomicInteger loadedClaims = new AtomicInteger(0);
+        // Iterating...
+        regionManager.getRegions().forEach((id, region) -> {
             // Skipping regions not starting with configured prefix.
             if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
-                continue;
+                return;
             // ...
-            totalClaims++;
+            totalClaims.incrementAndGet();
             // ...
             final String claimTypeId = region.getFlag(CustomFlag.CLAIM_TYPE);
             final @Nullable Claim.Type claimType = claimTypes.get(claimTypeId);
             // Skipping claims with non-existent or invalid type.
             if (claimType == null || claimTypes.containsKey(claimTypeId) == false) {
                 plugin.getLogger().warning("Claim cannot be loaded because it's TYPE is not defined. (CLAIM_ID = " + id + ", CLAIM_TYPE_ID = " + claimTypeId + ")");
-                continue;
+                return;
             }
             final Claim claim = new Claim(id, this, region, claimType);
             // Adding claim to the cache.
             claimsCache.put(id, claim);
             // ...
-            loadedClaims++;
-        }
+            loadedClaims.incrementAndGet();
+        });
         // ...
         plugin.getLogger().info("Successfully loaded " + loadedClaims + " out of " + totalClaims + " claims total.");
         // ...
-        if (loadedClaims < totalClaims) {
+        if (totalClaims.get() - loadedClaims.get() > 0) {
             plugin.getLogger().warning("Not loaded claims ARE STILL PROTECTED but are excluded from plugin cache and are inaccessible by players. You should take a closer look at all of them individually to see what's wrong.");
         }
     }
