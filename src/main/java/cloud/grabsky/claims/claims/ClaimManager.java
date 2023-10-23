@@ -57,6 +57,7 @@ import static com.sk89q.worldedit.bukkit.BukkitAdapter.adapt;
 import static java.lang.Math.abs;
 import static java.lang.String.valueOf;
 import static java.lang.System.currentTimeMillis;
+import static java.util.Comparator.comparing;
 import static okio.Okio.buffer;
 import static okio.Okio.source;
 
@@ -116,7 +117,7 @@ public final class ClaimManager {
         final AtomicInteger loadedClaimTypes = new AtomicInteger(0);
         // Itering over sorted and filtered files.
         // TO-DO: Lexicographical sort is going to fail for numbers greater than 10. Alternative sorting algorith must be used.
-        Stream.of(files).sorted().filter(file -> file.getName().endsWith(".json") == true).forEach(file -> {
+        Stream.of(files).sorted(comparing(File::getName).reversed()).filter(file -> file.getName().endsWith(".json") == true).forEach(file -> {
             // Incrementing total number of files as we're about to attempt loading.
             totalClaimTypes.incrementAndGet();
             // Trying...
