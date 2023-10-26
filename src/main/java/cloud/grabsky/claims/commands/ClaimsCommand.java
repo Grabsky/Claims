@@ -287,8 +287,11 @@ public class ClaimsCommand extends RootCommand {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (sender.hasPermission(this.getPermission() + ".reload") == true) {
+            // Reloading the claims cache...
+            claimManager.cacheClaims();
             // Reloading the plugin...
             if (plugin.reloadConfiguration() == true) {
+
                 // Sending success message to the sender.
                 Message.of(PluginLocale.RELOAD_SUCCESS).send(sender);
                 return;

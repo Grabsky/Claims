@@ -84,7 +84,6 @@ public final class ClaimManager {
     /**
      * Loads and caches defined {@link Claim.Type} objects defined in configuration files.
      */
-    // TO-DO: TEST IF STILL WORKS
     private void cacheClaimTypes() throws IllegalStateException {
         final File directory = new File(plugin.getDataFolder(), "types");
         // Listing files inside directory. Can be null for non-existent or non-directory files.
@@ -153,12 +152,14 @@ public final class ClaimManager {
      * Loads and caches {@link Claim} objects and related components.
      */
     // TO-DO: CLEAN THAT UP
-    private void cacheClaims() throws IllegalStateException {
+    public void cacheClaims() throws IllegalStateException {
+        this.claimsCache.clear();
+        // ...
         final AtomicInteger totalClaims = new AtomicInteger(0);
         final AtomicInteger loadedClaims = new AtomicInteger(0);
-        // Iterating...
+        // Iterating over all regions
         regionManager.getRegions().forEach((id, region) -> {
-            // Skipping regions not starting with configured prefix.
+            // Skipping regions that are not starting with configured prefix.
             if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
                 return;
             // ...
@@ -204,19 +205,17 @@ public final class ClaimManager {
     }
 
     /**
-     * Tries to create {@link Claim} (and {@link ProtectedRegion} it relies on) at the following location.
-     * Returns {@code true} if {@link Claim} and all its components were successfully created.
+     * Tries to create {@link Claim} (and {@link ProtectedRegion} it relies on) at the specified location.
      */
     public @Nullable Claim createClaim(final @NotNull Location location, final @NotNull Player owner, final @NotNull Claim.Type type) {
-        // ...
         final int x = location.getBlockX();
         final int z = location.getBlockZ();
-        // This should always return the "largest" radius, assuming it's always the last one defined. (highest level)
+        // Getting the largest claim radius, assuming it is always the last one defined. (LAST CLAIM TYPE)
         final int maxRadius = claimTypes.values().iterator().next().getRadius();
-        // ...
+        // Calculating ultimate boundaries.
         final BlockVector3 tMin = BlockVector3.at(x - maxRadius, location.getWorld().getMinHeight(), z - maxRadius);
         final BlockVector3 tMax = BlockVector3.at(x + maxRadius, location.getWorld().getMaxHeight(), z + maxRadius);
-        // Checking if region that is about to be created collides with any other regions, including nearby regions that are not yet fully upgraded.
+        // Checking boundaries are not colliding with any other regions, including other, not fully upgraded claims.
         final boolean isColliding = regionManager.getApplicableRegions(new ProtectedCuboidRegion("_", true, tMin.subtract(maxRadius, 0, maxRadius), tMax.add(maxRadius, 0, maxRadius))).getRegions().stream()
                 .anyMatch(region -> {
                     // Ignoring regions with lower priority.
@@ -232,32 +231,28 @@ public final class ClaimManager {
         // Returning null if region is colliding with a region nearby.
         if (isColliding == true)
             return null;
-        // ...
+        // Getting radius of specified claim type.
         final int radius = type.getRadius();
-        // ...
+        // Calculating initial boundaries.
         final BlockVector3 min = BlockVector3.at(x - radius, location.getWorld().getMinHeight(), z - radius);
         final BlockVector3 max = BlockVector3.at(x + radius, location.getWorld().getMaxHeight(), z + radius);
-        // Creating region id
+        // Creating region identifier from its center location.
         final String id = Claim.createId(location);
-        // Creating region at new points
+        // Creating a new WorldGuard region within the calculated boundaries.
         final ProtectedRegion region = new ProtectedCuboidRegion(id, min, max);
         // Setting default flags
         setDefaultFlags(region, location, owner);
         region.setFlag(CustomFlag.CLAIM_TYPE, type.getId());
-        // Setting region priority
+        // Setting region priority.
         region.setPriority(PluginConfig.REGION_PRIORITY);
-        // ...
-        final UUID ownerUniqueId = owner.getUniqueId();
-        // Adding owner
-        region.getOwners().addPlayer(ownerUniqueId);
-        // Registering region
+        // Setting region owner.
+        region.getOwners().addPlayer(owner.getUniqueId());
+        // Adding WorldGuard region to the RegionManager.
         regionManager.addRegion(region);
-        // Adding newly created claim to cache
-        final ClaimPlayer claimOwner = this.getClaimPlayer(ownerUniqueId);
-        // ...
+        // Creating Claim object and caching it.
         final Claim claim = new Claim(id, this, region, type);
         claimsCache.put(id, claim);
-        // ...
+        // Returning Claim object.
         return claim;
     }
 
