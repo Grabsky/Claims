@@ -47,22 +47,17 @@ public class ClaimsCommand extends RootCommand {
     @Dependency
     private @UnknownNullability ClaimManager claimManager = Claims.getInstance().getClaimManager();
 
+
     @Override
     public @NotNull CompletionsProvider onTabComplete(final @NotNull RootCommandContext context, final int index) throws CommandLogicException {
         // Getting the first argument (second input element) from command input.
         final String argument = context.getInput().at(1, "").toLowerCase();
         // Displaying list of sub-commands in case no argument has been provided.
         if (argument.isEmpty() == true)
-            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "edit", "list", "get", "reload", "restore");
+            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "get", "list", "reload", "restore");
         // Otherwise, checking permissions and sending specialized permissions to the sender.
         return (context.getExecutor().hasPermission(this.getPermission() + "." + argument) == true)
                 ? switch (argument) {
-                    case "edit" -> switch (index) {
-                        case 1 -> CompletionsProvider.of(Claim.class);
-                        case 2 -> CompletionsProvider.of("--force");
-                        // Displaying no completions for higher indexes.
-                        default -> CompletionsProvider.EMPTY;
-                    };
                     case "list" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
                     case "restore" -> (index == 1) ? CompletionsProvider.of(Claim.class) : CompletionsProvider.EMPTY;
                     // Displaying no completions in case unrecognized argument has been provided.
@@ -76,42 +71,9 @@ public class ClaimsCommand extends RootCommand {
     public void onCommand(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) throws CommandLogicException {
         // Displaying help in case no arguments has been provided.
         if (arguments.hasNext() == false) {
-            final Player sender = context.getExecutor().asPlayer();
-            final ClaimPlayer claimSender = claimManager.getClaimPlayer(sender);
-            // Getting location of the command sender.
-            final Location location = sender.getLocation();
-            // Getting Claim at location of the command sender.
-            final @Nullable Claim claim = claimManager.getClaimAt(location);
-            // ...
-            if (claim != null) {
-                // Checking whether sender is owner of that claim or has ability to edit claims of other players.
-                if (claimSender.isOwnerOf(claim) == true || sender.hasPermission(this.getPermission() + ".edit") == true) {
-                    // Checking whether the claim panel is already open.
-                    if (isClaimPanelOpen(claim) == false) {
-                        // Building new instance of ClaimPanel and opening it to the command sender.
-                        new ClaimPanel.Builder()
-                                .setClaimManager(claimManager)
-                                .setClaim(claim)
-                                .build()
-                                .open(sender, (panel) -> {
-                                    plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseCategories.INSTANCE, false));
-                                    return true;
-                                });
-                        return;
-                    }
-                    // Sending error message to command sender.
-                    Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
-                    return;
-                }
-                // Sending error message to command sender.
-                Message.of(PluginLocale.NOT_CLAIM_OWNER).send(sender);
-                return;
-            }
-            // Sending error message to command sender.
-            Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
+            this.onDefault(context, arguments);
         // Otherwise, executing specialized sub-command logic.
         } else switch (arguments.next(String.class).asRequired().toLowerCase()) {
-            case "edit" -> this.onClaimsEdit(context, arguments);
             case "get" -> this.onClaimsGet(context, arguments);
             case "list" -> this.onClaimsList(context, arguments);
             case "reload" -> this.onClaimsReload(context, arguments);
@@ -121,43 +83,52 @@ public class ClaimsCommand extends RootCommand {
         }
     }
 
+
     /* CLAIMS */
+
+    private void onDefault(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
+        final Player sender = context.getExecutor().asPlayer();
+        final ClaimPlayer claimSender = claimManager.getClaimPlayer(sender);
+        // Getting location of the command sender.
+        final Location location = sender.getLocation();
+        // Getting Claim at location of the command sender.
+        final @Nullable Claim claim = claimManager.getClaimAt(location);
+        // ...
+        if (claim != null) {
+            // Checking whether sender is owner of that claim or has ability to edit claims of other players.
+            if (claimSender.isOwnerOf(claim) == true || sender.hasPermission(this.getPermission() + ".edit") == true) {
+                // Checking whether the claim panel is already open.
+                if (isClaimPanelOpen(claim) == false) {
+                    // Building new instance of ClaimPanel and opening it to the command sender.
+                    new ClaimPanel.Builder()
+                            .setClaimManager(claimManager)
+                            .setClaim(claim)
+                            .build()
+                            .open(sender, (panel) -> {
+                                plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseCategories.INSTANCE, false));
+                                return true;
+                            });
+                    return;
+                }
+                // Sending error message to command sender.
+                Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
+                return;
+            }
+            // Sending error message to command sender.
+            Message.of(PluginLocale.NOT_CLAIM_OWNER).send(sender);
+            return;
+        }
+        // Sending error message to command sender.
+        Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
+    }
+
+
+    /* CLAIMS HELP */
 
     private void onHelp(final @NotNull RootCommandContext context) {
         Message.of(PluginLocale.COMMAND_CLAIMS_USAGE).send(context.getExecutor());
     }
 
-    /* CLAIMS EDIT */
-
-    private static final ExceptionHandler.Factory CLAIMS_EDIT_USAGE = (exception) -> {
-        return (exception instanceof MissingInputException)
-                ? (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_USAGE).send(context.getExecutor())
-                : null; // Let other exceptions be handled internally.
-    };
-
-    private void onClaimsEdit(final RootCommandContext context, final ArgumentQueue arguments) {
-        final Player sender = context.getExecutor().asPlayer();
-        // ...
-        if (sender.hasPermission(this.getPermission() + ".edit") == true) {
-            // ...
-            final Claim claim = arguments.next(Claim.class).asRequired(CLAIMS_EDIT_USAGE);
-            // ...
-            if (isClaimPanelOpen(claim) == false) {
-                new ClaimPanel.Builder()
-                        .setClaimManager(claimManager)
-                        .setClaim(claim)
-                        .build()
-                        .open(sender, (panel) -> {
-                            plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseCategories.INSTANCE, false));
-                            return true;
-                        });
-                return;
-            }
-            Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
-            return;
-        }
-        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
-    }
 
     /* CLAIMS LIST */
 
@@ -240,9 +211,10 @@ public class ClaimsCommand extends RootCommand {
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
+
     /* CLAIMS GET */
 
-    private void onClaimsGet(final RootCommandContext context, final ArgumentQueue arguments) {
+    private void onClaimsGet(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
         if (sender.hasPermission(this.getPermission() + ".get") == true) {
@@ -270,9 +242,10 @@ public class ClaimsCommand extends RootCommand {
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
+
     /* CLAIMS RELOAD */
 
-    private void onClaimsReload(final RootCommandContext context, final ArgumentQueue arguments) {
+    private void onClaimsReload(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (sender.hasPermission(this.getPermission() + ".reload") == true) {
@@ -293,6 +266,7 @@ public class ClaimsCommand extends RootCommand {
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
+
     /* CLAIMS RESTORE */
 
     private static final ExceptionHandler.Factory CLAIMS_RESTORE_USAGE = (exception) -> {
@@ -301,7 +275,7 @@ public class ClaimsCommand extends RootCommand {
                 : null; // Let other exceptions be handled internally.
     };
 
-    private void onClaimsRestore(final RootCommandContext context, final ArgumentQueue arguments) {
+    private void onClaimsRestore(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
         if (sender.hasPermission(this.getPermission() + ".restore") == true) {

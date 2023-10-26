@@ -58,11 +58,6 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("commands.claims_usage")
     public static Component COMMAND_CLAIMS_USAGE;
 
-    // Commands > Claims > Edit
-
-    @JsonPath("commands.claims_edit_usage")
-    public static String COMMAND_CLAIMS_EDIT_USAGE;
-
     @JsonPath("commands.claims_edit_failure_already_in_use")
     public static String COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE;
 
