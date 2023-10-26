@@ -22,10 +22,9 @@
         // Claims
         "claims_usage": [
             "<dark_gray>› <gold>/claims",
-            "<dark_gray>› <gold>/claims edit <white>(claim) <gray>(--force)",
             "<dark_gray>› <gold>/claims get",
-            "<dark_gray>› <gold>/claims list <white>(player)",
-            "<dark_gray>› <gold>/claims restore <white>(claim)"
+            "<dark_gray>› <gold>/claims list <gray>(player)",
+            "<dark_gray>› <gold>/claims restore <gray>(claim)"
         ],
         // Claims > Edit
         "claims_edit_usage": "<dark_gray>› <gray>Użycie: <gold>/claims edit <white>(claim) <gray>(--force)",
@@ -48,9 +47,8 @@
         ],
         "claims_list_member_of_footer": " ",
         "claims_list_member_of_none": "<dark_gray>› <gold><player><gray> nie jest członkiem żadnego terenu.",
-        "claims_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Pozycja: <gold><claim_location><newline><newline><gray>Kliknij, aby edytować.'><click:suggest_command:'/claims edit <claim>'><gray>瘀 <gold><claim></click>",
+        "claims_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Pozycja: <gold><claim_location>'><gray>瘀 <gold><claim>",
         // Claims > Restore
-        "claims_restore_usage": "<dark_gray>› <gray>Użycie: <gold>/claims restore <white>(claim)",
         "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
         // Waypoints
         "waypoints_usage": [

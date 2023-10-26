@@ -101,9 +101,6 @@ public final class PluginLocale implements JsonConfiguration {
 
     // Commands > Claims > Restore
 
-    @JsonPath("commands.claims_restore_usage")
-    public static Component COMMAND_CLAIMS_RESTORE_USAGE;
-
     @JsonPath("commands.claims_restore_success")
     public static Component COMMAND_CLAIMS_RESTORE_SUCCESS;
 
