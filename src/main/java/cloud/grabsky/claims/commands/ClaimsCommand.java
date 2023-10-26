@@ -42,10 +42,10 @@ import static java.util.Comparator.comparingInt;
 public class ClaimsCommand extends RootCommand {
 
     @Dependency
-    private @UnknownNullability Claims plugin = Claims.getInstance();
+    private @UnknownNullability Claims plugin;
 
     @Dependency
-    private @UnknownNullability ClaimManager claimManager = Claims.getInstance().getClaimManager();
+    private @UnknownNullability ClaimManager claimManager;
 
 
     @Override
