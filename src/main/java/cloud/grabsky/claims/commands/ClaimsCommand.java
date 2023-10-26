@@ -23,25 +23,15 @@ import io.papermc.paper.math.BlockPosition;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.BlockDisplay;
-import org.bukkit.entity.Display;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
-import org.bukkit.util.Transformation;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
@@ -63,7 +53,7 @@ public class ClaimsCommand extends RootCommand {
         final String argument = context.getInput().at(1, "").toLowerCase();
         // Displaying list of sub-commands in case no argument has been provided.
         if (argument.isEmpty() == true)
-            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "border", "edit", "list", "get", "reload", "restore");
+            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "edit", "list", "get", "reload", "restore");
         // Otherwise, checking permissions and sending specialized permissions to the sender.
         return (context.getExecutor().hasPermission(this.getPermission() + "." + argument) == true)
                 ? switch (argument) {
@@ -121,7 +111,6 @@ public class ClaimsCommand extends RootCommand {
             Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
         // Otherwise, executing specialized sub-command logic.
         } else switch (arguments.next(String.class).asRequired().toLowerCase()) {
-            case "border" -> this.onClaimsBorder(context, arguments);
             case "edit" -> this.onClaimsEdit(context, arguments);
             case "get" -> this.onClaimsGet(context, arguments);
             case "list" -> this.onClaimsList(context, arguments);
@@ -340,73 +329,6 @@ public class ClaimsCommand extends RootCommand {
                 claimManager.getPlugin().getLogger().warning("An error occurred while trying to access claim:");
                 claimManager.getPlugin().getLogger().warning("   " + e.getMessage());
             }
-            return;
-        }
-        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
-    }
-
-    /* CLAIMS BORDER */
-
-    @Experimental
-    private void onClaimsBorder(final RootCommandContext context, final ArgumentQueue arguments) {
-        final Player sender = context.getExecutor().asPlayer();
-        // ...
-        if (sender.hasPermission(this.getPermission() + ".border") == true) {
-            // ...
-            final ClaimPlayer claimSender = claimManager.getClaimPlayer(sender);
-            // ...
-            final Location location = sender.getLocation();
-            // ...
-            // Both variables shouldn't be null unless claim was manually modified
-            final @Nullable Claim claim = claimManager.getClaimAt(location);
-            // ...
-            if (claim != null) {
-                if (sender.hasPermission(this.getPermission() + ".edit") == true || claimSender.isOwnerOf(claim) == true) {
-                    // ...
-                    final Location center = claim.getCenter();
-                    // ...
-                    final float radius = claim.getType().getRadius() + 0.5F;
-                    final float entityPosition = (claim.getType().getRadius() / 2.0F);
-                    // ...
-                    final BlockData data = Material.LIME_STAINED_GLASS.createBlockData();
-                    final Vector3f scale = new Vector3f(radius, radius, 0);
-                    // ...
-                    final Iterator<Location> locations = List.of(
-                            center.clone().add(0, -entityPosition - 0.5F, -entityPosition),
-                            center.clone().add(entityPosition, -entityPosition - 0.5F, 0),
-                            center.clone().add(0, -entityPosition - 0.5F, entityPosition),
-                            center.clone().add(-entityPosition, -entityPosition - 0.5F, 0)
-                    ).iterator();
-                    // ...
-                    final Iterator<Transformation> transformations = List.of(
-                            new Transformation(new Vector3f(-radius, 0, -entityPosition - 0.5F), new Quaternionf(0, 0, 0, 1), scale, new Quaternionf(0, 1, 0, 1)),
-                            new Transformation(new Vector3f(entityPosition + 0.5F, 0, -radius), new Quaternionf(0, -1, 0, 1), scale, new Quaternionf(0, 0, 0, 1)),
-                            new Transformation(new Vector3f(radius, 0, entityPosition + 0.5F), new Quaternionf(0, 0, 0, 1), scale, new Quaternionf(0, -1, 0, 1)),
-                            new Transformation(new Vector3f(-entityPosition - 0.5F, 0, radius), new Quaternionf(0, 1, 0, 1), scale, new Quaternionf(0, 0, 0, 1))
-                    ).iterator();
-                    // ...
-                    while (locations.hasNext() == true && transformations.hasNext() == true) {
-                        // ...
-                        center.getWorld().spawnEntity(locations.next(), EntityType.BLOCK_DISPLAY, SpawnReason.CUSTOM, (entity) -> {
-                            if (entity instanceof BlockDisplay blockDisplay) {
-                                blockDisplay.setBlock(data);
-                                blockDisplay.setTransformation(transformations.next());
-                                blockDisplay.setViewRange(Float.MAX_VALUE);
-                                blockDisplay.setBrightness(new Display.Brightness(15, 0));
-                                blockDisplay.setVisibleByDefault(false);
-                                blockDisplay.setPersistent(false);
-                                // ...
-                                sender.showEntity(plugin, entity);
-                            }
-                            plugin.getBedrockScheduler().run(300L, (task) -> entity.remove());
-                        });
-                    }
-                    return;
-                }
-                Message.of(PluginLocale.NOT_CLAIM_OWNER).send(sender);
-                return;
-            }
-            Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
             return;
         }
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
