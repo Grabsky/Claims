@@ -2,10 +2,6 @@ package cloud.grabsky.claims.claims;
 
 import cloud.grabsky.azure.api.AzureProvider;
 import cloud.grabsky.azure.api.user.User;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -15,6 +11,14 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+/**
+ * Represents a {@link Player} that can be associated with a {@link Claim}.
+ */
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class ClaimPlayer {
 
@@ -28,37 +32,42 @@ public final class ClaimPlayer {
     private boolean isChangingClaimName = false;
 
     /**
-     * Returns {@code true} if (this) {@link ClaimPlayer} is owner of <i>any</i> {@link Claim}.
+     * Returns {@code true} if this {@link ClaimPlayer} is owner of any {@link Claim}.
      */
     public boolean hasClaim() {
         return this.getClaims().isEmpty() == false;
     }
 
-    // ...
+    /**
+     * Returns list of {@link Claim Claims} this {@link ClaimPlayer} is owner of.
+     */
     public Set<Claim> getClaims() {
         return claimManager.getClaims().stream().filter(this::isOwnerOf).collect(Collectors.toUnmodifiableSet());
     }
 
+    /**
+     * Returns list of {@link Claim Claims} this {@link ClaimPlayer} is member of.
+     */
     public Set<Claim> getRelativeClaims() {
         return claimManager.getClaims().stream().filter(this::isMemberOf).collect(Collectors.toSet());
     }
 
     /**
-     * Returns {@code true} if (this) {@link ClaimPlayer} is member of provided {@link Claim}.
+     * Returns {@code true} if this {@link ClaimPlayer} is member of provided {@link Claim}.
      */
     public boolean isMemberOf(final Claim claim) {
         return claim.isMember(this);
     }
 
     /**
-     * Returns {@code true} if (this) {@link ClaimPlayer} is owner of provided {@link Claim}.
+     * Returns {@code true} if this {@link ClaimPlayer} is owner of provided {@link Claim}.
      */
     public boolean isOwnerOf(final Claim claim) {
         return claim.isOwner(this);
     }
 
     /**
-     * Returns {@link Player} instance relative to (this) {@link ClaimPlayer}.
+     * Returns {@link Player} instance relative to this {@link ClaimPlayer}.
      */
     public Player toPlayer() {
         return Bukkit.getPlayer(uniqueId);
@@ -75,4 +84,5 @@ public final class ClaimPlayer {
     public boolean equals(final Object other) {
         return (other instanceof ClaimPlayer otherClaimPlayer && uniqueId.equals(otherClaimPlayer.uniqueId) == true);
     }
+
 }
