@@ -47,7 +47,6 @@ public class ClaimsCommand extends RootCommand {
     @Dependency
     private @UnknownNullability ClaimManager claimManager;
 
-
     @Override
     public @NotNull CompletionsProvider onTabComplete(final @NotNull RootCommandContext context, final int index) throws CommandLogicException {
         // Getting the first argument (second input element) from command input.
@@ -214,7 +213,7 @@ public class ClaimsCommand extends RootCommand {
 
     /* CLAIMS GET */
 
-    private void onClaimsGet(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
+    private void onClaimsGet(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
         if (sender.hasPermission(this.getPermission() + ".get") == true) {
@@ -245,7 +244,7 @@ public class ClaimsCommand extends RootCommand {
 
     /* CLAIMS RELOAD */
 
-    private void onClaimsReload(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
+    private void onClaimsReload(final RootCommandContext context, final ArgumentQueue arguments) {
         final CommandSender sender = context.getExecutor().asCommandSender();
         // ...
         if (sender.hasPermission(this.getPermission() + ".reload") == true) {
@@ -269,18 +268,17 @@ public class ClaimsCommand extends RootCommand {
 
     /* CLAIMS RESTORE */
 
-    private static final ExceptionHandler.Factory CLAIMS_RESTORE_USAGE = (exception) -> {
-        return (exception instanceof MissingInputException)
-                ? (e, context) -> Message.of(PluginLocale.COMMAND_CLAIMS_RESTORE_USAGE).send(context.getExecutor())
-                : null; // Let other exceptions be handled internally.
-    };
-
-    private void onClaimsRestore(final @NotNull RootCommandContext context, final @NotNull ArgumentQueue arguments) {
+    private void onClaimsRestore(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
         if (sender.hasPermission(this.getPermission() + ".restore") == true) {
-            // Getting next argument as Claim.
-            final Claim claim = arguments.next(Claim.class).asRequired(CLAIMS_RESTORE_USAGE);
+            // Getting next argument as Claim. Defaults to the claim player is currently on. Might be null.
+            final @Nullable Claim claim = arguments.next(Claim.class).asOptional(claimManager.getClaimAt(sender.getLocation()));
+            // Sending error message if no claim argument was provided and player is not on any claim.
+            if (claim == null) {
+                Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
+                return;
+            }
             // Trying...
             try {
                 // Getting center location of the claim.
