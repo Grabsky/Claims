@@ -7,6 +7,10 @@
     "region_priority": 0,
     // Delay before player is teleported to the spawn. (in seconds)
     "spawn_teleport_delay": 5,
+    // Random teleport minimum distance from spawn point.
+    "random_teleport_min_distance": 500,
+    // Random teleport maximum distance from spawn point.
+    "random_teleport_max_distance": 1000,
 
     // Claims settings.
     "claim_settings": {

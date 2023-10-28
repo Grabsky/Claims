@@ -43,6 +43,12 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("claim_no_center_defined")
     public static Component CLAIM_NO_CENTER_DEFINED;
 
+    @JsonPath("random_teleport_searching")
+    public static Component RANDOM_TELEPORT_SEARCHING;
+
+    @JsonPath("random_teleport_failure_not_found")
+    public static Component RANDOM_TELEPORT_FAILURE_NOT_FOUND;
+
 
     // Command Arguments
 

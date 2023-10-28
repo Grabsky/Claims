@@ -13,6 +13,9 @@
     // ...
     "claim_does_not_exist": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie istnieje.",
     "claim_no_center_defined": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie został poprawnie zdefiniowany.",
+    // Random location teleport messages are displayed in action bar.
+    "random_teleport_searching": "<gray>Trwa szukanie bezpiecznej lokalizacji...",
+    "random_teleport_failure_not_found": "<red>Nie udało się znaleźć bezpiecznej lokalizacji.",
     // ...
     "command_arguments": {
         "argument_claim_not_found": "<dark_gray>› <red>Teren <gold><claim><red> nie istnieje.",

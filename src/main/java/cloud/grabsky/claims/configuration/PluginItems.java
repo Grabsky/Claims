@@ -57,6 +57,10 @@ public final class PluginItems implements JsonConfiguration {
     @JsonPath("interface.functional.icon_spawn")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_SPAWN;
 
+    // Interface > Functional > Icon Random Teleport
+    @JsonPath("interface.functional.icon_random_teleport")
+    public static ItemStack INTERFACE_FUNCTIONAL_ICON_RANDOM_TELEPORT;
+
     // Interface > Functional > Icon Waypoint
     @JsonPath("interface.functional.icon_waypoint")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_WAYPOINT;

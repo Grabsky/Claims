@@ -27,6 +27,12 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("spawn_teleport_delay")
     public static int SPAWN_TELEPORT_DELAY;
 
+    @JsonPath("random_teleport_min_distance")
+    public static int RANDOM_TELEPORT_MIN_DISTANCE;
+
+    @JsonPath("random_teleport_max_distance")
+    public static int RANDOM_TELEPORT_MAX_DISTANCE;
+
     // Claim Settings
 
     @JsonPath("claim_settings.claims_limit")

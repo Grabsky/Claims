@@ -2,11 +2,14 @@ package cloud.grabsky.claims.util;
 
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.commands.exception.NumberParseException;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.block.Biome;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.jetbrains.annotations.ApiStatus.Experimental;
@@ -15,7 +18,12 @@ import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.ListIterator;
+import java.util.Random;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -135,6 +143,90 @@ public final class Utilities {
     @SuppressWarnings("UnstableApiUsage")
     public static @NotNull BlockPosition toChunkPosition(final Position position) {
         return Position.block((position.blockX() & 0xF), position.blockY(), (position.blockZ() & 0xF));
+    }
+
+
+    private static final Random RANDOM = new Random();
+
+    /**
+     * Returns random {@link Location} in the specified radius.
+     */
+    public static Location getRandomLocationInSquare(final @NotNull Location center, final int minDistance, final int maxDistance) {
+        // ...
+        int x = RANDOM.nextInt(center.getBlockX() - maxDistance, center.getBlockX() + maxDistance);
+        int z = RANDOM.nextInt(center.getBlockZ() - maxDistance, center.getBlockZ() + maxDistance);
+        // ...
+        if (Math.abs(x) <= minDistance && Math.abs(z) <= minDistance)
+            if (Math.abs(x) <= minDistance)
+                x = (x > 0) ? x + minDistance : x - minDistance;
+            else if (Math.abs(z) <= minDistance)
+                z = (z > 0) ? z + minDistance : z - minDistance;
+        // ...
+        return new Location(center.getWorld(), x, 0, z);
+    }
+
+    private static final HashSet<Biome> OCEAN_BIOMES = new HashSet<>(Arrays.asList(
+            Biome.OCEAN,
+            Biome.COLD_OCEAN,
+            Biome.LUKEWARM_OCEAN,
+            Biome.WARM_OCEAN,
+            Biome.DEEP_OCEAN,
+            Biome.DEEP_COLD_OCEAN,
+            Biome.DEEP_FROZEN_OCEAN,
+            Biome.DEEP_LUKEWARM_OCEAN
+    ));
+
+    /**
+     * Tries to find `attempts` number of `Locations` and returns the first one to be safe.
+     */
+    public static CompletableFuture<Location> getSafeLocation(final int minRadius, final int maxRadius) {
+        final CompletableFuture<Location> future = new CompletableFuture<>();
+        // ...
+        final AtomicInteger attempts = new AtomicInteger(0);
+        // ...
+        Claims.getInstance().getBedrockScheduler().runAsync(1L, (task) -> {
+            while (future.isDone() == false) {
+                System.out.println(attempts + " attempts.");
+                // ...
+                attempts.set(attempts.get() + 1);
+                // ...
+                final Location location = getRandomLocationInSquare(PluginConfig.DEFAULT_WORLD.getSpawnLocation(), minRadius, maxRadius);
+                // ...
+                final Chunk chunk = location.getChunk();
+                // ...
+                if (OCEAN_BIOMES.contains(location.getWorld().getBiome(location)) == true)
+                    continue;
+                // ...
+                location.set(
+                        location.getBlockX() + 0.5D,
+                        location.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ()) + 1.0D,
+                        location.getBlockZ() + 0.5D
+                );
+                // ...
+                if (isSafe(chunk, location) == true)
+                    future.complete(location);
+            }
+        });
+        // ...
+        return future;
+    }
+
+    /**
+     * Returns whether this `Location` is safe.
+     */
+    @SuppressWarnings("UnstableApiUsage")
+    public static boolean isSafe(final @NotNull Chunk chunk, final @NotNull Location location) {
+        for (int x = location.getBlockX() - 3; x <= location.getBlockX() + 3; x++) {
+            for (int y = location.getBlockY() - 3; y <= location.getBlockY() + 3; y++) {
+                for (int z = location.getBlockZ() - 3; z <= location.getBlockZ() + 3; z++) {
+                    final BlockPosition pos = toChunkPosition(Position.block(x, y, z));
+                    if (chunk.getBlock(pos.blockX(), pos.blockY(), pos.blockZ()).isLiquid() == true) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
     }
 
 }

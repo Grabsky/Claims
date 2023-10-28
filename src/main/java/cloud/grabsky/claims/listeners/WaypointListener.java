@@ -90,13 +90,31 @@ public final class WaypointListener implements Listener {
             return;
         // ...
         final @Nullable Block block = event.getClickedBlock();
-        //  ...
+        // ...
         if (PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS == true && block != null && block.getType() == Material.LODESTONE) {
+            // ...
             final Location location = block.getLocation().toCenterLocation();
             final NamespacedKey key = toChunkDataKey(toChunkPosition(location));
             // Preventing non-owners from opening the menu.
-            if (location.getChunk().getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, "INVALID_UUID").equals(event.getPlayer().getUniqueId().toString()) == false)
+            if (location.getChunk().getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, "INVALID_UUID").equals(event.getPlayer().getUniqueId().toString()) == false) {
+                // TEMPORRARY; OPENING GLOBAL WAYPOINT PANEL
+                for (int y = block.getY(); y >= block.getY() - 5; y--) {
+                    if (block.getWorld().getBlockAt(block.getX(), y, block.getZ()).getType() == Material.COMMAND_BLOCK) {
+                        // CANCELLING THE INTERACTION
+                        event.setCancelled(true);
+                        // OPENING
+                        new ClaimPanel.Builder()
+                                .setClaimManager(claimManager)
+                                .setAccessBlockLocation(location)
+                                .build().open(event.getPlayer(), (panel) -> {
+                                    plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                                    return true;
+                                });
+                        break;
+                    }
+                }
                 return;
+            }
             // Cancelling the click.
             event.setCancelled(true);
             // Opening the panel.
