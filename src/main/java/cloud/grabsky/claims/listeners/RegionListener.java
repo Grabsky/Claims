@@ -1,6 +1,7 @@
 package cloud.grabsky.claims.listeners;
 
 import cloud.grabsky.bedrock.components.Message;
+import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
@@ -12,8 +13,6 @@ import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import cloud.grabsky.claims.session.Session;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -39,10 +38,14 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 import static cloud.grabsky.claims.util.Utilities.getAroundPosition;
@@ -165,8 +168,17 @@ public final class RegionListener implements Listener {
                         // Deleting the claim and associated region.
                         claimManager.deleteClaim(claim);
                         // Dropping claim block item if player is not in creative mode.
-                        if (player.getGameMode() == GameMode.SURVIVAL)
-                            event.getBlock().getWorld().dropItem(event.getBlock().getLocation(), claim.getType().getBlock());
+                        if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
+                            // Getting identifier of this claim type.
+                            final String typeId = claim.getType().getId();
+                            // Getting block item of this claim type.
+                            final ItemStack blockItem = claim.getType().getBlock();
+                            // Dropping claim block item.
+                            event.getBlock().getWorld().dropItem(
+                                    event.getBlock().getLocation(),
+                                    new ItemBuilder(blockItem).setPersistentData(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, typeId).build()
+                            );
+                        }
                         // Showing success message.
                         Message.of(PluginLocale.PLACEMENT_DESTROY_SUCCESS).send(player);
                         return;
