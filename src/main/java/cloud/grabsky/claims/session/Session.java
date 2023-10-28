@@ -13,21 +13,21 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalCause;
 import io.papermc.paper.event.player.AsyncChatEvent;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public abstract class Session<T> {
@@ -83,7 +83,7 @@ public abstract class Session<T> {
                 })
                 .build();
 
-        @EventHandler(priority = EventPriority.MONITOR)
+        @EventHandler
         public static void onQuit(final @NotNull PlayerQuitEvent event) {
             final UUID uniqueId = event.getPlayer().getUniqueId();
             // Invalidating session on player quit.
@@ -92,7 +92,7 @@ public abstract class Session<T> {
         }
 
         // TO-DO: Merge common logic.
-        @EventHandler(priority = EventPriority.MONITOR)
+        @EventHandler
         public static void onChat(final @NotNull AsyncChatEvent event) {
             final Player player = event.getPlayer();
             final UUID uniqueId = event.getPlayer().getUniqueId();
