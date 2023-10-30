@@ -28,6 +28,7 @@ import cloud.grabsky.configuration.ConfigurationHolder;
 import cloud.grabsky.configuration.ConfigurationMapper;
 import cloud.grabsky.configuration.exception.ConfigurationMappingException;
 import cloud.grabsky.configuration.paper.PaperConfigurationMapper;
+import com.google.gson.Gson;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.World;
@@ -40,14 +41,27 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.session.SessionManager;
 import com.sk89q.worldguard.session.handler.ExitFlag;
+import io.papermc.paper.plugin.loader.PluginClasspathBuilder;
+import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
+import org.eclipse.aether.artifact.DefaultArtifact;
+import org.eclipse.aether.graph.Dependency;
+import org.eclipse.aether.repository.RemoteRepository;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Stream;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import static cloud.grabsky.configuration.paper.util.Resources.ensureResourceExistence;
 
@@ -182,6 +196,45 @@ public final class Claims extends BedrockPlugin {
             sessionManager.registerHandler(LeaveActionBarFlag.FACTORY, ExitFlag.FACTORY);
             sessionManager.registerHandler(ClientTimeFlag.FACTORY, ExitFlag.FACTORY);
             sessionManager.registerHandler(ClientWeatherFlag.FACTORY, ExitFlag.FACTORY);
+        }
+
+    }
+
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static final class PluginLoader implements io.papermc.paper.plugin.loader.PluginLoader {
+
+        @Override
+        public void classloader(final @NotNull PluginClasspathBuilder classpathBuilder) throws IllegalStateException {
+            final MavenLibraryResolver resolver = new MavenLibraryResolver();
+            // Parsing the file.
+            try (final InputStream in = getClass().getResourceAsStream("/paper-libraries.json")) {
+                final PluginLibraries libraries = new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), PluginLibraries.class);
+                // Adding repositorties.
+                libraries.asRepositories().forEach(resolver::addRepository);
+                // Adding dependencies.
+                libraries.asDependencies().forEach(resolver::addDependency);
+                // Adding library resolver.
+                classpathBuilder.addLibrary(resolver);
+            } catch (final IOException e) {
+                throw new IllegalStateException(e);
+            }
+        }
+
+        @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
+        private static final class PluginLibraries {
+
+            private final Map<String, String> repositories;
+            private final List<String> dependencies;
+
+            public Stream<RemoteRepository> asRepositories() {
+                return repositories.entrySet().stream().map(entry -> new RemoteRepository.Builder(entry.getKey(), "default", entry.getValue()).build());
+            }
+
+            public Stream<Dependency> asDependencies() {
+                return dependencies.stream().map(value -> new Dependency(new DefaultArtifact(value), null));
+            }
+
         }
 
     }

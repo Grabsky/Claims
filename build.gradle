@@ -1,16 +1,14 @@
 plugins {
     id("java-library")
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("net.minecrell.plugin-yml.paper") version "0.6.0"
 }
 
 final buildsDirectory = (System.getenv("JVM_BUILDS") ?: null)
 final pluginsDirectory = (System.getenv("PLUGINS_DIR") ?: null)
 
 group = "cloud.grabsky"
-version = "0.9.2-SNAPSHOT"
-
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+version = "0.9.3-SNAPSHOT"
 
 repositories {
     mavenLocal()
@@ -27,9 +25,9 @@ dependencies {
     // Paper
     compileOnly("io.papermc.paper:paper-api:1.20.2-R0.1-SNAPSHOT")
     // Dependencies
-    implementation("cloud.grabsky:bedrock:1.20.1-46")
-    implementation("cloud.grabsky:commands:1.20.1-35")
-    implementation("cloud.grabsky:configuration-paper:1.20.1-42")
+    paperLibrary("cloud.grabsky:bedrock:1.20.1-46")
+    paperLibrary("cloud.grabsky:commands:1.20.1-35")
+    paperLibrary("cloud.grabsky:configuration-paper:1.20.1-42")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-SNAPSHOT")
     // Azure
@@ -38,6 +36,12 @@ dependencies {
 
 tasks {
     shadowJar { archiveFileName = "${rootProject.name}-${project.version}.jar" }
+    compileJava {
+        options.fork = true
+        // Setting compatibility to Java 17 (above should work too).
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
 }
 
 tasks.register("deploy") {
@@ -52,6 +56,14 @@ tasks.register("deploy") {
     }
 }
 
-tasks.withType(JavaCompile).configureEach {
-    options.fork = true
+paper {
+    name = "Claims"
+    main = "cloud.grabsky.claims.Claims"
+    loader = "cloud.grabsky.claims.Claims\$PluginLoader"
+    apiVersion = "1.20"
+    generateLibrariesJson = true
+    serverDependencies {
+        "WorldGuard" { load = "BEFORE"; required = true }
+        "Azure"      { load = "BEFORE"; required = true }
+    }
 }
