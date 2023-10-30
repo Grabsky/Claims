@@ -6,6 +6,7 @@ import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
+import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.session.Session;
 import cloud.grabsky.claims.util.Utilities;
@@ -14,6 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -64,7 +66,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
         final var slotsIterator = UI_SLOTS.iterator();
         final var claimsIterator = moveIterator(claims.listIterator(), (pageToDisplay * maxOnPage) - maxOnPage);
         // ...
-        this.renderCommonButtons(cPanel);
+        renderCommonButtons(cPanel);
         // Rendering PREVIOUS PAGE button.
         if (claimsIterator.hasPrevious() == true)
             cPanel.setItem(28, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> render(cPanel, viewer, pageToDisplay - 1, maxOnPage));
@@ -147,19 +149,54 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
             cPanel.setItem(34, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> render(cPanel, viewer, pageToDisplay + 1, maxOnPage));
     }
 
-    private void renderCommonButtons(final ClaimPanel cPanel) {
-        cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
+    private static void renderCommonButtons(final ClaimPanel cPanel) {
+        final @Nullable Block accessBlock = (cPanel.getAccessBlockLocation() != null)
+                ? cPanel.getAccessBlockLocation().getWorld().getBlockAt(cPanel.getAccessBlockLocation())
+                : null;
+        // In case access location is a public waypoint, rendering RANDOM TELEPORT button.
+        if (accessBlock != null && Utilities.isLodestonePublic(accessBlock))
+            cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_RANDOM_TELEPORT), (event) -> {
+                final Player viewer = cPanel.getViewer();
+                // Sending message to the player.
+                Message.of(PluginLocale.RANDOM_TELEPORT_SEARCHING).sendActionBar(viewer);
+                // Searching for safe location...
+                Utilities.getSafeLocation(PluginConfig.RANDOM_TELEPORT_MIN_DISTANCE, PluginConfig.RANDOM_TELEPORT_MAX_DISTANCE).thenAccept(location -> {
+                    // In case location was found, teleporting player to it.
+                    if (location != null) Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                        if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
+                            // Displaying particles. NOTE: This can expose vanished players.
+                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                                PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                    current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                });
+                            }
+                            // Playing sounds. NOTE: This can expose vanished players.
+                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                                old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                                current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                        }
+                    });
+                        // Othwerwise, sending error message to the sender.
+                    else Message.of(PluginLocale.RANDOM_TELEPORT_FAILURE_NOT_FOUND).sendActionBar(viewer);
+
+                });
+                // ...
+                cPanel.close();
+            });
+            // Otherwise, rendering SPAWN TELEPORT button.
+        else cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
             final Player viewer = cPanel.getViewer();
             final Location location = AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD);
             // Closing the panel.
             cPanel.close();
             // Teleporting...
-            Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+            Utilities.teleport(viewer, location, PluginConfig.SPAWN_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
                 if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
                     // Displaying particles. NOTE: This can expose vanished players.
                     if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
                         PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                            location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                            current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                         });
                     }
                     // Playing sounds. NOTE: This can expose vanished players.
@@ -170,16 +207,17 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
                 }
             });
         });
+        // Rendering other buttons.
         cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
         cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), null);
         cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseRelativeClaims.INSTANCE, true));
-        // RETURN
+        // Rendering return button.
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> {
-            if (cPanel.getClaim() != null) {
+            // Returning to previous view if applicable.
+            if (cPanel.getClaim() != null)
                 cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true);
-                return;
-            }
-            cPanel.close();
+                // Otherwise, closing the panel.
+            else cPanel.close();
         });
     }
 

@@ -175,14 +175,48 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
     }
 
     private static void renderCommonButtons(final ClaimPanel cPanel) {
-        // Rendering SPAWN TELEPORT button.
-        cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
+        final @Nullable Block accessBlock = (cPanel.getAccessBlockLocation() != null)
+                ? cPanel.getAccessBlockLocation().getWorld().getBlockAt(cPanel.getAccessBlockLocation())
+                : null;
+        // In case access location is a public waypoint, rendering RANDOM TELEPORT button.
+        if (accessBlock != null && Utilities.isLodestonePublic(accessBlock))
+            cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_RANDOM_TELEPORT), (event) -> {
+                final Player viewer = cPanel.getViewer();
+                // Sending message to the player.
+                Message.of(PluginLocale.RANDOM_TELEPORT_SEARCHING).sendActionBar(viewer);
+                // Searching for safe location...
+                Utilities.getSafeLocation(PluginConfig.RANDOM_TELEPORT_MIN_DISTANCE, PluginConfig.RANDOM_TELEPORT_MAX_DISTANCE).thenAccept(location -> {
+                    // In case location was found, teleporting player to it.
+                    if (location != null) Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                        if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
+                            // Displaying particles. NOTE: This can expose vanished players.
+                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                                PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                    current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                });
+                            }
+                            // Playing sounds. NOTE: This can expose vanished players.
+                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                                old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                                current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                        }
+                    });
+                    // Othwerwise, sending error message to the sender.
+                    else Message.of(PluginLocale.RANDOM_TELEPORT_FAILURE_NOT_FOUND).sendActionBar(viewer);
+
+                });
+                // ...
+                cPanel.close();
+            });
+        // Otherwise, rendering SPAWN TELEPORT button.
+        else cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
             final Player viewer = cPanel.getViewer();
             final Location location = AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD);
             // Closing the panel.
             cPanel.close();
             // Teleporting...
-            Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+            Utilities.teleport(viewer, location, PluginConfig.SPAWN_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
                 if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
                     // Displaying particles. NOTE: This can expose vanished players.
                     if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
@@ -198,56 +232,17 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 }
             });
         });
-        // Rendering RANDOM TELEPORT button.
-        final @Nullable Location blockLocation = cPanel.getAccessBlockLocation();
-        if (blockLocation != null) {
-            for (int y = blockLocation.getBlockY(); y >= blockLocation.getBlockY() - 5; y--) {
-                // ...
-                if (blockLocation.getWorld().getBlockAt(blockLocation.getBlockX(), y, blockLocation.getBlockZ()).getType() != Material.COMMAND_BLOCK)
-                    continue;
-                // ...
-                cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_RANDOM_TELEPORT), (event) -> {
-                    final Player viewer = cPanel.getViewer();
-                    // ...
-                    Message.of(PluginLocale.RANDOM_TELEPORT_SEARCHING).sendActionBar(viewer);
-                    // Searching for safe location...
-                    Utilities.getSafeLocation(PluginConfig.RANDOM_TELEPORT_MIN_DISTANCE, PluginConfig.RANDOM_TELEPORT_MAX_DISTANCE).thenAccept(location -> {
-                        // In case location was found, teleporting player to it.
-                        if (location != null) Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
-                            if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
-                                // Displaying particles. NOTE: This can expose vanished players.
-                                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
-                                    PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                                        current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
-                                    });
-                                }
-                                // Playing sounds. NOTE: This can expose vanished players.
-                                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
-                                    old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
-                                if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
-                                    current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
-                            }
-                        });
-                        // Othwerwise, sending error message to the sender.
-                        else Message.of(PluginLocale.RANDOM_TELEPORT_FAILURE_NOT_FOUND).sendActionBar(viewer);
-
-                    });
-                    // ...
-                    cPanel.close();
-                });
-            }
-        }
-
+        // Rendering other buttons.
         cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), null);
         cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseOwnedClaims.INSTANCE, true));
         cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseRelativeClaims.INSTANCE, true));
-        // RETURN
+        // Rendering return button.
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> {
-            if (cPanel.getClaim() != null) {
+            // Returning to previous view if applicable.
+            if (cPanel.getClaim() != null)
                 cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true);
-                return;
-            }
-            cPanel.close();
+            // Otherwise, closing the panel.
+            else cPanel.close();
         });
     }
 

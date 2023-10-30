@@ -9,7 +9,9 @@ import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Biome;
+import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.jetbrains.annotations.ApiStatus.Experimental;
@@ -227,6 +229,16 @@ public final class Utilities {
             }
         }
         return true;
+    }
+
+    /**
+     * Returns {@code true} if this lodestone is public and can be accessed by everyone.
+     */
+    public static boolean isLodestonePublic(final @NotNull Block block) {
+        for (int y = block.getY(); y >= block.getY() - 5; y--)
+            if (block.getWorld().getBlockAt(block.getX(), y, block.getZ()).getType() == Material.COMMAND_BLOCK)
+                return true;
+        return false;
     }
 
 }
