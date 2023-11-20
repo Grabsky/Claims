@@ -48,10 +48,10 @@ public enum BrowseMembers implements Consumer<ClaimPanel> {
             // ...
             final ItemStack head = (user == null)
                     ? new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_REMOVE_MEMBER)
-                            .setName(text(member.getUniqueId().toString(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
+                            .setName(text(member.getUniqueId().toString(), NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
                             .build()
                     : new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_REMOVE_MEMBER)
-                            .setName(text(user.getName(), NamedTextColor.YELLOW, TextDecoration.BOLD).decoration(TextDecoration.ITALIC, false))
+                            .setName(text(user.getName(), NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
                             .setSkullTexture(user.getTextures())
                             .build();
             // ...
