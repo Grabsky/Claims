@@ -7,20 +7,8 @@
                 "amount": 1,
                 "meta": {
                     "name": "<yellow>Teleporty",
-                    "lore": [
-                        "<gray>Kliknij <yellow>LPM<gray>, aby teleportować się na teren.",
-                        "<gray>Kliknij <yellow>PPM<gray>, aby otworzyć menu telpeortacji."
-                    ],
+                    "lore": ["<gray>Kliknij, aby otworzyć menu telpeortacji."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0="
-                }
-            },
-            "browse_settings": {
-                "material": "minecraft:player_head",
-                "amount": 1,
-                "meta": {
-                    "name": "<yellow>Ustawienia",
-                    "lore": ["<gray>Kliknij, aby zmienić ustawienia."],
-                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzZiY2I1OWFkNGIyNjExM2IxYTIwMGE5MDNhNTMxYWRjMzI1MjJjMWJlMTc1N2E1NjZkYjhjOGIifX19"
                 }
             },
             "browse_flags": {
