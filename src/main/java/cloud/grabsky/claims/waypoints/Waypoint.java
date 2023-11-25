@@ -1,13 +1,14 @@
 package cloud.grabsky.claims.waypoints;
 
 import io.papermc.paper.math.Position;
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.Setter;
 import org.bukkit.Location;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
+
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.Setter;
 
 public final class Waypoint {
 

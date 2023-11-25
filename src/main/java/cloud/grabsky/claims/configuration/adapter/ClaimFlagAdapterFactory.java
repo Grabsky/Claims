@@ -11,9 +11,6 @@ import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonReader.Token;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
-import lombok.AccessLevel;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +22,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 import java.util.Set;
+
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 import static com.squareup.moshi.Types.getRawType;
 import static com.squareup.moshi.Types.newParameterizedType;

@@ -11,14 +11,15 @@ import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.exception.ArgumentParseException;
 import cloud.grabsky.commands.exception.CommandLogicException;
 import cloud.grabsky.commands.exception.MissingInputException;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 import java.util.stream.Stream;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class ClaimArgument implements CompletionsProvider, ArgumentParser<Claim> {

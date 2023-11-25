@@ -4,11 +4,12 @@ import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.commands.argument.ClaimArgument;
 import cloud.grabsky.commands.RootCommandManager;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.Consumer;
+
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class CommandArgumentTemplate implements Consumer<RootCommandManager> {

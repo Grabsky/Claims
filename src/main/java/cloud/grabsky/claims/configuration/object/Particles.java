@@ -1,10 +1,11 @@
 package cloud.grabsky.claims.configuration.object;
 
 import com.squareup.moshi.Json;
+import org.bukkit.Particle;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
-import org.bukkit.Particle;
 
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
 public final class Particles {

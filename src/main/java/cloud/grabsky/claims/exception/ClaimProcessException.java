@@ -1,10 +1,11 @@
 package cloud.grabsky.claims.exception;
 
+import net.kyori.adventure.text.Component;
+
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import net.kyori.adventure.text.Component;
 
 @NoArgsConstructor(access = AccessLevel.PUBLIC)
 @AllArgsConstructor(access = AccessLevel.PUBLIC)
