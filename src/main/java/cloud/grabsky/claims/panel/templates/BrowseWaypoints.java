@@ -88,10 +88,16 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             cPanel.setItem(28, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> render(cPanel, viewer, pageToDisplay - 1, maxOnPage));
         // Rendering waypoints.
         while (waypointsIterator.hasNext() == true && slotsIterator.hasNext() == true) {
-            final Waypoint waypoint = waypointsIterator.next();
-            final Location location = waypoint.getLocation().clone();
-            // ...
             final int slot = slotsIterator.next();
+            // ...
+            final Waypoint waypoint = waypointsIterator.next();
+            final @Nullable Location location = waypoint.getLocation().complete();
+            // ...
+            if (location == null) {
+                System.out.println("BrowseWaypoints#render: LOCATION NOT FOUND");
+                cPanel.setItem(slot, new ItemStack(Material.POISONOUS_POTATO), null);
+                continue;
+            }
             // ...
             final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT).edit(meta -> {
                 meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
@@ -266,7 +272,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 if (lore != null)
                     meta.lore(lore.stream().map(line -> {
                         return Message.of(line)
-                                .replace("[LOCATION]", waypoint.getLocation().blockX() + ", " + waypoint.getLocation().blockY() + ", " + waypoint.getLocation().blockZ())
+                                .replace("[LOCATION]", (int) waypoint.getLocation().x() + ", " + (int) waypoint.getLocation().y() + ", " + (int) waypoint.getLocation().z())
                                 .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
                                 .getMessage();
                     }).toList());
@@ -276,7 +282,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 this.destroy(event.getWhoClicked().getUniqueId(), waypoint).thenAccept(isSuccess -> {
                     cPanel.getManager().getPlugin().getBedrockScheduler().run(1L, (task) -> {
                         // Re-opening panel if access block still exists.
-                        if (waypoint.getLocation().equals(cPanel.getAccessBlockLocation()) == false) {
+                        if (waypoint.getLocation().complete() == null || waypoint.getLocation().complete().equals(cPanel.getAccessBlockLocation()) == false) {
                             cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
                             return;
                         }
@@ -312,10 +318,17 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                         player.closeInventory();
             });
             final Claims plugin = Claims.getInstance();
-            final Location location = waypoint.getLocation();
+            final @Nullable Location location = waypoint.getLocation().complete();
+            // ...
+            if (location == null) {
+                System.out.println("BrowseWaypoints#destroy: LOCATION NOT FOUND");
+                return CompletableFuture.completedFuture(false);
+            }
+            // ...
+
             final NamespacedKey key = toChunkDataKey(toChunkPosition(location));
             // Trying to remove the waypoint...
-            return plugin.getWaypointManager().removeWaypoint(owner, waypoint).thenCombine(location.getWorld().getChunkAtAsync(location), (isSuccess, chunk) -> {
+            return plugin.getWaypointManager().removeWaypoints(owner, waypoint).thenCombine(location.getWorld().getChunkAtAsync(location), (isSuccess, chunk) -> {
                 // Returning 'false' as soon as removal failed.
                 if (isSuccess == false) return false;
                 // ...

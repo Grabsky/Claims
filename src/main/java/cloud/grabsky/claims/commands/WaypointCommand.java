@@ -15,10 +15,12 @@ import cloud.grabsky.commands.component.ExceptionHandler;
 import cloud.grabsky.commands.exception.CommandLogicException;
 import cloud.grabsky.commands.exception.MissingInputException;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
 import java.util.List;
@@ -103,7 +105,9 @@ public final class WaypointCommand extends RootCommand {
                 return;
             }
             // Creating the waypoint.
-            waypointManager.createWaypoint(target.getUniqueId(), name, Waypoint.Source.COMMAND, sender.getLocation()).thenAccept((isSuccess) -> {
+            final Waypoint waypoint = Waypoint.fromCommand(name, sender.getLocation());
+            // ...
+            waypointManager.createWaypoint(target.getUniqueId(), waypoint).thenAccept((isSuccess) -> {
                 // Sending success/error message to command sender.
                 Message.of(isSuccess == true ? PluginLocale.COMMAND_WAYPOINTS_CREATE_SUCCESS : PluginLocale.COMMAND_WAYPOINTS_CREATE_FAILURE_ALREADY_EXISTS)
                         .placeholder("name", name)
@@ -188,7 +192,7 @@ public final class WaypointCommand extends RootCommand {
             // Trying...
             try {
                 // Removing all waypoints (owned by specified player) with given name.
-                waypointManager.removeAllWaypoints(target.getUniqueId(), (waypoint) -> waypoint.getName().equals(name) == true);
+                waypointManager.removeWaypoints(target.getUniqueId(), (waypoint) -> waypoint.getName().equals(name) == true);
                 // Sending success message to command sender.
                 Message.of(PluginLocale.COMMAND_WAYPOINTS_REMOVE_SUCCESS).placeholder("name", name).send(sender);
             } catch (final IllegalArgumentException ___) {
@@ -221,8 +225,14 @@ public final class WaypointCommand extends RootCommand {
                 Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
                 return;
             }
+            final @Nullable Location location = waypoint.getLocation().complete();
+            // ...
+            if (location == null) {
+                System.out.println("WaypointCommand#onWaypointTeleport: LOCATION NOT FOUND");
+                return;
+            }
             // Teleporting sender to location of the waypoint.
-            sender.teleportAsync(waypoint.getLocation()).thenAccept(isSuccess -> {
+            sender.teleportAsync(location).thenAccept(isSuccess -> {
                 // Sending success message to command sender.
                 Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(sender);
             });
