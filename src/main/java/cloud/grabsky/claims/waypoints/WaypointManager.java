@@ -1,12 +1,14 @@
 package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import io.papermc.paper.math.BlockPosition;
+import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.ApiStatus.Internal;
@@ -187,6 +189,14 @@ public final class WaypointManager {
 
     public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull UUID uniqueId) {
         return (cache.containsKey(uniqueId) == true) ? Collections.unmodifiableList(cache.get(uniqueId)) : Collections.emptyList();
+    }
+
+    public @Nullable Waypoint getBlockWaypoint(final @NotNull Location location) {
+        return cache.entrySet().stream()
+                .filter(waypoint -> {
+                    waypoint.getSource() == Waypoint.Source.BLOCK && Utilities.equalsNonNull(waypoint.getLocation().complete(), location) == true
+                })
+                .findFirst().orElse(null);
     }
 
     public @Nullable Waypoint getFirstWaypoint(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) {

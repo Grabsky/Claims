@@ -30,7 +30,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 
 import static cloud.grabsky.claims.util.Utilities.toChunkPosition;
 import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
@@ -141,7 +140,7 @@ public final class WaypointListener implements Listener {
                 return;
             }
             // Trying to "destroy" the waypoint.
-            this.destroy(key, ownerUniqueId, waypoint).whenComplete((isSuccess, e) -> {
+            this.destroy(ownerUniqueId, waypoint).whenComplete((isSuccess, e) -> {
                 // Printing stack trace in case some exception occurred during the method invocation.
                 if (e != null) e.printStackTrace();
                 // TO-DO: Error message suggesting to destroy and place one more time. (?)
@@ -166,6 +165,7 @@ public final class WaypointListener implements Listener {
                 return false;
             // IllegalArgumentException is thrown when provided UUID is invalid.
             final UUID ownerUniqueId = UUID.fromString(location.getChunk().getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, "INVALID_UUID"));
+            //
             // Getting first waypoint that matches specified location.
             final @Nullable Waypoint waypoint = waypointManager.getFirstWaypoint(ownerUniqueId, (cached) -> {
                 return cached.getLocation().complete() != null && cached.getLocation().complete().equals(location) == true;
@@ -178,7 +178,7 @@ public final class WaypointListener implements Listener {
                 return false;
             }
             // Trying to "destroy" the waypoint.
-            this.destroy(key, ownerUniqueId, waypoint).whenComplete((isSuccess, e) -> {
+            this.destroy(ownerUniqueId, waypoint).whenComplete((isSuccess, e) -> {
                 // Printing stack trace in case some exception occurred during the method invocation.
                 if (e != null) e.printStackTrace();
             });
@@ -202,9 +202,9 @@ public final class WaypointListener implements Listener {
             if (location.getChunk().getPersistentDataContainer().has(key, PersistentDataType.STRING) == false)
                 return false;
             // IllegalArgumentException is thrown when provided UUID is invalid.
-            final UUID ownerUniqueId = UUID.fromString(location.getChunk().getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, "INVALID_UUID"));
+            final UUID owner = UUID.fromString(location.getChunk().getPersistentDataContainer().getOrDefault(toChunkDataKey(toChunkPosition(location)), PersistentDataType.STRING, "INVALID_UUID"));
             // Getting first waypoint that matches specified location.
-            final @Nullable Waypoint waypoint = waypointManager.getFirstWaypoint(ownerUniqueId, (cached) -> {
+            final @Nullable Waypoint waypoint = waypointManager.getFirstWaypoint(owner, (cached) -> {
                 return cached.getLocation().complete() != null && cached.getLocation().complete().equals(location) == true;
             });
             // Setting block to AIR, to remove drops.
@@ -215,50 +215,24 @@ public final class WaypointListener implements Listener {
                 return false;
             }
             // Trying to "destroy" the waypoint.
-            this.destroy(key, ownerUniqueId, waypoint).whenComplete((isSuccess, e) -> {
-                // Printing stack trace in case some exception occurred during the method invocation.
-                if (e != null) e.printStackTrace();
-            });
+            this.destroy(owner, waypoint);
             return false;
         });
     }
 
-    private CompletableFuture<Boolean> create(final @NotNull NamespacedKey key, final @NotNull Player owner, final @NotNull Location location) {
+    private void create(final @NotNull Player owner, final @NotNull Location location) {
         final Waypoint waypoint = Waypoint.fromBlock(PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, location);
         // ...
-        location.getBlock().getChunk().getPersistentDataContainer().set(key, PersistentDataType.STRING, owner.getUniqueId().toString());
-        // Trying to create the waypoint...
-        return waypointManager.createWaypoint(owner.getUniqueId(), waypoint).thenApply(isSuccess -> {
-            // Returning 'false' as soon as creation failed.
-            if (isSuccess == false) return false;
-            // This stuff have to be scheduled onto the main thread.
-            plugin.getBedrockScheduler().run(1L, (task) -> {
-                // Setting cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
-                owner.setCooldown(Material.LODESTONE, PluginConfig.WAYPOINT_SETTINGS_PLACE_COOLDOWN * 20);
-                // Decorating the block.
-                Waypoint.decorateBlock(waypoint);
-            });
-            // ...
-            return true;
+        waypoint.create(waypointManager, owner.getUniqueId()).thenAccept(___ -> {
+            // Setting cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
+            owner.setCooldown(Material.LODESTONE, PluginConfig.WAYPOINT_SETTINGS_PLACE_COOLDOWN * 20);
         });
     }
 
-    private CompletableFuture<Boolean> destroy(final @NotNull NamespacedKey key, final @NotNull UUID uniqueId, final @NotNull Waypoint waypoint) {
-        // Invalidating sessions and closing inventories.
-        Waypoint.invalidateRenameSessions(waypoint);
+    private void destroy(final @NotNull Player owner, final @NotNull Location location) {
+        final Waypoint waypoint = Waypoint.fromBlock(PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, location);
         // ...
-
-        // Trying to remove the waypoint...
-        return waypointManager.removeWaypoints(uniqueId, waypoint).thenApply(isSuccess -> {
-            // Returning 'false' as soon as removal failed.
-            if (isSuccess == false) return false;
-            // ...
-
-            // Undecorating the block on the main thread.
-            plugin.getBedrockScheduler().run(1L, (task) -> Waypoint.undecorateBlock(key, waypoint));
-            // ...
-            return true;
-        });
+        waypoint.destroy(waypointManager, owner.getUniqueId());
     }
 
 }

@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.ListIterator;
+import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -239,6 +240,17 @@ public final class Utilities {
             if (block.getWorld().getBlockAt(block.getX(), y, block.getZ()).getType() == Material.COMMAND_BLOCK)
                 return true;
         return false;
+    }
+
+    /**
+     * Returns {@code true} if both objects are equal and not-null, otherwise {@code false} is returned.
+     */
+    public static boolean equalsNonNull(final @Nullable Object first, final @Nullable Object second) {
+        // Returning 'false' in case both values are null.
+        if (first == null && second == null)
+            return false;
+        // Comparing and returning the result otherwise.
+        return Objects.equals(first, second);
     }
 
 }
