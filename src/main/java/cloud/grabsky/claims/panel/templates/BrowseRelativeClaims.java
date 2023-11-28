@@ -12,6 +12,7 @@ import cloud.grabsky.claims.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -121,11 +122,8 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
     }
 
     private static void renderCommonButtons(final ClaimPanel cPanel) {
-        final @Nullable Block accessBlock = (cPanel.getAccessBlockLocation() != null)
-                ? cPanel.getAccessBlockLocation().getWorld().getBlockAt(cPanel.getAccessBlockLocation())
-                : null;
         // In case access location is a public waypoint, rendering RANDOM TELEPORT button.
-        if (accessBlock != null && Utilities.isLodestonePublic(accessBlock))
+        if (cPanel.getAccessBlockLocation() != null && Utilities.findFirstBlockUnder(cPanel.getAccessBlockLocation(), 5, Material.COMMAND_BLOCK) != null)
             cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_RANDOM_TELEPORT), (event) -> {
                 final Player viewer = cPanel.getViewer();
                 // Sending message to the player.

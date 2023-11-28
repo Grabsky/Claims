@@ -8,12 +8,15 @@ import cloud.grabsky.commands.exception.NumberParseException;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
 import org.bukkit.Chunk;
+import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.util.RayTraceResult;
+import org.bukkit.util.Vector;
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -233,16 +236,6 @@ public final class Utilities {
     }
 
     /**
-     * Returns {@code true} if this lodestone is public and can be accessed by everyone.
-     */
-    public static boolean isLodestonePublic(final @NotNull Block block) {
-        for (int y = block.getY(); y >= block.getY() - 5; y--)
-            if (block.getWorld().getBlockAt(block.getX(), y, block.getZ()).getType() == Material.COMMAND_BLOCK)
-                return true;
-        return false;
-    }
-
-    /**
      * Returns {@code true} if both objects are equal and not-null, otherwise {@code false} is returned.
      */
     public static boolean equalsNonNull(final @Nullable Object first, final @Nullable Object second) {
@@ -251,6 +244,16 @@ public final class Utilities {
             return false;
         // Comparing and returning the result otherwise.
         return Objects.equals(first, second);
+    }
+
+    private static final org.bukkit.util.Vector BOTTOM = new Vector(0, -1, 0);
+
+    @SuppressWarnings("UnstableApiUsage")
+    public static @Nullable Block findFirstBlockUnder(final Location location, final int depth, final Material type) {
+        // Raytracing blocks. This is likely to be less performent than classic for-loop, but definitely cleaner and more readable.
+        final @Nullable RayTraceResult result = location.getWorld().rayTraceBlocks(location, BOTTOM, depth, FluidCollisionMode.NEVER, true, (block) -> block.getType() == type);
+        // Returning the result Block instance or null.
+        return (result != null) ? result.getHitBlock() : null;
     }
 
 }

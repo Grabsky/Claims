@@ -36,28 +36,40 @@ public final class Waypoint {
     /**
      * Creates a new {@link Waypoint} instance of {@link Source#COMMAND Source.COMMAND} source.
      */
-    public static @NotNull Waypoint fromCommand(final String name, final Location location) {
+    @Internal
+    public static @NotNull Waypoint fromCommand(final UUID owner, final String name, final Location location) {
         return new Waypoint(
                 name,
                 name,
                 System.currentTimeMillis(),
                 LazyLocation.fromLocation(location),
                 Source.COMMAND
-        );
+        ).complete(owner);
     }
 
     /**
      * Creates a new {@link Waypoint} instance of {@link Source#BLOCK Source.BLOCK} source.
      */
-    public static @NotNull Waypoint fromBlock(final String displayName, final Location location) {
+    @Internal
+    public static @NotNull Waypoint fromBlock(final UUID owner, final String displayName, final Location location) {
         return new Waypoint(
                 location.x() + "_" + location.y() + "_" + location.z(),
                 displayName,
                 System.currentTimeMillis(),
                 LazyLocation.fromLocation(location),
                 Source.BLOCK
-        );
+        ).complete(owner);
     }
+
+    @Internal
+    public @NotNull Waypoint complete(final @NotNull UUID owner) {
+        this.owner = owner;
+        // Returning this instance.
+        return this;
+    }
+
+    @Getter(AccessLevel.PUBLIC)
+    private transient UUID owner;
 
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull String name;
@@ -72,13 +84,14 @@ public final class Waypoint {
         this.displayName = displayName;
     }
 
-
-
     @Getter(AccessLevel.PUBLIC)
-    private final long createdOn;
+    private final @NotNull Long createdOn;
 
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull LazyLocation location;
+
+    @Getter(AccessLevel.PUBLIC)
+    private final @NotNull Source source;
 
     @Getter(AccessLevel.PUBLIC)
     private transient boolean isPendingRename = false;
@@ -93,9 +106,6 @@ public final class Waypoint {
         this.isPendingRename = state;
     }
 
-    @Getter(AccessLevel.PUBLIC)
-    private final @NotNull Source source;
-
 
     /**
      * Represents source context of how {@link Waypoint} has been created.
@@ -108,8 +118,8 @@ public final class Waypoint {
     private static final Color TRANSPARENT = Color.fromARGB(0, 0, 0, 0);
 
     // NOTE: Untested, some methods may be triggered asynchronously when they're not supposed to...
-    public CompletableFuture<Void> create(final @NotNull WaypointManager manager, final @NotNull UUID uniqueId) {
-        return manager.createWaypoint(uniqueId, this).thenCompose(isSuccess -> {
+    public CompletableFuture<Void> create(final @NotNull WaypointManager manager) {
+        return manager.createWaypoint(this.getOwner(), this).thenCompose(isSuccess -> {
             // Completing in case removal has failed.
             if (isSuccess == false)
                 return CompletableFuture.completedFuture(null);
@@ -124,7 +134,7 @@ public final class Waypoint {
             // Decoragint the block...
             return location.getWorld().getChunkAtAsync(location).thenApply(chunk -> {
                 // Tagging the chunk...
-                chunk.getPersistentDataContainer().set(toChunkDataKey(toChunkPosition(location)), PersistentDataType.STRING, uniqueId.toString());
+                // chunk.getPersistentDataContainer().set(toChunkDataKey(toChunkPosition(location)), PersistentDataType.STRING, uniqueId.toString());
                 // Playing effects...
                 location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_SET_SPAWN, 1.0F, 1.0F);
                 // Creating TextDisplay above placed block.
@@ -147,8 +157,8 @@ public final class Waypoint {
     }
 
     // NOTE: Untested, some methods may be triggered asynchronously when they're not supposed to...
-    public CompletableFuture<Void> destroy(final @NotNull WaypointManager manager, final @NotNull UUID uniqueId) {
-        return manager.removeWaypoints(uniqueId, this).thenCompose(isSuccess -> {
+    public CompletableFuture<Void> destroy(final @NotNull WaypointManager manager, final @NotNull Waypoint waypoint) {
+        return manager.removeWaypoints(waypoint.getOwner(), waypoint).thenCompose(isSuccess -> {
             // Completing in case removal has failed.
             if (isSuccess == false)
                 return CompletableFuture.completedFuture(null);
@@ -192,7 +202,7 @@ public final class Waypoint {
             // Undecorating the block...
             return location.getWorld().getChunkAtAsync(location).thenApply(chunk -> {
                 // Untagging the chunk...
-                chunk.getPersistentDataContainer().remove(toChunkDataKey(toChunkPosition(location)));
+                // chunk.getPersistentDataContainer().remove(toChunkDataKey(toChunkPosition(location)));
                 // Playing effects...
                 location.getWorld().spawnParticle(Particle.DRAGON_BREATH, location, 80, 0.25, 0.25, 0.25, 0.03);
                 location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1.0F, 1.0F);

@@ -1,6 +1,7 @@
 package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.util.InstanceCreator;
 import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
 import com.squareup.moshi.JsonAdapter;
@@ -20,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -37,6 +39,12 @@ import static okio.Okio.buffer;
 import static okio.Okio.sink;
 import static okio.Okio.source;
 
+// TO-DO:
+// - Add field of WaypointManager type to the Waypoint class and test whether InstanceCreator actually work.
+// - Test waypoint listeners, panel and commands.
+// - Check how it's saved to the filesystem.
+// - More work towards "unifying" the waypoint "decorator" methods.
+// - Decide whether Waypoint.create(...) should be used instead of WaypointManager.createWaypoint(...), whatever makes more sense.
 public final class WaypointManager {
 
     @Getter(AccessLevel.PUBLIC)
@@ -55,6 +63,7 @@ public final class WaypointManager {
         this.cache = new ConcurrentHashMap<>();
         // ...
         this.adapter = new Moshi.Builder()
+                .add(InstanceCreator.createFactory(WaypointManager.class, () -> this))
                 .add(NamespacedKey.class, NamespacedKeyAdapter.INSTANCE)
                 .build().adapter(TYPE_LIST_OF_WAYPOINTS).indent("  "); // JsonAdapter<List<Waypoint>>
         // Caching waypoints.
@@ -80,6 +89,8 @@ public final class WaypointManager {
                     // Increasing number of total players.
                     // Loading list of waypoints from the file.
                     final List<Waypoint> waypoints = this.readFile(file);
+                    // Completing...
+                    waypoints.replaceAll(waypoint -> waypoint.complete(uniqueId));
                     // Increasing number of loaded players.
                     loadedPlayersCount++;
                     // Adding to the cache...
@@ -192,11 +203,9 @@ public final class WaypointManager {
     }
 
     public @Nullable Waypoint getBlockWaypoint(final @NotNull Location location) {
-        return cache.entrySet().stream()
-                .filter(waypoint -> {
-                    waypoint.getSource() == Waypoint.Source.BLOCK && Utilities.equalsNonNull(waypoint.getLocation().complete(), location) == true
-                })
-                .findFirst().orElse(null);
+        return cache.values().stream().flatMap(Collection::stream).filter(waypoint -> {
+            return waypoint.getSource() == Waypoint.Source.BLOCK && Utilities.equalsNonNull(waypoint.getLocation().complete(), location);
+        }).findFirst().orElse(null);
     }
 
     public @Nullable Waypoint getFirstWaypoint(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) {

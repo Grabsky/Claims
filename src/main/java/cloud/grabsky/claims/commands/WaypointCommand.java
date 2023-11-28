@@ -105,9 +105,9 @@ public final class WaypointCommand extends RootCommand {
                 return;
             }
             // Creating the waypoint.
-            final Waypoint waypoint = Waypoint.fromCommand(name, sender.getLocation());
+            final Waypoint waypoint = Waypoint.fromCommand(target.getUniqueId(), name, sender.getLocation());
             // ...
-            waypointManager.createWaypoint(target.getUniqueId(), waypoint).thenAccept((isSuccess) -> {
+            waypointManager.createWaypoint(target.getUniqueId(), waypoint).thenAccept(isSuccess -> {
                 // Sending success/error message to command sender.
                 Message.of(isSuccess == true ? PluginLocale.COMMAND_WAYPOINTS_CREATE_SUCCESS : PluginLocale.COMMAND_WAYPOINTS_CREATE_FAILURE_ALREADY_EXISTS)
                         .placeholder("name", name)
