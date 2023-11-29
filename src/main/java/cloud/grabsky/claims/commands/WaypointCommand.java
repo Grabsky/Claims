@@ -37,7 +37,7 @@ public final class WaypointCommand extends RootCommand {
         // Getting the first argument (second input element) from command input.
         final String argument = context.getInput().at(1, "").toLowerCase();
         // Displaying list of sub-commands in case no argument has been provided.
-        if (argument.isEmpty() == true)
+        if (index == 0)
             return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it) == true, "create", "remove", "list", "teleport");
         // Otherwise, checking permissions and sending specialized permissions to the sender.
         return (context.getExecutor().hasPermission(this.getPermission() + "." + argument) == true)
