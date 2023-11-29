@@ -32,7 +32,7 @@
                 "material": "minecraft:structure_void",
                 "amount": 1,
                 "meta": {
-                    "name": "<white>Dodaj",
+                    "name": "<yellow>Dodaj",
                     "lore": ["<gray>Kliknij, aby przeglądać listę graczy."],
                     "custom_model_data": 3
                 }
@@ -87,7 +87,7 @@
                 "meta": {
                     "name": "<yellow>Miejsce Teleportu",
                     "lore": ["<gray>Kliknij, aby ustawić miejsce teleportu."],
-                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTJkN2E3NTFlYjA3MWUwOGRiYmM5NWJjNWQ5ZDY2ZTVmNTFkYzY3MTI2NDBhZDJkZmEwM2RlZmJiNjhhN2YzYSJ9fX0="
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzA2NTVkNjM4ZTRiNjIxOWZlNjU1ZjdiZWEzNGY5OTQ5NTQxZGQyMDc3NjRiMzYwODhlZDFiZmZkMWNjM2UxNiJ9fX0="
                 }
             },
             "icon_spawn": {
@@ -123,6 +123,22 @@
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
                 }
             },
+            "icon_waypoint_invalid": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "lore": [
+                        "<dark_gray>› <gray>Pozycja: <yellow>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "",
+                        "<gray>Kliknij <yellow>PPM<gray>, aby zmienić nazwę.",
+                        "<gray>Kliknij <yellow>Q<gray>, aby usunąć.",
+                        "",
+                        "<red>Bezpieczna teleportacja niedostępna."
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
+                }
+            },
             "icon_owned_claim": {
                 "material": "minecraft:player_head",
                 "amount": 1,
@@ -144,7 +160,7 @@
                     "name": "<yellow>Teren",
                     "lore": [
                         "<dark_gray>› <gray>Właściciel: <yellow>[OWNER]",
-                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
+                        "<dark_gray>› <gray>Pozycja: <yellow>[LOCATION]",
                         "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
                         "",
                         "<gray>Kliknij, aby się teleportować."

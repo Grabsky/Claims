@@ -151,7 +151,7 @@ public final class PluginLocale implements JsonConfiguration {
     public static String COMMAND_WAYPOINTS_LIST_FOOTER;
 
     @JsonPath("commands.waypoints_list_none")
-    public static Component COMMAND_WAYPOINTS_LIST_NONE;
+    public static String COMMAND_WAYPOINTS_LIST_NONE;
 
     @JsonPath("commands.waypoints_list_entry")
     public static String COMMAND_WAYPOINTS_LIST_ENTRY;
