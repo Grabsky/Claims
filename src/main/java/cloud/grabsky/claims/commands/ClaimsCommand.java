@@ -251,8 +251,7 @@ public class ClaimsCommand extends RootCommand {
             // Reloading the claims cache...
             claimManager.cacheClaims();
             // Reloading the plugin...
-            if (plugin.reloadConfiguration() == true) {
-
+            if (plugin.onReload() == true) {
                 // Sending success message to the sender.
                 Message.of(PluginLocale.RELOAD_SUCCESS).send(sender);
                 return;

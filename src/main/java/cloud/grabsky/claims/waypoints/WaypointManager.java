@@ -144,7 +144,7 @@ public final class WaypointManager {
      * Removes a waypoint owned by the specified {@link UUID}, then attempts to save changes to the filesystem.
      */
     public @NotNull CompletableFuture<Boolean> removeWaypoints(final @NotNull UUID uniqueId, final @NotNull Waypoint waypoint) throws IllegalArgumentException {
-        return removeWaypoints(uniqueId, (cached) -> cached == waypoint);
+        return removeWaypoints(uniqueId, (cached) -> cached.equals(waypoint) == true);
     }
 
     /**

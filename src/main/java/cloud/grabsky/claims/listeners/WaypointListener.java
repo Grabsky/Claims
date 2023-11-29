@@ -13,7 +13,6 @@ import cloud.grabsky.claims.waypoints.Waypoint.Source;
 import cloud.grabsky.claims.waypoints.WaypointManager;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -26,15 +25,10 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
-import org.bukkit.persistence.PersistentDataType;
-import org.checkerframework.checker.units.qual.N;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.UUID;
-
-import static cloud.grabsky.claims.util.Utilities.toChunkPosition;
-import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
 
 public final class WaypointListener implements Listener {
 
@@ -187,7 +181,7 @@ public final class WaypointListener implements Listener {
     private void destroy(final @NotNull UUID owner, final @NotNull Location location) {
         final Waypoint waypoint = Waypoint.fromBlock(owner, PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, location);
         // ...
-        waypoint.destroy(waypointManager, waypoint);
+        waypoint.destroy(waypointManager);
     }
 
 }
