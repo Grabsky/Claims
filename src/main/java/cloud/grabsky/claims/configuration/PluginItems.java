@@ -12,10 +12,6 @@ public final class PluginItems implements JsonConfiguration {
     @JsonPath("interface.categories.browse_teleports")
     public static ItemStack INTERFACE_CATEGORIES_BROWSE_TELEPORTS;
 
-    // Interface > Categories > Browse Settings
-    @JsonPath("interface.categories.browse_settings")
-    public static ItemStack INTERFACE_CATEGORIES_BROWSE_SETTINGS;
-
     // Interface > Categories > Browse Flags
     @JsonPath("interface.categories.browse_flags")
     public static ItemStack INTERFACE_CATEGORIES_BROWSE_FLAGS;
@@ -64,6 +60,10 @@ public final class PluginItems implements JsonConfiguration {
     // Interface > Functional > Icon Waypoint
     @JsonPath("interface.functional.icon_waypoint")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_WAYPOINT;
+
+    // Interface > Functional > Icon Waypoint (Invalid)
+    @JsonPath("interface.functional.icon_waypoint_invalid")
+    public static ItemStack INTERFACE_FUNCTIONAL_ICON_WAYPOINT_INVALID;
 
     // Interface > Functional > Icon Claim (Owned)
     @JsonPath("interface.functional.icon_owned_claim")

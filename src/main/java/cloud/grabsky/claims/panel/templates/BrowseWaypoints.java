@@ -12,23 +12,14 @@ import cloud.grabsky.claims.session.Session;
 import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
-import cloud.grabsky.claims.waypoints.WaypointManager;
-import io.papermc.paper.math.BlockPosition;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
-import org.bukkit.Particle;
-import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.TextDisplay;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,8 +28,6 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 import lombok.AccessLevel;
@@ -46,13 +35,9 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
-import static cloud.grabsky.claims.util.Utilities.toChunkPosition;
-import static cloud.grabsky.claims.waypoints.WaypointManager.toChunkDataKey;
 import static net.kyori.adventure.text.Component.text;
-import static org.bukkit.persistence.PersistentDataType.STRING;
 
 // TO-DO: Clean up the mess.
-@SuppressWarnings("UnstableApiUsage")
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BrowseWaypoints implements Consumer<ClaimPanel> {
     /* SINGLETON */ public static final BrowseWaypoints INSTANCE = new BrowseWaypoints();
@@ -88,19 +73,19 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             cPanel.setItem(28, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> render(cPanel, viewer, pageToDisplay - 1, maxOnPage));
         // Rendering waypoints.
         while (waypointsIterator.hasNext() == true && slotsIterator.hasNext() == true) {
-            final Waypoint waypoint = waypointsIterator.next();
-            final Location location = waypoint.getLocation().clone();
-            // ...
             final int slot = slotsIterator.next();
             // ...
-            final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT).edit(meta -> {
+            final Waypoint waypoint = waypointsIterator.next();
+            final @Nullable Location location = waypoint.getLocation().complete();
+            // ...
+            final ItemBuilder icon = new ItemBuilder(location != null ? PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT : PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT_INVALID).edit(meta -> {
                 meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
                 // ...
                 final @Nullable List<Component> lore = meta.lore();
                 if (lore != null)
                     meta.lore(lore.stream().map(line -> {
                         return Message.of(line)
-                                .replace("[LOCATION]", location.blockX() + ", " + location.blockY() + ", " + location.blockZ())
+                                .replace("[LOCATION]", waypoint.getLocation().x() + ", " + waypoint.getLocation().y() + ", " + waypoint.getLocation().z())
                                 .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
                                 .getMessage();
                     }).toList());
@@ -110,36 +95,33 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 switch (event.getClick()) {
                     // Teleporting...
                     case LEFT, SHIFT_LEFT -> {
+                        if (location == null)
+                            return;
+                        // Teleport with effects... (BLOCK source waypoints)
                         if (waypoint.getSource() == Source.BLOCK) {
                             location.getWorld().getChunkAtAsync(location).thenAccept(chunk -> {
-                                final NamespacedKey key = WaypointManager.toChunkDataKey(toChunkPosition(location));
-                                if (chunk.getPersistentDataContainer().getOrDefault(key, STRING, "").equals(viewer.getUniqueId().toString()) == true) {
-                                    // Closing the panel.
-                                    cPanel.close();
-                                    // Teleporting...
-                                    Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
-                                        if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
-                                            // Displaying particles. NOTE: This can expose vanished players.
-                                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
-                                                PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                                                    current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
-                                                });
-                                            }
-                                            // Playing sounds. NOTE: This can expose vanished players.
-                                            if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
-                                                old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
-                                            if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
-                                                current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
-                                        }
-                                    });
-                                    return;
-                                }
+                                // Closing the panel.
                                 cPanel.close();
-                                Message.of(PluginLocale.UI_WAYPOINT_TELEPORT_FAILURE_NOT_EXISTENT).sendActionBar(viewer);
+                                // Teleporting...
+                                Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                                    if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
+                                        // Displaying particles. NOTE: This can expose vanished players.
+                                        if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
+                                            PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                                current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                            });
+                                        }
+                                        // Playing sounds. NOTE: This can expose vanished players.
+                                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
+                                            old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
+                                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
+                                            current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                                    }
+                                });
                             });
                             return;
                         }
-                        // Just teleport otherwise... (non BLOCK source waypoints)
+                        // Just teleport otherwise... (non-BLOCK source waypoints)
                         cPanel.close();
                         // Teleporting...
                         Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", null);
@@ -175,11 +157,8 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
     }
 
     private static void renderCommonButtons(final ClaimPanel cPanel) {
-        final @Nullable Block accessBlock = (cPanel.getAccessBlockLocation() != null)
-                ? cPanel.getAccessBlockLocation().getWorld().getBlockAt(cPanel.getAccessBlockLocation())
-                : null;
         // In case access location is a public waypoint, rendering RANDOM TELEPORT button.
-        if (accessBlock != null && Utilities.isLodestonePublic(accessBlock))
+        if (cPanel.getAccessBlockLocation() != null && Utilities.findFirstBlockUnder(cPanel.getAccessBlockLocation(), 5, Material.COMMAND_BLOCK) != null)
             cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_RANDOM_TELEPORT), (event) -> {
                 final Player viewer = cPanel.getViewer();
                 // Sending message to the player.
@@ -264,82 +243,18 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 // ...
                 final @Nullable List<Component> lore = meta.lore();
                 if (lore != null)
-                    meta.lore(lore.stream().map(line -> {
-                        return Message.of(line)
-                                .replace("[LOCATION]", waypoint.getLocation().blockX() + ", " + waypoint.getLocation().blockY() + ", " + waypoint.getLocation().blockZ())
-                                .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
-                                .getMessage();
-                    }).toList());
+                    meta.lore(lore.stream().map(line -> Message.of(line)
+                            .replace("[LOCATION]", (int) waypoint.getLocation().x() + ", " + (int) waypoint.getLocation().y() + ", " + (int) waypoint.getLocation().z())
+                            .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
+                            .getMessage()
+                    ).toList());
             });
             // ...
-            cPanel.setItem(13, icon.build(), (event) -> {
-                this.destroy(event.getWhoClicked().getUniqueId(), waypoint).thenAccept(isSuccess -> {
-                    cPanel.getManager().getPlugin().getBedrockScheduler().run(1L, (task) -> {
-                        // Re-opening panel if access block still exists.
-                        if (waypoint.getLocation().equals(cPanel.getAccessBlockLocation()) == false) {
-                            cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
-                            return;
-                        }
-                        // Closing the panel otherwise.
-                        cPanel.close();
-                    });
-                });
-            });
+            cPanel.setItem(13, icon.build(), (event) -> waypoint.destroy(Claims.getInstance().getWaypointManager()).thenAcceptAsync((___) -> {
+                cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
+            }));
             // RETURN
             cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
-        }
-
-        private CompletableFuture<Boolean> destroy(final UUID owner, final @NotNull Waypoint waypoint) {
-            // Invalidating sessions and closing inventories.
-            Bukkit.getOnlinePlayers().forEach(player -> {
-                final UUID onlineUniqueId = player.getUniqueId();
-                final @Nullable Session<?> session = Session.Listener.CURRENT_EDIT_SESSIONS.getIfPresent(onlineUniqueId);
-                if (session != null) {
-                    final @Nullable Location sessionAccessBlockLocation = session.getAssociatedPanel().getAccessBlockLocation();
-                    // Skipping unrelated sessions.
-                    if (sessionAccessBlockLocation != null && (waypoint.getLocation().equals(sessionAccessBlockLocation) == true || session.getSubject().equals(waypoint) == true)) {
-                        final @Nullable Player sessionOperator = Bukkit.getPlayer(onlineUniqueId);
-                        // Invalidating and clearing the title.
-                        if (sessionOperator != null && sessionOperator.isOnline() == true) {
-                            Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(onlineUniqueId);
-                            sessionOperator.clearTitle();
-                        }
-                    }
-                }
-                // Closing open panels.
-                if (player.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel)
-                    if (waypoint.getLocation().equals(cPanel.getAccessBlockLocation()) == true)
-                        player.closeInventory();
-            });
-            final Claims plugin = Claims.getInstance();
-            final Location location = waypoint.getLocation();
-            final NamespacedKey key = toChunkDataKey(toChunkPosition(location));
-            // Trying to remove the waypoint...
-            return plugin.getWaypointManager().removeWaypoint(owner, waypoint).thenCombine(location.getWorld().getChunkAtAsync(location), (isSuccess, chunk) -> {
-                // Returning 'false' as soon as removal failed.
-                if (isSuccess == false) return false;
-                // ...
-                final BlockPosition pos = toChunkPosition(location);
-                // This stuff have to be scheduled onto the main thread.
-                plugin.getBedrockScheduler().run(1L, (task) -> {
-                    // ...
-                    final Block block = chunk.getBlock(pos.blockX(), pos.blockY(), pos.blockZ());
-                    // ...
-                    if (block.getType() == Material.LODESTONE)
-                        block.setType(Material.AIR);
-                    // ...
-                    location.getChunk().getPersistentDataContainer().remove(key);
-                    // Displaying visual effects.
-                    location.getWorld().spawnParticle(Particle.DRAGON_BREATH, location, 80, 0.25, 0.25, 0.25, 0.03);
-                    location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1.0F, 1.0F);
-                    // Removing TextDisplay above the block.
-                    location.getNearbyEntities(2, 2, 2).stream().filter(TextDisplay.class::isInstance).forEach(entity -> {
-                        if (entity.getPersistentDataContainer().has(key, PersistentDataType.BYTE) == true)
-                            entity.remove();
-                    });
-                });
-                return true;
-            });
         }
 
     }

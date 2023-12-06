@@ -42,14 +42,14 @@
             " "
         ],
         "claims_list_owner_of_footer": " ",
-        "claims_list_owner_of_none": "<dark_gray>› <gold><player><gray> nie jest właścicielem żadnego terenu.",
+        "claims_list_owner_of_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie jest właścicielem żadnego terenu.",
 
         "claims_list_member_of_header": [
             "<dark_gray>› <gold><player><gray> jest członkiem <gold><count><gray> terenów:",
             " "
         ],
         "claims_list_member_of_footer": " ",
-        "claims_list_member_of_none": "<dark_gray>› <gold><player><gray> nie jest członkiem żadnego terenu.",
+        "claims_list_member_of_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie jest członkiem żadnego terenu.",
         "claims_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Pozycja: <gold><claim_location>'><gray>瘀 <gold><claim>",
         // Claims > Restore
         "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",

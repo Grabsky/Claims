@@ -1,8 +1,8 @@
 package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
-import cloud.grabsky.claims.configuration.PluginConfig;
-import cloud.grabsky.claims.waypoints.adapter.LocationAdapter;
+import cloud.grabsky.claims.util.InstanceCreator;
+import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.JsonReader;
@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +39,12 @@ import static okio.Okio.buffer;
 import static okio.Okio.sink;
 import static okio.Okio.source;
 
+// TO-DO:
+// - Add field of WaypointManager type to the Waypoint class and test whether InstanceCreator actually work.
+// - Test waypoint listeners, panel and commands.
+// - Check how it's saved to the filesystem.
+// - More work towards "unifying" the waypoint "decorator" methods.
+// - Decide whether Waypoint.create(...) should be used instead of WaypointManager.createWaypoint(...), whatever makes more sense.
 public final class WaypointManager {
 
     @Getter(AccessLevel.PUBLIC)
@@ -56,8 +63,8 @@ public final class WaypointManager {
         this.cache = new ConcurrentHashMap<>();
         // ...
         this.adapter = new Moshi.Builder()
+                .add(InstanceCreator.createFactory(WaypointManager.class, () -> this))
                 .add(NamespacedKey.class, NamespacedKeyAdapter.INSTANCE)
-                .add(LocationAdapter.INSTANCE)
                 .build().adapter(TYPE_LIST_OF_WAYPOINTS).indent("  "); // JsonAdapter<List<Waypoint>>
         // Caching waypoints.
         this.cacheWaypoints();
@@ -82,6 +89,8 @@ public final class WaypointManager {
                     // Increasing number of total players.
                     // Loading list of waypoints from the file.
                     final List<Waypoint> waypoints = this.readFile(file);
+                    // Completing...
+                    waypoints.replaceAll(waypoint -> waypoint.complete(uniqueId));
                     // Increasing number of loaded players.
                     loadedPlayersCount++;
                     // Adding to the cache...
@@ -98,6 +107,9 @@ public final class WaypointManager {
         plugin.getLogger().info("Successfully loaded " + loadedWaypointsCount + " waypoint(s) owned by " + loadedPlayersCount + " player(s) total.");
     }
 
+    /**
+     * Reads file containing waypoints.
+     */
     @SuppressWarnings("unchecked")
     private @NotNull List<Waypoint> readFile(final @NotNull File file) throws IOException, IllegalStateException {
         // Creating a JsonReader from provided file.
@@ -113,32 +125,32 @@ public final class WaypointManager {
         return waypoints;
     }
 
-    public @NotNull CompletableFuture<Boolean> createWaypoint(final @NotNull UUID uniqueId, final @NotNull String name, final @NotNull Waypoint.Source source, final @NotNull Location location) {
+    /**
+     * Creates a waypoint for the specified {@link UUID} with the given parameters, then attempts to save changes to the filesystem.
+     */
+    public @NotNull CompletableFuture<Boolean> createWaypoint(final @NotNull UUID uniqueId, @NotNull Waypoint waypoint) {
+        final String name = waypoint.getName();
         // Creating Waypoint object using provided values, or overriding existing one.
-        final Waypoint waypoint = cache.getOrDefault(uniqueId, new ArrayList<>()).stream()
-                .filter(w -> w.getName().equalsIgnoreCase(name) == true)
-                .findFirst().orElse(new Waypoint(name, PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, source, System.currentTimeMillis(), location));
+        waypoint = cache.getOrDefault(uniqueId, new ArrayList<>()).stream()
+                .filter(cachedWaypoint -> cachedWaypoint.getName().equalsIgnoreCase(name) == true)
+                .findFirst().orElse(waypoint);
         // Adding waypoint to the cache.
         cache.computeIfAbsent(uniqueId, (___) -> new ArrayList<>()).add(waypoint);
         // Saving and returning the result.
         return this.save(uniqueId);
     }
 
-    public @NotNull CompletableFuture<Boolean> removeWaypoint(final @NotNull UUID uniqueId, final @NotNull Waypoint waypoint) throws IllegalArgumentException {
-        // Creating a copy of waypoints owned by specified player.
-        final List<Waypoint> waypointsCopy = (cache.containsKey(uniqueId) == true) ? new ArrayList<>(cache.get(uniqueId)) : new ArrayList<>();
-        // Removing waypoint matching provided object.
-        waypointsCopy.remove(waypoint);
-        // Returning "failed" CompletableFuture in case nothing was removed from the list.
-        if ((cache.containsKey(uniqueId) == true ? cache.get(uniqueId).size() : 0) == waypointsCopy.size())
-            throw new IllegalArgumentException("Waypoint (OWNER = " + uniqueId + ", NAME = " + waypoint.getName() + ") does not exist or belong to " + uniqueId + ".");
-        // Updating the cache.
-        cache.put(uniqueId, waypointsCopy);
-        // Saving and returning the result.
-        return this.save(uniqueId);
+    /**
+     * Removes a waypoint owned by the specified {@link UUID}, then attempts to save changes to the filesystem.
+     */
+    public @NotNull CompletableFuture<Boolean> removeWaypoints(final @NotNull UUID uniqueId, final @NotNull Waypoint waypoint) throws IllegalArgumentException {
+        return removeWaypoints(uniqueId, (cached) -> cached.equals(waypoint) == true);
     }
 
-    public @NotNull CompletableFuture<Boolean> removeAllWaypoints(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) throws IllegalArgumentException {
+    /**
+     * Removes all waypoints owned by the specified {@link UUID} that match the provided {@link Predicate}, then attempts to save changes to the filesystem.
+     */
+    public @NotNull CompletableFuture<Boolean> removeWaypoints(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) throws IllegalArgumentException {
         // Creating a copy of waypoints owned by specified player.
         final List<Waypoint> waypointsCopy = (cache.containsKey(uniqueId) == true) ? new ArrayList<>(cache.get(uniqueId)) : new ArrayList<>();
         // Removing waypoint(s) matching provided location.
@@ -152,6 +164,9 @@ public final class WaypointManager {
         return this.save(uniqueId);
     }
 
+    /**
+     * Saves waypoints owned by the specified {@link UUID} to the filesystem.
+     */
     public @NotNull CompletableFuture<Boolean> save(final @NotNull UUID uniqueId) {
         ensureDataDirectoryExists();
         // ...
@@ -179,12 +194,18 @@ public final class WaypointManager {
         });
     }
 
+    public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull OfflinePlayer player) {
+        return this.getWaypoints(player.getUniqueId());
+    }
+
     public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull UUID uniqueId) {
         return (cache.containsKey(uniqueId) == true) ? Collections.unmodifiableList(cache.get(uniqueId)) : Collections.emptyList();
     }
 
-    public @NotNull @Unmodifiable List<Waypoint> getWaypoints(final @NotNull OfflinePlayer player) {
-        return this.getWaypoints(player.getUniqueId());
+    public @Nullable Waypoint getBlockWaypoint(final @NotNull Location location) {
+        return cache.values().stream().flatMap(Collection::stream).filter(waypoint -> {
+            return waypoint.getSource() == Waypoint.Source.BLOCK && Utilities.equalsNonNull(waypoint.getLocation().complete(), location);
+        }).findFirst().orElse(null);
     }
 
     public @Nullable Waypoint getFirstWaypoint(final @NotNull UUID uniqueId, final @NotNull Predicate<Waypoint> predicate) {

@@ -57,6 +57,7 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Executor;
 import java.util.stream.Stream;
 
 import lombok.AccessLevel;
@@ -78,31 +79,35 @@ public final class Claims extends BedrockPlugin {
 
     private ConfigurationMapper mapper;
 
+    // Can be passed to some CompletableFuture methods to make sure code is executed on the main thread.
+    public static Executor MAIN_THREAD_EXECUTOR;
+
     @Override
     public void onEnable() {
         super.onEnable();
-        // ...
+        // Setting the plugin instance.
         instance = this;
-        // ...
+        // Setting the main-thread executor.
+        MAIN_THREAD_EXECUTOR = this.getServer().getScheduler().getMainThreadExecutor(this);
+        // Creating ConfigurationMapper instance.
         this.mapper = PaperConfigurationMapper.create(moshi -> {
             moshi.add(NamedTextColor.class, NamedTextColorAdapter.INSTANCE);
             moshi.add(ClaimFlagAdapterFactory.INSTANCE);
         });
-        // ...
-        if (this.onReload() == false) {
-            return; // Plugin should be disabled automatically whenever exception is thrown.
-        }
+        // Reloading configuration and shutting the server down in case it fails.
+        if (this.onReload() == false)
+            this.getServer().shutdown();
         // Creating instance of RegionManager
         final World world = BukkitAdapter.adapt(PluginConfig.DEFAULT_WORLD);
         final RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
-        // ...
+        // Registering additional WorldGuard flags' handlers.
         Claims.CustomFlag.registerHandlers();
         // Initializing ClaimManager
         this.claimManager = new ClaimManager(this, regionManager);
         this.waypointManager = new WaypointManager(this);
-        // Registering events
+        // Registering Panel/GUI listeners.
         Panel.registerDefaultListeners(this);
-        // ...
+        // Registering plugin listeners.
         this.getServer().getPluginManager().registerEvents(new RegionListener(this, claimManager), this);
         this.getServer().getPluginManager().registerEvents(new WaypointListener(this), this);
         this.getServer().getPluginManager().registerEvents(Session.Listener.INSTANCE, this);
@@ -122,6 +127,7 @@ public final class Claims extends BedrockPlugin {
 
     @Override
     public void onLoad() {
+        // Registering additional WorldGuard flags.
         Claims.CustomFlag.registerFlags();
     }
 
@@ -133,7 +139,7 @@ public final class Claims extends BedrockPlugin {
             final File localeCommands = ensureResourceExistence(this, new File(this.getDataFolder(), "locale_commands.json"));
             final File items = ensureResourceExistence(this, new File(this.getDataFolder(), "items.json"));
             final File flags = ensureResourceExistence(this, new File(this.getDataFolder(), "flags.json"));
-            // ...
+            // Mapping the files.
             mapper.map(
                     ConfigurationHolder.of(PluginConfig.class, config),
                     ConfigurationHolder.of(PluginLocale.class, locale),
@@ -141,29 +147,37 @@ public final class Claims extends BedrockPlugin {
                     ConfigurationHolder.of(PluginItems.class, items),
                     ConfigurationHolder.of(PluginFlags.class, flags)
             );
+            // Returning true, as everything seemed to reload properly.
             return true;
         } catch (final IOException e) {
-            throw new IllegalStateException(e); // Re-throwing as runtime exception
-        }
-    }
-
-    public boolean reloadConfiguration() {
-        try {
-            return onReload();
-        } catch (final ConfigurationMappingException exc) {
-            exc.printStackTrace();
+            this.getLogger().severe("An error occured while trying to reload the plugin.");
+            this.getLogger().severe("  " + e.getMessage());
+            // Returning false, as plugin has failed to reload.
             return false;
         }
     }
 
+
+    /**
+     * Instances of {@link NamespacedKey} keys used all-over the place in the plugin logic.
+     */
     public static final class Key {
 
+        /**
+         * Represents the {@link NamespacedKey} for the claim type.
+         */
         public static final NamespacedKey CLAIM_TYPE = new NamespacedKey("claims", "claim_level");
+
+        /**
+         * Represents the {@link NamespacedKey} for the waypoint decoration. Used to identify the decoration associated with waypoints.
+         */
+        public static final NamespacedKey WAYPOINT_DECORATION = new NamespacedKey("claims", "waypoint_decoration");
 
     }
 
+
     /**
-     * Instances {@link Flag}
+     * Represents custom WorldGuard flags registered by the plugin.
      */
     public static final class CustomFlag {
 
@@ -201,6 +215,7 @@ public final class Claims extends BedrockPlugin {
     }
 
 
+    // This class is used to download runtime dependencies defined by the Gradle bukkit-yml plugin.
     @SuppressWarnings("UnstableApiUsage")
     public static final class PluginLoader implements io.papermc.paper.plugin.loader.PluginLoader {
 
@@ -208,7 +223,7 @@ public final class Claims extends BedrockPlugin {
         public void classloader(final @NotNull PluginClasspathBuilder classpathBuilder) throws IllegalStateException {
             final MavenLibraryResolver resolver = new MavenLibraryResolver();
             // Parsing the file.
-            try (final InputStream in = getClass().getResourceAsStream("/paper-libraries.json")) {
+            try (final InputStream in = this.getClass().getResourceAsStream("/paper-libraries.json")) {
                 final PluginLibraries libraries = new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), PluginLibraries.class);
                 // Adding repositorties.
                 libraries.asRepositories().forEach(resolver::addRepository);

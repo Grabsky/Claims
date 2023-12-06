@@ -15,7 +15,7 @@ import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -150,11 +150,8 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
     }
 
     private static void renderCommonButtons(final ClaimPanel cPanel) {
-        final @Nullable Block accessBlock = (cPanel.getAccessBlockLocation() != null)
-                ? cPanel.getAccessBlockLocation().getWorld().getBlockAt(cPanel.getAccessBlockLocation())
-                : null;
         // In case access location is a public waypoint, rendering RANDOM TELEPORT button.
-        if (accessBlock != null && Utilities.isLodestonePublic(accessBlock))
+        if (cPanel.getAccessBlockLocation() != null && Utilities.findFirstBlockUnder(cPanel.getAccessBlockLocation(), 5, Material.COMMAND_BLOCK) != null)
             cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_RANDOM_TELEPORT), (event) -> {
                 final Player viewer = cPanel.getViewer();
                 // Sending message to the player.
