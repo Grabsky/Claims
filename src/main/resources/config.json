@@ -70,5 +70,15 @@
         },
         // Rename prompt.
         "rename_prompt": { "duration": 15, "title": "<yellow>Zmień Nazwę", "subtitle": "<gray>Podaj nową nazwę na czacie..." }
+    },
+
+    // Compass settings
+    "compass_settings": {
+        // Determines whether enhanced compass integration should be enabled.
+        "enhanced_compass": true,
+        // Refresh rate in ticks.
+        "refresh_rate": 3,
+        // BossBar to be displayed when player is holding compass.
+        "bossbar": { "overlay": "PROGRESS", "color": "YELLOW", "text": "<location_x> x     <location_y> ʏ     <location_z> ᴢ" }
     }
 }

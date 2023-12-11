@@ -7,6 +7,7 @@ import cloud.grabsky.claims.commands.ClaimsCommand;
 import cloud.grabsky.claims.commands.WaypointCommand;
 import cloud.grabsky.claims.commands.templates.CommandArgumentTemplate;
 import cloud.grabsky.claims.commands.templates.CommandExceptionTemplate;
+import cloud.grabsky.claims.compass.CompassHandler;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginItems;
@@ -77,6 +78,8 @@ public final class Claims extends BedrockPlugin {
     @Getter(AccessLevel.PUBLIC)
     private WaypointManager waypointManager;
 
+    private CompassHandler compassHandler;
+
     private ConfigurationMapper mapper;
 
     // Can be passed to some CompletableFuture methods to make sure code is executed on the main thread.
@@ -87,6 +90,8 @@ public final class Claims extends BedrockPlugin {
         super.onEnable();
         // Setting the plugin instance.
         instance = this;
+        // Initializing CompassHandler.
+        this.compassHandler = new CompassHandler(this);
         // Setting the main-thread executor.
         MAIN_THREAD_EXECUTOR = this.getServer().getScheduler().getMainThreadExecutor(this);
         // Creating ConfigurationMapper instance.
@@ -147,6 +152,8 @@ public final class Claims extends BedrockPlugin {
                     ConfigurationHolder.of(PluginItems.class, items),
                     ConfigurationHolder.of(PluginFlags.class, flags)
             );
+            // Reloading the CompassHandler.
+            this.compassHandler.reload();
             // Returning true, as everything seemed to reload properly.
             return true;
         } catch (final IOException e) {
