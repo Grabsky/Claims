@@ -7,7 +7,6 @@ import cloud.grabsky.claims.commands.ClaimsCommand;
 import cloud.grabsky.claims.commands.WaypointCommand;
 import cloud.grabsky.claims.commands.templates.CommandArgumentTemplate;
 import cloud.grabsky.claims.commands.templates.CommandExceptionTemplate;
-import cloud.grabsky.claims.compass.CompassHandler;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginItems;
@@ -20,6 +19,8 @@ import cloud.grabsky.claims.flags.EnterActionBarFlag;
 import cloud.grabsky.claims.flags.LeaveActionBarFlag;
 import cloud.grabsky.claims.flags.object.FixedTime;
 import cloud.grabsky.claims.flags.object.FixedWeather;
+import cloud.grabsky.claims.handlers.ClockHandler;
+import cloud.grabsky.claims.handlers.CompassHandler;
 import cloud.grabsky.claims.listeners.RegionListener;
 import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.claims.session.Session;
@@ -79,6 +80,7 @@ public final class Claims extends BedrockPlugin {
     private WaypointManager waypointManager;
 
     private CompassHandler compassHandler;
+    private ClockHandler clockHandler;
 
     private ConfigurationMapper mapper;
 
@@ -92,6 +94,7 @@ public final class Claims extends BedrockPlugin {
         instance = this;
         // Initializing CompassHandler.
         this.compassHandler = new CompassHandler(this);
+        this.clockHandler = new ClockHandler(this);
         // Setting the main-thread executor.
         MAIN_THREAD_EXECUTOR = this.getServer().getScheduler().getMainThreadExecutor(this);
         // Creating ConfigurationMapper instance.
@@ -154,6 +157,8 @@ public final class Claims extends BedrockPlugin {
             );
             // Reloading the CompassHandler.
             this.compassHandler.reload();
+            // Reloading the ClockHandler.
+            this.clockHandler.reload();
             // Returning true, as everything seemed to reload properly.
             return true;
         } catch (final IOException e) {
