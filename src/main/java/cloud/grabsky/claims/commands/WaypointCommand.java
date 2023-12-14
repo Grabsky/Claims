@@ -14,6 +14,7 @@ import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.component.ExceptionHandler;
 import cloud.grabsky.commands.exception.CommandLogicException;
 import cloud.grabsky.commands.exception.MissingInputException;
+import net.kyori.adventure.text.Component;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
@@ -154,10 +155,15 @@ public final class WaypointCommand extends RootCommand {
                     .send(sender);
             // Iterating over waypoints and listing each of them to the sender.
             for (var waypoint : waypointManager.getWaypoints(target.getUniqueId())) {
+                final @Nullable Location location = waypoint.getLocation().complete();
+                // ...
                 Message.of(PluginLocale.COMMAND_WAYPOINTS_LIST_ENTRY)
                         .replace("<target>", target.getName()) // Uses Message#replace because placeholders does not work inside click events.
                         .replace("<waypoint_name>", waypoint.getName()) // Uses Message#replace because placeholders does not work inside click events.
-                        .placeholder("waypoint_location", waypoint.getLocation())
+                        .placeholder("waypoint_location", (location != null)
+                                ? Component.text(location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ())
+                                : Component.text("N/A")
+                        )
                         .placeholder("waypoint_displayname", waypoint.getDisplayName())
                         .send(sender);
             }
