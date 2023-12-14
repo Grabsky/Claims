@@ -78,11 +78,13 @@ public final class WaypointCommand extends RootCommand {
         }
     }
 
+
     /* WAYPOINTS */
 
     private void onDefault(final @NotNull RootCommandContext context) {
         Message.of(PluginLocale.COMMAND_WAYPOINTS_USAGE).send(context.getExecutor());
     }
+
 
     /* WAYPOINTS CREATE */
 
@@ -119,6 +121,7 @@ public final class WaypointCommand extends RootCommand {
         // Sending error message to command sender.
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
+
 
     /* WAYPOINTS LIST */
 
@@ -175,6 +178,7 @@ public final class WaypointCommand extends RootCommand {
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
+
     /* WAYPOINTS REMOVE */
 
     private static final ExceptionHandler.Factory WAYPOINTS_REMOVE_USAGE = (exception) -> {
@@ -195,16 +199,17 @@ public final class WaypointCommand extends RootCommand {
                 Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
                 return;
             }
-            // Trying...
-            try {
-                // Removing all waypoints (owned by specified player) with given name.
-                waypointManager.removeWaypoints(target.getUniqueId(), (waypoint) -> waypoint.getName().equals(name) == true);
-                // Sending success message to command sender.
-                Message.of(PluginLocale.COMMAND_WAYPOINTS_REMOVE_SUCCESS).placeholder("name", name).send(sender);
-            } catch (final IllegalArgumentException ___) {
-                // Sending error message to command sender.
+            // Getting player's waypoint with given name.
+            final @Nullable Waypoint waypoint = waypointManager.getFirstWaypoint(target.getUniqueId(), (w) -> w.getName().equals(name) == true);
+            // Sending error message to command sender, in case waypoint with such name does not exist.
+            if (waypoint == null) {
                 Message.of(PluginLocale.COMMAND_WAYPOINTS_REMOVE_FAILURE_NOT_FOUND).placeholder("name", name).send(sender);
+                return;
             }
+            // Destroying the waypoint.
+            waypoint.destroy(waypointManager);
+            // Sending success message to command sender.
+            Message.of(PluginLocale.COMMAND_WAYPOINTS_REMOVE_SUCCESS).placeholder("name", name).send(sender);
             return;
         }
         // Sending error message to command sender.
