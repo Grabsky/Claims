@@ -23,13 +23,13 @@ import java.util.function.Consumer;
 import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.bedrock.helpers.Inventories.hasSimilarItems;
 import static cloud.grabsky.bedrock.helpers.Inventories.removeSimilarItems;
-import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
 public enum BrowseCategories implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
 
-    private static final Component INVENTORY_TITLE = text("\u7000\u7101", NamedTextColor.WHITE);
+    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_categories", NamedTextColor.WHITE);
 
     private static final String PERMISSION_BYPASS_UPGRADE_COST = "claims.bypass.ignore_upgrade_cost";
 
@@ -37,7 +37,7 @@ public enum BrowseCategories implements Consumer<ClaimPanel> {
     public void accept(final ClaimPanel cPanel) {
         // Returning in case there is no Claim object associated with this ClaimPanel.
         if (cPanel.getClaim() == null) { cPanel.close(); return; }
-        // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
+        // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
         // "Rendering" the inventory contents.
         this.render(cPanel.getClaim(), cPanel);

@@ -17,11 +17,12 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 
 public enum BrowseMembers implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
 
-    private static final Component INVENTORY_TITLE = text("\u7000\u7104", NamedTextColor.WHITE);
+    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_members", NamedTextColor.WHITE);
     private static final List<Integer> UI_SLOTS = List.of(11, 12, 13, 14, 15,  21, 22, 23, 24, 25);
 
     @Override

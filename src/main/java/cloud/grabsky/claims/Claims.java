@@ -226,44 +226,4 @@ public final class Claims extends BedrockPlugin {
 
     }
 
-
-    // This class is used to download runtime dependencies defined by the Gradle bukkit-yml plugin.
-    @SuppressWarnings("UnstableApiUsage")
-    public static final class PluginLoader implements io.papermc.paper.plugin.loader.PluginLoader {
-
-        @Override
-        public void classloader(final @NotNull PluginClasspathBuilder classpathBuilder) throws IllegalStateException {
-            final MavenLibraryResolver resolver = new MavenLibraryResolver();
-            // Parsing the file.
-            try (final InputStream in = this.getClass().getResourceAsStream("/paper-libraries.json")) {
-                final PluginLibraries libraries = new Gson().fromJson(new InputStreamReader(in, StandardCharsets.UTF_8), PluginLibraries.class);
-                // Adding repositorties.
-                libraries.asRepositories().forEach(resolver::addRepository);
-                // Adding dependencies.
-                libraries.asDependencies().forEach(resolver::addDependency);
-                // Adding library resolver.
-                classpathBuilder.addLibrary(resolver);
-            } catch (final IOException e) {
-                throw new IllegalStateException(e);
-            }
-        }
-
-        @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
-        private static final class PluginLibraries {
-
-            private final Map<String, String> repositories;
-            private final List<String> dependencies;
-
-            public Stream<RemoteRepository> asRepositories() {
-                return repositories.entrySet().stream().map(entry -> new RemoteRepository.Builder(entry.getKey(), "default", entry.getValue()).build());
-            }
-
-            public Stream<Dependency> asDependencies() {
-                return dependencies.stream().map(value -> new Dependency(new DefaultArtifact(value), null));
-            }
-
-        }
-
-    }
-
 }

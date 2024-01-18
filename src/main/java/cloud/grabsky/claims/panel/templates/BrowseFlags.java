@@ -17,11 +17,12 @@ import org.bukkit.inventory.ItemStack;
 import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 
 public enum BrowseFlags implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
 
-    private static final Component INVENTORY_TITLE = text("\u7000\u7104", NamedTextColor.WHITE);
+    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_flags", NamedTextColor.WHITE);
 
     @Override
     public void accept(final ClaimPanel cPanel) {

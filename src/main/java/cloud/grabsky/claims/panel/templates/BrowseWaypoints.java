@@ -36,6 +36,7 @@ import lombok.NoArgsConstructor;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static net.kyori.adventure.text.Component.text;
+import static net.kyori.adventure.text.Component.translatable;
 
 // TO-DO: Clean up the mess.
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
@@ -44,7 +45,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
 
     private List<Waypoint> waypoints;
 
-    private static final Component INVENTORY_TITLE = text("\u7000\u7300", NamedTextColor.WHITE);
+    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_waypoints", NamedTextColor.WHITE);
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm");
     private static final List<Integer> UI_SLOTS = List.of(29, 30, 31, 32, 33);
 
@@ -230,7 +231,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
 
         private final Waypoint waypoint;
 
-        private static final Component INVENTORY_TITLE = text("\u7000\u7108", NamedTextColor.WHITE);
+        private static final Component INVENTORY_TITLE = translatable("ui.claims.confirmation", NamedTextColor.WHITE);
 
         @Override
         public void accept(final @NotNull ClaimPanel cPanel) {

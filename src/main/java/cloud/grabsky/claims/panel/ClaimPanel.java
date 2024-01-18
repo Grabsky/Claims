@@ -1,11 +1,13 @@
 package cloud.grabsky.claims.panel;
 
+import cloud.grabsky.bedrock.components.ComponentBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.util.InventoryViewExtensions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
@@ -25,10 +27,12 @@ import java.util.function.Consumer;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.experimental.ExtensionMethod;
 
 import static net.kyori.adventure.text.Component.text;
 import static net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacySection;
 
+@ExtensionMethod(value = InventoryViewExtensions.class)
 public final class ClaimPanel extends Panel {
 
     @Getter(AccessLevel.PUBLIC)
@@ -69,13 +73,16 @@ public final class ClaimPanel extends Panel {
         template.accept(this);
     }
 
+
     public void updateTitle(final @NotNull Component title) {
         final ClaimPlayer editor = manager.getClaimPlayer(this.getViewer());
-        // Parsing the title to legacy String. Workaround until Paper adds InventoryView#title(Component).
-        final String legacyTitle = legacySection().serialize(title);
         // Setting the title. '*' is appended when modifying not-self-owned claim.
         if (editor.toPlayer().getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel)
-            editor.toPlayer().getOpenInventory().setTitle((claim != null && editor.isOwnerOf(claim) == false) ? legacyTitle + ChatColor.BLACK + "\u7001*" : legacyTitle);
+            editor.toPlayer().getOpenInventory().title(
+                    (claim != null && editor.isOwnerOf(claim) == false)
+                            ? ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.10").append(title).appendTranslation("ui.util.blank.173").appendTranslation("ui.claims.not_owner").build()
+                            : ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.10").append(title).build()
+            );
     }
 
 
