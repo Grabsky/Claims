@@ -1,3 +1,26 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2024 Grabsky <44530932+Grabsky@users.noreply.github.com>
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ *   of this software and associated documentation files (the "Software"), to deal
+ *   in the Software without restriction, including without limitation the rights
+ *   to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *   copies of the Software, and to permit persons to whom the Software is
+ *   furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ *   copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * HORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
 package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
@@ -12,10 +35,6 @@ import io.papermc.paper.math.BlockPosition;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
-import org.jetbrains.annotations.ApiStatus.Internal;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,6 +49,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Predicate;
 
+import org.jetbrains.annotations.ApiStatus.Internal;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.Unmodifiable;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 
@@ -39,12 +63,6 @@ import static okio.Okio.buffer;
 import static okio.Okio.sink;
 import static okio.Okio.source;
 
-// TO-DO:
-// - Add field of WaypointManager type to the Waypoint class and test whether InstanceCreator actually work.
-// - Test waypoint listeners, panel and commands.
-// - Check how it's saved to the filesystem.
-// - More work towards "unifying" the waypoint "decorator" methods.
-// - Decide whether Waypoint.create(...) should be used instead of WaypointManager.createWaypoint(...), whatever makes more sense.
 public final class WaypointManager {
 
     @Getter(AccessLevel.PUBLIC)
