@@ -68,8 +68,6 @@ tasks {
     }
 }
 
-// Copies produced .jar to $WORKSPACE_BUILDS and $WORKSPACE_PLUGINS directories specified as environment variables.
-// This is solely for debugging/development purposes and does nothing when said variables are not set.
 tasks.register("deploy") {
     dependsOn(reobfJar)
     doLast {

@@ -46,6 +46,8 @@ public final class InventoryViewExtensions {
         );
         // Sending the packet.
         player.connection.send(packet);
+        // Sending inventory update to the player.
+        player.containerMenu.sendAllDataToRemote();
     }
 
 }
