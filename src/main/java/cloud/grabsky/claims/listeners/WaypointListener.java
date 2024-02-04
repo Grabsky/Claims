@@ -99,11 +99,8 @@ public final class WaypointListener implements Listener {
             final Location location = block.getLocation().toCenterLocation();
             // ...
             final @Nullable Waypoint waypoint = waypointManager.getBlockWaypoint(location);
-            // ...
-            if (waypoint == null)
-                return;
-            // Checking whether player can access this waypoint.
-            if (waypoint.getOwner().equals(event.getPlayer().getUniqueId()) == true || Utilities.findFirstBlockUnder(location, 5, Material.COMMAND_BLOCK) != null) {
+            // Returning if waypoint at this location exists and player is not it's owner.
+            if (Utilities.findFirstBlockUnder(location, 5, Material.COMMAND_BLOCK) != null || (waypoint != null && waypoint.getOwner().equals(event.getPlayer().getUniqueId()) == true) == true) {
                 // Cancelling the click.
                 event.setCancelled(true);
                 // Opening the panel.
