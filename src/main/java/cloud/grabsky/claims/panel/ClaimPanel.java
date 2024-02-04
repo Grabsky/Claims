@@ -102,8 +102,8 @@ public final class ClaimPanel extends Panel {
         if (editor.toPlayer().getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel)
             editor.toPlayer().getOpenInventory().title(
                     (claim != null && editor.isOwnerOf(claim) == false)
-                            ? ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.10").append(title).appendTranslation("ui.util.blank.173").appendTranslation("ui.claims.not_owner").build()
-                            : ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.10").append(title).build()
+                            ? ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.-10").append(title).appendTranslation("ui.util.blank.-176").appendTranslation("ui.claims.not_owner").build()
+                            : ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.-10").append(title).build()
             );
     }
 
