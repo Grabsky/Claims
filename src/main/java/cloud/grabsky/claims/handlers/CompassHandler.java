@@ -67,7 +67,7 @@ public final class CompassHandler implements Listener {
         if (this.task != null) {
             // Cancelling existing task.
             task.cancel();
-            // Removing viewers from curretly stored boss bars.
+            // Removing viewers from currently stored boss bars.
             storage.values().forEach(bar -> bar.viewers().forEach(viewer -> {
                 // Trying to cast to an Audience, which is very unlikely to fail.
                 if (viewer instanceof Audience audience)
