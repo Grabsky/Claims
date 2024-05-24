@@ -27,7 +27,7 @@ import io.papermc.paper.adventure.AdventureComponent;
 import net.kyori.adventure.text.Component;
 import net.minecraft.network.protocol.game.ClientboundOpenScreenPacket;
 import net.minecraft.server.level.ServerPlayer;
-import org.bukkit.craftbukkit.v1_20_R3.entity.CraftPlayer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.inventory.InventoryView;
 
 import org.jetbrains.annotations.NotNull;

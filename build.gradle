@@ -1,7 +1,7 @@
 plugins {
     id "java-library"
     id "net.minecrell.plugin-yml.paper" version "0.6.0"
-    id "io.papermc.paperweight.userdev" version "1.5.11"
+    id "io.papermc.paperweight.userdev" version "1.7.1"
     id "com.github.johnrengelman.shadow" version "8.1.1"
 }
 
@@ -10,7 +10,7 @@ final WORKSPACE_BUILDS = System.getenv("WORKSPACE_BUILDS") ?: null
 final WORKSPACE_PLUGINS = System.getenv("WORKSPACE_PLUGINS") ?: null
 
 group = "cloud.grabsky"
-version = "1.20.4-${System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"}"
+version = "1.20.6-${System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"}"
 
 repositories {
     mavenLocal()
@@ -18,7 +18,7 @@ repositories {
     // Repository for the WorldEdit and WorldGuard APIs.
     maven { url = "https://maven.enginehub.org/repo/" }
     // Repository for the Paper API.
-    maven { url = "https://papermc.io/repo/repository/maven-public/" }
+    maven { url = "https://repo.papermc.io/repository/maven-public/" }
     // Repository containing the 'bedrock' dependency.
     maven { url = "https://maven.pkg.github.com/grabsky/bedrock"
         credentials {
@@ -44,10 +44,10 @@ repositories {
 
 dependencies {
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.28")
-    annotationProcessor("org.projectlombok:lombok:1.18.28")
+    compileOnly("org.projectlombok:lombok:1.18.32")
+    annotationProcessor("org.projectlombok:lombok:1.18.32")
     // Paper
-    paperweight.paperDevBundle("1.20.4-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")
     // Dependencies
     implementation("cloud.grabsky:bedrock:1.20.1-47")
     implementation("cloud.grabsky:commands:1.20.1-35")
@@ -59,17 +59,17 @@ dependencies {
 }
 
 tasks {
-    reobfJar { reobfJar.outputJar.get().asFile.renameTo("${rootProject.name}-${project.version}.jar") }
+    shadowJar { shadowJar.archiveFileName = "${rootProject.name}-${project.version}.jar" }
     compileJava {
         options.fork = true
-        // Setting compatibility to Java 17 (above should work too).
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        // Setting compatibility to Java 21 (above should work too).
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 }
 
 tasks.register("deploy") {
-    dependsOn(reobfJar)
+    dependsOn(shadowJar)
     doLast {
         // Copying to the builds directory specified by 'WORKSPACE_BUILDS' environment variable.
         if (WORKSPACE_BUILDS != null)
