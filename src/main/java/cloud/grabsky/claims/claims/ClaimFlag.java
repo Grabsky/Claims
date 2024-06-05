@@ -61,7 +61,7 @@ public abstract sealed class ClaimFlag<T> permits ClaimFlag.State, ClaimFlag.Tim
 
     public static <T> @NotNull List<Option<T>> createOptions(final @NotNull List<T> options, final @NotNull List<Component> displayOptions) throws IllegalArgumentException {
         if (options.size() != displayOptions.size())
-            throw new IllegalArgumentException("Both options arrays must be of the same length. Expected legnth: " + options.size());
+            throw new IllegalArgumentException("Both options arrays must be of the same length. Expected length: " + options.size());
         // ...
         final List<Option<T>> result = new ArrayList<>();
         // ...
