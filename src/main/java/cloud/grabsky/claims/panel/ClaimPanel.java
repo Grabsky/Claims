@@ -117,15 +117,18 @@ public final class ClaimPanel extends Panel {
         private Location accessBlockLocation;
 
         public @NotNull Builder setClaimManager(final @NotNull ClaimManager claimManager) {
-            this.claimManager = claimManager; return this.self();
+            this.claimManager = claimManager;
+            return this.self();
         }
 
         public @NotNull Builder setClaim(final @Nullable Claim claim) {
-            this.claim = claim; return this.self();
+            this.claim = claim;
+            return this.self();
         }
 
         public @NotNull Builder setAccessBlockLocation(final @Nullable Location accessBlockLocation) {
-            this.accessBlockLocation = accessBlockLocation; return this.self();
+            this.accessBlockLocation = accessBlockLocation;
+            return this.self();
         }
 
         @Override
