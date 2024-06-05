@@ -1,13 +1,9 @@
 plugins {
-    id "java-library"
-    id "net.minecrell.plugin-yml.paper" version "0.6.0"
-    id "io.papermc.paperweight.userdev" version "1.7.1"
-    id "com.github.johnrengelman.shadow" version "8.1.1"
+    id("java-library")
+    id("net.minecrell.plugin-yml.paper") version "0.6.0"
+    id("io.papermc.paperweight.userdev") version "1.7.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
-
-// Environment-specific variables...
-final WORKSPACE_BUILDS = System.getenv("WORKSPACE_BUILDS") ?: null
-final WORKSPACE_PLUGINS = System.getenv("WORKSPACE_PLUGINS") ?: null
 
 group = "cloud.grabsky"
 version = "1.20.6-${System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"}"
@@ -20,26 +16,11 @@ repositories {
     // Repository for the Paper API.
     maven { url = "https://repo.papermc.io/repository/maven-public/" }
     // Repository containing the 'bedrock' dependency.
-    maven { url = "https://maven.pkg.github.com/grabsky/bedrock"
-        credentials {
-            username = findProperty("gpr.actor") ?: System.getenv("GITHUB_ACTOR")
-            password = findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
+    maven { url = "https://maven.pkg.github.com/grabsky/bedrock"; fillCredentials(it) }
     // Repository containing the 'configuration' dependency.
-    maven { url = "https://maven.pkg.github.com/grabsky/configuration"
-        credentials {
-            username = findProperty("gpr.actor") ?: System.getenv("GITHUB_ACTOR")
-            password = findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
+    maven { url = "https://maven.pkg.github.com/grabsky/configuration"; fillCredentials(it) }
     // Repository containing the 'commands' dependency.
-    maven { url = "https://maven.pkg.github.com/grabsky/commands"
-        credentials {
-            username = findProperty("gpr.actor") ?: System.getenv("GITHUB_ACTOR")
-            password = findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
-        }
-    }
+    maven { url = "https://maven.pkg.github.com/grabsky/commands"; fillCredentials(it) }
 }
 
 dependencies {
@@ -68,18 +49,6 @@ tasks {
     }
 }
 
-tasks.register("deploy") {
-    dependsOn(shadowJar)
-    doLast {
-        // Copying to the builds directory specified by 'WORKSPACE_BUILDS' environment variable.
-        if (WORKSPACE_BUILDS != null)
-            copy { from(reobfJar) into(WORKSPACE_BUILDS) }
-        // Copying to the plugins directory specified by 'WORKSPACE_PLUGINS' environment variable.
-        if (WORKSPACE_PLUGINS != null)
-            copy { from(reobfJar) into(WORKSPACE_PLUGINS) }
-    }
-}
-
 paper {
     main = "cloud.grabsky.claims.Claims"
     apiVersion = "1.20"
@@ -88,5 +57,14 @@ paper {
     serverDependencies {
         "WorldGuard" { load = "BEFORE"; required = true }
         "Azure"      { load = "BEFORE"; required = true }
+    }
+}
+
+/* UTILITY METHODS */
+
+private final def fillCredentials(final MavenArtifactRepository repository) {
+    repository.credentials {
+        username = findProperty("gpr.actor") ?: System.getenv("GITHUB_ACTOR")
+        password = findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
     }
 }
