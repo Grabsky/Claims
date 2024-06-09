@@ -32,3 +32,15 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           path: build/libs
+      # Expose Release Name
+      - name: Expose Release Name
+        run: echo "PROJECT_RELEASE_NAME=$( ./gradlew release -q --no-rebuild )" >> $GITHUB_ENV
+      # Expose Tag
+      - name: Expose Tag
+        run: echo "PROJECT_TAG=$( ./gradlew tag -q --no-rebuild )" >> $GITHUB_ENV
+      # Release
+      - name: Release
+        uses: ncipollo/release-action@v1
+        with:
+          name: "${{ env.PROJECT_RELEASE_NAME }}"
+          tag: "${{ env.PROJECT_TAG }}"
