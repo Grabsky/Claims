@@ -69,7 +69,7 @@ public abstract sealed class ClaimFlag<T> permits ClaimFlag.State, ClaimFlag.Tim
         final Iterator<Component> displayOptionsIterator = displayOptions.iterator();
         // ...
         while (optionsIterator.hasNext() == true && displayOptionsIterator.hasNext() == true) {
-            result.add(new Option<T>(optionsIterator.next(), displayOptionsIterator.next()));
+            result.add(new Option<>(optionsIterator.next(), displayOptionsIterator.next()));
         }
         return result;
     }
@@ -80,7 +80,7 @@ public abstract sealed class ClaimFlag<T> permits ClaimFlag.State, ClaimFlag.Tim
         // ...
         while (iterator.hasNext() == true) {
             if (iterator.next().getValue() == current)
-                return (iterator.hasNext() == true) ? iterator.next().getValue() : options.get(0).getValue();
+                return (iterator.hasNext() == true) ? iterator.next().getValue() : options.getFirst().getValue();
         }
         throw new IllegalArgumentException("Unexpected flag value: " + current);
     }

@@ -51,7 +51,7 @@ import static cloud.grabsky.claims.util.Utilities.getNumberOrDefault;
 import static org.jetbrains.annotations.ApiStatus.Internal;
 
 /**
- * Claim container that stores underlaying {@link ProtectedRegion} instance.
+ * Claim container that stores underlying {@link ProtectedRegion} instance.
  * Most methods can throw {@link ClaimProcessException} because region can be modified/removed externally using API or commands.
  */
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)

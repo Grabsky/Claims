@@ -72,7 +72,7 @@ public final class BrowseOnlinePlayers implements Consumer<ClaimPanel> {
                 .filter(claimPlayer -> claimPlayer.isOwnerOf(claim) == false) // excluding owner(s)
                 .filter(claimPlayer -> claimPlayer.isMemberOf(claim) == false) // excluding member(s)
                 .toList();
-        // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
+        // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
         // "Rendering" the inventory contents.
         this.render(cPanel, 1, UI_SLOTS.size());

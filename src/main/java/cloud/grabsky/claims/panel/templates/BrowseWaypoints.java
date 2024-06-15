@@ -75,7 +75,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
 
     @Override
     public void accept(final @NotNull ClaimPanel cPanel) {
-        final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
+        final Player viewer = (Player) cPanel.getInventory().getViewers().getFirst();
         // ...
         this.waypoints = cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(viewer.getUniqueId()).stream()
                 .sorted((s1, s2) -> s1.getDisplayName().compareToIgnoreCase(s2.getDisplayName()))
@@ -133,7 +133,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                                         // Displaying particles. NOTE: This can expose vanished players.
                                         if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
                                             PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                                                current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                                current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                                             });
                                         }
                                         // Playing sounds. NOTE: This can expose vanished players.
@@ -153,7 +153,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                     }
                     // Changing name...
                     case RIGHT, SHIFT_RIGHT -> {
-                        // Craeting new (or overriding previous) session.
+                        // Creating new (or overriding previous) session.
                         Session.Listener.CURRENT_EDIT_SESSIONS.put(event.getWhoClicked().getUniqueId(), new Session.WaypointRenameSession(waypoint, cPanel));
                         // ...
                         waypoint.setPendingRename(true);
@@ -196,7 +196,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                             // Displaying particles. NOTE: This can expose vanished players.
                             if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
                                 PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                                    current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                    current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                                 });
                             }
                             // Playing sounds. NOTE: This can expose vanished players.
@@ -206,7 +206,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                                 current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
                         }
                     });
-                    // Othwerwise, sending error message to the sender.
+                    // Otherwise, sending error message to the sender.
                     else Message.of(PluginLocale.RANDOM_TELEPORT_FAILURE_NOT_FOUND).sendActionBar(viewer);
 
                 });
@@ -225,7 +225,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                     // Displaying particles. NOTE: This can expose vanished players.
                     if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
                         PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                            current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                            current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                         });
                     }
                     // Playing sounds. NOTE: This can expose vanished players.
@@ -261,7 +261,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
         public void accept(final @NotNull ClaimPanel cPanel) {
             cPanel.updateTitle(INVENTORY_TITLE);
             // ...
-            final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
+            final Player viewer = (Player) cPanel.getInventory().getViewers().getFirst();
             // ...
             final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_DELETE_WAYPOINT).edit(meta -> {
                 meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));

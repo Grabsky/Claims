@@ -99,7 +99,7 @@ public final class RegionListener implements Listener {
                     final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
                     // Making sure player does not exceed claim limit.
                     if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIM_SETTINGS_CLAIMS_LIMIT) {
-                        // Setting 5 second cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
+                        // Setting 5 second cooldown to prevent block place spam. Unfortunately this works per-material and not per-item.
                         event.getPlayer().setCooldown(event.getItemInHand().getType(), PluginConfig.CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN * 20);
                         // Making sure that placed region is far enough from spawn
                         if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN) == false) {
@@ -335,7 +335,7 @@ public final class RegionListener implements Listener {
             event.setResult(null);
     }
 
-    // Prevents item from being used in stonecutter recipe.
+    // Prevents item from being used in stone cutter recipe.
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onStonecutterRecipeSelect(final PlayerStonecutterRecipeSelectEvent event) {
         if (event.getStonecutterInventory().getInputItem() != null && containsClaimType(event.getStonecutterInventory().getInputItem()) == true)

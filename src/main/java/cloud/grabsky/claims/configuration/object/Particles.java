@@ -44,7 +44,7 @@ public final class Particles {
 
     @Json(name = "offset_x")
     @Getter(AccessLevel.PUBLIC)
-    private final double offestX;
+    private final double offsetX;
 
     @Json(name = "offset_y")
     @Getter(AccessLevel.PUBLIC)

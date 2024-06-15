@@ -70,7 +70,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
 
     @Override
     public void accept(final @NotNull ClaimPanel cPanel) {
-        final Player viewer = (Player) cPanel.getInventory().getViewers().get(0);
+        final Player viewer = (Player) cPanel.getInventory().getViewers().getFirst();
         // ...
         this.claims = cPanel.getManager().getClaimPlayer(viewer).getRelativeClaims().stream()
                 .sorted((s1, s2) -> s1.getDisplayName().compareToIgnoreCase(s2.getDisplayName()))
@@ -105,7 +105,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                 final Long createdOn = claim.getCreatedOn();
                 icon.getMeta().lore(lore.stream().map(line -> {
                     return Message.of(line)
-                            .replace("[OWNER]", requirePresent(claim.getOwners().get(0).toUser().getName(), "N/A"))
+                            .replace("[OWNER]", requirePresent(claim.getOwners().getFirst().toUser().getName(), "N/A"))
                             .replace("[LOCATION]", location.blockX() + ", " + location.blockY() + ", " + location.blockZ())
                             .replace("[CREATED_ON]", (createdOn != null) ? DATE_FORMAT.format(new Date(createdOn)) : "N/A")
                             .getMessage();
@@ -127,7 +127,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                         // Displaying particles. NOTE: This can expose vanished players.
                         if (PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS != null) {
                             PluginConfig.CLAIM_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                                location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                location.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                             });
                         }
                         // Playing sounds. NOTE: This can expose vanished players.
@@ -159,7 +159,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                             // Displaying particles. NOTE: This can expose vanished players.
                             if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
                                 PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                                    current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                                    current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                                 });
                             }
                             // Playing sounds. NOTE: This can expose vanished players.
@@ -169,7 +169,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                                 current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
                         }
                     });
-                        // Othwerwise, sending error message to the sender.
+                        // Otherwise, sending error message to the sender.
                     else Message.of(PluginLocale.RANDOM_TELEPORT_FAILURE_NOT_FOUND).sendActionBar(viewer);
 
                 });
@@ -188,7 +188,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                     // Displaying particles. NOTE: This can expose vanished players.
                     if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
                         PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
-                            current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffestX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
+                            current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                         });
                     }
                     // Playing sounds. NOTE: This can expose vanished players.

@@ -171,7 +171,7 @@ public final class Claims extends BedrockPlugin {
             // Returning true, as everything seemed to reload properly.
             return true;
         } catch (final IOException e) {
-            this.getLogger().severe("An error occured while trying to reload the plugin.");
+            this.getLogger().severe("An error occurred while trying to reload the plugin.");
             this.getLogger().severe("  " + e.getMessage());
             // Returning false, as plugin has failed to reload.
             return false;

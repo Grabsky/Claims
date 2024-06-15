@@ -55,7 +55,7 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
         }
         // ...
         final Claim claim = cPanel.getClaim();
-        // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
+        // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
         // ...ROW 1
         cPanel.setItem(11,

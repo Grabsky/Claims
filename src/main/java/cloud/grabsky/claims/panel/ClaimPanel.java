@@ -84,7 +84,7 @@ public final class ClaimPanel extends Panel {
     }
 
     public Player getViewer() {
-        return (Player) this.getInventory().getViewers().get(0);
+        return (Player) this.getInventory().getViewers().getFirst();
     }
 
     public void applyClaimTemplate(final @NotNull Consumer<ClaimPanel> template, final boolean clearCurrent) {

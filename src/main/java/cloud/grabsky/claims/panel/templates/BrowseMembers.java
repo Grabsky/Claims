@@ -55,7 +55,7 @@ public enum BrowseMembers implements Consumer<ClaimPanel> {
             cPanel.close();
             return;
         }
-        // Changing (client-side) title of the inventory to render custom resourcepack texture on top of it.
+        // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
         // "Rendering" the inventory contents.
         this.render(cPanel);

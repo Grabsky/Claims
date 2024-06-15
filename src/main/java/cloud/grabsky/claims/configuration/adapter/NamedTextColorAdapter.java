@@ -58,7 +58,7 @@ public final class NamedTextColorAdapter extends JsonAdapter<NamedTextColor> {
             case "gold" -> NamedTextColor.GOLD;
             case "gray" -> NamedTextColor.GRAY;
             case "green" -> NamedTextColor.GREEN;
-            case "light_pruple" -> NamedTextColor.LIGHT_PURPLE;
+            case "light_purple" -> NamedTextColor.LIGHT_PURPLE;
             case "red" -> NamedTextColor.RED;
             case "white" -> NamedTextColor.WHITE;
             case "yellow" -> NamedTextColor.YELLOW;

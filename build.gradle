@@ -6,15 +6,15 @@ plugins {
 }
 
 group = "cloud.grabsky"
-version = "1.20.6-${System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"}"
+version = "1.21-${System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"}"
 
 repositories {
     mavenLocal()
     mavenCentral()
-    // Repository for the WorldEdit and WorldGuard APIs.
-    maven { url = "https://maven.enginehub.org/repo/" }
     // Repository for the Paper API.
     maven { url = "https://repo.papermc.io/repository/maven-public/" }
+    // Repository for the WorldEdit and WorldGuard APIs.
+    maven { url = "https://maven.enginehub.org/repo/" }
     // Repository containing the 'bedrock' dependency.
     maven { url = "https://maven.pkg.github.com/grabsky/bedrock"; fillCredentials(it) }
     // Repository containing the 'configuration' dependency.
@@ -28,10 +28,10 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.32")
     annotationProcessor("org.projectlombok:lombok:1.18.32")
     // Paper
-    paperweight.paperDevBundle("1.20.6-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
     // Dependencies
-    implementation("cloud.grabsky:bedrock:1.20.1-55")
-    implementation("cloud.grabsky:commands:1.20.1-35")
+    implementation("cloud.grabsky:bedrock:1.20.6-61")
+    implementation("cloud.grabsky:commands:1.20.1-37")
     implementation("cloud.grabsky:configuration-paper:1.20.1-42")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-SNAPSHOT")

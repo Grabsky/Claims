@@ -194,7 +194,7 @@ public final class WaypointListener implements Listener {
         final Waypoint waypoint = Waypoint.fromBlock(owner.getUniqueId(), PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, location);
         // ...
         waypoint.create(waypointManager).thenAccept(___ -> {
-            // Setting cooldown to prevent block place spam. Unfortunately this works per-material and not per-itemstack.
+            // Setting cooldown to prevent block place spam. Unfortunately this works per-material and not per-item.
             owner.setCooldown(Material.LODESTONE, PluginConfig.WAYPOINT_SETTINGS_PLACE_COOLDOWN * 20);
         });
     }

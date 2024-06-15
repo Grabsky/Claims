@@ -50,7 +50,7 @@ public final class InstanceCreator {
                 // ...
                 final @Nullable JsonAdapter<T> delegate = moshi.nextAdapter(this, type, annotations);
                 // ...
-                return new JsonAdapter<T>() {
+                return new JsonAdapter<>() {
 
                     @Override
                     public @Nullable T fromJson(final @NotNull JsonReader reader) throws IOException {

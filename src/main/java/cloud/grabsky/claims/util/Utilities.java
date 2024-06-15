@@ -181,6 +181,7 @@ public final class Utilities {
     /**
      * Returns random {@link Location} in the specified radius.
      */
+    // TO-DO: Investigate duplicated condition.
     public static Location getRandomLocationInSquare(final @NotNull Location center, final int minDistance, final int maxDistance) {
         // ...
         int x = RANDOM.nextInt(center.getBlockX() - maxDistance, center.getBlockX() + maxDistance);
@@ -274,7 +275,7 @@ public final class Utilities {
 
     @SuppressWarnings("UnstableApiUsage")
     public static @Nullable Block findFirstBlockUnder(final Location location, final int depth, final Material type) {
-        // Raytracing blocks. This is likely to be less performent than classic for-loop, but definitely cleaner and more readable.
+        // Raytracing blocks. This is likely to be less performant than classic for-loop, but definitely cleaner and more readable.
         final @Nullable RayTraceResult result = location.getWorld().rayTraceBlocks(location, BOTTOM, depth, FluidCollisionMode.NEVER, true, (block) -> block.getType() == type);
         // Returning the result Block instance or null.
         return (result != null) ? result.getHitBlock() : null;

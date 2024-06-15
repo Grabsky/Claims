@@ -271,7 +271,7 @@ public final class WaypointManager {
         if (dataDirectory.isDirectory() == false) {
             if (dataDirectory.delete() == false)
                 throw new IllegalStateException("File " + dataDirectory.getPath() + " is not a directory and could not be deleted. Please delete or rename it manually.");
-            // Calling (self) after deleting non-directory file. This should not lead to inifnite recursion.
+            // Calling (self) after deleting non-directory file. This should not lead to infinite recursion.
             ensureDataDirectoryExists();
         }
     }

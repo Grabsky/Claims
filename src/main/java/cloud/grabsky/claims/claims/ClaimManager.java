@@ -138,8 +138,8 @@ public final class ClaimManager {
         // Some numbers to be incremented and displayed later on...
         final AtomicInteger totalClaimTypes = new AtomicInteger(0);
         final AtomicInteger loadedClaimTypes = new AtomicInteger(0);
-        // Itering over sorted and filtered files.
-        // TO-DO: Lexicographical sort is going to fail for numbers greater than 10. Alternative sorting algorith must be used.
+        // Iterating over sorted and filtered files.
+        // TO-DO: Lexicographical sort is going to fail for numbers greater than 10. Alternative sorting algorithm must be used.
         Stream.of(files).sorted(comparing(File::getName).reversed()).filter(file -> file.getName().endsWith(".json") == true).forEach(file -> {
             // Incrementing total number of files as we're about to attempt loading.
             totalClaimTypes.incrementAndGet();
