@@ -30,7 +30,7 @@ dependencies {
     // Paper
     paperweight.paperDevBundle("1.21-R0.1-SNAPSHOT")
     // Dependencies
-    implementation("cloud.grabsky:bedrock:1.20.6-61")
+    implementation("cloud.grabsky:bedrock:1.21-62")
     implementation("cloud.grabsky:commands:1.20.1-37")
     implementation("cloud.grabsky:configuration-paper:1.20.1-42")
     // WorldEdit
