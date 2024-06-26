@@ -27,7 +27,6 @@ import cloud.grabsky.claims.configuration.object.Particles;
 import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
-import net.kyori.adventure.bossbar.BossBar;
 import net.kyori.adventure.sound.Sound;
 import net.kyori.adventure.text.Component;
 import org.bukkit.World;
@@ -36,10 +35,6 @@ import java.util.List;
 
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.Nullable;
-
-import lombok.AccessLevel;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
 
 @Internal
 public final class PluginConfig implements JsonConfiguration {
@@ -144,44 +139,5 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("waypoint_settings.rename_prompt.subtitle")
     public static Component WAYPOINT_SETTINGS_RENAME_PROMPT_SUBTITLE;
-
-    // Compass Settings
-
-    @JsonPath("compass_settings.enhanced_compass")
-    public static boolean COMPASS_SETTINGS_ENHANCED_COMPASS;
-
-    @JsonPath("compass_settings.refresh_rate")
-    public static long COMPASS_SETTINGS_REFRESH_RATE;
-
-    @JsonPath("compass_settings.bossbar")
-    public static BossBarProperties COMPASS_SETTINGS_BOSSBAR;
-
-    // Clock Settings
-
-    @JsonPath("clock_settings.enhanced_clock")
-    public static boolean CLOCK_SETTINGS_ENHANCED_CLOCK;
-
-    @JsonPath("clock_settings.refresh_rate")
-    public static long CLOCK_SETTINGS_REFRESH_RATE;
-
-    @JsonPath("clock_settings.bossbar")
-    public static BossBarProperties CLOCK_SETTINGS_BOSSBAR;
-
-
-
-    // Moshi should be able to create instance of the object despite the constructor being private.
-    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
-    public static final class BossBarProperties {
-
-        @Getter(AccessLevel.PUBLIC)
-        private final BossBar.Color color;
-
-        @Getter(AccessLevel.PUBLIC)
-        private final BossBar.Overlay overlay;
-
-        @Getter(AccessLevel.PUBLIC)
-        private final String text;
-
-    }
 
 }

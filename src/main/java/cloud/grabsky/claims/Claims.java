@@ -42,8 +42,6 @@ import cloud.grabsky.claims.flags.EnterActionBarFlag;
 import cloud.grabsky.claims.flags.LeaveActionBarFlag;
 import cloud.grabsky.claims.flags.object.FixedTime;
 import cloud.grabsky.claims.flags.object.FixedWeather;
-import cloud.grabsky.claims.handlers.ClockHandler;
-import cloud.grabsky.claims.handlers.CompassHandler;
 import cloud.grabsky.claims.listeners.RegionListener;
 import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.claims.session.Session;
@@ -88,9 +86,6 @@ public final class Claims extends BedrockPlugin {
     @Getter(AccessLevel.PUBLIC)
     private WaypointManager waypointManager;
 
-    private CompassHandler compassHandler;
-    private ClockHandler clockHandler;
-
     private ConfigurationMapper mapper;
 
     // Can be passed to some CompletableFuture methods to make sure code is executed on the main thread.
@@ -101,9 +96,6 @@ public final class Claims extends BedrockPlugin {
         super.onEnable();
         // Setting the plugin instance.
         instance = this;
-        // Initializing CompassHandler.
-        this.compassHandler = new CompassHandler(this);
-        this.clockHandler = new ClockHandler(this);
         // Setting the main-thread executor.
         MAIN_THREAD_EXECUTOR = this.getServer().getScheduler().getMainThreadExecutor(this);
         // Creating ConfigurationMapper instance.
@@ -164,10 +156,6 @@ public final class Claims extends BedrockPlugin {
                     ConfigurationHolder.of(PluginItems.class, items),
                     ConfigurationHolder.of(PluginFlags.class, flags)
             );
-            // Reloading the CompassHandler.
-            this.compassHandler.reload();
-            // Reloading the ClockHandler.
-            this.clockHandler.reload();
             // Returning true, as everything seemed to reload properly.
             return true;
         } catch (final IOException e) {
