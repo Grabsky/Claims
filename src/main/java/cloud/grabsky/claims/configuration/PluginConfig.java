@@ -48,14 +48,28 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("region_priority")
     public static int REGION_PRIORITY;
 
-    @JsonPath("spawn_teleport_delay")
-    public static int SPAWN_TELEPORT_DELAY;
-
     @JsonPath("random_teleport_min_distance")
     public static int RANDOM_TELEPORT_MIN_DISTANCE;
 
     @JsonPath("random_teleport_max_distance")
     public static int RANDOM_TELEPORT_MAX_DISTANCE;
+
+    // Teleportation
+
+    @JsonPath("teleportation.delay")
+    public static int TELEPORTATION_DELAY;
+
+    @JsonPath("teleportation.fade_in_fade_out_animation_translation")
+    public static String TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION;
+
+    @JsonNullable @JsonPath("teleportation.sounds.out")
+    public static @Nullable Sound TELEPORTATION_SOUNDS_OUT;
+
+    @JsonNullable @JsonPath("teleportation.sounds.in")
+    public static @Nullable Sound TELEPORTATION_SOUNDS_IN;
+
+    @JsonNullable @JsonPath("teleportation.particles")
+    public static @Nullable List<Particles> TELEPORTATION_PARTICLES;
 
     // Claim Settings
 
@@ -73,18 +87,6 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("claim_settings.minimum_distance_from_spawn")
     public static int CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN;
-
-    @JsonPath("claim_settings.teleport_delay")
-    public static int CLAIM_SETTINGS_TELEPORT_DELAY;
-
-    @JsonPath("claim_settings.teleport_effects")
-    public static List<Particles> CLAIM_SETTINGS_TELEPORT_EFFECTS;
-
-    @JsonNullable @JsonPath("claim_settings.teleport_sounds.in")
-    public static @Nullable Sound CLAIM_SETTINGS_TELEPORT_SOUNDS_IN;
-
-    @JsonNullable @JsonPath("claim_settings.teleport_sounds.out")
-    public static @Nullable Sound CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT;
 
     @JsonNullable @JsonPath("claim_settings.interface_upgrade_sound")
     public static Sound CLAIMS_SETTINGS_UI_UPGRADE_SOUND;
@@ -116,18 +118,6 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("waypoint_settings.place_cooldown")
     public static int WAYPOINT_SETTINGS_PLACE_COOLDOWN;
-
-    @JsonPath("waypoint_settings.teleport_delay")
-    public static int WAYPOINT_SETTINGS_TELEPORT_DELAY;
-
-    @JsonPath("waypoint_settings.teleport_effects")
-    public static List<Particles> WAYPOINT_SETTINGS_TELEPORT_EFFECTS;
-
-    @JsonNullable @JsonPath("waypoint_settings.teleport_sounds.in")
-    public static @Nullable Sound WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN;
-
-    @JsonNullable @JsonPath("waypoint_settings.teleport_sounds.out")
-    public static @Nullable Sound WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT;
 
     // Waypoint Settings > Rename Prompt
 

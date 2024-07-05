@@ -23,6 +23,7 @@
  */
 package cloud.grabsky.claims.util;
 
+import cloud.grabsky.bedrock.components.ComponentBuilder;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.configuration.PluginConfig;
@@ -30,6 +31,9 @@ import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.commands.exception.NumberParseException;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.title.Title;
+import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
@@ -37,6 +41,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
@@ -60,7 +65,9 @@ import org.jetbrains.annotations.UnknownNullability;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 
+@ExtensionMethod(Extensions.class)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class Utilities {
 
@@ -105,23 +112,32 @@ public final class Utilities {
         // Handling teleports with no (or bypassed) delay.
         if (bypassPermission != null && source.hasPermission(bypassPermission) == true) {
             final Location old = source.getLocation();
+            // Sending the title.
+            if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
+                source.showRichTitle(Component.translatable(PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION), Component.empty(), 8, 16, 8);
             // ...
-            source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
-                if (isSuccess == false) {
-                    Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
-                    return;
-                }
-                // Sending success message through action bar.
-                Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
-                // Returning if no effects were provided or player is vanished. (vanish checks compatible only with Azure)
-                if (then == null)
-                    return;
-                // Scheduling task that spawns provided effects.
-                Claims.getInstance().getBedrockScheduler().run(1L, (task) -> {
-                    // Making player invulnerable for next 5 seconds.
-                    source.setNoDamageTicks(100);
-                    // Executing provided task.
-                    then.accept(old, destination);
+            Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
+                // ...
+                source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
+                    if (isSuccess == false) {
+                        Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
+                        return;
+                    }
+                    // Fading the title out.
+                    if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
+                        source.fadeOutTitle(8, 8);
+                    // Sending success message through action bar.
+                    Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
+                    // Returning if no effects were provided or player is vanished. (vanish checks compatible only with Azure)
+                    if (then == null)
+                        return;
+                    // Scheduling task that spawns provided effects.
+                    Claims.getInstance().getBedrockScheduler().run(1L, (__1) -> {
+                        // Making player invulnerable for next 5 seconds.
+                        source.setNoDamageTicks(100);
+                        // Executing provided task.
+                        then.accept(old, destination);
+                    });
                 });
             });
             return;
@@ -142,23 +158,31 @@ public final class Utilities {
             // Handling last iteration.
             if (cycle == delay) {
                 final Location old = source.getLocation();
+                // Showing the title.
+                if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
+                    source.showRichTitle(Component.translatable(PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION), Component.empty(), 8, 100, 8);
                 // ...
-                source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
-                    if (isSuccess == false) {
-                        Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
-                        return;
-                    }
-                    // Sending success message through action bar.
-                    Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
-                    // Returning if no effects were provided.
-                    if (then == null)
-                        return;
-                    // Scheduling task that spawns provided effects.
-                    Claims.getInstance().getBedrockScheduler().run(1L, (task) -> {
-                        // Making player invulnerable for next 5 seconds.
-                        source.setNoDamageTicks(100);
-                        // Executing provided task.
-                        then.accept(old, destination);
+                Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
+                    source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
+                        if (isSuccess == false) {
+                            Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
+                            return;
+                        }
+                        // Fading the title out.
+                        if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
+                            source.fadeOutTitle(8, 8);
+                        // Sending success message through action bar.
+                        Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
+                        // Returning if no effects were provided.
+                        if (then == null)
+                            return;
+                        // Scheduling task that spawns provided effects.
+                        Claims.getInstance().getBedrockScheduler().run(1L, (__1) -> {
+                            // Making player invulnerable for next 5 seconds.
+                            source.setNoDamageTicks(100);
+                            // Executing provided task.
+                            then.accept(old, destination);
+                        });
                     });
                 });
             }
@@ -217,7 +241,6 @@ public final class Utilities {
         // ...
         Claims.getInstance().getBedrockScheduler().runAsync(1L, (task) -> {
             while (future.isDone() == false) {
-                System.out.println(attempts + " attempts.");
                 // ...
                 attempts.set(attempts.get() + 1);
                 // ...
@@ -238,6 +261,7 @@ public final class Utilities {
                     future.complete(location);
             }
         });
+        Claims.getInstance().getLogger().info("Found safe location in " + attempts + " attempts.");
         // ...
         return future;
     }

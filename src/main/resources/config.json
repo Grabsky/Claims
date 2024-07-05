@@ -5,12 +5,29 @@
     "region_prefix": "claims_",
     // Priority of underlying region.
     "region_priority": 0,
-    // Delay before player is teleported to the spawn. (in seconds)
-    "spawn_teleport_delay": 5,
     // Random teleport minimum distance from spawn point.
     "random_teleport_min_distance": 500,
     // Random teleport maximum distance from spawn point.
     "random_teleport_max_distance": 1000,
+
+    // Teleportation settings.
+    "teleportation": {
+        // Delay before player is teleported. (in seconds)
+        "delay": 5,
+        // Fade-in-fade-out animation translation key. Setting this to blank string will disable the animation.
+        "fade_in_fade_out_animation_translation": "ui.util.black_screen",
+        // Sounds that are played to nearby players upon teleportation.
+        "sounds": {
+            "out": { "key": "firedot:teleport.out", "source": "player", "volume": 1.0, "pitch": 1.0 },
+            "in": { "key": "firedot:teleport.in", "source": "player", "volume": 1.0, "pitch": 1.0 }
+        },
+        // Particles that are displayed to nearby players upon teleportation.
+        "particles": [
+            { "particle": "WAX_OFF", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
+            { "particle": "WAX_ON", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
+            { "particle": "MYCELIUM", "amount": 120, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 }
+        ]
+    },
 
     // Claims settings.
     "claim_settings": {
@@ -24,19 +41,6 @@
         "default_display_name": "Bez nazwy",
         // Minimum block distance from spawn before claims can be placed.
         "minimum_distance_from_spawn": 300,
-        // Delay before player is teleported to the claim. (in seconds)
-        "teleport_delay": 5,
-        // Teleport effects.
-        "teleport_effects": [
-            { "particle": "WAX_OFF", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
-            { "particle": "WAX_ON", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
-            { "particle": "MYCELIUM", "amount": 120, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 }
-        ],
-        // Teleport sounds.
-        "teleport_sounds": {
-            "out": { "key": "firedot:teleport.out", "source": "player", "volume": 1.0, "pitch": 1.0 },
-            "in": { "key": "firedot:teleport.in", "source": "player", "volume": 1.0, "pitch": 1.0 }
-        },
         // Claim upgrade sound.
         "interface_upgrade_sound": { "key": "minecraft:entity.player.levelup", "source": "master", "volume": 1.0, "pitch": 1.0 },
         // Click sound inside claim panel interface
@@ -55,40 +59,7 @@
         "default_display_name": "Bez nazwy",
         // Place cooldown. (in seconds)
         "place_cooldown": 5,
-        // Delay before player is teleported to the waypoint. (in seconds)
-        "teleport_delay": 5,
-        // Teleport effects.
-        "teleport_effects": [
-            { "particle": "WAX_OFF", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
-            { "particle": "WAX_ON", "amount": 40, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 },
-            { "particle": "MYCELIUM", "amount": 120, "speed": 0.3, "offset_x": 0.25,  "offset_y": 0.4, "offset_z": 0.25 }
-        ],
-        // Teleport sounds.
-        "teleport_sounds": {
-            "out": { "key": "firedot:teleport.out", "source": "player", "volume": 1.0, "pitch": 1.0 },
-            "in": { "key": "firedot:teleport.in", "source": "player", "volume": 1.0, "pitch": 1.0 }
-        },
         // Rename prompt.
         "rename_prompt": { "duration": 15, "title": "<yellow>Zmień Nazwę", "subtitle": "<gray>Podaj nową nazwę na czacie..." }
-    },
-
-    // Compass settings.
-    "compass_settings": {
-        // Determines whether enhanced compass integration should be enabled.
-        "enhanced_compass": true,
-        // Refresh rate in ticks.
-        "refresh_rate": 3,
-        // BossBar to be displayed when player is holding compass.
-        "bossbar": { "overlay": "PROGRESS", "color": "YELLOW", "text": "<location_x> x     <location_y> ʏ     <location_z> ᴢ" }
-    },
-
-    // Clock settings.
-    "clock_settings": {
-        // Determines whether enhanced clock integration should be enabled.
-        "enhanced_clock": true,
-        // Refresh rate in ticks.
-        "refresh_rate": 3,
-        // BossBar to be displayed when player is holding clock.
-        "bossbar": { "overlay": "PROGRESS", "color": "YELLOW", "text": "<time>" }
     }
 }

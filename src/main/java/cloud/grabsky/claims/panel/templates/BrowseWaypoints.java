@@ -32,6 +32,7 @@ import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.util.Extensions;
 import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
@@ -57,6 +58,7 @@ import org.jetbrains.annotations.Nullable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static net.kyori.adventure.text.Component.text;
@@ -128,19 +130,19 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                                 // Closing the panel.
                                 cPanel.close();
                                 // Teleporting...
-                                Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                                Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.TELEPORTATION_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
                                     if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
                                         // Displaying particles. NOTE: This can expose vanished players.
-                                        if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
-                                            PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                                        if (PluginConfig.TELEPORTATION_PARTICLES != null) {
+                                            PluginConfig.TELEPORTATION_PARTICLES.forEach(it -> {
                                                 current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                                             });
                                         }
                                         // Playing sounds. NOTE: This can expose vanished players.
-                                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT != null)
-                                            old.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
-                                        if (PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN != null)
-                                            current.getWorld().playSound(PluginConfig.CLAIM_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                                        if (PluginConfig.TELEPORTATION_SOUNDS_OUT != null)
+                                            old.getWorld().playSound(PluginConfig.TELEPORTATION_SOUNDS_OUT, old.x(), old.y(), old.z());
+                                        if (PluginConfig.TELEPORTATION_SOUNDS_IN != null)
+                                            current.getWorld().playSound(PluginConfig.TELEPORTATION_SOUNDS_IN, current.x(), current.y(), current.z());
                                     }
                                 });
                             });
@@ -149,7 +151,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                         // Just teleport otherwise... (non-BLOCK source waypoints)
                         cPanel.close();
                         // Teleporting...
-                        Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.CLAIM_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", null);
+                        Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.TELEPORTATION_DELAY, "claims.bypass.teleport_delay", null);
                     }
                     // Changing name...
                     case RIGHT, SHIFT_RIGHT -> {
@@ -191,19 +193,19 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 // Searching for safe location...
                 Utilities.getSafeLocation(PluginConfig.RANDOM_TELEPORT_MIN_DISTANCE, PluginConfig.RANDOM_TELEPORT_MAX_DISTANCE).thenAccept(location -> {
                     // In case location was found, teleporting player to it.
-                    if (location != null) Utilities.teleport(viewer, location, PluginConfig.WAYPOINT_SETTINGS_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                    if (location != null) Utilities.teleport(viewer, location, PluginConfig.TELEPORTATION_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
                         if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
                             // Displaying particles. NOTE: This can expose vanished players.
-                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
-                                PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                            if (PluginConfig.TELEPORTATION_PARTICLES != null) {
+                                PluginConfig.TELEPORTATION_PARTICLES.forEach(it -> {
                                     current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                                 });
                             }
                             // Playing sounds. NOTE: This can expose vanished players.
-                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
-                                old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
-                            if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
-                                current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                            if (PluginConfig.TELEPORTATION_SOUNDS_OUT != null)
+                                old.getWorld().playSound(PluginConfig.TELEPORTATION_SOUNDS_OUT, old.x(), old.y(), old.z());
+                            if (PluginConfig.TELEPORTATION_SOUNDS_IN != null)
+                                current.getWorld().playSound(PluginConfig.TELEPORTATION_SOUNDS_IN, current.x(), current.y(), current.z());
                         }
                     });
                     // Otherwise, sending error message to the sender.
@@ -220,19 +222,19 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             // Closing the panel.
             cPanel.close();
             // Teleporting...
-            Utilities.teleport(viewer, location, PluginConfig.SPAWN_TELEPORT_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+            Utilities.teleport(viewer, location, PluginConfig.TELEPORTATION_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
                 if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
                     // Displaying particles. NOTE: This can expose vanished players.
-                    if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS != null) {
-                        PluginConfig.WAYPOINT_SETTINGS_TELEPORT_EFFECTS.forEach(it -> {
+                    if (PluginConfig.TELEPORTATION_PARTICLES != null) {
+                        PluginConfig.TELEPORTATION_PARTICLES.forEach(it -> {
                             current.getWorld().spawnParticle(it.getParticle(), viewer.getLocation().add(0, (viewer.getHeight() / 2), 0), it.getAmount(), it.getOffsetX(), it.getOffsetY(), it.getOffsetZ(), it.getSpeed());
                         });
                     }
                     // Playing sounds. NOTE: This can expose vanished players.
-                    if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT != null)
-                        old.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_OUT, old.x(), old.y(), old.z());
-                    if (PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN != null)
-                        current.getWorld().playSound(PluginConfig.WAYPOINT_SETTINGS_TELEPORT_SOUNDS_IN, current.x(), current.y(), current.z());
+                    if (PluginConfig.TELEPORTATION_SOUNDS_OUT != null)
+                        old.getWorld().playSound(PluginConfig.TELEPORTATION_SOUNDS_OUT, old.x(), old.y(), old.z());
+                    if (PluginConfig.TELEPORTATION_SOUNDS_IN != null)
+                        current.getWorld().playSound(PluginConfig.TELEPORTATION_SOUNDS_IN, current.x(), current.y(), current.z());
                 }
             });
         });
