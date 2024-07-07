@@ -32,7 +32,6 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.session.Session;
 import cloud.grabsky.claims.util.InventoryViewExtensions;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -51,8 +50,6 @@ import org.jetbrains.annotations.Range;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.ExtensionMethod;
-
-import static net.kyori.adventure.text.Component.text;
 
 @ExtensionMethod(value = InventoryViewExtensions.class)
 public final class ClaimPanel extends Panel {
@@ -108,7 +105,7 @@ public final class ClaimPanel extends Panel {
     }
 
 
-    public static final Component INVENTORY_TITLE = text("\u7000\u7100", NamedTextColor.WHITE);
+    public static final Component INVENTORY_TITLE = ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.-10").append("ui.claims.empty").build();
 
     public static final class Builder extends Panel.Builder<ClaimPanel> {
 
