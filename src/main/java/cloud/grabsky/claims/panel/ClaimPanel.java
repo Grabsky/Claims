@@ -105,7 +105,7 @@ public final class ClaimPanel extends Panel {
     }
 
 
-    public static final Component INVENTORY_TITLE = ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.-10").append("ui.claims.empty").build();
+    public static final Component INVENTORY_TITLE = ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.-10").appendTranslation("ui.claims.empty").build();
 
     public static final class Builder extends Panel.Builder<ClaimPanel> {
 
