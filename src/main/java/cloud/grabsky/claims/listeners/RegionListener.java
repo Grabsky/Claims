@@ -40,6 +40,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.block.Crafter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -51,6 +52,7 @@ import org.bukkit.event.block.BlockExplodeEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.block.CrafterCraftEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntitySpawnEvent;
 import org.bukkit.event.inventory.FurnaceBurnEvent;
@@ -307,13 +309,26 @@ public final class RegionListener implements Listener {
         event.blockList().removeIf(block -> claimManager.containsClaim(Claim.createId(block.getLocation())) == true);
     }
 
-    // Prevents item from being a crafting ingredient
+    // Prevents item from being a crafting ingredient in crafting table.
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onCraftPrepare(final PrepareItemCraftEvent event) {
         if (event.getRecipe() == null) return;
         for (final ItemStack item : event.getInventory().getMatrix()) {
             if (item != null && containsClaimType(item) == true) {
                 event.getInventory().setResult(null);
+                return;
+            }
+        }
+    }
+
+    // Prevents item from being a crafting ingredient in crafter.
+    @SuppressWarnings("UnstableApiUsage") // See https://github.com/PaperMC/Paper/discussions/10972#discussioncomment-10093821
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onCraftPrepare(final CrafterCraftEvent event) {
+        final Crafter crafter = (Crafter) event.getBlock().getState();
+        for (final ItemStack item : crafter.getInventory()) {
+            if (item != null && containsClaimType(item) == true) {
+                event.setCancelled(true);
                 return;
             }
         }
