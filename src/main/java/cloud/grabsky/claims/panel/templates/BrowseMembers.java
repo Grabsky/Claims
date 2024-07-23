@@ -46,7 +46,7 @@ public enum BrowseMembers implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
 
     private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_members", NamedTextColor.WHITE);
-    private static final List<Integer> UI_SLOTS = List.of(11, 12, 13, 14, 15,  21, 22, 23, 24, 25);
+    private static final List<Integer> UI_SLOTS = List.of(11, 12, 13, 14, 15, 20, 21, 22, 23, 24);
 
     @Override
     public void accept(final ClaimPanel cPanel) {
