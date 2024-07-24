@@ -66,7 +66,7 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
 
     private List<? extends Player> onlineClaimPlayers = new ArrayList<>();
 
-    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_online_players", NamedTextColor.WHITE);
+    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_waypoint_online_players", NamedTextColor.WHITE);
     private static final List<Integer> UI_SLOTS = List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34);
 
     @Override
@@ -101,7 +101,7 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
             final Player player = onlineClaimPlayersIterator.next();
             final User user = AzureProvider.getAPI().getUserCache().getUser(player);
             // Creating player skull icon.
-            final ItemStack head = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_ADD_MEMBER)
+            final ItemStack head = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_TRANSFER_WAYPOINT)
                     .setName(text(user.getName(), NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
                     .setSkullTexture(user.getTextures())
                     .build();
@@ -126,7 +126,10 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
                                 // ...
                                 viewer.closeInventory();
                                 // Sending error message that claim members limit has been reached.
-                                Message.of("TRANSFERRED!").send(viewer);
+                                Message.of(PluginLocale.UI_WAYPOINT_TRANSFER_SUCCESS)
+                                        .placeholder("name", newWaypoint.getDisplayName())
+                                        .placeholder("player", player)
+                                        .send(viewer);
                             });
                         }
                     });
@@ -135,8 +138,8 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
                 }
                 // Closing the panel.
                 viewer.closeInventory();
-                // Sending error message that claim members limit has been reached.
-                Message.of(PluginLocale.UI_MEMBERS_ADD_FAILURE_REACHED_LIMIT).placeholder("limit", PluginConfig.CLAIM_SETTINGS_MEMBERS_LIMIT).send(viewer);
+                // Sending error message that waypoints limit has been reached by this player.
+                Message.of(PluginLocale.UI_WAYPOINT_TRANSFER_FAILURE_REACHED_LIMIT).send(viewer);
             });
         }
         // Rendering NEXT PAGE button.

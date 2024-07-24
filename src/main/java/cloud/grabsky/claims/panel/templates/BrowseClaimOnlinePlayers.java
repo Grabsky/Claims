@@ -52,7 +52,7 @@ public final class BrowseClaimOnlinePlayers implements Consumer<ClaimPanel> {
 
     private List<ClaimPlayer> onlineClaimPlayers = new ArrayList<>();
 
-    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_online_players", NamedTextColor.WHITE);
+    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_claim_online_players", NamedTextColor.WHITE);
     private static final List<Integer> UI_SLOTS = List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34);
 
     @Override
