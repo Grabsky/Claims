@@ -94,7 +94,7 @@ public enum BrowseMembers implements Consumer<ClaimPanel> {
         }
         // Displaying [ICON_BROWSE_PLAYERS] button.
         if (slotsIterator.hasNext() == true)
-            cPanel.setItem(slotsIterator.next(), PluginItems.INTERFACE_CATEGORIES_BROWSE_ONLINE_PLAYERS, event -> cPanel.applyClaimTemplate(new BrowseOnlinePlayers(), true));
+            cPanel.setItem(slotsIterator.next(), PluginItems.INTERFACE_CATEGORIES_BROWSE_ONLINE_PLAYERS, event -> cPanel.applyClaimTemplate(new BrowseClaimOnlinePlayers(), true));
         // return
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true));
     }

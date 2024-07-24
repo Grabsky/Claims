@@ -89,6 +89,10 @@ public final class PluginItems implements JsonConfiguration {
     @JsonPath("interface.functional.icon_waypoint_invalid")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_WAYPOINT_INVALID;
 
+    // Interface > Functional > Icon Transfer Waypoint
+    @JsonPath("interface.functional.icon_transfer_waypoint")
+    public static ItemStack INTERFACE_FUNCTIONAL_ICON_TRANSFER_WAYPOINT;
+
     // Interface > Functional > Icon Claim (Owned)
     @JsonPath("interface.functional.icon_owned_claim")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_OWNED_CLAIM;
