@@ -23,25 +23,23 @@
  */
 package cloud.grabsky.claims.util;
 
-import cloud.grabsky.bedrock.components.ComponentBuilder;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.commands.exception.NumberParseException;
+import io.papermc.paper.entity.TeleportFlag;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.title.Title;
-import net.kyori.adventure.title.TitlePart;
 import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
@@ -118,7 +116,9 @@ public final class Utilities {
             // ...
             Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
                 // ...
-                source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
+                final Entity finalSource = (source.getVehicle() != null) ? source.getVehicle() : source;
+                // ...
+                finalSource.teleportAsync(destination, TeleportCause.PLUGIN, TeleportFlag.EntityState.RETAIN_PASSENGERS).thenAccept(isSuccess -> {
                     if (isSuccess == false) {
                         Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
                         return;
@@ -163,7 +163,10 @@ public final class Utilities {
                     source.showRichTitle(Component.translatable(PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION), Component.empty(), 8, 100, 8);
                 // ...
                 Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
-                    source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
+                    // ...
+                    final Entity finalSource = (source.getVehicle() != null) ? source.getVehicle() : source;
+                    // ...
+                    finalSource.teleportAsync(destination, TeleportCause.PLUGIN, TeleportFlag.EntityState.RETAIN_PASSENGERS).thenAccept(isSuccess -> {
                         if (isSuccess == false) {
                             Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
                             return;
