@@ -103,7 +103,7 @@
         "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu.",
         // Interface > Browse Waypoints
         "waypoint_teleport_failure_not_existent": "<red>Nie odnaleziono docelowej lokalizacji.", // (actionbar)
-        "waypoint_rename_success": "<dark_gray>› <gray>Nazwa teleportu została zaktualizowana: <gold><name>",
+        "waypoint_rename_success": "<dark_gray>› <gray>Nazwa magnetytu została zaktualizowana: <gold><name>",
         "waypoint_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
         // Interface > Browse Owned Claims
         "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <gold><name>",
@@ -111,9 +111,9 @@
         // Interface > Browse Relative Claims
         // ...
         // Interface > Transfer Waypoint
-        "waypoint_transfer_success": "<dark_gray>› <gray>Przekazałeś teleport <gold><name><gray> graczowi <gold><player><gray>.",
-        "waypoint_transfer_success_target": "<dark_gray>› <gray>Gracz <gold><player><gray> przekazał Ci teleport <gold><name><gray>.",
-        "waypoint_transfer_failure_reached_limit": "<dark_gray>› <red>Ten gracz osiągnął limit posiadanych teleportów."
+        "waypoint_transfer_success": "<dark_gray>› <gray>Przekazałeś magnetyt <gold><name><gray> graczowi <gold><player><gray>.",
+        "waypoint_transfer_success_target": "<dark_gray>› <gray>Gracz <gold><player><gray> przekazał Ci magnetyt <gold><name><gray>.",
+        "waypoint_transfer_failure_reached_limit": "<dark_gray>› <red>Ten gracz osiągnął limit posiadanych magnetytów."
     },
     "claim_placement": {
         "place_success": [
@@ -135,8 +135,8 @@
     },
     "waypoint_placement": {
         "place_success": "<dark_gray>› <gray>Nowy teleport został utworzony.",
-        "place_failure_already_exists": "<dark_gray>› <red>Teleport o tej nazwie już istnieje.",
-        "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) teleportów."
+        "place_failure_already_exists": "<dark_gray>› <red>Magnetyt o tej nazwie już istnieje.",
+        "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) magnetytów."
     },
     // NOTE: Changing those values will NOT update enter/leave messages in existing claims.
     "flags": {
