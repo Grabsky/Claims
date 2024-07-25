@@ -96,7 +96,7 @@ public final class BrowseClaimOnlinePlayers implements Consumer<ClaimPanel> {
             final User user = claimPlayer.toUser();
             // ...
             final ItemStack head = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_ADD_MEMBER)
-                    .setName(text(user.getName(), NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
+                    .setName(text(user.getName(), NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false))
                     .setSkullTexture(user.getTextures())
                     .build();
             // ...

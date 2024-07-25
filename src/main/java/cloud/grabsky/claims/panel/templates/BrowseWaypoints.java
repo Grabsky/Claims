@@ -106,7 +106,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             final @Nullable Location location = waypoint.getLocation().complete();
             // ...
             final ItemBuilder icon = new ItemBuilder(location != null ? PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT : PluginItems.INTERFACE_FUNCTIONAL_ICON_WAYPOINT_INVALID).edit(meta -> {
-                meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+                meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false));
                 // ...
                 final @Nullable List<Component> lore = meta.lore();
                 if (lore != null)
@@ -267,7 +267,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             final Player viewer = (Player) cPanel.getInventory().getViewers().getFirst();
             // ...
             final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_DELETE_WAYPOINT).edit(meta -> {
-                meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+                meta.displayName(text(waypoint.getDisplayName()).color(NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false));
                 // ...
                 final @Nullable List<Component> lore = meta.lore();
                 if (lore != null)

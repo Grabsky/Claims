@@ -102,7 +102,7 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
             final User user = AzureProvider.getAPI().getUserCache().getUser(player);
             // Creating player skull icon.
             final ItemStack head = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_TRANSFER_WAYPOINT)
-                    .setName(text(user.getName(), NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false))
+                    .setName(text(user.getName(), NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false))
                     .setSkullTexture(user.getTextures())
                     .build();
             // ...

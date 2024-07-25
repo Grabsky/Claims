@@ -2,7 +2,7 @@
     // ...
     "option_prefix": "› ",
     "option_color": "GRAY",
-    "option_color_selected": "YELLOW",
+    "option_color_selected": "GOLD",
     // ...
     "flags": {
         "use": {
@@ -12,11 +12,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Interakcja<gray> (bloki użytkowe)",
+                    "name": "<gold>Interakcja<gray> (bloki użytkowe)",
                     "lore": [
                         "<gray>Interakcja z blokami użytkowymi.",
                         "",
-                        "<gray>Zakres: <yellow>Goście",
+                        "<gray>Zakres: <gold>Goście",
                         "",
                         "[OPTIONS]",
                         "",
@@ -33,11 +33,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Interakcja<gray> (kontenery)",
+                    "name": "<gold>Interakcja<gray> (kontenery)",
                     "lore": [
                         "<gray>Interakcja z kontenerami na przedmioty.",
                         "",
-                        "<gray>Zakres: <yellow>Goście",
+                        "<gray>Zakres: <gold>Goście",
                         "",
                         "[OPTIONS]"
                     ],
@@ -52,11 +52,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Wybuch TNT",
+                    "name": "<gold>Wybuch TNT",
                     "lore": [
                         "<gray>Niszczenie terenu przez TNT.",
                         "",
-                        "<gray>Zakres: <yellow>Środowisko",
+                        "<gray>Zakres: <gold>Środowisko",
                         "",
                         "[OPTIONS]",
                         "",
@@ -73,11 +73,11 @@
                 "material": "minecraft:creeper_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Wybuch Creeperów",
+                    "name": "<gold>Wybuch Creeperów",
                     "lore": [
                         "<gray>Niszczenie terenu przez creepery.",
                         "",
-                        "<gray>Zakres: <yellow>Środowisko",
+                        "<gray>Zakres: <gold>Środowisko",
                         "",
                         "[OPTIONS]",
                         "",
@@ -93,11 +93,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Topnienie Śniegu",
+                    "name": "<gold>Topnienie Śniegu",
                     "lore": [
                         "<gray>Topnienie śniegu na terenie.",
                         "",
-                        "<gray>Zakres: <yellow>Środowisko",
+                        "<gray>Zakres: <gold>Środowisko",
                         "",
                         "[OPTIONS]"
                     ],
@@ -112,11 +112,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Topnienie Lodu",
+                    "name": "<gold>Topnienie Lodu",
                     "lore": [
                         "<gray>Topnienie lodu na terenie.",
                         "",
-                        "<gray>Zakres: <yellow>Środowisko",
+                        "<gray>Zakres: <gold>Środowisko",
                         "",
                         "[OPTIONS]"
                     ],
@@ -131,11 +131,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Rozprzestrzenianie Ognia",
+                    "name": "<gold>Rozprzestrzenianie Ognia",
                     "lore": [
                         "<gray>Rozprzestrzenianie się ognia na terenie.",
                         "",
-                        "<gray>Zakres: <yellow>Środowisko",
+                        "<gray>Zakres: <gold>Środowisko",
                         "",
                         "[OPTIONS]",
                         "",
@@ -152,11 +152,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Spawn Mobów",
+                    "name": "<gold>Spawn Mobów",
                     "lore": [
                         "<gray>Spawn mobów na terenie.",
                         "",
-                        "<gray>Zakres: <yellow>Środowisko",
+                        "<gray>Zakres: <gold>Środowisko",
                         "",
                         "[OPTIONS]"
                     ],
@@ -171,11 +171,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Pogoda",
+                    "name": "<gold>Pogoda",
                     "lore": [
                         "<gray>Pogoda widoczna na terenie.",
                         "",
-                        "<gray>Zakres: <yellow>Środowisko",
+                        "<gray>Zakres: <gold>Środowisko",
                         "",
                         "[OPTIONS]",
                         "",
@@ -192,11 +192,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Czas",
+                    "name": "<gold>Czas",
                     "lore": [
                         "<gray>Godzina widoczna na terenie.",
                         "",
-                        "<gray>Zakres: <yellow>Środowisko",
+                        "<gray>Zakres: <gold>Środowisko",
                         "",
                         "[OPTIONS]",
                         "",

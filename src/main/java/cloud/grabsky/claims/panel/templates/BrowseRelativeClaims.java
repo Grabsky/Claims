@@ -101,7 +101,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
             // ...
             final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_RELATIVE_CLAIM);
             // Setting name.
-            icon.setName(Component.text(claim.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
+            icon.setName(Component.text(claim.getDisplayName()).color(NamedTextColor.GOLD).decoration(TextDecoration.ITALIC, false));
             // ...
             final @Nullable List<Component> lore = icon.getMeta().lore();
             if (lore != null) {
