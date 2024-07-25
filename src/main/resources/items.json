@@ -6,7 +6,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Teleporty",
+                    "name": "<gold>Teleporty",
                     "lore": ["<gray>Kliknij, aby otworzyć menu telpeortacji."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0="
                 }
@@ -15,7 +15,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Flagi",
+                    "name": "<gold>Flagi",
                     "lore": ["<gray>Kliknij, aby zarządzać flagami."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWNiYTcyNzdmYzg5NWJmM2I2NzM2OTQxNTk4NjRiODMzNTFhNGQxNDcxN2U0NzZlYmRhMWMzYmYzOGZjZjM3In19fQ=="
                 }
@@ -24,7 +24,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Członkowie",
+                    "name": "<gold>Członkowie",
                     "lore": ["<gray>Kliknij, aby zarządzać członkami terenu."]
                 }
             },
@@ -32,7 +32,7 @@
                 "material": "minecraft:structure_void",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Dodaj",
+                    "name": "<gold>Dodaj",
                     "lore": ["<gray>Kliknij, aby przeglądać listę graczy."],
                     "custom_model_data": 3
                 }
@@ -41,7 +41,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Kamienie Teleportacji",
+                    "name": "<gold>Kamienie Teleportacji",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
                 }
@@ -50,7 +50,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Posiadane Tereny",
+                    "name": "<gold>Posiadane Tereny",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTgyYjBiN2M2OGU4ODgwMDAzMGU2NzQ1MjJhYWI0MDM5NmZhNTQzMDcyYjk0OWMwNjAwZTY2YzJlZDM1MmZmMCJ9fX0="
                 }
@@ -59,7 +59,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Współdzielone Tereny",
+                    "name": "<gold>Współdzielone Tereny",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDdkZjNjMjhlZjY2NWI1YjEyOGY0MDkwZGY2ZTRiYmNhMjRlZjQ0NGI1N2YyMTVkZTkxNWQ4OGQ1YzQyZmUxOCJ9fX0="
                 }
@@ -85,7 +85,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Miejsce Teleportu",
+                    "name": "<gold>Miejsce Teleportu",
                     "lore": ["<gray>Kliknij, aby ustawić miejsce teleportu."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzA2NTVkNjM4ZTRiNjIxOWZlNjU1ZjdiZWEzNGY5OTQ5NTQxZGQyMDc3NjRiMzYwODhlZDFiZmZkMWNjM2UxNiJ9fX0="
                 }
@@ -94,7 +94,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Spawn",
+                    "name": "<gold>Spawn",
                     "lore": ["<gray>Kliknij, aby się teleportować."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDM4Y2YzZjhlNTRhZmMzYjNmOTFkMjBhNDlmMzI0ZGNhMTQ4NjAwN2ZlNTQ1Mzk5MDU1NTI0YzE3OTQxZjRkYyJ9fX0="
                 }
@@ -103,7 +103,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Losowy Teleport",
+                    "name": "<gold>Losowy Teleport",
                     "lore": ["<gray>Kliknij, aby się teleportować."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTJmMDk2ZWVmODdkOWYyMGNjYWFiYTJhMDJlZWQ2ZjQzZTY0MzJhNjkyOGZlMTY0NjdjYjRkZWI1ZTc0MTE4YyJ9fX0="
                 }
@@ -113,8 +113,8 @@
                 "amount": 1,
                 "meta": {
                     "lore": [
-                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
-                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "<dark_gray>› <gray>Współrzędne: <gold>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <gold>[CREATED_ON]",
                         "",
                         "<gray>Kliknij <white><lang:ui.icons.mouse_button.left><gray> aby się teleportować.",
                         "<gray>Kliknij <white><lang:ui.icons.mouse_button.right><gray> aby zmienić nazwę.",
@@ -129,8 +129,8 @@
                 "amount": 1,
                 "meta": {
                     "lore": [
-                        "<dark_gray>› <gray>Pozycja: <yellow>[LOCATION]",
-                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "<dark_gray>› <gray>Pozycja: <gold>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <gold>[CREATED_ON]",
                         "",
                         "<gray>Kliknij <white><lang:ui.icons.mouse_button.right><gray> aby zmienić nazwę.",
                         "<gray>Kliknij <red>Q, aby usunąć.",
@@ -144,10 +144,10 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Teren",
+                    "name": "<gold>Teren",
                     "lore": [
-                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
-                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "<dark_gray>› <gray>Współrzędne: <gold>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <gold>[CREATED_ON]",
                         "",
                         "<gray>Kliknij <white><lang:ui.icons.mouse_button.left><gray> aby się teleportować.",
                         "<gray>Kliknij <white><lang:ui.icons.mouse_button.right><gray> aby zmienić nazwę."
@@ -158,11 +158,11 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<yellow>Teren",
+                    "name": "<gold>Teren",
                     "lore": [
-                        "<dark_gray>› <gray>Właściciel: <yellow>[OWNER]",
-                        "<dark_gray>› <gray>Pozycja: <yellow>[LOCATION]",
-                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "<dark_gray>› <gray>Właściciel: <gold>[OWNER]",
+                        "<dark_gray>› <gray>Pozycja: <gold>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <gold>[CREATED_ON]",
                         "",
                         "<gray>Kliknij, aby się teleportować."
                     ]
@@ -173,8 +173,8 @@
                 "amount": 1,
                 "meta": {
                     "lore": [
-                        "<dark_gray>› <gray>Współrzędne: <yellow>[LOCATION]",
-                        "<dark_gray>› <gray>Data utworzenia: <yellow>[CREATED_ON]",
+                        "<dark_gray>› <gray>Współrzędne: <gold>[LOCATION]",
+                        "<dark_gray>› <gray>Data utworzenia: <gold>[CREATED_ON]",
                         "",
                         "<red>Kliknij, aby potwierdzić usunięcie."
                     ],

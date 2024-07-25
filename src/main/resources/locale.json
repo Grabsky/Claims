@@ -103,10 +103,10 @@
         "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu.",
         // Interface > Browse Waypoints
         "waypoint_teleport_failure_not_existent": "<red>Nie odnaleziono docelowej lokalizacji.", // (actionbar)
-        "waypoint_rename_success": "<dark_gray>› <gray>Nazwa teleportu została zaktualizowana: <yellow><name>",
+        "waypoint_rename_success": "<dark_gray>› <gray>Nazwa teleportu została zaktualizowana: <gold><name>",
         "waypoint_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
         // Interface > Browse Owned Claims
-        "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <yellow><name>",
+        "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <gold><name>",
         "claim_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków."
         // Interface > Browse Relative Claims
         // ...
@@ -114,11 +114,10 @@
     "claim_placement": {
         "place_success": [
             "",
-            "<dark_gray>› <gray>Chroniony teren został utworzony.",
+            "<dark_gray>› <gray>Chroniony teren został utworzony. Otwórz panel zarządznia:",
             "",
-            "<dark_gray>› <gray>Aby otworzyć panel zarządzania terenem:",
-            "<dark_gray>›  - <gray>Naciśnij <yellow>PPM<gray> na blok terenu nie trzymając nic w ręce.",
-            "<dark_gray>›  - <gray>Użyj komendy <yellow>/claims<gray> znajdując się w jego granicach.",
+            "  <gray>1, Naciśnij <white><lang:ui.icons.mouse_button.right><gray> na blok terenu.",
+            "  <gray>2. Użyj komendy <gold>/claims<gray> znajdując się w jego granicach.",
             ""
         ],
         "place_failure_overlaps": "<dark_gray>› <red>Za blisko innego terenu.",
