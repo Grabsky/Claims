@@ -75,7 +75,7 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
         this.onlineClaimPlayers = Bukkit.getOnlinePlayers().stream()
                 .filter(player -> player.equals(cPanel.getViewer()) == false)
                 .filter(player -> cPanel.getViewer().canSee(player) == true)
-                .filter(player -> cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(player).size() < PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT)
+                .filter(player -> cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(player).size() < PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT || player.hasPermission("claims.bypass.ignore_waypoints_limit") == true)
                 .toList();
         // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
@@ -108,7 +108,7 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
             // ...
             cPanel.setItem(uiSlotsIterator.next(), head, (event) -> {
                 // Making sure not to exceed the members limit.
-                if (cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(player).size() < PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT) {
+                if (cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(player).size() < PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT || player.hasPermission("claims.bypass.ignore_waypoints_limit") == true) {
                     // Should never be null.
                     final @Nullable Location location = waypoint.getLocation().complete();
                     // Returning when location happens to be null.
@@ -125,11 +125,16 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
                                 newWaypoint.create(waypointManager);
                                 // ...
                                 viewer.closeInventory();
-                                // Sending error message that claim members limit has been reached.
+                                // Sending success message to the viewer.
                                 Message.of(PluginLocale.UI_WAYPOINT_TRANSFER_SUCCESS)
                                         .placeholder("name", newWaypoint.getDisplayName())
                                         .placeholder("player", player)
                                         .send(viewer);
+                                // Sending success message to the target.
+                                Message.of(PluginLocale.UI_WAYPOINT_TRANSFER_SUCCESS_TARGET)
+                                        .placeholder("player", viewer)
+                                        .placeholder("name", newWaypoint.getDisplayName())
+                                        .send(player);
                             });
                         }
                     });

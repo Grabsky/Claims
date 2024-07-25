@@ -257,6 +257,9 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("interface.waypoint_transfer_success")
     public static String UI_WAYPOINT_TRANSFER_SUCCESS;
 
+    @JsonPath("interface.waypoint_transfer_success_target")
+    public static String UI_WAYPOINT_TRANSFER_SUCCESS_TARGET;
+
     @JsonPath("interface.waypoint_transfer_failure_reached_limit")
     public static String UI_WAYPOINT_TRANSFER_FAILURE_REACHED_LIMIT;
 
