@@ -35,10 +35,13 @@ import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import cloud.grabsky.claims.session.Session;
+import com.destroystokyo.paper.MaterialTags;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Crafter;
 import org.bukkit.entity.Player;
@@ -225,18 +228,27 @@ public final class RegionListener implements Listener {
     // TO-DO: Make sure none else has the claim panel open.
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onClaimInteract(final PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.getItem() != null || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
+        // Skipping non-right-click-block actions and cancelled actions.
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.useInteractedBlock() == Result.DENY || event.useItemInHand() == Result.DENY)
             return;
-        // ...
+        // Getting the clicked block.
         final @Nullable Block block = event.getClickedBlock();
-        // Following check is (most likely) redundant because of the action check.
+        // Following check is probably redundant because of the action check. We still keep it here to get rid of nullability warning.
         if (block == null)
             return;
-        // ...
+        // Generating ID for given block location.
         final String id = Claim.createId(block.getLocation());
-        // ...
+        // Checking if generated ID is a registered claim.
         if (claimManager.containsClaim(id) == true) {
+            // Skipping when player is trying to place a block.
+            if (event.getPlayer().isSneaking() == true && (isBlockOrSummonsEntity(event.getPlayer().getInventory().getItemInMainHand()) == true || isBlockOrSummonsEntity(event.getPlayer().getInventory().getItemInMainHand())) == true)
+                return;
+            // ...
             event.setCancelled(true);
+            // Make sure to handle interaction only for the main hand.
+            if (event.getHand() != EquipmentSlot.HAND)
+                return;
+            System.out.println("opened");
             // ...
             final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(event.getPlayer());
             final Claim claim = claimManager.getClaim(id);
@@ -388,6 +400,16 @@ public final class RegionListener implements Listener {
 
     private static boolean containsClaimType(final @NotNull ItemStack item) {
         return item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, STRING) == true;
+    }
+
+    // Likely to be incomplete.
+    private static boolean isBlockOrSummonsEntity(final @NotNull ItemStack item) {
+        return item.getType().isBlock() == true
+                || item.getType() == Material.ARMOR_STAND
+                || item.getType() == Material.ITEM_FRAME
+                || item.getType() == Material.GLOW_ITEM_FRAME
+                || MaterialTags.SPAWN_EGGS.isTagged(item)
+                || Tag.ITEMS_BOATS.isTagged(item.getType());
     }
 
 }

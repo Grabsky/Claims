@@ -34,8 +34,10 @@ import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
 import cloud.grabsky.claims.waypoints.WaypointManager;
+import com.destroystokyo.paper.MaterialTags;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
@@ -48,6 +50,7 @@ import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
 
@@ -89,7 +92,8 @@ public final class WaypointListener implements Listener {
 
     @EventHandler(ignoreCancelled = true)
     public void onWaypointInteract(final @NotNull PlayerInteractEvent event) {
-        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.getHand() != EquipmentSlot.HAND || event.getItem() != null || event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY)
+        // Skipping non-right-click-block actions and cancelled actions.
+        if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY)
             return;
         // ...
         final @Nullable Block block = event.getClickedBlock();
@@ -101,8 +105,14 @@ public final class WaypointListener implements Listener {
             final @Nullable Waypoint waypoint = waypointManager.getBlockWaypoint(location);
             // Returning if waypoint at this location exists and player is not it's owner.
             if (Utilities.findFirstBlockUnder(location, 5, Material.COMMAND_BLOCK) != null || (waypoint != null && waypoint.getOwner().equals(event.getPlayer().getUniqueId()) == true) == true) {
+                // Skipping when player is trying to place a block.
+                if (event.getPlayer().isSneaking() == true && (isBlockOrSummonsEntity(event.getPlayer().getInventory().getItemInMainHand()) == true || isBlockOrSummonsEntity(event.getPlayer().getInventory().getItemInMainHand())) == true)
+                    return;
                 // Cancelling the click.
                 event.setCancelled(true);
+                // Make sure to handle interaction only for the main hand.
+                if (event.getHand() != EquipmentSlot.HAND)
+                    return;
                 // Opening the panel.
                 new ClaimPanel.Builder()
                         .setClaimManager(claimManager)
@@ -203,6 +213,16 @@ public final class WaypointListener implements Listener {
         final Waypoint waypoint = Waypoint.fromBlock(owner, PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, location);
         // ...
         waypoint.destroy(waypointManager);
+    }
+
+    // Likely to be incomplete.
+    private static boolean isBlockOrSummonsEntity(final @NotNull ItemStack item) {
+        return item.getType().isBlock() == true
+                || item.getType() == Material.ARMOR_STAND
+                || item.getType() == Material.ITEM_FRAME
+                || item.getType() == Material.GLOW_ITEM_FRAME
+                || MaterialTags.SPAWN_EGGS.isTagged(item)
+                || Tag.ITEMS_BOATS.isTagged(item.getType());
     }
 
 }
