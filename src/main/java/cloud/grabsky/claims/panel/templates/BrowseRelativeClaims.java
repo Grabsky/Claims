@@ -34,6 +34,7 @@ import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -99,6 +100,8 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
             final int slot = slotsIterator.next();
             // ...
             final ItemBuilder icon = new ItemBuilder(PluginItems.INTERFACE_FUNCTIONAL_ICON_RELATIVE_CLAIM);
+            // Setting name.
+            icon.setName(Component.text(claim.getDisplayName()).color(NamedTextColor.YELLOW).decoration(TextDecoration.ITALIC, false));
             // ...
             final @Nullable List<Component> lore = icon.getMeta().lore();
             if (lore != null) {
