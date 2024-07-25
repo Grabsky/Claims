@@ -252,6 +252,17 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("interface.claim_rename_failure_invalid_string")
     public static Component UI_CLAIM_RENAME_FAILURE_INVALID_STRING;
 
+    // Interface > Transfer Waypoint
+
+    @JsonPath("interface.waypoint_transfer_success")
+    public static String UI_WAYPOINT_TRANSFER_SUCCESS;
+
+    @JsonPath("interface.waypoint_transfer_success_target")
+    public static String UI_WAYPOINT_TRANSFER_SUCCESS_TARGET;
+
+    @JsonPath("interface.waypoint_transfer_failure_reached_limit")
+    public static String UI_WAYPOINT_TRANSFER_FAILURE_REACHED_LIMIT;
+
 
     // Claim Placement > Place
 

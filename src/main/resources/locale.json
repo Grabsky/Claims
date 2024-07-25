@@ -107,9 +107,13 @@
         "waypoint_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
         // Interface > Browse Owned Claims
         "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <gold><name>",
-        "claim_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków."
+        "claim_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
         // Interface > Browse Relative Claims
         // ...
+        // Interface > Transfer Waypoint
+        "waypoint_transfer_success": "<dark_gray>› <gray>Przekazałeś teleport <gold><name><gray> graczowi <gold><player><gray>.",
+        "waypoint_transfer_success_target": "<dark_gray>› <gray>Gracz <gold><player><gray> przekazał Ci teleport <gold><name><gray>.",
+        "waypoint_transfer_failure_reached_limit": "<dark_gray>› <red>Ten gracz osiągnął limit posiadanych teleportów."
     },
     "claim_placement": {
         "place_success": [

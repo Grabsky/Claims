@@ -119,6 +119,7 @@
                         "<gray>Kliknij <white><lang:ui.icons.mouse_button.left><gray> aby się teleportować.",
                         "<gray>Kliknij <white><lang:ui.icons.mouse_button.right><gray> aby zmienić nazwę.",
                         "",
+                        "<gray>Kliknij <red>F<gray>, aby przekazać innemu graczowi.",
                         "<gray>Kliknij <red>Q<gray>, aby usunąć."
                     ],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
@@ -138,6 +139,13 @@
                         "<red>Bezpieczna teleportacja niedostępna."
                     ],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
+                }
+            },
+            "icon_transfer_waypoint": {
+                "material": "minecraft:player_head",
+                "amount": 1,
+                "meta": {
+                    "lore": ["<gray>Kliknij, aby <green>przekazać<gray> temu graczowi magnetyt."]
                 }
             },
             "icon_owned_claim": {

@@ -175,6 +175,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                         viewer.showTitle(title);
                     }
                     case DROP -> cPanel.applyClaimTemplate(new Confirmation(waypoint), true);
+                    case SWAP_OFFHAND -> cPanel.applyClaimTemplate(new BrowseWaypointOnlinePlayers(waypoint), true);
                 }
             });
         }
