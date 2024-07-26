@@ -248,7 +248,6 @@ public final class RegionListener implements Listener {
             // Make sure to handle interaction only for the main hand.
             if (event.getHand() != EquipmentSlot.HAND)
                 return;
-            System.out.println("opened");
             // ...
             final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(event.getPlayer());
             final Claim claim = claimManager.getClaim(id);
