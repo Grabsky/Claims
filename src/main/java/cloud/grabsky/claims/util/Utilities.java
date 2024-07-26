@@ -39,6 +39,7 @@ import org.bukkit.Material;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.util.RayTraceResult;
@@ -116,7 +117,7 @@ public final class Utilities {
             // ...
             Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
                 // ...
-                final Entity finalSource = (source.getVehicle() != null) ? source.getVehicle() : source;
+                final Entity finalSource = (source.getVehicle() != null && source.getVehicle().getType() != EntityType.BLOCK_DISPLAY) ? source.getVehicle() : source;
                 // ...
                 finalSource.teleportAsync(destination, TeleportCause.PLUGIN, TeleportFlag.EntityState.RETAIN_PASSENGERS).thenAccept(isSuccess -> {
                     if (isSuccess == false) {
@@ -164,7 +165,7 @@ public final class Utilities {
                 // ...
                 Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
                     // ...
-                    final Entity finalSource = (source.getVehicle() != null) ? source.getVehicle() : source;
+                    final Entity finalSource = (source.getVehicle() != null && source.getVehicle().getType() != EntityType.BLOCK_DISPLAY) ? source.getVehicle() : source;
                     // ...
                     finalSource.teleportAsync(destination, TeleportCause.PLUGIN, TeleportFlag.EntityState.RETAIN_PASSENGERS).thenAccept(isSuccess -> {
                         if (isSuccess == false) {
