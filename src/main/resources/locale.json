@@ -16,6 +16,12 @@
     // Random location teleport messages are displayed in action bar.
     "random_teleport_searching": "<gray>Trwa szukanie bezpiecznej lokalizacji...",
     "random_teleport_failure_not_found": "<red>Nie udało się znaleźć bezpiecznej lokalizacji.",
+    // Dimension names are used when rendering some UI buttons.
+    "dimensions": {
+        "minecraft:overworld": "Overworld",
+        "minecraft:nether": "Nether",
+        "minecraft:the_end": "End"
+    },
     // ...
     "command_arguments": {
         "argument_claim_not_found": "<dark_gray>› <red>Teren <gold><claim><red> nie istnieje.",

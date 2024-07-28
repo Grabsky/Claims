@@ -45,6 +45,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
@@ -68,6 +69,10 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
     private static final List<Integer> UI_SLOTS = List.of(29, 30, 31, 32, 33);
 
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+
+    static {
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+    }
 
     @Override
     public void accept(final @NotNull ClaimPanel cPanel) {
@@ -110,6 +115,7 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                     return Message.of(line)
                             .replace("[OWNER]", requirePresent(claim.getOwners().getFirst().toUser().getName(), "N/A"))
                             .replace("[LOCATION]", location.blockX() + ", " + location.blockY() + ", " + location.blockZ())
+                            .replace("[DIMENSION]", PluginLocale.DIMENSIONS.getOrDefault(claim.getCenter().getWorld().key().asString(), "N/A"))
                             .replace("[CREATED_ON]", (createdOn != null) ? DATE_FORMAT.format(new Date(createdOn)) : "N/A")
                             .getMessage();
                 }).toList());

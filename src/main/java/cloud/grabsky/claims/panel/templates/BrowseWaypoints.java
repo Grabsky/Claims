@@ -32,7 +32,6 @@ import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.session.Session;
-import cloud.grabsky.claims.util.Extensions;
 import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
@@ -50,6 +49,7 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.NotNull;
@@ -58,7 +58,6 @@ import org.jetbrains.annotations.Nullable;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
-import lombok.experimental.ExtensionMethod;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static net.kyori.adventure.text.Component.text;
@@ -72,8 +71,12 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
     private List<Waypoint> waypoints;
 
     private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_waypoints", NamedTextColor.WHITE);
-    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy hh:mm");
+    private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     private static final List<Integer> UI_SLOTS = List.of(29, 30, 31, 32, 33);
+
+    static {
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("Europe/Warsaw"));
+    }
 
     @Override
     public void accept(final @NotNull ClaimPanel cPanel) {
@@ -112,7 +115,8 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 if (lore != null)
                     meta.lore(lore.stream().map(line -> {
                         return Message.of(line)
-                                .replace("[LOCATION]", waypoint.getLocation().x() + ", " + waypoint.getLocation().y() + ", " + waypoint.getLocation().z())
+                                .replace("[LOCATION]", (int) Math.floor(waypoint.getLocation().x()) + ", " + (int) Math.floor(waypoint.getLocation().y()) + ", " + (int) Math.floor(waypoint.getLocation().z()))
+                                .replace("[DIMENSION]", PluginLocale.DIMENSIONS.getOrDefault(waypoint.getLocation().world().asString(), "N/A"))
                                 .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
                                 .getMessage();
                     }).toList());
