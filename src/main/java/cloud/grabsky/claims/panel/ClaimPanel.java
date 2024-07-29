@@ -176,7 +176,7 @@ public final class ClaimPanel extends Panel {
     public static boolean isClaimPanelOpen(final @NotNull Claim claim) {
         return Bukkit.getOnlinePlayers().stream()
                 .map(Player::getOpenInventory)
-                .anyMatch((it) -> it.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim().equals(claim) == true);
+                .anyMatch(it -> it.getTopInventory().getHolder() instanceof ClaimPanel cPanel && cPanel.getClaim() != null && cPanel.getClaim().equals(claim) == true);
     }
 
 }
