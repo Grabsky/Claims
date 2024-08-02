@@ -63,15 +63,21 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.session.SessionManager;
 import com.sk89q.worldguard.session.handler.ExitFlag;
+import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executor;
 
+import org.jetbrains.annotations.NotNull;
+
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 import static cloud.grabsky.configuration.paper.util.Resources.ensureResourceExistence;
 
@@ -132,6 +138,8 @@ public final class Claims extends BedrockPlugin {
                 // Registering commands...
                 .registerCommand(ClaimsCommand.class)
                 .registerCommand(WaypointCommand.class);
+        // Registering PAPI placeholders...
+        Placeholders.INSTANCE.register();
     }
 
     @Override
@@ -219,6 +227,39 @@ public final class Claims extends BedrockPlugin {
             sessionManager.registerHandler(LeaveActionBarFlag.FACTORY, ExitFlag.FACTORY);
             sessionManager.registerHandler(ClientTimeFlag.FACTORY, ExitFlag.FACTORY);
             sessionManager.registerHandler(ClientWeatherFlag.FACTORY, ExitFlag.FACTORY);
+        }
+
+    }
+
+    @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
+    public static final class Placeholders extends PlaceholderExpansion {
+        public static final Placeholders INSTANCE = new Placeholders(); // SINGLETON
+
+        @Override
+        public @NotNull String getAuthor() {
+            return "Grabsky";
+        }
+
+        @Override
+        public @NotNull String getIdentifier() {
+            return "claims";
+        }
+
+        @Override
+        public @NotNull String getVersion() {
+            return Claims.getInstance().getPluginMeta().getVersion();
+        }
+
+        @Override
+        public String onRequest(final @NotNull OfflinePlayer player, final @NotNull String params) {
+            if (params.equalsIgnoreCase("claims_count") == true && player instanceof Player onlinePlayer && onlinePlayer.isOnline() == true) {
+                final int count = Claims.getInstance().getClaimManager().getClaimPlayer(onlinePlayer).getClaims().size();
+                return String.valueOf(count);
+            } else if (params.equalsIgnoreCase("waypoints_count") == true && player instanceof Player onlinePlayer && onlinePlayer.isOnline() == true) {
+                final int count = Claims.getInstance().getWaypointManager().getWaypoints(onlinePlayer).size();
+                return String.valueOf(count);
+            }
+            return null;
         }
 
     }
