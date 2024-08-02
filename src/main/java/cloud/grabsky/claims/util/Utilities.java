@@ -116,10 +116,10 @@ public final class Utilities {
                 source.showRichTitle(Component.translatable(PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION), Component.empty(), 8, 16, 8);
             // ...
             Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
+                // NOTE: Teleporting vehicle with player passengers can cause de-sync.
+                // final Entity finalSource = (source.getVehicle() != null && source.getVehicle().getType() != EntityType.BLOCK_DISPLAY) ? source.getVehicle() : source;
                 // ...
-                final Entity finalSource = (source.getVehicle() != null && source.getVehicle().getType() != EntityType.BLOCK_DISPLAY) ? source.getVehicle() : source;
-                // ...
-                finalSource.teleportAsync(destination, TeleportCause.PLUGIN, TeleportFlag.EntityState.RETAIN_PASSENGERS).thenAccept(isSuccess -> {
+                source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
                     if (isSuccess == false) {
                         Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
                         return;
@@ -164,10 +164,10 @@ public final class Utilities {
                     source.showRichTitle(Component.translatable(PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION), Component.empty(), 8, 100, 8);
                 // ...
                 Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
+                    // NOTE: Teleporting vehicle with player passengers can cause de-sync.
+                    // final Entity finalSource = (source.getVehicle() != null && source.getVehicle().getType() != EntityType.BLOCK_DISPLAY) ? source.getVehicle() : source;
                     // ...
-                    final Entity finalSource = (source.getVehicle() != null && source.getVehicle().getType() != EntityType.BLOCK_DISPLAY) ? source.getVehicle() : source;
-                    // ...
-                    finalSource.teleportAsync(destination, TeleportCause.PLUGIN, TeleportFlag.EntityState.RETAIN_PASSENGERS).thenAccept(isSuccess -> {
+                    source.teleportAsync(destination, TeleportCause.PLUGIN, TeleportFlag.EntityState.RETAIN_PASSENGERS).thenAccept(isSuccess -> {
                         if (isSuccess == false) {
                             Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
                             return;
