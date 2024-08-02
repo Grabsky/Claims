@@ -277,6 +277,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 if (lore != null)
                     meta.lore(lore.stream().map(line -> Message.of(line)
                             .replace("[LOCATION]", (int) waypoint.getLocation().x() + ", " + (int) waypoint.getLocation().y() + ", " + (int) waypoint.getLocation().z())
+                            .replace("[DIMENSION]", PluginLocale.DIMENSIONS.getOrDefault(waypoint.getLocation().world().asString(), "N/A"))
                             .replace("[CREATED_ON]", DATE_FORMAT.format(new Date(waypoint.getCreatedOn())))
                             .getMessage()
                     ).toList());
