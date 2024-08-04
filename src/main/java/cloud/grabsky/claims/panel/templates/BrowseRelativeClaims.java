@@ -120,12 +120,17 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                             .getMessage();
                 }).toList());
             }
-            // ...
-            if (claim.getType().getUpgradeButton().getItemMeta() instanceof SkullMeta upgradeSkullMeta) {
+            if (PluginItems.INTERFACE_FUNCTIONAL_ICON_RELATIVE_CLAIM.getType() == Material.PLAYER_HEAD) {
                 icon.edit(SkullMeta.class, (meta) -> {
-                    meta.setPlayerProfile(upgradeSkullMeta.getPlayerProfile());
+                    icon.setSkullTexture(claim.getOwners().getFirst().toUser().getTextures());
                 });
             }
+            // OLD: Using claim level button.
+            // if (claim.getType().getUpgradeButton().getItemMeta() instanceof SkullMeta upgradeSkullMeta) {
+            //     icon.edit(SkullMeta.class, (meta) -> {
+            //         meta.setPlayerProfile(upgradeSkullMeta.getPlayerProfile());
+            //     });
+            // }
             // ...
             cPanel.setItem(slot, icon.build(), (event) -> {
                 // Closing the panel.
