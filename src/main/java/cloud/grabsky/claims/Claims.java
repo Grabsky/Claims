@@ -164,6 +164,12 @@ public final class Claims extends BedrockPlugin {
                     ConfigurationHolder.of(PluginItems.class, items),
                     ConfigurationHolder.of(PluginFlags.class, flags)
             );
+            // Unregistering PAPI expansion if already registered.
+            if (Placeholders.INSTANCE.isRegistered() == true)
+                Placeholders.INSTANCE.unregister();
+            // Registering the expansion again.
+            if (Placeholders.INSTANCE.isReady() == true)
+                Placeholders.INSTANCE.register();
             // Returning true, as everything seemed to reload properly.
             return true;
         } catch (final IOException e) {
@@ -234,6 +240,10 @@ public final class Claims extends BedrockPlugin {
     @RequiredArgsConstructor(access = AccessLevel.PRIVATE)
     public static final class Placeholders extends PlaceholderExpansion {
         public static final Placeholders INSTANCE = new Placeholders(); // SINGLETON
+
+        public boolean isReady() {
+            return Claims.getInstance().getClaimManager() != null && Claims.getInstance().getWaypointManager() != null;
+        }
 
         @Override
         public @NotNull String getAuthor() {
