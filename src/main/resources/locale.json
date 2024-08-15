@@ -10,6 +10,7 @@
     // ...
     "claims_not_in_claimed_area": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie.",
     "claims_not_owner": "<dark_gray>› <red>Tylko właściciel terenu ma do tego uprawnienia.",
+    "claims_not_member": "<dark_gray>› <red>Tylko właściciel i członkowie terenu mają do tego uprawnienia.",
     // ...
     "claim_does_not_exist": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie istnieje.",
     "claim_no_center_defined": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie został poprawnie zdefiniowany.",

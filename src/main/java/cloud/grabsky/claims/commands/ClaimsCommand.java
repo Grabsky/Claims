@@ -33,6 +33,7 @@ import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.exception.ClaimProcessException;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.templates.BrowseCategories;
+import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import cloud.grabsky.commands.ArgumentQueue;
 import cloud.grabsky.commands.RootCommand;
 import cloud.grabsky.commands.RootCommandContext;
@@ -136,10 +137,21 @@ public class ClaimsCommand extends RootCommand {
                 // Sending error message to command sender.
                 Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
                 return;
+            } else if (claimSender.isMemberOf(claim) == true) {
+                new ClaimPanel.Builder()
+                        .setClaimManager(claimManager)
+                        .setAccessBlockLocation(null)
+                        .build().open(sender, (panel) -> {
+                            if (panel instanceof ClaimPanel cPanel) {
+                                plugin.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                                return true;
+                            }
+                            return false;
+                        });
+            } else {
+                Message.of(PluginLocale.NOT_CLAIM_MEMBER).send(sender);
+                return;
             }
-            // Sending error message to command sender.
-            Message.of(PluginLocale.NOT_CLAIM_OWNER).send(sender);
-            return;
         }
         // Sending error message to command sender.
         Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);

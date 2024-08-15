@@ -63,6 +63,9 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("claims_not_owner")
     public static Component NOT_CLAIM_OWNER;
 
+    @JsonPath("claims_not_member")
+    public static Component NOT_CLAIM_MEMBER;
+
     @JsonPath("claim_does_not_exist")
     public static Component CLAIM_DOES_NOT_EXIST;
 

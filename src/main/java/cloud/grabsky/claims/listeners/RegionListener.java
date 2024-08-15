@@ -272,18 +272,17 @@ public final class RegionListener implements Listener {
                                 }
                                 return false;
                             });
-                } else if (claim.isMember(claimPlayer) == true) {
+                } else if (claimPlayer.isMemberOf(claim) == true)
                     new ClaimPanel.Builder()
-                            .setClaimManager(claimManager)
-                            .setAccessBlockLocation(block.getLocation())
-                            .build().open(event.getPlayer(), (panel) -> {
-                                if (panel instanceof ClaimPanel cPanel) {
-                                    claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
-                                    return true;
-                                }
-                                return false;
-                            });
-                }
+                        .setClaimManager(claimManager)
+                        .setAccessBlockLocation(block.getLocation())
+                        .build().open(event.getPlayer(), (panel) -> {
+                            if (panel instanceof ClaimPanel cPanel) {
+                                claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                                return true;
+                            }
+                            return false;
+                        });
             }
         }
     }
