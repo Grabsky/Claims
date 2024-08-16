@@ -148,10 +148,11 @@ public class ClaimsCommand extends RootCommand {
                             }
                             return false;
                         });
-            } else {
-                Message.of(PluginLocale.NOT_CLAIM_MEMBER).send(sender);
                 return;
             }
+            // Sending error message to command sender.
+            Message.of(PluginLocale.NOT_CLAIM_MEMBER).send(sender);
+            return;
         }
         // Sending error message to command sender.
         Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
