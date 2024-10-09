@@ -35,12 +35,14 @@ import cloud.grabsky.claims.waypoints.Waypoint;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.RemovalCause;
+import io.papermc.paper.event.player.AsyncChatDecorateEvent;
 import io.papermc.paper.event.player.AsyncChatEvent;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.UUID;
@@ -108,16 +110,29 @@ public abstract class Session<T> {
                 .build();
 
         @EventHandler
-        public static void onQuit(final @NotNull PlayerQuitEvent event) {
+        public void onQuit(final @NotNull PlayerQuitEvent event) {
             final UUID uniqueId = event.getPlayer().getUniqueId();
             // Invalidating session on player quit.
             if (CURRENT_EDIT_SESSIONS.asMap().containsKey(uniqueId) == true)
                 CURRENT_EDIT_SESSIONS.invalidate(uniqueId);
         }
 
+        @SuppressWarnings("UnstableApiUsage")
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onChatDecorate(final @NotNull AsyncChatDecorateEvent event) {
+            // Returning for non-player event calls.
+            if (event.player() == null)
+                return;
+            // Getting the unique id of the player. This is not null.
+            final UUID uniqueId = event.player().getUniqueId();
+            // Cancelling the event if there is an active session.
+            if (CURRENT_EDIT_SESSIONS.asMap().containsKey(uniqueId) == true && CURRENT_EDIT_SESSIONS.getIfPresent(uniqueId) != null)
+                event.setCancelled(true);
+        }
+
         // TO-DO: Merge common logic.
-        @EventHandler
-        public static void onChat(final @NotNull AsyncChatEvent event) {
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onChat(final @NotNull AsyncChatEvent event) {
             final Player player = event.getPlayer();
             final UUID uniqueId = event.getPlayer().getUniqueId();
             // Handling existing session.
