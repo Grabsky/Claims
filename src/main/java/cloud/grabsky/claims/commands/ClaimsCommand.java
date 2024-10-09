@@ -78,12 +78,12 @@ public class ClaimsCommand extends RootCommand {
         final String argument = context.getInput().at(1, "").toLowerCase();
         // Displaying list of sub-commands in case no argument has been provided.
         if (index == 0)
-            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "get", "list", "reload", "restore");
+            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "get", "list", "reload", "restore", "teleport");
         // Otherwise, checking permissions and sending specialized permissions to the sender.
         return (context.getExecutor().hasPermission(this.getPermission() + "." + argument) == true)
                 ? switch (argument) {
                     case "list" -> (index == 1) ? CompletionsProvider.of(Player.class) : CompletionsProvider.EMPTY;
-                    case "restore" -> (index == 1) ? CompletionsProvider.of(Claim.class) : CompletionsProvider.EMPTY;
+                    case "restore", "teleport" -> (index == 1) ? CompletionsProvider.of(Claim.class) : CompletionsProvider.EMPTY;
                     // Displaying no completions in case unrecognized argument has been provided.
                     default -> CompletionsProvider.EMPTY;
                 }
@@ -102,6 +102,7 @@ public class ClaimsCommand extends RootCommand {
             case "list" -> this.onClaimsList(context, arguments);
             case "reload" -> this.onClaimsReload(context, arguments);
             case "restore" -> this.onClaimsRestore(context, arguments);
+            case "teleport" -> this.onClaimsTeleport(context, arguments);
             // Displaying help in case unrecognized argument has been provided.
             default -> this.onHelp(context);
         }
@@ -207,6 +208,7 @@ public class ClaimsCommand extends RootCommand {
                             .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
                             .placeholder("claim_displayname", claim.getDisplayName())
                             .placeholder("claim_location", claim.getCenter())
+                            .placeholder("claim_owner", claim.getOwners().getFirst().toUser().getName())
                             .send(sender);
                 });
                 // Sending output footer to the sender.
@@ -233,6 +235,7 @@ public class ClaimsCommand extends RootCommand {
                             .replace("<claim>", claim.getId()) // Must be a direct replacement because placeholders do not work in click events.
                             .placeholder("claim_displayname", claim.getDisplayName())
                             .placeholder("claim_location", claim.getCenter())
+                            .placeholder("claim_owner", claim.getOwners().getFirst().toUser().getName())
                             .send(sender);
                 });
                 // Sending output footer to the sender.
@@ -329,6 +332,41 @@ public class ClaimsCommand extends RootCommand {
                     chunk.getBlock(position.blockX(), position.blockY(), position.blockZ()).setType(type);
                     // Sending success message to the sender.
                     Message.of(PluginLocale.COMMAND_CLAIMS_RESTORE_SUCCESS).send(sender);
+                });
+            } catch (final ClaimProcessException e) {
+                // Sending error message to the sender.
+                Message.of(e.getErrorMessage()).send(sender);
+                // Logging error message to the console
+                claimManager.getPlugin().getLogger().warning("An error occurred while trying to access claim:");
+                claimManager.getPlugin().getLogger().warning("   " + e.getMessage());
+            }
+            return;
+        }
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
+    }
+
+
+    /* CLAIMS TELEPORT */
+
+    private void onClaimsTeleport(final RootCommandContext context, final ArgumentQueue arguments) {
+        final Player sender = context.getExecutor().asPlayer();
+        // ...
+        if (sender.hasPermission(this.getPermission() + ".teleport") == true) {
+            // Getting next argument as Claim. Defaults to the claim player is currently on. Might be null.
+            final @Nullable Claim claim = arguments.next(Claim.class).asOptional(claimManager.getClaimAt(sender.getLocation()));
+            // Sending error message if no claim argument was provided and player is not on any claim.
+            if (claim == null) {
+                Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
+                return;
+            }
+            // Trying...
+            try {
+                // Getting center location of the claim.
+                final Location destination = claim.getCenter().clone().add(0.0, 0.5, 0.0);
+                // Getting chunk at claim center asynchronously...
+                sender.teleportAsync(destination).thenAccept(chunk -> {
+                    // Sending success message to the sender.
+                    Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(sender);
                 });
             } catch (final ClaimProcessException e) {
                 // Sending error message to the sender.

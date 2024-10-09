@@ -57,7 +57,7 @@
         ],
         "claims_list_member_of_footer": " ",
         "claims_list_member_of_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie jest członkiem żadnego terenu.",
-        "claims_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Pozycja: <gold><claim_location>'><gray><lang:ui.icons.question_mark> <gold><claim>",
+        "claims_list_entry": "<dark_gray>›    <click:suggest_command:'/claims teleport <claim>'><hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Właściciel: <gold><claim_owner><newline><gray>Pozycja: <gold><claim_location><newline><newline><gray>Kliknij, aby się teleportować.'><gray><lang:ui.icons.question_mark> <gold><claim_displayname> <#848484>(<claim>)</hover></click>",
         // Claims > Restore
         "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
         // Waypoints
@@ -84,8 +84,8 @@
             " "
         ],
         "waypoints_list_footer": " ",
-        "waypoints_list_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie ma aktywnych żadnych teleportów.",
-        "waypoints_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><waypoint_displayname><newline><gray>Pozycja: <gold><waypoint_location><newline><newline><gray>Kliknij, aby się teleportować.'><click:run_command:'/waypoints teleport <target> <waypoint_name>'><gray><lang:ui.icons.question_mark> <gold><waypoint_name></click>",
+        "waypoints_list_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie ma żadnych aktywnych teleportów.",
+        "waypoints_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><waypoint_displayname><newline><gray>Pozycja: <gold><waypoint_location><newline><newline><gray>Kliknij, aby się teleportować.'><click:suggest_command:'/waypoints teleport <target> <waypoint_name>'><gray><lang:ui.icons.question_mark> <gold><waypoint_displayname> <#848484>(<waypoint_name>)</click>",
         // Waypoints > Teleport
         "waypoints_teleport_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints teleport <white>(player) (name)"
     },
