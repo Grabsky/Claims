@@ -20,7 +20,7 @@
     // Dimension names are used when rendering some UI buttons.
     "dimensions": {
         "minecraft:overworld": "Overworld",
-        "minecraft:nether": "Nether",
+        "minecraft:the_nether": "Nether",
         "minecraft:the_end": "End"
     },
     // ...
