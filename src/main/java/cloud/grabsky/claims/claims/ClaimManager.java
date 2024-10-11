@@ -90,7 +90,9 @@ public final class ClaimManager {
     @Getter(AccessLevel.PUBLIC)
     private final Claims plugin;
 
+    @Getter(AccessLevel.PUBLIC)
     private final RegionManager regionManager;
+
     private final Map<String, Claim> claimsCache = new HashMap<>();
     private final Map<UUID, ClaimPlayer> claimPlayerCache = new HashMap<>();
 

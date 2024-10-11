@@ -28,6 +28,7 @@ import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonPath;
 import cloud.grabsky.configuration.paper.adapter.StringComponentAdapter;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.Map;
 
@@ -77,6 +78,9 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("random_teleport_failure_not_found")
     public static Component RANDOM_TELEPORT_FAILURE_NOT_FOUND;
+
+    @JsonPath("portal_teleport_failure")
+    public static Component PORTAL_TELEPORT_FAILURE;
 
     @JsonPath("dimensions")
     public static Map<String, String> DIMENSIONS;

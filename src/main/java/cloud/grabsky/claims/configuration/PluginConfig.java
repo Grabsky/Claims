@@ -54,6 +54,9 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("random_teleport_max_distance")
     public static int RANDOM_TELEPORT_MAX_DISTANCE;
 
+    @JsonPath("portals_teleport_to_unauthorized_regions")
+    public static Boolean PORTALS_TELEPORT_TO_UNAUTHORIZED_REGIONS;
+
     // Teleportation
 
     @JsonPath("teleportation.delay")

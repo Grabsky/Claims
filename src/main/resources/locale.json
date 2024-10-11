@@ -17,6 +17,8 @@
     // Random location teleport messages are displayed in action bar.
     "random_teleport_searching": "<gray>Trwa szukanie bezpiecznej lokalizacji...",
     "random_teleport_failure_not_found": "<red>Nie udało się znaleźć bezpiecznej lokalizacji.",
+    // Portal failure message is displayed in action bar.
+    "portal_teleport_failure": "<red>Teleportacja nieudana. Zbuduj portal w innym miejscu.",
     // Dimension names are used when rendering some UI buttons.
     "dimensions": {
         "minecraft:overworld": "Overworld",

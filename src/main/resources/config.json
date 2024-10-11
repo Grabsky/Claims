@@ -9,6 +9,8 @@
     "random_teleport_min_distance": 500,
     // Random teleport maximum distance from spawn point.
     "random_teleport_max_distance": 1000,
+    // Whether teleportation to unauthorized regions through portals should be allowed.
+    "portals_teleport_to_unauthorized_regions": false,
 
     // Teleportation settings.
     "teleportation": {

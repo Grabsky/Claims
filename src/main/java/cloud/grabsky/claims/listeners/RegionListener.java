@@ -36,6 +36,13 @@ import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import cloud.grabsky.claims.session.Session;
 import com.destroystokyo.paper.MaterialTags;
+import com.sk89q.worldedit.bukkit.BukkitAdapter;
+import com.sk89q.worldedit.bukkit.BukkitPlayer;
+import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.WorldGuard;
+import com.sk89q.worldguard.protection.managers.RegionManager;
+import com.sk89q.worldguard.protection.regions.ProtectedRegion;
+import com.sk89q.worldguard.protection.regions.RegionContainer;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -44,6 +51,7 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Crafter;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -63,6 +71,9 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataContainer;
@@ -392,6 +403,64 @@ public final class RegionListener implements Listener {
                 if (isAnyClaimSuperClose == true) {
                     event.setCancelled(true);
                 }
+            }
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPortalCreate(final PortalCreateEvent event) {
+        if (event.getReason() == PortalCreateEvent.CreateReason.FIRE)
+            return;
+        // Getting destination location of the portal. While this could technically fail because we ONLY check the first block of the portal, it should still cover 99.9% cases.
+        final Location location = event.getBlocks().getFirst().getLocation();
+        // Adapting Bukkit's World object to WorldEdit one.
+        final com.sk89q.worldedit.world.World aWorld = BukkitAdapter.adapt(location.getWorld());
+        // Getting the RegionManager instance for involved world.
+        final @Nullable RegionManager regions = WorldGuard.getInstance().getPlatform().getRegionContainer().get(aWorld);
+        // Returning if no RegionManager was found for the involved world.
+        if (regions == null)
+            return;
+        // Iterating over all claims at the destination area.
+        for (final ProtectedRegion region : regions.getApplicableRegions(BukkitAdapter.asBlockVector(location))) {
+            // Cancelling the event if non-player entity tries to create a portal on ANY protected region.
+            if (event.getEntity() instanceof Player == false) {
+                event.setCancelled(true);
+                return;
+            } else if (event.getEntity() instanceof Player player) {
+                final UUID uniqueId = player.getUniqueId();
+                // Disallowing portal creation if player is neither an owner nor a member of the region.
+                if (player.hasPermission("claims.plugin.can_modify_unowned_claim") == false && region.getMembers().contains(uniqueId) == false && region.getOwners().contains(uniqueId) == false) {
+                    Message.of(PluginLocale.PORTAL_TELEPORT_FAILURE).sendActionBar(player);
+                    event.setCancelled(true);
+                    return;
+                }
+            }
+        }
+    }
+
+    // Needs to be low priority for WorldGuard's greeting / farewell flags to be properly cancelled / ignored.
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
+    public void onPortalTeleport(final PlayerTeleportEvent event) {
+        // Returning if portal rules are disabled in the configuration.
+        if (PluginConfig.PORTALS_TELEPORT_TO_UNAUTHORIZED_REGIONS == true || event.getFrom().getWorld().key().asString().equals("minecraft:the_end") == true)
+            return;
+        // Getting destination location of the teleport.
+        final Location location = event.getTo();
+        // Adapting Bukkit's World object to WorldEdit one.
+        final com.sk89q.worldedit.world.World aWorld = BukkitAdapter.adapt(location.getWorld());
+        // Getting the RegionManager instance for involved world.
+        final @Nullable RegionManager regions = WorldGuard.getInstance().getPlatform().getRegionContainer().get(aWorld);
+        // Returning if no RegionManager was found for the involved world.
+        if (regions == null)
+            return;
+        // Iterating over all claims at the destination area.
+        for (final ProtectedRegion region : regions.getApplicableRegions(BukkitAdapter.asBlockVector(location))) {
+            final UUID uniqueId = event.getPlayer().getUniqueId();
+            // Disallowing teleportation if player is neither an owner nor a member of the region.
+            if (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claim") == false && region.getMembers().contains(uniqueId) == false && region.getOwners().contains(uniqueId) == false) {
+                Message.of(PluginLocale.PORTAL_TELEPORT_FAILURE).sendActionBar(event.getPlayer());
+                event.setCancelled(true);
+                return;
             }
         }
     }
