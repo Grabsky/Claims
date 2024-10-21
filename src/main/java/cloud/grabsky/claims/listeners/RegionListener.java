@@ -100,7 +100,7 @@ public final class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) // TO-DO: Perhaps allow for collisions between owned regions?
     public void onClaimPlace(final BlockPlaceEvent event) {
         // Not sure if that covers all possible cases including building in WorldGuard regions, but it's better than nothing.
-        if (event.canBuild() == false)
+        if (event.canBuild() == false || event.getItemInHand().hasItemMeta() == false)
             return;
         // Checking if placed block is a claim block.
         final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
@@ -466,7 +466,7 @@ public final class RegionListener implements Listener {
     }
 
     private static boolean containsClaimType(final @NotNull ItemStack item) {
-        return item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, STRING) == true;
+        return item.hasItemMeta() == true && item.getItemMeta().getPersistentDataContainer().has(Claims.Key.CLAIM_TYPE, STRING) == true;
     }
 
     // Likely to be incomplete.
