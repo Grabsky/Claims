@@ -19,6 +19,10 @@
     "random_teleport_failure_not_found": "<red>Nie udało się znaleźć bezpiecznej lokalizacji.",
     // Portal failure message is displayed in action bar.
     "portal_teleport_failure": "<red>Teleportacja nieudana. Zbuduj portal w innym miejscu.",
+    // Border messages are displayed in action bar.
+    "claim_border_enabled": "<gray>Granice terenu zostały <green>włączone<gray>.",
+    "claim_border_disabled": "<gray>Granice terenu zostały <red>wyłączone<gray>.",
+    "claim_border_shaders_not_supported": "<red>Shadery mogą sprawić, że granice są niewidoczne.",
     // Dimension names are used when rendering some UI buttons.
     "dimensions": {
         "minecraft:overworld": "Overworld",

@@ -42,6 +42,7 @@ import cloud.grabsky.claims.flags.EnterActionBarFlag;
 import cloud.grabsky.claims.flags.LeaveActionBarFlag;
 import cloud.grabsky.claims.flags.object.FixedTime;
 import cloud.grabsky.claims.flags.object.FixedWeather;
+import cloud.grabsky.claims.listeners.PlayerListener;
 import cloud.grabsky.claims.listeners.RegionListener;
 import cloud.grabsky.claims.listeners.WaypointListener;
 import cloud.grabsky.claims.session.Session;
@@ -51,6 +52,7 @@ import cloud.grabsky.configuration.ConfigurationHolder;
 import cloud.grabsky.configuration.ConfigurationMapper;
 import cloud.grabsky.configuration.exception.ConfigurationMappingException;
 import cloud.grabsky.configuration.paper.PaperConfigurationMapper;
+import com.github.retrooper.packetevents.PacketEvents;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;
 import com.sk89q.worldedit.world.World;
@@ -63,6 +65,7 @@ import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.session.SessionManager;
 import com.sk89q.worldguard.session.handler.ExitFlag;
+import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.NamespacedKey;
@@ -126,6 +129,7 @@ public final class Claims extends BedrockPlugin {
         this.getServer().getPluginManager().registerEvents(new RegionListener(this, claimManager), this);
         this.getServer().getPluginManager().registerEvents(new WaypointListener(this), this);
         this.getServer().getPluginManager().registerEvents(Session.Listener.INSTANCE, this);
+        this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
         // Setting-up RootCommandManager... (applying templates, registering commands)
         new RootCommandManager(this)
                 // Registering templates...
@@ -138,14 +142,23 @@ public final class Claims extends BedrockPlugin {
                 // Registering commands...
                 .registerCommand(ClaimsCommand.class)
                 .registerCommand(WaypointCommand.class);
-        // Registering PAPI placeholders...
+        // Initializing PacketEvents.
+        PacketEvents.getAPI().init();
+        // Registering PlaceholderAPI placeholders.
         Placeholders.INSTANCE.register();
     }
 
     @Override
     public void onLoad() {
+        PacketEvents.setAPI(SpigotPacketEventsBuilder.build(this));
+        PacketEvents.getAPI().load();
         // Registering additional WorldGuard flags.
         Claims.CustomFlag.registerFlags();
+    }
+
+    @Override
+    public void onDisable() {
+        PacketEvents.getAPI().terminate();
     }
 
     @Override

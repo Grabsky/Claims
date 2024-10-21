@@ -82,6 +82,15 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("portal_teleport_failure")
     public static Component PORTAL_TELEPORT_FAILURE;
 
+    @JsonPath("claim_border_enabled")
+    public static Component CLAIM_BORDER_ENABLED;
+
+    @JsonPath("claim_border_disabled")
+    public static Component CLAIM_BORDER_DISABLED;
+
+    @JsonPath("claim_border_shaders_not_supported")
+    public static Component CLAIM_BORDER_SHADERS_NOT_SUPPORTED;
+
     @JsonPath("dimensions")
     public static Map<String, String> DIMENSIONS;
 

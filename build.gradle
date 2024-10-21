@@ -23,6 +23,8 @@ repositories {
     maven { url = "https://maven.pkg.github.com/grabsky/commands"; fillCredentials(it) }
     // Repository for the PlaceholderAPI, API.
     maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
+    // Repository containing the 'PacketEvents' dependency.
+    maven { url = "https://repo.codemc.io/repository/maven-releases" }
 }
 
 dependencies {
@@ -41,6 +43,8 @@ dependencies {
     compileOnly("cloud.grabsky:azure-api:1.20.1-11") { exclude group: "cloud.grabsky", module: "bedrock" }
     // PlaceholderAPI
     compileOnly("me.clip:placeholderapi:2.11.5")
+    // PacketEvents
+    compileOnly("com.github.retrooper:packetevents-spigot:2.5.0")
 }
 
 tasks {

@@ -43,7 +43,17 @@ import cloud.grabsky.commands.component.CompletionsProvider;
 import cloud.grabsky.commands.component.ExceptionHandler;
 import cloud.grabsky.commands.exception.CommandLogicException;
 import cloud.grabsky.commands.exception.MissingInputException;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.util.Vector3f;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.papermc.paper.math.BlockPosition;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -52,7 +62,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
@@ -78,7 +90,7 @@ public class ClaimsCommand extends RootCommand {
         final String argument = context.getInput().at(1, "").toLowerCase();
         // Displaying list of sub-commands in case no argument has been provided.
         if (index == 0)
-            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "get", "list", "reload", "restore", "teleport");
+            return CompletionsProvider.filtered(it -> context.getExecutor().hasPermission(this.getPermission() + "." + it), "border", "get", "list", "reload", "restore", "teleport");
         // Otherwise, checking permissions and sending specialized permissions to the sender.
         return (context.getExecutor().hasPermission(this.getPermission() + "." + argument) == true)
                 ? switch (argument) {
@@ -100,6 +112,7 @@ public class ClaimsCommand extends RootCommand {
         } else switch (arguments.next(String.class).asRequired().toLowerCase()) {
             case "get" -> this.onClaimsGet(context, arguments);
             case "list" -> this.onClaimsList(context, arguments);
+            case "border" -> this.onClaimsBorder(context, arguments);
             case "reload" -> this.onClaimsReload(context, arguments);
             case "restore" -> this.onClaimsRestore(context, arguments);
             case "teleport" -> this.onClaimsTeleport(context, arguments);
@@ -248,6 +261,70 @@ public class ClaimsCommand extends RootCommand {
         }
         // Sending error message to the sender.
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
+    }
+
+
+    /* CLAIMS BORDER */
+
+    private void onClaimsBorder(final RootCommandContext context, final ArgumentQueue arguments) {
+        final Player sender = context.getExecutor().asPlayer();
+        // ...
+        if (sender.hasPermission(this.getPermission() + ".border") == true) {
+            final ClaimPlayer claimSender = claimManager.getClaimPlayer(sender);
+            // Removing current border entities.
+            if (claimSender.getBorderEntities().isEmpty() == false) {
+                final int[] currentEntities = claimSender.getBorderEntities().stream().mapToInt(Integer::intValue).toArray();
+                // Creating the packet.
+                final var destroyPacket = new WrapperPlayServerDestroyEntities(currentEntities);
+                // Sending packet to the player.
+                PacketEvents.getAPI().getPlayerManager().sendPacket(sender, destroyPacket);
+                // Clearing list of border entities.
+                claimSender.getBorderEntities().clear();
+                // Sending message to the player and returning.
+                Message.of(PluginLocale.CLAIM_BORDER_DISABLED).sendActionBar(sender);
+                return;
+            }
+            // Getting location of the command sender.
+            final Location location = sender.getLocation();
+            // Getting Claim at location of the command sender.
+            final @Nullable Claim claim = claimManager.getClaimAt(location);
+            // ..............
+            if (claim == null) {
+                Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
+                return;
+            }
+            // ...
+            final var minY = location.getWorld().getMinHeight();
+            final var maxY = location.getWorld().getMaxHeight();
+            // Calculating total number of entities that are going to be created.
+            // First location must be 5 blocks below the min Y, because 10 is added to Y coordinate on first iteration of the for loop.
+            final Location initialLocation = new Location(claim.getCenter().getWorld(), claim.getCenter().x(), minY - 5, claim.getCenter().z());
+            // Item.
+            final ItemStack item = new ItemBuilder(Material.COAL, 1).setCustomModelData(1).build();
+            // ...
+            for (int i = minY; i <= maxY + 1; i += 10) {
+                final Location spawnLocation = initialLocation.add(0, 10, 0);
+                // ...
+                final com.github.retrooper.packetevents.protocol.world.Location wrappedLocation = SpigotConversionUtil.fromBukkitLocation(spawnLocation);
+                // Getting the next entity ID...
+                final int id = Bukkit.getUnsafe().nextEntityId();
+                // Adding to the set...
+                claimSender.getBorderEntities().add(id);
+                // Creating packet...
+                final var spawnPacket = new WrapperPlayServerSpawnEntity(id, UUID.randomUUID(), EntityTypes.ITEM_DISPLAY, wrappedLocation, 0, 0, null);
+                final var metadataPacket = new WrapperPlayServerEntityMetadata(id, List.of(
+                        new EntityData(12, EntityDataTypes.VECTOR3F, new Vector3f(claim.getType().getRadius() * 2 + 1, 10, claim.getType().getRadius() * 2 + 1)),
+                        new EntityData(17, EntityDataTypes.FLOAT, 2.0F),
+                        new EntityData(23, EntityDataTypes.ITEMSTACK, SpigotConversionUtil.fromBukkitItemStack(item))
+                ));
+                PacketEvents.getAPI().getPlayerManager().sendPacket(sender, spawnPacket);
+                PacketEvents.getAPI().getPlayerManager().sendPacket(sender, metadataPacket);
+            }
+            Message.of(PluginLocale.CLAIM_BORDER_ENABLED).sendActionBar(sender);
+            plugin.getBedrockScheduler().run(40L, (task) -> {
+                Message.of(PluginLocale.CLAIM_BORDER_SHADERS_NOT_SUPPORTED).sendActionBar(sender);
+            });
+        }
     }
 
 

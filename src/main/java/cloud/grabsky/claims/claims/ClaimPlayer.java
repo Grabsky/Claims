@@ -28,6 +28,7 @@ import cloud.grabsky.azure.api.user.User;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -51,6 +52,9 @@ public final class ClaimPlayer {
 
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull UUID uniqueId;
+
+    @Getter(value = AccessLevel.PUBLIC, onMethod_ = @Internal)
+    private final @NotNull Set<Integer> borderEntities = new HashSet<>();
 
     @Internal @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.PUBLIC)
     private boolean isChangingClaimName = false;
