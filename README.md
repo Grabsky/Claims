@@ -12,7 +12,7 @@ Modern and clean, but opinionated claims plugin based on **[WorldGuard](https://
 <br />
 
 ## Requirements
-Requires **Java 21** (or higher) and **Paper 1.20.6** (or higher).
+Requires **Java 21** (or higher) and **Paper 1.21.3** (or higher).
 
 <br />
 
