@@ -25,16 +25,20 @@ package cloud.grabsky.claims.claims;
 
 import cloud.grabsky.azure.api.AzureProvider;
 import cloud.grabsky.azure.api.user.User;
+import cloud.grabsky.claims.configuration.PluginConfig;
+import cloud.grabsky.claims.util.Utilities;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.jetbrains.annotations.ApiStatus.Internal;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -58,6 +62,29 @@ public final class ClaimPlayer {
 
     @Internal @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.PUBLIC)
     private boolean isChangingClaimName = false;
+
+    /**
+     * Returns number of {@link Claim Claims} this {@link ClaimPlayer} can have. Defaults to {@code claim_settings.claims_limit} configuration value and returns {@code -1} for offline players.
+     */
+    public int getClaimsLimit() {
+        final Player player = this.toPlayer();
+        // Returning '-1' if player is not online.
+        if (player == null || player.isOnline() == false)
+            return -1;
+        // Iterating over 'claims.plugin.claims_limit' permissions and returning the highest number found. Defaults to a config value.
+        return player.getEffectivePermissions().stream()
+                // Including only permissions that start with 'claims.plugin.claims_limit.'
+                .filter(it -> it.getValue() == true && it.getPermission().startsWith("claims.plugin.claims_limit.") == true)
+                // Unboxing the number from permission.
+                .map(it -> {
+                    final @Nullable Integer value = Utilities.parseInt(it.getPermission().replace("claims.plugin.claims_limit.", ""));
+                    return (value != null && value >= 0) ? value : null;
+                })
+                // Filtering 'null' values.
+                .filter(Objects::nonNull)
+                // Returning the maximum number in this stream.
+                .mapToInt(Integer::intValue).max().orElse(PluginConfig.CLAIM_SETTINGS_CLAIMS_LIMIT);
+    }
 
     /**
      * Returns {@code true} if this {@link ClaimPlayer} is owner of any {@link Claim}.

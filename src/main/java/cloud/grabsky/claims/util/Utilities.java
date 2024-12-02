@@ -309,4 +309,16 @@ public final class Utilities {
         return (result != null) ? result.getHitBlock() : null;
     }
 
+
+    /**
+     * Returns parsed {@link Integer} or {@code null} if invalid.
+     */
+    public static @Nullable Integer parseInt(final String value) {
+        try {
+            return Integer.parseInt(value);
+        } catch (final NumberFormatException e) {
+            return null;
+        }
+    }
+
 }

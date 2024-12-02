@@ -114,7 +114,7 @@ public final class RegionListener implements Listener {
                     final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(uuid);
                     final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
                     // Making sure player does not exceed claim limit.
-                    if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < PluginConfig.CLAIM_SETTINGS_CLAIMS_LIMIT) {
+                    if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < claimPlayer.getClaimsLimit()) {
                         // Setting 5 second cooldown to prevent block place spam. Unfortunately this works per-material and not per-item.
                         event.getPlayer().setCooldown(event.getItemInHand().getType(), PluginConfig.CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN * 20);
                         // Making sure that placed region is far enough from spawn
@@ -149,7 +149,7 @@ public final class RegionListener implements Listener {
                         return;
                     }
                     event.setCancelled(true);
-                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT).placeholder("limit", PluginConfig.CLAIM_SETTINGS_CLAIMS_LIMIT).send(player);
+                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT).placeholder("limit", claimPlayer.getClaimsLimit()).send(player);
                     return;
                 }
                 event.setCancelled(true);
