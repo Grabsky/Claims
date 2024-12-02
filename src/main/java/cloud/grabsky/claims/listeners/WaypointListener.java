@@ -78,7 +78,7 @@ public final class WaypointListener implements Listener {
         if (PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS == true && event.getBlockPlaced().getType() == Material.LODESTONE) {
             final Player player = event.getPlayer();
             // ...
-            if (waypointManager.getWaypoints(player).stream().filter(waypoint -> waypoint.getSource() == Source.BLOCK).count() < PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT || player.hasPermission("claims.bypass.ignore_waypoints_limit") == true) {
+            if (waypointManager.getWaypoints(player).stream().filter(waypoint -> waypoint.getSource() == Source.BLOCK).count() < waypointManager.getWaypointsLimit(player) || player.hasPermission("claims.bypass.ignore_waypoints_limit") == true) {
                 final Location location = event.getBlock().getLocation().toCenterLocation();
                 // Trying to create the waypoint.
                 this.create(player, location);
@@ -86,7 +86,7 @@ public final class WaypointListener implements Listener {
                 return;
             }
             event.setCancelled(true);
-            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT).placeholder("limit", PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT).send(player);
+            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT).placeholder("limit", waypointManager.getWaypointsLimit(player)).send(player);
         }
     }
 

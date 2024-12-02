@@ -24,6 +24,9 @@
 package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
+import cloud.grabsky.claims.claims.Claim;
+import cloud.grabsky.claims.claims.ClaimPlayer;
+import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.util.InstanceCreator;
 import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
@@ -35,6 +38,7 @@ import io.papermc.paper.math.BlockPosition;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
@@ -252,6 +257,28 @@ public final class WaypointManager {
         }
         // Returning false...
         return CompletableFuture.completedFuture(false);
+    }
+
+    /**
+     * Returns number of {@link Waypoint Waypoints} this {@link Player} can have. Defaults to {@code waypoint_settings.enhanced_lodestone_blocks_limit} configuration value and returns {@code -1} for offline players.
+     */
+    public int getWaypointsLimit(final @NotNull Player player) {
+        // Returning '-1' if player is not online.
+        if (player.isOnline() == false)
+            return -1;
+        // Iterating over 'claims.plugin.waypoints_limit' permissions and returning the highest number found. Defaults to a config value.
+        return player.getEffectivePermissions().stream()
+                // Including only permissions that start with 'claims.plugin.waypoints_limit.'
+                .filter(it -> it.getValue() == true && it.getPermission().startsWith("claims.plugin.waypoints_limit.") == true)
+                // Unboxing the number from permission.
+                .map(it -> {
+                    final @Nullable Integer value = Utilities.parseInt(it.getPermission().replace("claims.plugin.waypoints_limit.", ""));
+                    return (value != null && value >= 0) ? value : null;
+                })
+                // Filtering 'null' values.
+                .filter(Objects::nonNull)
+                // Returning the maximum number in this stream.
+                .mapToInt(Integer::intValue).max().orElse(PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT);
     }
 
 
