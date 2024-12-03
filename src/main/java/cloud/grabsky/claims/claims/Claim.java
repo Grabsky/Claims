@@ -63,18 +63,18 @@ public final class Claim {
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull ClaimManager manager;
 
-    @Getter(AccessLevel.MODULE) @Setter(value = AccessLevel.MODULE, onMethod = @__({@Internal}))
+    @Getter(AccessLevel.MODULE) @Setter(value = AccessLevel.MODULE, onMethod_ = @Internal)
     private @NotNull ProtectedRegion region;
 
-    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.MODULE, onMethod = @__({@Internal}))
+    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.MODULE, onMethod_ = @Internal)
     private @NotNull Claim.Type type;
 
     /* FIELDS BELOW ARE EXCLUDED FROM CONSTRUCTOR */
 
-    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
+    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod_ = @Internal)
     private boolean isBeingEdited = false;
 
-    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod = @__({@Internal}))
+    @Getter(AccessLevel.PUBLIC) @Setter(value = AccessLevel.PUBLIC, onMethod_ = @Internal)
     private boolean isPendingRename = false;
 
     public Location getCenter() throws ClaimProcessException {
