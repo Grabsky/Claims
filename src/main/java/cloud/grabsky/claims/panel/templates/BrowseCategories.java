@@ -96,26 +96,34 @@ public enum BrowseCategories implements Consumer<ClaimPanel> {
         // ...
         cPanel.setItem(32, upgradeButton, (event) -> {
             // Returning if claim is already on the max level.
-            if (type.isUpgradeable() == false)
-                return;
-            // ...
-            if (viewer.hasPermission(PERMISSION_BYPASS_UPGRADE_COST) == true || hasUpgradeCost(viewer, type) == true) {
+            if (type.isUpgradeable() == false) {
+                // Closing the inventory.
+                cPanel.close();
+                // Sending error message to the viewer.
+                Message.of(PluginLocale.UI_UPGRADE_FAILURE_NOT_UPGRADEABLE).send(viewer);
+            }
+            // Otherwise, checking if player has items required to upgrade the claim.
+            else if (viewer.hasPermission(PERMISSION_BYPASS_UPGRADE_COST) == true || hasUpgradeCost(viewer, type) == true) {
                 // Removing upgrade cost from Player unless it has bypass permission
                 if (viewer.hasPermission(PERMISSION_BYPASS_UPGRADE_COST) == false)
                     removeSimilarItems(viewer, type.getUpgradeCost());
                 // Trying to upgrade the claim...
                 if (cPanel.getManager().upgradeClaim(claim) == true) {
+                    // Playing the upgrade sound if configured.
                     if (PluginConfig.CLAIMS_SETTINGS_UI_UPGRADE_SOUND != null)
                         viewer.playSound(PluginConfig.CLAIMS_SETTINGS_UI_UPGRADE_SOUND);
-                    // ...
+                    // Sending success message to the viewer.
                     Message.of(PluginLocale.UI_UPGRADE_SUCCESS)
                             .placeholder("size", claim.getType().getRadius() * 2 + 1)
                             .send(viewer);
-                    // ...
+                    // Refreshing the view.
                     this.render(claim, cPanel);
-                    return;
+                } else {
+                    // Closing the inventory.
+                    cPanel.close();
+                    // Sending error message to the viewer.
+                    Message.of(PluginLocale.UI_UPGRADE_FAILURE_MISSING_ITEMS).send(viewer);
                 }
-                Message.of(PluginLocale.UI_UPGRADE_FAILURE_MISSING_ITEMS).send(viewer);
             }
         });
 
@@ -126,8 +134,8 @@ public enum BrowseCategories implements Consumer<ClaimPanel> {
     private static void setUpgradeStatus(final @NotNull ItemStack item, final @NotNull Player player, final @NotNull Claim.Type type) {
         final Component statusComponent = (type.isUpgradeable() == true)
                 ? (player.hasPermission(PERMISSION_BYPASS_UPGRADE_COST) == true || hasUpgradeCost(player, type) == true)
-                ? PluginLocale.UPGRADE_ICON_UPGRADE_READY
-                : PluginLocale.UPGRADE_ICON_UPGRADE_MISSING_ITEMS
+                        ? PluginLocale.UPGRADE_ICON_UPGRADE_READY
+                        : PluginLocale.UPGRADE_ICON_UPGRADE_MISSING_ITEMS
                 : PluginLocale.UPGRADE_ICON_UPGRADE_NOT_UPGRADEABLE;
         // ...
         item.editMeta(meta -> {
