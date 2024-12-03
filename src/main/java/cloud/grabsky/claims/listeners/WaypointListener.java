@@ -53,6 +53,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -74,19 +75,26 @@ public final class WaypointListener implements Listener {
     public void onWaypointPlace(final @NotNull BlockPlaceEvent event) {
         if (event.canBuild() == false)
             return;
-        // ...
+        // Checking of feature is enabled and if placed block is LODESTONE
         if (PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS == true && event.getBlockPlaced().getType() == Material.LODESTONE) {
             final Player player = event.getPlayer();
-            // ...
-            if (waypointManager.getWaypoints(player).stream().filter(waypoint -> waypoint.getSource() == Source.BLOCK).count() < waypointManager.getWaypointsLimit(player) || player.hasPermission("claims.bypass.ignore_waypoints_limit") == true) {
+            // Getting the maximum number of waypoints this player can have.
+            final int limit = waypointManager.getWaypointsLimit(player);
+            // Checking if player has not reached the maximum number of waypoints.
+            if (player.hasPermission("claims.bypass.ignore_waypoints_limit") == true || waypointManager.getWaypoints(player).stream().filter(waypoint -> waypoint.getSource() == Source.BLOCK).count() < limit) {
                 final Location location = event.getBlock().getLocation().toCenterLocation();
                 // Trying to create the waypoint.
-                this.create(player, location);
-                // ...
+                this.create(player, location).thenAccept(isSuccess -> {
+                    // Sending success message to the player.
+                    if (isSuccess == true)
+                        Message.of(PluginLocale.WAYPOINT_PLACE_SUCCESS).replace("<limit>", String.valueOf(limit)).send(player);
+                });
                 return;
             }
+            // Cancelling the event otherwise.
             event.setCancelled(true);
-            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT).placeholder("limit", waypointManager.getWaypointsLimit(player)).send(player);
+            // Sending error message to the player.
+            Message.of(PluginLocale.WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT).placeholder("limit", limit).send(player);
         }
     }
 
@@ -200,12 +208,14 @@ public final class WaypointListener implements Listener {
         });
     }
 
-    private void create(final @NotNull Player owner, final @NotNull Location location) {
+    private CompletableFuture<Boolean> create(final @NotNull Player owner, final @NotNull Location location) {
         final Waypoint waypoint = Waypoint.fromBlock(owner.getUniqueId(), PluginConfig.WAYPOINT_SETTINGS_DEFAULT_DISPLAY_NAME, location);
-        // ...
-        waypoint.create(waypointManager).thenAccept(___ -> {
+        // Creating the waypoints.
+        return waypoint.create(waypointManager).thenApply(isSuccess -> {
             // Setting cooldown to prevent block place spam. Unfortunately this works per-material and not per-item.
             owner.setCooldown(Material.LODESTONE, PluginConfig.WAYPOINT_SETTINGS_PLACE_COOLDOWN * 20);
+            // Passing returned 'isSuccess' variable to the next stage.
+            return isSuccess;
         });
     }
 
