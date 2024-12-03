@@ -6,7 +6,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Teleporty",
+                    "custom_name": "<gold>Teleporty",
                     "lore": ["<gray>Kliknij, aby otworzyć menu telpeortacji."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjlmMTcxMjdmMTBhZDRmNzBkYjA5M2E2MDIzYzdiNjljZjkxYjQwOWI4MThhODNkZWIzZDU1NDU3YjMxNmY2ZSJ9fX0="
                 }
@@ -15,7 +15,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Flagi",
+                    "custom_name": "<gold>Flagi",
                     "lore": ["<gray>Kliknij, aby zarządzać flagami."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWNiYTcyNzdmYzg5NWJmM2I2NzM2OTQxNTk4NjRiODMzNTFhNGQxNDcxN2U0NzZlYmRhMWMzYmYzOGZjZjM3In19fQ=="
                 }
@@ -24,7 +24,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Członkowie",
+                    "custom_name": "<gold>Członkowie",
                     "lore": ["<gray>Kliknij, aby zarządzać członkami terenu."]
                 }
             },
@@ -32,16 +32,16 @@
                 "material": "minecraft:structure_void",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Dodaj",
+                    "custom_name": "<gold>Dodaj",
                     "lore": ["<gray>Kliknij, aby przeglądać listę graczy."],
-                    "model": "firedot:plus"
+                    "model": "firedot:add"
                 }
             },
             "browse_waypoints": {
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Magnetyty",
+                    "custom_name": "<gold>Magnetyty",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZjUwMjE2NTk3ZjE2YmNkYzIyZjEwYTNjYzIyOTljYTg4NGM1N2U0Njg1MGZiOGRlZjAxODk1NjYyZDM5MDQwNCJ9fX0="
                 }
@@ -50,7 +50,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Posiadane Tereny",
+                    "custom_name": "<gold>Posiadane Tereny",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZTgyYjBiN2M2OGU4ODgwMDAzMGU2NzQ1MjJhYWI0MDM5NmZhNTQzMDcyYjk0OWMwNjAwZTY2YzJlZDM1MmZmMCJ9fX0="
                 }
@@ -59,7 +59,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Współdzielone Tereny",
+                    "custom_name": "<gold>Współdzielone Tereny",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDdkZjNjMjhlZjY2NWI1YjEyOGY0MDkwZGY2ZTRiYmNhMjRlZjQ0NGI1N2YyMTVkZTkxNWQ4OGQ1YzQyZmUxOCJ9fX0="
                 }
@@ -85,7 +85,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Miejsce Teleportu",
+                    "custom_name": "<gold>Miejsce Teleportu",
                     "lore": ["<gray>Kliknij, aby ustawić miejsce teleportu."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzA2NTVkNjM4ZTRiNjIxOWZlNjU1ZjdiZWEzNGY5OTQ5NTQxZGQyMDc3NjRiMzYwODhlZDFiZmZkMWNjM2UxNiJ9fX0="
                 }
@@ -94,7 +94,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Spawn",
+                    "custom_name": "<gold>Spawn",
                     "lore": ["<gray>Kliknij, aby się teleportować."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDM4Y2YzZjhlNTRhZmMzYjNmOTFkMjBhNDlmMzI0ZGNhMTQ4NjAwN2ZlNTQ1Mzk5MDU1NTI0YzE3OTQxZjRkYyJ9fX0="
                 }
@@ -103,7 +103,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Losowy Teleport",
+                    "custom_name": "<gold>Losowy Teleport",
                     "lore": ["<gray>Kliknij, aby się teleportować.", "", "<red>Pamiętaj, że wrócić na spawn możesz tylko", "<red>za pomocą magnetytu lub bloku terenu.", "", "<red>Wpisz <gold>/spawn<red>, aby dowiedzieć się więcej."],
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTJmMDk2ZWVmODdkOWYyMGNjYWFiYTJhMDJlZWQ2ZjQzZTY0MzJhNjkyOGZlMTY0NjdjYjRkZWI1ZTc0MTE4YyJ9fX0="
                 }
@@ -154,7 +154,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Teren",
+                    "custom_name": "<gold>Teren",
                     "lore": [
                         "<dark_gray>› <gray>Świat: <gold>[DIMENSION]",
                         "<dark_gray>› <gray>Współrzędne: <gold>[LOCATION]",
@@ -169,7 +169,7 @@
                 "material": "minecraft:player_head",
                 "amount": 1,
                 "meta": {
-                    "name": "<gold>Teren",
+                    "custom_name": "<gold>Teren",
                     "lore": [
                         "<dark_gray>› <gray>Właściciel: <gold>[OWNER]",
                         "<dark_gray>› <gray>Świat: <gold>[DIMENSION]",
@@ -201,7 +201,7 @@
                 "material": "minecraft:structure_void",
                 "amount": 1,
                 "meta": {
-                    "name": "<gray>Następna Strona",
+                    "custom_name": "<gray>Następna Strona",
                     "model": "firedot:arrow_right"
                 }
             },
@@ -209,7 +209,7 @@
                 "material": "minecraft:structure_void",
                 "amount": 1,
                 "meta": {
-                    "name": "<gray>Poprzednia Strona",
+                    "custom_name": "<gray>Poprzednia Strona",
                     "model": "firedot:arrow_left"
                 }
             },
@@ -217,7 +217,7 @@
                 "material": "minecraft:barrier",
                 "amount": 1,
                 "meta": {
-                    "name": "<red>Powrót",
+                    "custom_name": "<red>Powrót",
                     "model": "firedot:return"
                 }
             }
