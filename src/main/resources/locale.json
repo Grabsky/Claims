@@ -115,14 +115,11 @@
         "members_remove_success": "<dark_gray>› <gray>Gracz <gold><player><gray> został usunięty do terenu.",
         "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu.",
         // Interface > Browse Waypoints
-        "waypoint_teleport_failure_not_existent": "<red>Nie odnaleziono docelowej lokalizacji.", // (actionbar)
         "waypoint_rename_success": "<dark_gray>› <gray>Nazwa magnetytu została zaktualizowana: <gold><name>",
         "waypoint_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
         // Interface > Browse Owned Claims
         "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <gold><name>",
         "claim_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
-        // Interface > Browse Relative Claims
-        // ...
         // Interface > Transfer Waypoint
         "waypoint_transfer_success": "<dark_gray>› <gray>Przekazałeś magnetyt <gold><name><gray> graczowi <gold><player><gray>.",
         "waypoint_transfer_success_target": "<dark_gray>› <gray>Gracz <gold><player><gray> przekazał Ci magnetyt <gold><name><gray>.",
@@ -148,7 +145,6 @@
     },
     "waypoint_placement": {
         "place_success": "<dark_gray>› <gray>Nowy teleport został utworzony.",
-        "place_failure_already_exists": "<dark_gray>› <red>Magnetyt o tej nazwie już istnieje.",
         "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) magnetytów."
     },
     // NOTE: Changing those values will NOT update enter/leave messages in existing claims.

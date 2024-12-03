@@ -28,7 +28,6 @@ import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonPath;
 import cloud.grabsky.configuration.paper.adapter.StringComponentAdapter;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 
 import java.util.Map;
 
@@ -256,9 +255,6 @@ public final class PluginLocale implements JsonConfiguration {
 
     // Interface > Browse Waypoints
 
-    @JsonPath("interface.waypoint_teleport_failure_not_existent")
-    public static String UI_WAYPOINT_TELEPORT_FAILURE_NOT_EXISTENT;
-
     @JsonPath("interface.waypoint_rename_success")
     public static String UI_WAYPOINT_RENAME_SUCCESS;
 
@@ -321,9 +317,6 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("waypoint_placement.place_success")
     public static String WAYPOINT_PLACE_SUCCESS;
-
-    @JsonPath("waypoint_placement.place_failure_already_exists")
-    public static Component WAYPOINT_PLACE_FAILURE_ALREADY_EXISTS;
 
     @JsonPath("waypoint_placement.place_failure_reached_waypoints_limit")
     public static String WAYPOINT_PLACE_FAILURE_REACHED_WAYPOINTS_LIMIT;
