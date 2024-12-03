@@ -44,5 +44,5 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           name: "${{ env.PROJECT_RELEASE_NAME }}"
-          tag-name: "${{ env.PROJECT_TAG }}"
+          tag_name: "${{ env.PROJECT_TAG }}"
           files: "build/libs/Claims-*.jar"
