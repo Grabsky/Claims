@@ -43,6 +43,11 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          # Configuring release name and tag.
           name: "${{ env.PROJECT_RELEASE_NAME }}"
           tag_name: "${{ env.PROJECT_TAG }}"
+          # Configuring files that are attached to the release.
           files: "build/libs/Claims-*.jar"
+          # Configuring release body.
+          append_body: true
+          body: "Unless stated otherwise, this is NOT a stable release. You are advised AGAINST running it, even in a development environment."
