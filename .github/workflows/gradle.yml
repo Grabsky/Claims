@@ -42,8 +42,7 @@ jobs:
       # Release
       - name: Release
         uses: softprops/action-gh-release@v2
-        if: startsWith(github.ref, 'refs/tags/')
         with:
           name: "${{ env.PROJECT_RELEASE_NAME }}"
           tag-name: "${{ env.PROJECT_TAG }}"
-          files: 'build/libs/Claims-*.jar'
+          files: "build/libs/Claims-*.jar"
