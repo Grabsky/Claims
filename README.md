@@ -1,8 +1,9 @@
 # Claims
+[![Latest Release](https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.github.com%2Frepos%2FGrabsky%2FClaims%2Freleases%2Flatest&query=tag_name&logo=gradle&style=for-the-badge&label=%20&labelColor=%231C2128&color=%23454F5A)](https://github.com/Grabsky/Claims/releases/latest)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/Grabsky/Claims/gradle.yml?style=for-the-badge&logo=github&logoColor=white&label=%20)]()
 [![CodeFactor Grade](https://img.shields.io/codefactor/grade/github/Grabsky/Claims/main?style=for-the-badge&logo=codefactor&logoColor=white&label=%20)]()
 
-Modern and clean, but opinionated claims plugin based on **[WorldGuard](https://github.com/EngineHub/WorldGuard)** for **[PaperMC/Paper](https://github.com/PaperMC/Paper)** servers. Maintained for use on servers I develop for and no public release is planned as of now.
+Modern and clean, but opinionated claims plugin based on **[WorldGuard](https://github.com/EngineHub/WorldGuard)** and made specifically for **[Paper](https://github.com/PaperMC/Paper)** servers. Maintained for use on servers I develop for and no public release is planned as of now.
 
 <br />
 
@@ -27,3 +28,8 @@ $ cd ./Claims
 # Compiling and building artifacts.
 $ gradlew shadowJar
 ```
+
+<br />
+
+## Contributing
+This project is open for code contributions.
