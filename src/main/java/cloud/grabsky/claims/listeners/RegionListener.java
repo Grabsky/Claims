@@ -268,7 +268,7 @@ public final class RegionListener implements Listener {
                 if (event.getPlayer().hasPermission("claims.plugin.can_modify_unowned_claims") == true || claim.isOwner(claimPlayer) == true) {
                     // Cancelling in case panel is already in use.
                     if (isClaimPanelOpen(claim) == true) {
-                        Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(event.getPlayer());
+                        Message.of(PluginLocale.CLAIMS_ALREADY_EDITING).send(event.getPlayer());
                         return;
                     }
                     // Otherwise, creating and opening the panel.

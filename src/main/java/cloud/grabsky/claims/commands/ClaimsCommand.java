@@ -149,7 +149,7 @@ public class ClaimsCommand extends RootCommand {
                     return;
                 }
                 // Sending error message to command sender.
-                Message.of(PluginLocale.COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE).send(sender);
+                Message.of(PluginLocale.CLAIMS_ALREADY_EDITING).send(sender);
                 return;
             } else if (claimSender.isMemberOf(claim) == true) {
                 new ClaimPanel.Builder()

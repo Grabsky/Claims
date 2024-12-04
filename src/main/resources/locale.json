@@ -11,6 +11,7 @@
     "claims_not_in_claimed_area": "<dark_gray>› <red>Nie znajdujesz się na żadnym terenie.",
     "claims_not_owner": "<dark_gray>› <red>Tylko właściciel terenu ma do tego uprawnienia.",
     "claims_not_member": "<dark_gray>› <red>Tylko właściciel i członkowie terenu mają do tego uprawnienia.",
+    "claims_already_editing": "<dark_gray>› <red>Panel jest teraz używany przez innego gracza.",
     // ...
     "claim_does_not_exist": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie istnieje.",
     "claim_no_center_defined": "<dark_gray>› <red>Operacja nie powiodła się. Teren nie został poprawnie zdefiniowany.",
@@ -37,69 +38,69 @@
     "commands": {
         // Claims
         "claims_usage": [
-            "<dark_gray>› <gold>/claims",
-            "<dark_gray>› <gold>/claims get",
-            "<dark_gray>› <gold>/claims list <gray>(player)",
-            "<dark_gray>› <gold>/claims restore <gray>(claim)"
+            "",
+            "<dark_gray>› <gold>/claims<dark_gray> - <#848484>Opens management panel of the current claim.",
+            "<dark_gray>› <gold>/claims get<dark_gray> - <#848484>Gives all configured claim blocks.",
+            "<dark_gray>› <gold>/claims border<dark_gray> - <#848484>Shows border of the current claim.",
+            "<dark_gray>› <gold>/claims list <gray>[player]<dark_gray> - <#848484>Lists all claims of specified player.",
+            "<dark_gray>› <gold>/claims restore <gray>[claim]<dark_gray> - <#848484>Restores the current claim.",
+            "<dark_gray>› <gold>/claims teleport <gray>[claim]<dark_gray> - <#848484>Teleports to the specified claim.",
+            ""
         ],
-        // Claims > Edit
-        "claims_edit_usage": "<dark_gray>› <gray>Użycie: <gold>/claims edit <white>(claim) <gray>(--force)",
-        "claims_edit_failure_already_in_use": "<dark_gray>› <red>Panel jest teraz używany przez innego gracza.",
         // Claims > Get
         "claims_get_success": "<dark_gray>› <gray>Bloki terenu zostały dodane do twojego ekwipunku.",
         "claims_get_failure": "<dark_gray>› <red>Nie zdefiniowano żadnego typu terenu.",
-        // Claims > Find
-        "claims_list_usage": "<dark_gray>› <gray>Użycie: <gold>/claims list <gray>(player)",
+        // Claims > List
+        "claims_list_usage": "<dark_gray>› <gray>Użycie: <gold>/claims list <gray>[player]",
         "claims_list_owner_of_header": [
             "<dark_gray>› <gold><player><gray> jest właścicielem <gold><count><gray> terenów:",
-            " "
+            ""
         ],
-        "claims_list_owner_of_footer": " ",
+        "claims_list_owner_of_footer": "",
         "claims_list_owner_of_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie jest właścicielem żadnego terenu.",
-
         "claims_list_member_of_header": [
             "<dark_gray>› <gold><player><gray> jest członkiem <gold><count><gray> terenów:",
-            " "
+            ""
         ],
-        "claims_list_member_of_footer": " ",
+        "claims_list_member_of_footer": "",
         "claims_list_member_of_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie jest członkiem żadnego terenu.",
         "claims_list_entry": "<dark_gray>›    <click:suggest_command:'/claims teleport <claim>'><hover:show_text:'<gray>Nazwa: <gold><claim_displayname><newline><gray>Właściciel: <gold><claim_owner><newline><gray>Pozycja: <gold><claim_location><newline><newline><gray>Kliknij, aby się teleportować.'><gray><lang:ui.icons.question_mark> <gold><claim_displayname> <#848484>(<claim>)</hover></click>",
         // Claims > Restore
         "claims_restore_success": "<dark_gray>› <gray>Przywrócono blok terenu na swoje miejsce.",
         // Waypoints
         "waypoints_usage": [
-            " ",
-            "<dark_gray>› <gold>/waypoints create <white>(player) (name)",
-            "<dark_gray>› <gold>/waypoints list <gray>(player)",
-            "<dark_gray>› <gold>/waypoints remove <white>(player) (name)",
-            "<dark_gray>› <gold>/waypoints teleport <white>(player) (name)",
-            " "
+            "",
+            "<dark_gray>› <gold>/waypoints create <gray>(player) (name)<dark_gray> - <#848484>Creates a new waypoint.",
+            "<dark_gray>› <gold>/waypoints list <gray>(player)<dark_gray> - <#848484>Lists all waypoints of spec. player.",
+            "<dark_gray>› <gold>/waypoints remove <gray>(player) (name)<dark_gray> - <#848484>Removes spec. waypoint.",
+            "<dark_gray>› <gold>/waypoints teleport <gray>(player) (name)<dark_gray> - <#848484>Warps to spe. waypoint.",
+            ""
         ],
         // Waypoints > Create
-        "waypoints_create_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints create <white>(player) (name)",
+        "waypoints_create_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints create <gray>(player) (name)",
         "waypoints_create_success": "<dark_gray>› <gray>Waypoint o nazwie <gold><name><gray> został utworzony.",
         "waypoints_create_failure_already_exists": "<dark_gray>› <red>Waypoint o nazwie <gold><name><red> już istnieje.",
         // Waypoints > Remove
-        "waypoints_remove_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints remove <white>(player) (name)",
+        "waypoints_remove_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints remove <gray>(player) (name)",
         "waypoints_remove_success": "<dark_gray>› <gray>Waypoint o nazwie <gold><name><gray> został usunięty.",
         "waypoints_remove_failure_not_found": "<dark_gray>› <red>Waypoint o nazwie <gold><name><red> nie istnieje.",
         // Waypoints > List
-        "waypoints_list_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints list <gray>(player)",
+        "waypoints_list_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints list <gray>[player]",
         "waypoints_list_header": [
             "<dark_gray>› <gray>Gracz <gold><player><gray> ma aktywnych <gold><count><gray> teleportów:",
-            " "
+            ""
         ],
-        "waypoints_list_footer": " ",
+        "waypoints_list_footer": "",
         "waypoints_list_none": "<dark_gray>› <gray>Gracz <gold><player><gray> nie ma żadnych aktywnych teleportów.",
         "waypoints_list_entry": "<dark_gray>›    <hover:show_text:'<gray>Nazwa: <gold><waypoint_displayname><newline><gray>Pozycja: <gold><waypoint_location><newline><newline><gray>Kliknij, aby się teleportować.'><click:suggest_command:'/waypoints teleport <target> <waypoint_name>'><gray><lang:ui.icons.question_mark> <gold><waypoint_displayname> <#848484>(<waypoint_name>)</click>",
         // Waypoints > Teleport
-        "waypoints_teleport_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints teleport <white>(player) (name)"
+        "waypoints_teleport_usage": "<dark_gray>› <gray>Użycie: <gold>/waypoints teleport <gray>(player) (waypoint)"
     },
     // ...
     "interface": {
         // Interface > Upgrade
         "upgrade_success": "<dark_gray>› <gray>Rozmiar terenu został zwiększony do <gold><size>x<size><gray>.",
-        "upgrade_failure_not_upgradeable": "<dark_gray>› <red>Ten teren został już maksymalnie ulepszony.",
+        "upgrade_failure_not_upgradeable": "<dark_gray>› <red>Ten teren został już ulepszony do maksymalnego poziomu.",
         "upgrade_failure_missing_items": "<dark_gray>› <red>Nie posiadasz przedmiotów wymaganych do ulepszenia.",
         "upgrade_icon_upgrade_ready": "<gray>Kliknij, aby ulepszyć.",
         "upgrade_icon_upgrade_not_upgradeable": "<red>Osiągnąłeś maksymalny poziom terenu.",
@@ -126,26 +127,19 @@
         "waypoint_transfer_failure_reached_limit": "<dark_gray>› <red>Ten gracz osiągnął limit posiadanych magnetytów."
     },
     "claim_placement": {
-        "place_success": [
-            "",
-            "<dark_gray>› <gray>Chroniony teren został utworzony. Otwórz panel zarządznia:",
-            "",
-            "  <gray>1, Naciśnij <white><lang:ui.icons.mouse_button.right><gray> na blok terenu.",
-            "  <gray>2. Użyj komendy <gold>/claims<gray> znajdując się w jego granicach.",
-            ""
-        ],
-        "place_failure_overlaps": "<dark_gray>› <red>Za blisko innego terenu.",
+        "place_success": "<click:open_url:'https://firedot.pl/wiki/#/tereny'><hover:show_text:'<gray>Więcej informacji znajdziesz pod komendą <gold>/pomoc teren<gray> i w dokumentacji serwera.'><dark_gray>› <gray>Chroniony teren został utworzony. <#848484><lang:ui.icons.question_mark></hover></click>",
+        "place_failure_overlaps": "<dark_gray>› <red>Znajdujesz się za blisko innego terenu.",
         "place_failure_blacklisted_world": "<dark_gray>› <red>Nie możesz postawić terenu w tym świecie.",
-        "place_failure_too_close_to_spawn": "<dark_gray>› <red>Minimalna odległość od spawnu to <distance> kratek.",
-        "place_failure_reached_claims_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) terenów.",
+        "place_failure_too_close_to_spawn": "<dark_gray>› <red>Minimalna odległość od spawnu to <distance> bloków.",
+        "place_failure_reached_claims_limit": "<dark_gray>› <red>Osiągnąłeś maksymalną liczbę aktywnych terenów.",
         "place_failure_invalid_claim_type": "<dark_gray>› <red>Teren, który próbujesz postawić jest nieprawidłowy. Skontaktuj się z administracją.",
         "place_failure_other_claims_must_be_upgraded": "<dark_gray>› <red>Poprzednie tereny muszą być ulepszone od maksymalnego poziomu.",
         "destroy_success": "<dark_gray>› <gray>Chroniony teren został usunięty.",
         "destroy_failure_not_sneaking": "<dark_gray>› <red>Aby usunąć teren, zniszcz jego blok kucając."
     },
     "waypoint_placement": {
-        "place_success": "<dark_gray>› <gray>Nowy teleport został utworzony.",
-        "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś limit (<limit>) magnetytów."
+        "place_success": "<click:open_url:'https://firedot.pl/wiki/#/teleporty'><hover:show_text:'<gray>Więcej informacji znajdziesz pod komendą <gold>/pomoc teleport<gray> i w dokumentacji serwera.'><dark_gray>› <gray>Teleport został utworzony. <#848484><lang:ui.icons.question_mark></hover></click>",
+        "place_failure_reached_waypoints_limit": "<dark_gray>› <red>Osiągnąłeś maksymalną liczbę aktywnych magnetytów."
     },
     // NOTE: Changing those values will NOT update enter/leave messages in existing claims.
     "flags": {

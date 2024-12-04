@@ -66,6 +66,9 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("claims_not_member")
     public static Component NOT_CLAIM_MEMBER;
 
+    @JsonPath("claims_already_editing")
+    public static Component CLAIMS_ALREADY_EDITING;
+
     @JsonPath("claim_does_not_exist")
     public static Component CLAIM_DOES_NOT_EXIST;
 
@@ -107,9 +110,6 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("commands.claims_usage")
     public static Component COMMAND_CLAIMS_USAGE;
-
-    @JsonPath("commands.claims_edit_failure_already_in_use")
-    public static String COMMAND_CLAIMS_EDIT_FAILURE_ALREADY_IN_USE;
 
     // Commands > Claims > Get
 
