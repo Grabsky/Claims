@@ -43,10 +43,12 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDe
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.math.BlockPosition;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -66,6 +68,7 @@ import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 import static cloud.grabsky.claims.util.Utilities.toChunkPosition;
 import static java.util.Comparator.comparingInt;
 
+@SuppressWarnings("UnstableApiUsage")
 @Command(name = "claims", aliases = {"claim"}, permission = "claims.command.claims", usage = "/claims (...)")
 public class ClaimsCommand extends RootCommand {
 
@@ -257,6 +260,13 @@ public class ClaimsCommand extends RootCommand {
 
     /* CLAIMS BORDER */
 
+    private static final ItemStack BORDER_ITEM = new ItemStack(Material.COAL, 1);
+    private static final NamespacedKey BORDER_ITEM_MODEL = new NamespacedKey("wireframe", "wireframe_white");
+
+    static {
+        BORDER_ITEM.setData(DataComponentTypes.ITEM_MODEL, BORDER_ITEM_MODEL);
+    }
+
     private void onClaimsBorder(final RootCommandContext context, final ArgumentQueue arguments) {
         final Player sender = context.getExecutor().asPlayer();
         // ...
@@ -290,8 +300,6 @@ public class ClaimsCommand extends RootCommand {
             // Calculating total number of entities that are going to be created.
             // First location must be 5 blocks below the min Y, because 10 is added to Y coordinate on first iteration of the for loop.
             final Location initialLocation = new Location(claim.getCenter().getWorld(), claim.getCenter().x(), minY - 5, claim.getCenter().z());
-            // Item.
-            final ItemStack item = new ItemBuilder(Material.COAL, 1).setCustomModelData(1).build();
             // ...
             for (int i = minY; i <= maxY + 1; i += 10) {
                 final Location spawnLocation = initialLocation.add(0, 10, 0);
@@ -306,7 +314,7 @@ public class ClaimsCommand extends RootCommand {
                 final var metadataPacket = new WrapperPlayServerEntityMetadata(id, List.of(
                         new EntityData(12, EntityDataTypes.VECTOR3F, new Vector3f(claim.getType().getRadius() * 2 + 1, 10, claim.getType().getRadius() * 2 + 1)),
                         new EntityData(17, EntityDataTypes.FLOAT, 2.0F),
-                        new EntityData(23, EntityDataTypes.ITEMSTACK, SpigotConversionUtil.fromBukkitItemStack(item))
+                        new EntityData(23, EntityDataTypes.ITEMSTACK, SpigotConversionUtil.fromBukkitItemStack(BORDER_ITEM))
                 ));
                 PacketEvents.getAPI().getPlayerManager().sendPacket(sender, spawnPacket);
                 PacketEvents.getAPI().getPlayerManager().sendPacket(sender, metadataPacket);
