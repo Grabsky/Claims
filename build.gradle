@@ -24,13 +24,13 @@ repositories {
     // Repository for the PlaceholderAPI, API.
     maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
     // Repository containing the 'PacketEvents' dependency.
-    maven { url = "https://repo.codemc.io/repository/maven-snapshots" }
+    maven { url = "https://repo.codemc.io/repository/maven-releases" }
 }
 
 dependencies {
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.32")
-    annotationProcessor("org.projectlombok:lombok:1.18.32")
+    compileOnly("org.projectlombok:lombok:1.18.36")
+    annotationProcessor("org.projectlombok:lombok:1.18.36")
     // Paper
     paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
     // Dependencies
@@ -42,9 +42,9 @@ dependencies {
     // Azure
     compileOnly("cloud.grabsky:azure-api:1.20.1-11") { exclude group: "cloud.grabsky", module: "bedrock" }
     // PlaceholderAPI
-    compileOnly("me.clip:placeholderapi:2.11.5")
+    compileOnly("me.clip:placeholderapi:2.11.6")
     // PacketEvents
-    compileOnly("com.github.retrooper:packetevents-spigot:2.5.1-SNAPSHOT")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.7.0")
 }
 
 tasks {
