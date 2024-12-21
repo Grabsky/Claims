@@ -266,11 +266,25 @@ public final class Claims extends BedrockPlugin {
 
         @Override
         public String onRequest(final @NotNull OfflinePlayer player, final @NotNull String params) {
+            // Placeholder: %claims_claims_count%
             if (params.equalsIgnoreCase("claims_count") == true && player instanceof Player onlinePlayer && onlinePlayer.isOnline() == true) {
                 final int count = Claims.getInstance().getClaimManager().getClaimPlayer(onlinePlayer).getClaims().size();
                 return String.valueOf(count);
+            // Placeholder: %claims_waypoints_count%
             } else if (params.equalsIgnoreCase("waypoints_count") == true && player instanceof Player onlinePlayer && onlinePlayer.isOnline() == true) {
                 final int count = Claims.getInstance().getWaypointManager().getWaypoints(onlinePlayer).size();
+                return String.valueOf(count);
+            // Placeholder: %claims_claims_limit%
+            } else if (params.equalsIgnoreCase("claims_limit") == true && player instanceof Player onlinePlayer && onlinePlayer.isOnline() == true) {
+                if (onlinePlayer.hasPermission("claims.bypass.ignore_claims_limit") == true)
+                    return "∞";
+                final int count = Claims.getInstance().getClaimManager().getClaimPlayer(onlinePlayer).getClaimsLimit();
+                return String.valueOf(count);
+            // Placeholder: %claims_waypoints_limit%
+            } else if (params.equalsIgnoreCase("waypoints_limit") == true && player instanceof Player onlinePlayer && onlinePlayer.isOnline() == true) {
+                if (onlinePlayer.hasPermission("claims.bypass.ignore_waypoints_limit") == true)
+                    return "∞";
+                final int count = Claims.getInstance().getWaypointManager().getWaypointsLimit(onlinePlayer);
                 return String.valueOf(count);
             }
             return null;
