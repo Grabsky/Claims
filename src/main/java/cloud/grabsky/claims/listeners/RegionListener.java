@@ -435,6 +435,9 @@ public final class RegionListener implements Listener {
         // Returning if portal rules are disabled in the configuration.
         if (PluginConfig.PORTALS_TELEPORT_TO_UNAUTHORIZED_REGIONS == true || event.getFrom().getWorld().key().asString().equals("minecraft:the_end") == true)
             return;
+        // Checking if teleport cause was nether portal or end portal.
+        if (event.getCause() != PlayerTeleportEvent.TeleportCause.NETHER_PORTAL && event.getCause() != PlayerTeleportEvent.TeleportCause.END_PORTAL)
+            return;
         // Getting destination location of the teleport.
         final Location location = event.getTo();
         // Adapting Bukkit's World object to WorldEdit one.
