@@ -34,7 +34,7 @@
     // Claims settings.
     "claim_settings": {
         // Limit of claims that can be placed by a single player. Another one can be placed if previous is fully upgraded.
-        "claims_limit": 5,
+        "claims_limit": 1,
         // Claim block place attempt cooldown. Cooldown is applied to all blocks of the same type, no matter whether it is a claim block or not, so try to keep it low. (in seconds)
         "place_attempt_cooldown": 5,
         // Limit of players that can be added to a single claim
@@ -56,7 +56,7 @@
         // Determines whether waypoints can be created by placing a LODESTONE block.
         "enhanced_lodestone_blocks": true,
         // Limit of lodestones that can be placed by a single player.
-        "enhanced_lodestone_blocks_limit": 5,
+        "enhanced_lodestone_blocks_limit": 1,
         // Default display name of a waypoint.
         "default_display_name": "Bez nazwy",
         // Place cooldown. (in seconds)
