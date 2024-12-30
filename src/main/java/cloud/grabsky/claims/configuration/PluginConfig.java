@@ -88,6 +88,9 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonNullable @JsonPath("claim_settings.interface_click_sound")
     public static Sound CLAIMS_SETTINGS_UI_CLICK_SOUND;
 
+    @JsonPath("claim_settings.override_blocked_cmds_flag")
+    public static Boolean CLAIMS_SETTINGS_OVERRIDE_BLOCKED_CMDS_FLAG;
+
     // Claim Settings > Rename Prompt
 
     @JsonPath("claim_settings.rename_prompt.duration")

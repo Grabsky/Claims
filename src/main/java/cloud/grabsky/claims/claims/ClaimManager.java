@@ -382,6 +382,11 @@ public final class ClaimManager {
         region.setFlag(CustomFlag.CLAIM_CENTER, regionCenter);
         // Setting default home location (modifiable)
         region.setFlag(Flags.TELE_LOC, regionCenter.setY(regionCenter.getY() + 0.5F));
+        // Overriding global 'blocked-cmds' flag (if enabled)
+        if (PluginConfig.CLAIMS_SETTINGS_OVERRIDE_BLOCKED_CMDS_FLAG) {
+            region.setFlag(Flags.BLOCKED_CMDS.getRegionGroupFlag(), RegionGroup.MEMBERS);
+            region.setFlag(Flags.BLOCKED_CMDS, Set.of(" "));
+        }
     }
 
     public @Nullable Claim getClaim(final @NotNull String id) {
