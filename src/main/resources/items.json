@@ -4,7 +4,6 @@
         "categories": {
             "browse_teleports": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Teleporty",
                     "lore": ["<gray>Kliknij, aby otworzyć menu telpeortacji."],
@@ -13,7 +12,6 @@
             },
             "browse_flags": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Flagi",
                     "lore": ["<gray>Kliknij, aby zarządzać flagami."],
@@ -22,7 +20,6 @@
             },
             "browse_members": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Członkowie",
                     "lore": ["<gray>Kliknij, aby zarządzać członkami terenu."]
@@ -30,7 +27,6 @@
             },
             "browse_online_players": {
                 "material": "minecraft:structure_void",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Dodaj",
                     "lore": ["<gray>Kliknij, aby przeglądać listę graczy."],
@@ -39,7 +35,6 @@
             },
             "browse_waypoints": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Magnetyty",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
@@ -48,7 +43,6 @@
             },
             "browse_owned_claims": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Posiadane Tereny",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
@@ -57,7 +51,6 @@
             },
             "browse_relative_claims": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Współdzielone Tereny",
                     "lore": ["<gray>Kliknij, aby przeglądać."],
@@ -69,21 +62,18 @@
         "functional": {
             "icon_add_member": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "lore": ["<gray>Kliknij, aby <green>dodać<gray> tego gracza do terenu."]
                 }
             },
             "icon_remove_member": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "lore": ["<gray>Kliknij, aby <red>usunąć<gray> tego gracza z terenu."]
                 }
             },
             "icon_set_home": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Miejsce Teleportu",
                     "lore": ["<gray>Kliknij, aby ustawić miejsce teleportu."],
@@ -92,7 +82,6 @@
             },
             "icon_spawn": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Spawn",
                     "lore": ["<gray>Kliknij, aby się teleportować."],
@@ -101,7 +90,6 @@
             },
             "icon_random_teleport": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Losowy Teleport",
                     "lore": ["<gray>Kliknij, aby się teleportować.", "", "<red>Pamiętaj, że wrócić na spawn możesz tylko", "<red>za pomocą magnetytu lub bloku terenu.", "", "<red>Wpisz <gold>/spawn<red>, aby dowiedzieć się więcej."],
@@ -110,7 +98,6 @@
             },
             "icon_waypoint": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "lore": [
                         "<dark_gray>› <gray>Świat: <gold>[DIMENSION]",
@@ -128,7 +115,6 @@
             },
             "icon_waypoint_invalid": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "lore": [
                         "<dark_gray>› <gray>Świat: <gold>[DIMENSION]",
@@ -145,14 +131,12 @@
             },
             "icon_transfer_waypoint": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "lore": ["<gray>Kliknij, aby <green>przekazać<gray> temu graczowi magnetyt."]
                 }
             },
             "icon_owned_claim": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Teren",
                     "lore": [
@@ -167,7 +151,6 @@
             },
             "icon_relative_claim": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "custom_name": "<gold>Teren",
                     "lore": [
@@ -182,7 +165,6 @@
             },
             "icon_delete_waypoint": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "lore": [
                         "<dark_gray>› <gray>Świat: <gold>[DIMENSION]",
@@ -199,26 +181,23 @@
         "navigation": {
             "next_page": {
                 "material": "minecraft:structure_void",
-                "amount": 1,
                 "meta": {
-                    "custom_name": "<gray>Następna Strona",
-                    "model": "firedot:arrow_right"
+                    "model": "firedot:arrow_right",
+                    "components": "[hide_tooltip={}]"
                 }
             },
             "previous_page": {
                 "material": "minecraft:structure_void",
-                "amount": 1,
                 "meta": {
-                    "custom_name": "<gray>Poprzednia Strona",
-                    "model": "firedot:arrow_left"
+                    "model": "firedot:arrow_left",
+                    "components": "[hide_tooltip={}]"
                 }
             },
             "return": {
                 "material": "minecraft:barrier",
-                "amount": 1,
                 "meta": {
-                    "custom_name": "<red>Powrót",
-                    "model": "firedot:return"
+                    "model": "firedot:return",
+                    "components": "[hide_tooltip={}]"
                 }
             }
         }

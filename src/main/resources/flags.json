@@ -10,7 +10,6 @@
             "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Interakcja<gray> (bloki użytkowe)",
                     "lore": [
@@ -31,7 +30,6 @@
             "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Interakcja<gray> (kontenery)",
                     "lore": [
@@ -50,7 +48,6 @@
             "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Wybuch TNT",
                     "lore": [
@@ -71,7 +68,6 @@
             "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
                 "material": "minecraft:creeper_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Wybuch Creeperów",
                     "lore": [
@@ -91,7 +87,6 @@
             "ui_display_options": ["Włączone (Domyślne)", "Wyłączone"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Topnienie Śniegu",
                     "lore": [
@@ -110,7 +105,6 @@
             "ui_display_options": ["Włączone (Domyślne)", "Wyłączone"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Topnienie Lodu",
                     "lore": [
@@ -129,7 +123,6 @@
             "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Rozprzestrzenianie Ognia",
                     "lore": [
@@ -150,7 +143,6 @@
             "ui_display_options": ["Włączone (Domyślne)", "Wyłączone"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Spawn Mobów",
                     "lore": [
@@ -169,7 +161,6 @@
             "ui_display_options": ["Wyłączone (Domyślne)", "Słonecznie", "Deszcz"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Pogoda",
                     "lore": [
@@ -190,7 +181,6 @@
             "ui_display_options": ["Wyłączone (Domyślne)", "Rano", "Południe", "Wieczór", "Północ"],
             "ui_display": {
                 "material": "minecraft:player_head",
-                "amount": 1,
                 "meta": {
                     "name": "<gold>Czas",
                     "lore": [
