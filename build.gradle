@@ -36,7 +36,7 @@ dependencies {
     // Dependencies
     implementation("cloud.grabsky:bedrock:1.21-63")
     implementation("cloud.grabsky:commands:1.20.1-37")
-    implementation("cloud.grabsky:configuration-paper:1.21.4-47")
+    implementation("cloud.grabsky:configuration-paper:1.21.4-48")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-SNAPSHOT")
     // Azure
