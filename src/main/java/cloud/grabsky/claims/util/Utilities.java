@@ -19,20 +19,21 @@ import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.commands.exception.NumberParseException;
-import io.papermc.paper.entity.TeleportFlag;
 import io.papermc.paper.math.BlockPosition;
 import io.papermc.paper.math.Position;
+import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
+import org.apache.logging.log4j.util.TriConsumer;
 import org.bukkit.Chunk;
 import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.SoundCategory;
 import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.HumanEntity;
-import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
@@ -44,7 +45,7 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.BiConsumer;
+import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -97,93 +98,99 @@ public final class Utilities {
         }}.stream();
     }
 
-    // NOTE: Safe teleports may (and probably should) be introduced in the future. Teleport invulnerability is a temporary solution.
-    public static void teleport(final @NotNull HumanEntity source, final @NotNull Location destination, final int delay, final @Nullable String bypassPermission, final @Nullable BiConsumer<Location, Location> then) {
-        // Handling teleports with no (or bypassed) delay.
-        if (bypassPermission != null && source.hasPermission(bypassPermission) == true) {
-            final Location old = source.getLocation();
-            // Sending the title.
-            if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
-                source.showRichTitle(Component.translatable(PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION), Component.empty(), 8, 16, 8);
-            // ...
-            Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
-                // NOTE: Teleporting vehicle with player passengers can cause de-sync.
-                // final Entity finalSource = (source.getVehicle() != null && source.getVehicle().getType() != EntityType.BLOCK_DISPLAY) ? source.getVehicle() : source;
+    // Players with this permission can teleport instantly.
+    public static final String BYPASS_TELEPORT_COOLDOWN = "claims.plugin.bypass_teleport_cooldown";
+
+    private static void showFadeIn(final Audience audience) {
+        // Sending the title, but only if configured to do so.
+        if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
+            audience.showRichTitle(Component.translatable(PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION), Component.empty(), 8, 16, 8);
+    }
+
+    /**
+     * Performs a teleportation of specified {@link HumanEntity} to specified {@link Location}.
+     */
+    private static CompletableFuture<Boolean> performTeleport(final @NotNull HumanEntity source, final @NotNull Location destination) {
+        final CompletableFuture<Boolean> future = new CompletableFuture<>();
+        // Fading-in the black screen.
+        showFadeIn(source);
+        // Scheduling teleport 8 ticks after fading-in player's screen. So that teleport is hidden.
+        Claims.getInstance().getBedrockScheduler().run(8L, (_) -> {
+            source.teleportAsync(destination, PlayerTeleportEvent.TeleportCause.PLUGIN).thenAccept(isSuccess -> {
+                // Fading-out the black screen.
+                if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
+                    source.fadeOutTitle(8, 8);
                 // ...
-                source.teleportAsync(destination, TeleportCause.PLUGIN).thenAccept(isSuccess -> {
-                    if (isSuccess == false) {
-                        Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
-                        return;
-                    }
-                    // Fading the title out.
-                    if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
-                        source.fadeOutTitle(8, 8);
-                    // Sending success message through action bar.
+                if (isSuccess) {
+                    // Showing success message on the action bar.
                     Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
-                    // Returning if no effects were provided or player is vanished. (vanish checks compatible only with Azure)
-                    if (then == null)
-                        return;
-                    // Scheduling task that spawns provided effects.
-                    Claims.getInstance().getBedrockScheduler().run(1L, (__1) -> {
-                        // Making player invulnerable for next 5 seconds.
-                        source.setNoDamageTicks(100);
-                        // Executing provided task.
-                        then.accept(old, destination);
-                    });
-                });
+                    // Making player invulnerable for next 5 seconds.
+                    source.setNoDamageTicks(100);
+                }
+                // Completing the future.
+                future.complete(isSuccess);
             });
+        });
+        // Returning the future.
+        return future;
+    }
+
+    /**
+     * Performs a teleportation of specified {@link Player} to specified {@link Location}.
+     * For delays greater than 0, action bar countdown is generated. Smooth fade-in/fade-out animations are included via {@link Utilities#performTeleport(HumanEntity, Location) Utilities#performTeleport}.
+     */
+    public static void teleport(final @NotNull Player source, final @NotNull Location destination, final int delay, final @Nullable BiPredicate<Location, Location> shouldCancel, final @Nullable TriConsumer<Boolean, Location, Location> then) {
+        // Getting the initial position of the player.
+        final Location sourceInitialLocation = source.getLocation();
+        // Handling teleports with no (or bypassed) delay.
+        if (delay == 0 || source.hasPermission(BYPASS_TELEPORT_COOLDOWN) == true) {
+            // Fading-in to the black screen, teleporting asynchronously, sending messages and fading-out.
+            performTeleport(source, destination).thenAccept(isSuccess -> {
+                if (isSuccess == true && then != null) then.accept(isSuccess, sourceInitialLocation, destination);
+            });
+            // Returning, as this has been already handled.
             return;
         }
-        // Handling delayed teleports.
-        final Location sourceInitialLocation = source.getLocation();
         // Sending action bar message with delay information.
         Message.of(PluginLocale.TELEPORT_IN_PROGRESS).placeholder("delay", delay).sendActionBar(source);
-        // Scheduling a repeating task every 1 second, until specified numbers of iterations is reached.
-        Claims.getInstance().getBedrockScheduler().repeat(20L, 20L, (delay - 1), (cycle) -> {
-            // Sending action bar message with delay information.
-            Message.of(PluginLocale.TELEPORT_IN_PROGRESS).placeholder("delay", delay - cycle).sendActionBar(source);
-            // Handling teleport interrupt. (moving)
-            if (source.getLocation().distanceSquared(sourceInitialLocation) > 1.0) {
-                Message.of(PluginLocale.TELEPORT_FAILURE_MOVED).sendActionBar(source);
-                return false;
-            }
-            // Handling last iteration.
-            if (cycle == delay) {
-                final Location old = source.getLocation();
-                // Showing the title.
-                if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
-                    source.showRichTitle(Component.translatable(PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION), Component.empty(), 8, 100, 8);
-                // ...
-                Claims.getInstance().getBedrockScheduler().run(8L, (__0) -> {
-                    // NOTE: Teleporting vehicle with player passengers can cause de-sync.
-                    // final Entity finalSource = (source.getVehicle() != null && source.getVehicle().getType() != EntityType.BLOCK_DISPLAY) ? source.getVehicle() : source;
-                    // ...
-                    source.teleportAsync(destination, TeleportCause.PLUGIN, TeleportFlag.EntityState.RETAIN_PASSENGERS).thenAccept(isSuccess -> {
-                        if (isSuccess == false) {
-                            Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
-                            return;
+        // Submitting an asynchronous countdown task, after which the player will be teleported.
+        CompletableFuture.supplyAsync(() -> {
+                    try {
+                        for (int delayLeft = delay; delayLeft != 0; delayLeft--) {
+                            source.playSound(source, "minecraft:block.note_block.hat", SoundCategory.MASTER, 0.5F, 2.0F);
+                            // Showing message with delay information on the action bar.
+                            Message.of(PluginLocale.TELEPORT_IN_PROGRESS).placeholder("delay", delayLeft).sendActionBar(source);
+                            // Handling teleport interrupt. (moving)
+                            if (source.getLocation().distanceSquared(sourceInitialLocation) > 1.0) {
+                                // Showing failure message on the action bar. Interrupted.
+                                Message.of(PluginLocale.TELEPORT_FAILURE_MOVED).sendActionBar(source);
+                                // ...
+                                return false;
+                            }
+                            // Sleeping for one second.
+                            Thread.sleep(1000);
                         }
-                        // Fading the title out.
-                        if (PluginConfig.TELEPORTATION_FADE_IN_FADE_OUT_ANIMATION_TRANSLATION.isBlank() == false)
-                            source.fadeOutTitle(8, 8);
-                        // Sending success message through action bar.
-                        Message.of(PluginLocale.TELEPORT_SUCCESS).sendActionBar(source);
-                        // Returning if no effects were provided.
-                        if (then == null)
-                            return;
-                        // Scheduling task that spawns provided effects.
-                        Claims.getInstance().getBedrockScheduler().run(1L, (__1) -> {
-                            // Making player invulnerable for next 5 seconds.
-                            source.setNoDamageTicks(100);
-                            // Executing provided task.
-                            then.accept(old, destination);
-                        });
-                    });
+                        // Running 'shouldCancel' predicate and cancelling the teleport in case it fails.
+                        if (shouldCancel != null && shouldCancel.test(sourceInitialLocation, destination) == true) {
+                            // Playing timer 'ticking' sound.
+                            source.playSound(source, "minecraft:block.note_block.hat", SoundCategory.MASTER, 0.5F, 2.0F);
+                            // Showing failure message on the action bar. Cancelled.
+                            Message.of(PluginLocale.TELEPORT_FAILURE_UNKNOWN).sendActionBar(source);
+                            // ...
+                            return false;
+                        }
+                        // The end has been reached, returning 'true' so that a teleport is attempted in the next step.
+                        return true;
+                    } catch (final InterruptedException _) {
+                        return false;
+                    }
+                })
+                // Fading-in to the black screen, teleporting asynchronously, sending messages and fading-out.
+                .thenCompose(isSuccess -> (isSuccess == true) ? performTeleport(source, destination) : CompletableFuture.completedFuture(false))
+                // Running post-teleportation tasks.
+                .thenAccept(isSuccess -> {
+                    if (isSuccess == true && then != null) then.accept(isSuccess, sourceInitialLocation, destination);
                 });
-            }
-            return true;
-        });
-
     }
 
     /**

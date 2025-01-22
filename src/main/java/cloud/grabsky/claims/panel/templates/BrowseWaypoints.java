@@ -125,7 +125,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                                 // Closing the panel.
                                 cPanel.close();
                                 // Teleporting...
-                                Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.TELEPORTATION_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                                Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.TELEPORTATION_DELAY, null, (isSuccess, old, current) -> {
                                     if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
                                         // Displaying particles. NOTE: This can expose vanished players.
                                         if (PluginConfig.TELEPORTATION_PARTICLES != null) {
@@ -146,7 +146,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                         // Just teleport otherwise... (non-BLOCK source waypoints)
                         cPanel.close();
                         // Teleporting...
-                        Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.TELEPORTATION_DELAY, "claims.bypass.teleport_delay", null);
+                        Utilities.teleport(viewer, location.add(0.0, 0.5, 0.0), PluginConfig.TELEPORTATION_DELAY, null, null);
                     }
                     // Changing name...
                     case RIGHT, SHIFT_RIGHT -> {
@@ -189,7 +189,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 // Searching for safe location...
                 Utilities.getSafeLocation(PluginConfig.RANDOM_TELEPORT_MIN_DISTANCE, PluginConfig.RANDOM_TELEPORT_MAX_DISTANCE).thenAccept(location -> {
                     // In case location was found, teleporting player to it.
-                    if (location != null) Utilities.teleport(viewer, location, PluginConfig.TELEPORTATION_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+                    if (location != null) Utilities.teleport(viewer, location, PluginConfig.TELEPORTATION_DELAY, null, (isSuccess, old, current) -> {
                         if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
                             // Displaying particles. NOTE: This can expose vanished players.
                             if (PluginConfig.TELEPORTATION_PARTICLES != null) {
@@ -218,7 +218,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             // Closing the panel.
             cPanel.close();
             // Teleporting...
-            Utilities.teleport(viewer, location, PluginConfig.TELEPORTATION_DELAY, "claims.bypass.teleport_delay", (old, current) -> {
+            Utilities.teleport(viewer, location, PluginConfig.TELEPORTATION_DELAY, null, (isSuccess, old, current) -> {
                 if (AzureProvider.getAPI().getUserCache().getUser(viewer).isVanished() == false) {
                     // Displaying particles. NOTE: This can expose vanished players.
                     if (PluginConfig.TELEPORTATION_PARTICLES != null) {
