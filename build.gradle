@@ -51,6 +51,7 @@ tasks {
     shadowJar { shadowJar.archiveFileName = "${rootProject.name}-${project.version}.jar" }
     compileJava {
         options.fork = true
+        options.compilerArgs += "--enable-preview"
         // Setting compatibility to Java 21 (above should work too).
         sourceCompatibility = JavaVersion.VERSION_21
         targetCompatibility = JavaVersion.VERSION_21
