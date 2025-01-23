@@ -323,7 +323,10 @@ public class ClaimsCommand extends RootCommand {
             plugin.getBedrockScheduler().run(40L, (task) -> {
                 Message.of(PluginLocale.CLAIM_BORDER_SHADERS_NOT_SUPPORTED).sendActionBar(sender);
             });
+            return;
         }
+        // Sending error message to the sender.
+        Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
     }
 
 
