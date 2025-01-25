@@ -29,7 +29,6 @@ import org.bukkit.FluidCollisionMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.SoundCategory;
-import org.bukkit.block.Biome;
 import org.bukkit.block.Block;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
@@ -38,13 +37,12 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiPredicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
@@ -228,9 +226,13 @@ public final class Utilities {
     public static CompletableFuture<Location> getSafeLocation(final int minRadius, final int maxRadius) {
         final CompletableFuture<Location> future = new CompletableFuture<>();
         final AtomicInteger attempts = new AtomicInteger(0);
+        final AtomicLong start = new AtomicLong();
         // Scheduling the task to run asynchronously.
         Claims.getInstance().getBedrockScheduler().runAsync(1L, (_) -> {
-            while (future.isDone() == false) {
+            // Setting the start time.
+            start.set(System.nanoTime());
+            // Running a while loop until safe location is found, or 100 attempts are made. (better be safe than sorry!)
+            while (future.isDone() == false && attempts.get() < 100) {
                 // Incrementing attempts counter.
                 attempts.set(attempts.get() + 1);
                 // Getting random location in the specified radius.
@@ -238,25 +240,45 @@ public final class Utilities {
                 // Getting chunk from the random location.
                 final Chunk chunk = location.getChunk();
                 // Getting the namespaced key of the biome.
-                final String biome = location.getWorld().getBiome(location).key().asString();
+                final String biome = location.getWorld().getComputedBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ()).getKey().asString();
                 // Skipping blacklisted biomes
                 if (PluginConfig.RANDOM_TELEPORT_BIOMES_BLACKLIST.contains(biome) == true)
                     continue;
+                // Getting the highest solid block Y at the specified location.
+                final double y = getReasonablyHighY(location) + 1.0D;
                 // Making sure the location is above the ground and not inside of a block.
-                location.set(
-                        location.getBlockX() + 0.5D,
-                        location.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ()) + 1.0D,
-                        location.getBlockZ() + 0.5D
-                );
+                location.set(location.getBlockX() + 0.5D, y, location.getBlockZ() + 0.5D);
                 // Completing the future in case the location is safe.
                 if (isSafe(chunk, location) == true)
                     future.complete(location);
             }
         });
-        // Logging count of attempts that were made to find a safe location. (Debugging)
-        Claims.getInstance().getLogger().info("Found safe location in " + attempts + " attempts.");
+        future.whenComplete((_, _) -> {
+            // Logging count of attempts that were made to find a safe location. (Debugging)
+            Claims.getInstance().getLogger().info("Found safe location in " + attempts + " attempts. (" + (System.nanoTime() - start.get()) / 1_000_000F + "ms)");
+        });
         // Returning the future.
         return future;
+    }
+
+    /**
+     * Returns highest block Y at given {@link Location} excluding non-solid blocks.
+     * This method starts from the (Y = 60) and goes up until it finds a solid block.
+     * If no solid block is found, then Bukkit's {@link org.bukkit.World#getHighestBlockAt(Location) World#getHighestBlock} method is used as a fallback.
+     */
+    public static int getReasonablyHighY(final @NotNull Location location) {
+        for (int y = 60; y < location.getWorld().getMaxHeight(); y++) {
+            // Getting the block at the specified location.
+            final Block block = location.getWorld().getBlockAt(location.getBlockX(), y, location.getBlockZ());
+            // Returning the Y coordinate in case all conditions are met. (Safe Location)
+            if (block.isSolid() == true) {
+                if (block.getRelative(0, 1, 0).isSolid() == false && block.getRelative(0, 2, 0).isSolid() == false)
+                    if (block.getRelative(0, 2, 0).getLightFromSky() >= 2)
+                        return y;
+            }
+        }
+        // Fallback to the Bukkit method in case no safer location was found.
+        return location.getWorld().getHighestBlockYAt(location);
     }
 
     /**
@@ -264,6 +286,10 @@ public final class Utilities {
      */
     @SuppressWarnings("UnstableApiUsage")
     public static boolean isSafe(final @NotNull Chunk chunk, final @NotNull Location location) {
+        // Returning false in case block above the location is not solid.
+        if (location.getBlock().getRelative(0, 1, 0).isSolid() == true)
+            return false;
+        // Iterating over nearby blocks to check for any liquids.
         for (int x = location.getBlockX() - 3; x <= location.getBlockX() + 3; x++) {
             for (int y = location.getBlockY() - 3; y <= location.getBlockY() + 3; y++) {
                 for (int z = location.getBlockZ() - 3; z <= location.getBlockZ() + 3; z++) {
