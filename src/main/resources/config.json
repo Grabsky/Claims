@@ -6,9 +6,31 @@
     // Priority of underlying region.
     "region_priority": 0,
     // Random teleport minimum distance from spawn point.
-    "random_teleport_min_distance": 500,
+    "random_teleport_min_distance": 1250,
     // Random teleport maximum distance from spawn point.
-    "random_teleport_max_distance": 1000,
+    "random_teleport_max_distance": 7500,
+    // Random teleport biomes blacklist.
+    "random_teleport_biomes_blacklist": [
+        "minecraft:ocean",
+        "minecraft:deep_ocean",
+        "minecraft:frozen_ocean",
+        "minecraft:deep_frozen_ocean",
+        "minecraft:cold_ocean",
+        "minecraft:deep_cold_ocean",
+        "minecraft:lukewarm_ocean",
+        "minecraft:deep_lukewarm_ocean",
+        "minecraft:warm_ocean",
+        "minecraft:river",
+        "minecraft:frozen_river",
+        "minecraft:old_growth_birch_forest",
+        "minecraft:old_growth_pine_taiga",
+        "minecraft:old_growth_spruce_taiga",
+        "minecraft:mushroom_fields",
+        "minecraft:pale_garden",
+        "minecraft:dark_forest",
+        "minecraft:windswept_hills",
+        "minecraft:windswept_gravelly_hills"
+    ],
     // Whether teleportation to unauthorized regions through portals should be allowed.
     "portals_teleport_to_unauthorized_regions": false,
 

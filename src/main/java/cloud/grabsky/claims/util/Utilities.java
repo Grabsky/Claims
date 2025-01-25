@@ -222,49 +222,40 @@ public final class Utilities {
         return new Location(center.getWorld(), x, 0, z);
     }
 
-    private static final HashSet<Biome> OCEAN_BIOMES = new HashSet<>(Arrays.asList(
-            Biome.OCEAN,
-            Biome.COLD_OCEAN,
-            Biome.LUKEWARM_OCEAN,
-            Biome.WARM_OCEAN,
-            Biome.DEEP_OCEAN,
-            Biome.DEEP_COLD_OCEAN,
-            Biome.DEEP_FROZEN_OCEAN,
-            Biome.DEEP_LUKEWARM_OCEAN
-    ));
-
     /**
      * Tries to find `attempts` number of `Locations` and returns the first one to be safe.
      */
     public static CompletableFuture<Location> getSafeLocation(final int minRadius, final int maxRadius) {
         final CompletableFuture<Location> future = new CompletableFuture<>();
-        // ...
         final AtomicInteger attempts = new AtomicInteger(0);
-        // ...
-        Claims.getInstance().getBedrockScheduler().runAsync(1L, (task) -> {
+        // Scheduling the task to run asynchronously.
+        Claims.getInstance().getBedrockScheduler().runAsync(1L, (_) -> {
             while (future.isDone() == false) {
-                // ...
+                // Incrementing attempts counter.
                 attempts.set(attempts.get() + 1);
-                // ...
+                // Getting random location in the specified radius.
                 final Location location = getRandomLocationInSquare(PluginConfig.DEFAULT_WORLD.getSpawnLocation(), minRadius, maxRadius);
-                // ...
+                // Getting chunk from the random location.
                 final Chunk chunk = location.getChunk();
-                // ...
-                if (OCEAN_BIOMES.contains(location.getWorld().getBiome(location)) == true)
+                // Getting the namespaced key of the biome.
+                final String biome = location.getWorld().getBiome(location).key().asString();
+                // Skipping blacklisted biomes
+                if (PluginConfig.RANDOM_TELEPORT_BIOMES_BLACKLIST.contains(biome) == true)
                     continue;
-                // ...
+                // Making sure the location is above the ground and not inside of a block.
                 location.set(
                         location.getBlockX() + 0.5D,
                         location.getWorld().getHighestBlockYAt(location.getBlockX(), location.getBlockZ()) + 1.0D,
                         location.getBlockZ() + 0.5D
                 );
-                // ...
+                // Completing the future in case the location is safe.
                 if (isSafe(chunk, location) == true)
                     future.complete(location);
             }
         });
+        // Logging count of attempts that were made to find a safe location. (Debugging)
         Claims.getInstance().getLogger().info("Found safe location in " + attempts + " attempts.");
-        // ...
+        // Returning the future.
         return future;
     }
 
