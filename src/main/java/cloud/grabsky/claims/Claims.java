@@ -250,6 +250,11 @@ public final class Claims extends BedrockPlugin {
         }
 
         @Override
+        public boolean persist() {
+            return true;
+        }
+
+        @Override
         public @NotNull String getAuthor() {
             return "Grabsky";
         }
