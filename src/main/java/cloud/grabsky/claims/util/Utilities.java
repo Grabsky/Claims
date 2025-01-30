@@ -239,15 +239,15 @@ public final class Utilities {
                 final Location location = getRandomLocationInSquare(PluginConfig.DEFAULT_WORLD.getSpawnLocation(), minRadius, maxRadius);
                 // Getting chunk from the random location.
                 final Chunk chunk = location.getChunk();
-                // Getting the namespaced key of the biome.
-                final String biome = location.getWorld().getComputedBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ()).getKey().asString();
-                // Skipping blacklisted biomes
-                if (PluginConfig.RANDOM_TELEPORT_BIOMES_BLACKLIST.contains(biome) == true)
-                    continue;
                 // Getting the highest solid block Y at the specified location.
                 final double y = getReasonablyHighY(location) + 1.0D;
                 // Making sure the location is above the ground and not inside of a block.
                 location.set(location.getBlockX() + 0.5D, y, location.getBlockZ() + 0.5D);
+                // Getting the namespaced key of the biome.
+                final String biome = location.getWorld().getBiome(location.getBlockX(), location.getBlockY(), location.getBlockZ()).getKey().asString();
+                // Skipping blacklisted biomes
+                if (PluginConfig.RANDOM_TELEPORT_BIOMES_BLACKLIST.contains(biome) == true)
+                    continue;
                 // Completing the future in case the location is safe.
                 if (isSafe(chunk, location) == true)
                     future.complete(location);
