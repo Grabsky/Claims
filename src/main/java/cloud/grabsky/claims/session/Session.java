@@ -109,7 +109,7 @@ public abstract class Session<T> {
         }
 
         @SuppressWarnings("UnstableApiUsage")
-        @EventHandler(priority = EventPriority.MONITOR)
+        @EventHandler(priority = EventPriority.HIGHEST)
         public void onChatDecorate(final @NotNull AsyncChatDecorateEvent event) {
             // Returning for non-player event calls.
             if (event.player() == null)
@@ -122,7 +122,7 @@ public abstract class Session<T> {
         }
 
         // TO-DO: Merge common logic.
-        @EventHandler(priority = EventPriority.MONITOR)
+        @EventHandler(priority = EventPriority.HIGHEST)
         public void onChat(final @NotNull AsyncChatEvent event) {
             final Player player = event.getPlayer();
             final UUID uniqueId = event.getPlayer().getUniqueId();
