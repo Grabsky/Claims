@@ -98,8 +98,10 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
                     .build();
             // ...
             cPanel.setItem(uiSlotsIterator.next(), head, (event) -> {
-                // Making sure not to exceed the members limit.
-                if (cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(player).size() < PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT || player.hasPermission("claims.bypass.ignore_waypoints_limit") == true) {
+                // Getting the maximum number of waypoints this player can have.
+                final int limit = waypointManager.getWaypointsLimit(player);
+                // Checking if player has not reached the maximum number of waypoints.
+                if (player.hasPermission("claims.bypass.ignore_waypoints_limit") == true || waypointManager.getWaypoints(player).stream().filter(waypoint -> waypoint.getSource() == Waypoint.Source.BLOCK).count() < limit) {
                     // Should never be null.
                     final @Nullable Location location = waypoint.getLocation().complete();
                     // Returning when location happens to be null.
