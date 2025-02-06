@@ -67,4 +67,15 @@ public final class PluginFlags implements JsonConfiguration {
     @JsonPath("flags.client_time")
     public static ClaimFlag<FixedTime> CLIENT_TIME;
 
+    @JsonPath("flags.grass_growth")
+    public static ClaimFlag<StateFlag.State> GRASS_GROWTH;
+
+    @JsonPath("flags.vine_growth")
+    public static ClaimFlag<StateFlag.State> VINE_GROWTH;
+
+    @JsonPath("flags.leaf_decay")
+    public static ClaimFlag<StateFlag.State> LEAF_DECAY;
+
+
+
 }

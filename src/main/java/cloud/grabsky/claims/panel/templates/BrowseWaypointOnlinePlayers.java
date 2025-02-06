@@ -66,7 +66,12 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
         this.onlineClaimPlayers = Bukkit.getOnlinePlayers().stream()
                 .filter(player -> player.equals(cPanel.getViewer()) == false)
                 .filter(player -> cPanel.getViewer().canSee(player) == true)
-                .filter(player -> cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(player).size() < PluginConfig.WAYPOINT_SETTINGS_ENHANCED_LODESTONE_BLOCKS_LIMIT || player.hasPermission("claims.bypass.ignore_waypoints_limit") == true)
+                .filter(player -> {
+                    // Getting the maximum number of waypoints this player can have.
+                    final int limit = cPanel.getManager().getPlugin().getWaypointManager().getWaypointsLimit(player);
+                    // Checking if player has not reached the maximum number of waypoints.
+                    return (player.hasPermission("claims.bypass.ignore_waypoints_limit") == true || cPanel.getManager().getPlugin().getWaypointManager().getWaypoints(player).stream().filter(waypoint -> waypoint.getSource() == Waypoint.Source.BLOCK).count() < limit);
+                })
                 .toList();
         // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);

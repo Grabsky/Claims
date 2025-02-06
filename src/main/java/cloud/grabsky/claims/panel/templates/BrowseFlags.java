@@ -81,6 +81,16 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
         cPanel.setItem(24,
                 createDisplay(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER),
                 createClickAction(claim, Claims.CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER));
+        // ...ROW 3
+        cPanel.setItem(29,
+                createDisplay(claim, Flags.GRASS_SPREAD, PluginFlags.GRASS_GROWTH),
+                createClickAction(claim, Flags.GRASS_SPREAD, PluginFlags.GRASS_GROWTH));
+        cPanel.setItem(30,
+                createDisplay(claim, Flags.VINE_GROWTH, PluginFlags.VINE_GROWTH),
+                createClickAction(claim, Flags.VINE_GROWTH, PluginFlags.VINE_GROWTH));
+        cPanel.setItem(31,
+                createDisplay(claim, Flags.LEAF_DECAY, PluginFlags.LEAF_DECAY),
+                createClickAction(claim, Flags.LEAF_DECAY, PluginFlags.LEAF_DECAY));
         // ...
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true));
    }
