@@ -377,6 +377,9 @@ public final class ClaimManager {
         region.setFlag(Flags.MOB_SPAWNING,        PluginFlags.MOB_SPAWNING.getDefaultValue());
         region.setFlag(CustomFlag.CLIENT_TIME,    PluginFlags.CLIENT_TIME.getDefaultValue());
         region.setFlag(CustomFlag.CLIENT_WEATHER, PluginFlags.CLIENT_WEATHER.getDefaultValue());
+        region.setFlag(Flags.GRASS_SPREAD,        PluginFlags.GRASS_GROWTH.getDefaultValue());
+        region.setFlag(Flags.VINE_GROWTH,         PluginFlags.VINE_GROWTH.getDefaultValue());
+        region.setFlag(Flags.LEAF_DECAY,          PluginFlags.LEAF_DECAY.getDefaultValue());
         // Setting center location (not modifiable)
         region.setFlag(CustomFlag.CLAIM_CREATED, valueOf(currentTimeMillis()));
         region.setFlag(CustomFlag.CLAIM_CENTER, regionCenter);

@@ -37,6 +37,15 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
 
     private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_flags", NamedTextColor.WHITE);
 
+    public void DFU(final Claim claim) {
+        if (claim.getFlag(Flags.GRASS_SPREAD) == null)
+            claim.setFlag(Flags.GRASS_SPREAD, PluginFlags.GRASS_GROWTH.getDefaultValue());
+        if (claim.getFlag(Flags.VINE_GROWTH) == null)
+            claim.setFlag(Flags.VINE_GROWTH, PluginFlags.VINE_GROWTH.getDefaultValue());
+        if (claim.getFlag(Flags.LEAF_DECAY) == null)
+            claim.setFlag(Flags.LEAF_DECAY, PluginFlags.LEAF_DECAY.getDefaultValue());
+    }
+
     @Override
     public void accept(final ClaimPanel cPanel) {
         // Returning in case there is no Claim object associated with this ClaimPanel.
@@ -46,6 +55,8 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
         }
         // ...
         final Claim claim = cPanel.getClaim();
+        // Calling DFU for flags that were added after claimed region has been created.
+        DFU(claim);
         // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
         cPanel.updateTitle(INVENTORY_TITLE);
         // ...ROW 1
