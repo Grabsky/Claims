@@ -44,6 +44,8 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
             claim.setFlag(Flags.VINE_GROWTH, PluginFlags.VINE_GROWTH.getDefaultValue());
         if (claim.getFlag(Flags.LEAF_DECAY) == null)
             claim.setFlag(Flags.LEAF_DECAY, PluginFlags.LEAF_DECAY.getDefaultValue());
+        if (claim.getFlag(Flags.ENDER_BUILD) == null)
+            claim.setFlag(Flags.ENDER_BUILD, PluginFlags.ENDERMAN_GRIEF.getDefaultValue());
     }
 
     @Override
@@ -62,8 +64,7 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
         // ...ROW 1
         cPanel.setItem(11,
                 createDisplay(claim, Flags.USE, PluginFlags.USE),
-                createClickAction(claim, Flags.USE, PluginFlags.USE, RegionGroup.NON_MEMBERS)
-        );
+                createClickAction(claim, Flags.USE, PluginFlags.USE, RegionGroup.NON_MEMBERS));
         cPanel.setItem(12,
                 createDisplay(claim, Flags.CHEST_ACCESS, PluginFlags.CHEST_ACCESS),
                 createClickAction(claim, Flags.CHEST_ACCESS, PluginFlags.CHEST_ACCESS, RegionGroup.NON_MEMBERS));
@@ -102,8 +103,11 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
         cPanel.setItem(31,
                 createDisplay(claim, Flags.LEAF_DECAY, PluginFlags.LEAF_DECAY),
                 createClickAction(claim, Flags.LEAF_DECAY, PluginFlags.LEAF_DECAY));
+        cPanel.setItem(32,
+                createDisplay(claim, Flags.ENDER_BUILD, PluginFlags.ENDERMAN_GRIEF),
+                createClickAction(claim, Flags.ENDER_BUILD, PluginFlags.ENDERMAN_GRIEF));
         // ...
-        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (_) -> cPanel.applyClaimTemplate(BrowseCategories.INSTANCE, true));
    }
 
    private static <T> ItemStack createDisplay(final Claim claim, final Flag<T> flag, final ClaimFlag<T> claimFlag) {

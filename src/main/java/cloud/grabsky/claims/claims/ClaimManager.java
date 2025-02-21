@@ -380,6 +380,7 @@ public final class ClaimManager {
         region.setFlag(Flags.GRASS_SPREAD,        PluginFlags.GRASS_GROWTH.getDefaultValue());
         region.setFlag(Flags.VINE_GROWTH,         PluginFlags.VINE_GROWTH.getDefaultValue());
         region.setFlag(Flags.LEAF_DECAY,          PluginFlags.LEAF_DECAY.getDefaultValue());
+        region.setFlag(Flags.ENDER_BUILD,         PluginFlags.ENDERMAN_GRIEF.getDefaultValue());
         // Setting center location (not modifiable)
         region.setFlag(CustomFlag.CLAIM_CREATED, valueOf(currentTimeMillis()));
         region.setFlag(CustomFlag.CLAIM_CENTER, regionCenter);

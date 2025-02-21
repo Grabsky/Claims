@@ -249,6 +249,24 @@
                     "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZWZhZjlhYjcwYWQ0MDcxNDhlMmFlMGI0YWY4MWVkODE3YTBiZjk5Y2U2YTA4N2I2OTI4NmVjNmNhYTAzYTM5ZCJ9fX0="
                 }
             }
+        },
+        "enderman_grief": {
+            "default_value": "ALLOW",
+            "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
+            "ui_display": {
+                "material": "minecraft:player_head",
+                "meta": {
+                    "name": "<gold>Enderman",
+                    "lore": [
+                        "<gray>Podnoszenie bloków przez endermany.",
+                        "",
+                        "<gray>Zakres: <gold>Środowisko",
+                        "",
+                        "[OPTIONS]"
+                    ],
+                    "skull_texture": "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODQ3YzdlYzdhNjE3MWNiOWJjZmE0Mjk1YjI2ODk4YWI1YTQ2NDQxYzc5NDFkNWFhMGJjZjMzZjQ1ZjgwMmMwMSJ9fX0="
+                }
+            }
         }
     }
 }

@@ -76,6 +76,9 @@ public final class PluginFlags implements JsonConfiguration {
     @JsonPath("flags.leaf_decay")
     public static ClaimFlag<StateFlag.State> LEAF_DECAY;
 
+    @JsonPath("flags.enderman_grief")
+    public static ClaimFlag<StateFlag.State> ENDERMAN_GRIEF;
+
 
 
 }
