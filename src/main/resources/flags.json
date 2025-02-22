@@ -251,7 +251,7 @@
             }
         },
         "enderman_grief": {
-            "default_value": "ALLOW",
+            "default_value": "DENY",
             "ui_display_options": ["Włączone", "Wyłączone (Domyślne)"],
             "ui_display": {
                 "material": "minecraft:player_head",
