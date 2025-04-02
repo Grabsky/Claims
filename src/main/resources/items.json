@@ -122,7 +122,7 @@
                         "<dark_gray>› <gray>Data utworzenia: <gold>[CREATED_ON]",
                         "",
                         "<gray>Kliknij <white><lang:ui.icons.mouse_button.right><gray> aby zmienić nazwę.",
-                        "<gray>Kliknij <red>Q, aby usunąć.",
+                        "<gray>Kliknij <red>Q<gray>, aby usunąć.",
                         "",
                         "<red>Bezpieczna teleportacja niedostępna."
                     ],
