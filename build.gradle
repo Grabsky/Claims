@@ -1,12 +1,13 @@
 plugins {
     id("java-library")
-    id("net.minecrell.plugin-yml.paper") version "0.6.0"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.8"
+    id("xyz.jpenilla.run-paper") version "2.3.1"
+    id("de.eldoria.plugin-yml.paper") version "0.7.1"
     id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
 }
 
 group = "cloud.grabsky"
-version = "1.21.4-${System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"}"
+version = "1.21.7-${System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"}"
 
 repositories {
     mavenLocal()
@@ -15,28 +16,26 @@ repositories {
     maven { url = "https://repo.papermc.io/repository/maven-public/" }
     // Repository for the WorldEdit and WorldGuard APIs.
     maven { url = "https://maven.enginehub.org/repo/" }
-    // Repository containing the 'bedrock' dependency.
-    maven { url = "https://maven.pkg.github.com/grabsky/bedrock"; fillCredentials(it) }
-    // Repository containing the 'configuration' dependency.
-    maven { url = "https://maven.pkg.github.com/grabsky/configuration"; fillCredentials(it) }
-    // Repository containing the 'commands' dependency.
-    maven { url = "https://maven.pkg.github.com/grabsky/commands"; fillCredentials(it) }
     // Repository for the PlaceholderAPI, API.
     maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
     // Repository containing the 'PacketEvents' dependency.
     maven { url = "https://repo.codemc.io/repository/maven-releases" }
+    // Repository containing all my libraries.
+    maven { url = "https://vela.grabsky.workers.dev/releases" }
+    // Repository containing the 'Azure' dependency.
+    maven { url = "https://maven.pkg.github.com/grabsky/azure"; fillCredentials(it) }
 }
 
 dependencies {
     // Lombok
-    compileOnly("org.projectlombok:lombok:1.18.36")
-    annotationProcessor("org.projectlombok:lombok:1.18.36")
+    compileOnly("org.projectlombok:lombok:1.18.38")
+    annotationProcessor("org.projectlombok:lombok:1.18.38")
     // Paper
-    paperweight.paperDevBundle("1.21.4-R0.1-SNAPSHOT")
-    // Dependencies
-    implementation("cloud.grabsky:bedrock:1.21-63")
-    implementation("cloud.grabsky:commands:1.20.1-37")
-    implementation("cloud.grabsky:configuration-paper:1.21.4-50")
+    paperweight.paperDevBundle("1.21.7-R0.1-SNAPSHOT")
+    // Dependencies (My Libraries)
+    paperLibrary("cloud.grabsky:bedrock:1.21-67")
+    paperLibrary("cloud.grabsky:commands:1.20.1-40")
+    paperLibrary("cloud.grabsky:configuration-paper:1.21.4-54")
     // WorldEdit
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-SNAPSHOT")
     // Azure
@@ -44,11 +43,17 @@ dependencies {
     // PlaceholderAPI
     compileOnly("me.clip:placeholderapi:2.11.6")
     // PacketEvents
-    compileOnly("com.github.retrooper:packetevents-spigot:2.7.0")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
 }
 
 tasks {
-    shadowJar { shadowJar.archiveFileName = "${rootProject.name}-${project.version}.jar" }
+    runServer {
+        minecraftVersion("1.21.7")
+        jvmArgs("--enable-preview")
+    }
+    shadowJar {
+        shadowJar.archiveFileName = "${rootProject.name}-${project.version}.jar"
+    }
     compileJava {
         options.fork = true
         options.compilerArgs += "--enable-preview"
@@ -60,25 +65,20 @@ tasks {
 
 paper {
     main = "cloud.grabsky.claims.Claims"
-    apiVersion = "1.21.4"
-    // Must be open for NMS to work correctly.
-    hasOpenClassloader = true
+    apiVersion = "1.21.7"
     serverDependencies {
         "PlaceholderAPI" { load = "BEFORE"; required = true }
+        "packetevents"   { load = "BEFORE"; required = true }
         "WorldGuard"     { load = "BEFORE"; required = true }
         "Azure"          { load = "BEFORE"; required = true }
     }
 }
 
-/* FOR GITHUB ACTIONS */
+// Returns formatted release name. (for GitHub Actions)
+tasks.register("getRelease", () -> print("$VERSION #$RUN_NUMBER"))
 
-tasks.register("release") {
-    print("${version.toString().split('-')[0]} #${System.getenv("GITHUB_RUN_NUMBER")}")
-}
-
-tasks.register("tag") {
-    print(version)
-}
+// Returns formatted tag name. (for GitHub Actions)
+tasks.register("getTag", () -> print("$VERSION+$RUN_NUMBER"))
 
 /* UTILITY METHODS */
 
