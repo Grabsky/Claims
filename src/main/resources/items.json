@@ -183,21 +183,21 @@
                 "material": "minecraft:structure_void",
                 "meta": {
                     "model": "firedot:arrow_right",
-                    "components": "[hide_tooltip={}]"
+                    "components": "[tooltip_display={hide_tooltip:1b}]"
                 }
             },
             "previous_page": {
                 "material": "minecraft:structure_void",
                 "meta": {
                     "model": "firedot:arrow_left",
-                    "components": "[hide_tooltip={}]"
+                    "components": "[tooltip_display={hide_tooltip:1b}]"
                 }
             },
             "return": {
                 "material": "minecraft:barrier",
                 "meta": {
                     "model": "firedot:return",
-                    "components": "[hide_tooltip={}]"
+                    "components": "[tooltip_display={hide_tooltip:1b}]"
                 }
             }
         }
