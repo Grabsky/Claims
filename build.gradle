@@ -6,8 +6,11 @@ plugins {
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
 }
 
+final String VERSION = "1.21.7"
+final String RUN_NUMBER = System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"
+
 group = "cloud.grabsky"
-version = "1.21.7-${System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"}"
+version = "$VERSION+$RUN_NUMBER"
 
 repositories {
     mavenLocal()
@@ -72,6 +75,15 @@ paper {
         "WorldGuard"     { load = "BEFORE"; required = true }
         "Azure"          { load = "BEFORE"; required = true }
     }
+}
+
+// Configuring runServer task to use JetBrains' JDK 21 for expanded hot-swap features.
+tasks.withType(xyz.jpenilla.runtask.task.AbstractRun.class).configureEach {
+    javaLauncher = javaToolchains.launcherFor {
+        vendor = JvmVendorSpec.JETBRAINS
+        languageVersion = JavaLanguageVersion.of(21)
+    }
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition")
 }
 
 // Returns formatted release name. (for GitHub Actions)
