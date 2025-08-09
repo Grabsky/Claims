@@ -6,7 +6,7 @@ plugins {
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
 }
 
-final String VERSION = "1.21.7"
+final String VERSION = "1.21.8"
 final String RUN_NUMBER = System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"
 
 group = "cloud.grabsky"
@@ -25,33 +25,35 @@ repositories {
     maven { url = "https://repo.codemc.io/repository/maven-releases" }
     // Repository containing all my libraries.
     maven { url = "https://vela.grabsky.workers.dev/releases" }
-    // Repository containing the 'Azure' dependency.
-    maven { url = "https://maven.pkg.github.com/grabsky/azure"; fillCredentials(it) }
 }
 
 dependencies {
-    // Lombok
+    // https://github.com/projectlombok/lombok
     compileOnly("org.projectlombok:lombok:1.18.38")
     annotationProcessor("org.projectlombok:lombok:1.18.38")
-    // Paper
-    paperweight.paperDevBundle("1.21.7-R0.1-SNAPSHOT")
-    // Dependencies (My Libraries)
+    // https://github.com/PaperMC/Paper
+    paperweight.paperDevBundle("1.21.8-R0.1-SNAPSHOT")
+    // https://github.com/Grabsky/bedrock
     paperLibrary("cloud.grabsky:bedrock:1.21-67")
+    // https://github.com/Grabsky/commands
     paperLibrary("cloud.grabsky:commands:1.20.1-40")
+    // https://github.com/Grabsky/configuration
     paperLibrary("cloud.grabsky:configuration-paper:1.21.4-54")
-    // WorldEdit
+    // https://github.com/EngineHub/WorldGuard
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-SNAPSHOT")
-    // Azure
-    compileOnly("cloud.grabsky:azure-api:1.20.1-11") { exclude group: "cloud.grabsky", module: "bedrock" }
-    // PlaceholderAPI
+    // https://github.com/Grabsky/Azure
+    compileOnly("cloud.grabsky:azure-api:1.21.8-145") {
+        exclude group: "cloud.grabsky", module: "bedrock"
+    }
+    // https://github.com/PlaceholderAPI/PlaceholderAPI
     compileOnly("me.clip:placeholderapi:2.11.6")
-    // PacketEvents
-    compileOnly("com.github.retrooper:packetevents-spigot:2.8.0")
+    // https://github.com/retrooper/packetevents
+    compileOnly("com.github.retrooper:packetevents-spigot:2.9.4")
 }
 
 tasks {
     runServer {
-        minecraftVersion("1.21.7")
+        minecraftVersion("1.21.8")
         jvmArgs("--enable-preview")
     }
     shadowJar {
@@ -92,11 +94,3 @@ tasks.register("getRelease", () -> print("$VERSION #$RUN_NUMBER"))
 // Returns formatted tag name. (for GitHub Actions)
 tasks.register("getTag", () -> print("$VERSION+$RUN_NUMBER"))
 
-/* UTILITY METHODS */
-
-private final def fillCredentials(final MavenArtifactRepository repository) {
-    repository.credentials {
-        username = findProperty("gpr.actor") ?: System.getenv("GITHUB_ACTOR")
-        password = findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
-    }
-}

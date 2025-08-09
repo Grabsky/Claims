@@ -21,15 +21,12 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       # Build
       - name: Build
-        run: ./gradlew clean shadowJar --no-daemon
-        env:
-          # GitHub Packages
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: ./gradlew clean shadowJar
       # Expose Release & Tag
       - name: Expose Release & Tag
         run: |
-          echo "PROJECT_RELEASE=$(./gradlew getRelease --quiet --no-rebuild --no-daemon)" >> $GITHUB_ENV
-          echo "PROJECT_TAG=$(./gradlew getTag --quiet --no-rebuild --no-daemon)" >> $GITHUB_ENV
+          echo "PROJECT_RELEASE=$(./gradlew getRelease --quiet --no-rebuild)" >> $GITHUB_ENV
+          echo "PROJECT_TAG=$(./gradlew getTag --quiet --no-rebuild)" >> $GITHUB_ENV
       # Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
