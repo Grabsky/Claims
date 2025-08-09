@@ -38,10 +38,14 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
+import com.github.retrooper.packetevents.util.Quaternion4f;
+import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
+import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
+import com.google.common.util.concurrent.AtomicDouble;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.math.BlockPosition;
@@ -58,6 +62,7 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
@@ -260,11 +265,15 @@ public class ClaimsCommand extends RootCommand {
 
     /* CLAIMS BORDER */
 
-    private static final ItemStack BORDER_ITEM = new ItemStack(Material.COAL, 1);
-    private static final NamespacedKey BORDER_ITEM_MODEL = new NamespacedKey("wireframe", "wireframe_white");
+    private static final com.github.retrooper.packetevents.protocol.item.ItemStack BORDER_ITEM;
 
     static {
-        BORDER_ITEM.setData(DataComponentTypes.ITEM_MODEL, BORDER_ITEM_MODEL);
+        // Preparing a Bukkit ItemStack instance that will be represent the claim border.
+        final ItemStack item = new ItemStack(Material.STRUCTURE_VOID, 1);
+        // Setting item model to a resource-pack texture.
+        item.setData(DataComponentTypes.ITEM_MODEL, new NamespacedKey("firedot", "util/wireframe"));
+        // Converting to PacketEvents' type and storing.
+        BORDER_ITEM = SpigotConversionUtil.fromBukkitItemStack(item);
     }
 
     private void onClaimsBorder(final RootCommandContext context, final ArgumentQueue arguments) {
@@ -289,39 +298,61 @@ public class ClaimsCommand extends RootCommand {
             final Location location = sender.getLocation();
             // Getting Claim at location of the command sender.
             final @Nullable Claim claim = claimManager.getClaimAt(location);
-            // ..............
+            // Sending error message if player is not in a claimed area.
             if (claim == null) {
                 Message.of(PluginLocale.NOT_IN_CLAIMED_AREA).send(sender);
                 return;
             }
-            // ...
-            final var minY = location.getWorld().getMinHeight();
-            final var maxY = location.getWorld().getMaxHeight();
-            // Calculating total number of entities that are going to be created.
-            // First location must be 5 blocks below the min Y, because 10 is added to Y coordinate on first iteration of the for loop.
-            final Location initialLocation = new Location(claim.getCenter().getWorld(), claim.getCenter().x(), minY - 5, claim.getCenter().z());
-            // ...
-            for (int i = minY; i <= maxY + 1; i += 10) {
-                final Location spawnLocation = initialLocation.add(0, 10, 0);
-                // ...
-                final com.github.retrooper.packetevents.protocol.world.Location wrappedLocation = SpigotConversionUtil.fromBukkitLocation(spawnLocation);
-                // Getting the next entity ID...
-                final int id = Bukkit.getUnsafe().nextEntityId();
-                // Adding to the set...
-                claimSender.getBorderEntities().add(id);
-                // Creating packet...
-                final var spawnPacket = new WrapperPlayServerSpawnEntity(id, UUID.randomUUID(), EntityTypes.ITEM_DISPLAY, wrappedLocation, 0, 0, null);
-                final var metadataPacket = new WrapperPlayServerEntityMetadata(id, List.of(
-                        new EntityData(12, EntityDataTypes.VECTOR3F, new Vector3f(claim.getType().getRadius() * 2 + 1, 10, claim.getType().getRadius() * 2 + 1)),
-                        new EntityData(17, EntityDataTypes.FLOAT, 2.0F),
-                        new EntityData(23, EntityDataTypes.ITEMSTACK, SpigotConversionUtil.fromBukkitItemStack(BORDER_ITEM))
-                ));
-                PacketEvents.getAPI().getPlayerManager().sendPacket(sender, spawnPacket);
-                PacketEvents.getAPI().getPlayerManager().sendPacket(sender, metadataPacket);
-            }
+            // Creating initial entity location at the center of the claim.
+            final com.github.retrooper.packetevents.protocol.world.Location initialLocation = new com.github.retrooper.packetevents.protocol.world.Location(
+                    claim.getCenter().x(), sender.getY(), claim.getCenter().z(), 0.0F, 0.0F
+            );
+            // Getting the next entity ID...
+            final int id = Bukkit.getUnsafe().nextEntityId();
+            // Storing entity identifier so it can be removed / modified later.
+            claimSender.getBorderEntities().add(id);
+            // Constructing packet(s)...
+            final var spawnPacket = new WrapperPlayServerSpawnEntity(id, UUID.randomUUID(), EntityTypes.ITEM_DISPLAY, initialLocation, 0, 0, null);
+            final var metadataPacket = new WrapperPlayServerEntityMetadata(id, List.of(
+                    // Setting base metadata bit mask to glowing effect.
+                    new EntityData<>(0, EntityDataTypes.BYTE, (byte) 0x40),
+                    // Setting interpolation delay to 3 ticks.
+                    new EntityData<>(10, EntityDataTypes.INT, 3),
+                    // Setting scale to the size of the claim.
+                    new EntityData<>(12, EntityDataTypes.VECTOR3F, new Vector3f(claim.getType().getRadius() * 2 + 1, claim.getType().getRadius() * 2 + 1, 0)),
+                    // Setting rotation to lay flat on the ground.
+                    new EntityData<>(13, EntityDataTypes.QUATERNION, new Quaternion4f(0.707F, 0F, 0F, 0.707F)),
+                    // Setting view range to maximum value. (Still capped by render distance)
+                    new EntityData<>(17, EntityDataTypes.FLOAT, 2.0F),
+                    // Setting glowing color to green.
+                    new EntityData<>(22, EntityDataTypes.INT, 0x7FFF00),
+                    // Setting item to
+                    new EntityData<>(23, EntityDataTypes.ITEMSTACK, BORDER_ITEM)
+            ));
+            // Sending entity spawn packet to the sender.
+            PacketEvents.getAPI().getPlayerManager().sendPacket(sender, spawnPacket);
+            // Sending entity metadata update packet to the sender.
+            PacketEvents.getAPI().getPlayerManager().sendPacket(sender, metadataPacket);
+            // Showing action bar message to the sender.
             Message.of(PluginLocale.CLAIM_BORDER_ENABLED).sendActionBar(sender);
-            plugin.getBedrockScheduler().run(40L, (task) -> {
-                Message.of(PluginLocale.CLAIM_BORDER_SHADERS_NOT_SUPPORTED).sendActionBar(sender);
+            // Starting scheduled task to sync the border entity with sender's Y coordinate.
+            plugin.getBedrockScheduler().repeatAsync(3L, 3L, Integer.MAX_VALUE, (_) -> {
+                // Cancelling the task if there are no border entities to sync or player is no longer online.
+                if (claimSender.getBorderEntities().isEmpty() == true || sender.isConnected() == false)
+                    return false;
+                // Skipping if player is mid-air. This method is deprecated but there's no good alternative. Should work perfectly fine in this situation.
+                if (sender.isOnGround() == false)
+                    return true;
+                // Creating entity location instance with updated Y coordinate.
+                final com.github.retrooper.packetevents.protocol.world.Location updatedLocation = new com.github.retrooper.packetevents.protocol.world.Location(
+                        claim.getCenter().x(), sender.getY(), claim.getCenter().z(), 0.0F, 0.0F
+                );
+                // Constructing packet(s)...
+                final var teleportPacket = new WrapperPlayServerEntityTeleport(id, updatedLocation, false);
+                // Sending entity teleport packet to the sender.
+                PacketEvents.getAPI().getPlayerManager().sendPacket(sender, teleportPacket);
+                // Returning as to continue the task.
+                return true;
             });
             return;
         }
