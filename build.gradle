@@ -70,6 +70,8 @@ tasks {
 
 paper {
     main = "cloud.grabsky.claims.Claims"
+    loader = "cloud.grabsky.claims.Claims\$PluginLoader"
+    generateLibrariesJson = true
     apiVersion = "1.21.7"
     serverDependencies {
         "PlaceholderAPI" { load = "BEFORE"; required = true }
