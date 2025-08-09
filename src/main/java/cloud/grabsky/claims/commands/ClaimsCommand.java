@@ -283,13 +283,8 @@ public class ClaimsCommand extends RootCommand {
             final ClaimPlayer claimSender = claimManager.getClaimPlayer(sender);
             // Removing current border entities.
             if (claimSender.getBorderEntities().isEmpty() == false) {
-                final int[] currentEntities = claimSender.getBorderEntities().stream().mapToInt(Integer::intValue).toArray();
-                // Creating the packet.
-                final var destroyPacket = new WrapperPlayServerDestroyEntities(currentEntities);
-                // Sending packet to the player.
-                PacketEvents.getAPI().getPlayerManager().sendPacket(sender, destroyPacket);
-                // Clearing list of border entities.
-                claimSender.getBorderEntities().clear();
+                // Destroying border entities.
+                destroyBorderEntities(claimSender);
                 // Sending message to the player and returning.
                 Message.of(PluginLocale.CLAIM_BORDER_DISABLED).sendActionBar(sender);
                 return;
@@ -337,27 +332,46 @@ public class ClaimsCommand extends RootCommand {
             Message.of(PluginLocale.CLAIM_BORDER_ENABLED).sendActionBar(sender);
             // Starting scheduled task to sync the border entity with sender's Y coordinate.
             plugin.getBedrockScheduler().repeatAsync(3L, 3L, Integer.MAX_VALUE, (_) -> {
-                // Cancelling the task if there are no border entities to sync or player is no longer online.
-                if (claimSender.getBorderEntities().isEmpty() == true || sender.isConnected() == false)
-                    return false;
-                // Skipping if player is mid-air. This method is deprecated but there's no good alternative. Should work perfectly fine in this situation.
-                if (sender.isOnGround() == false)
+                // Cancelling the task if the player is no longer owner or member of the claim.
+                try {
+                    // Cancelling the task if there are no border entities to sync or player is no longer online.
+                    if (claimSender.getBorderEntities().isEmpty() == true || sender.isConnected() == false)
+                        return false;
+                    // Skipping if player is mid-air. This method is deprecated but there's no good alternative. Should work perfectly fine in this situation.
+                    if (sender.isOnGround() == false)
+                        return true;
+                    // Creating entity location instance with updated Y coordinate.
+                    final com.github.retrooper.packetevents.protocol.world.Location updatedLocation = new com.github.retrooper.packetevents.protocol.world.Location(
+                            claim.getCenter().x(), sender.getY(), claim.getCenter().z(), 0.0F, 0.0F
+                    );
+                    // Constructing packet(s)...
+                    final var teleportPacket = new WrapperPlayServerEntityTeleport(id, updatedLocation, false);
+                    // Sending entity teleport packet to the sender.
+                    PacketEvents.getAPI().getPlayerManager().sendPacket(sender, teleportPacket);
+                    // Returning 'true' as to continue the task.
                     return true;
-                // Creating entity location instance with updated Y coordinate.
-                final com.github.retrooper.packetevents.protocol.world.Location updatedLocation = new com.github.retrooper.packetevents.protocol.world.Location(
-                        claim.getCenter().x(), sender.getY(), claim.getCenter().z(), 0.0F, 0.0F
-                );
-                // Constructing packet(s)...
-                final var teleportPacket = new WrapperPlayServerEntityTeleport(id, updatedLocation, false);
-                // Sending entity teleport packet to the sender.
-                PacketEvents.getAPI().getPlayerManager().sendPacket(sender, teleportPacket);
-                // Returning as to continue the task.
-                return true;
+                } catch (final ClaimProcessException e) {
+                    // Destroying border entities when exception occurs. This will happen if claim was destroyed while the task was running.
+                    destroyBorderEntities(claimSender);
+                    // Returning 'false' as to terminate the task.
+                    return false;
+                }
             });
             return;
         }
         // Sending error message to the sender.
         Message.of(PluginLocale.MISSING_PERMISSIONS).send(sender);
+    }
+
+    private void destroyBorderEntities(final ClaimPlayer claimSender) {
+        // Removing current border entities.
+        final int[] currentEntities = claimSender.getBorderEntities().stream().mapToInt(Integer::intValue).toArray();
+        // Creating the packet.
+        final var destroyPacket = new WrapperPlayServerDestroyEntities(currentEntities);
+        // Sending packet to the player.
+        PacketEvents.getAPI().getPlayerManager().sendPacket(claimSender.toPlayer(), destroyPacket);
+        // Clearing list of border entities.
+        claimSender.getBorderEntities().clear();
     }
 
 
