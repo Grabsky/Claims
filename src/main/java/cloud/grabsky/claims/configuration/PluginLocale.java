@@ -81,9 +81,6 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("claim_border_disabled")
     public static Component CLAIM_BORDER_DISABLED;
 
-    @JsonPath("claim_border_shaders_not_supported")
-    public static Component CLAIM_BORDER_SHADERS_NOT_SUPPORTED;
-
     @JsonPath("dimensions")
     public static Map<String, String> DIMENSIONS;
 
