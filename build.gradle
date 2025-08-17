@@ -23,6 +23,8 @@ repositories {
     maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
     // Repository containing the 'PacketEvents' dependency.
     maven { url = "https://repo.codemc.io/repository/maven-releases" }
+    // Repository containing 'Pl3xMap' dependency.
+    maven { url = "https://api.modrinth.com/maven/" }
     // Repository containing all my libraries.
     maven { url = "https://vela.grabsky.workers.dev/releases" }
 }
@@ -49,6 +51,8 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     // https://github.com/retrooper/packetevents
     compileOnly("com.github.retrooper:packetevents-spigot:2.9.4")
+    // https://github.com/granny/Pl3xMap
+    compileOnly("maven.modrinth:pl3xmap:1.21.8-534")
 }
 
 tasks {
@@ -78,6 +82,7 @@ paper {
         "packetevents"   { load = "BEFORE"; required = true }
         "WorldGuard"     { load = "BEFORE"; required = true }
         "Azure"          { load = "BEFORE"; required = true }
+        "Pl3xMap"        { load = "BEFORE"; required = false }
     }
 }
 

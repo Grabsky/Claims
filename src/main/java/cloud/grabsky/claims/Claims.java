@@ -62,6 +62,12 @@ import io.papermc.paper.plugin.loader.PluginClasspathBuilder;
 import io.papermc.paper.plugin.loader.library.impl.MavenLibraryResolver;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
 import net.kyori.adventure.text.format.NamedTextColor;
+import net.pl3x.map.core.Pl3xMap;
+import net.pl3x.map.core.markers.Point;
+import net.pl3x.map.core.markers.layer.WorldLayer;
+import net.pl3x.map.core.markers.marker.Marker;
+import net.pl3x.map.core.markers.option.Options;
+import net.pl3x.map.core.markers.option.Tooltip;
 import org.bukkit.NamespacedKey;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -74,9 +80,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.NotNull;
@@ -149,6 +157,40 @@ public final class Claims extends BedrockPlugin {
         PacketEvents.getAPI().init();
         // Registering PlaceholderAPI placeholders.
         Placeholders.INSTANCE.register();
+        // Registering Pl3xMap integration if plugin is available.
+        if (this.getServer().getPluginManager().getPlugin("Pl3xMap") != null) {
+            final net.pl3x.map.core.world.World pl3xWorld = Pl3xMap.api().getWorldRegistry().get(PluginConfig.DEFAULT_WORLD.getName());
+            // Returning if world ends up being null. Not really possible but needed to satisfy code analysis.
+            if (pl3xWorld == null)
+                return;
+            // Getting the Pl3xMap API.
+            pl3xWorld.getLayerRegistry().register("claims", new WorldLayer("claims", pl3xWorld, () -> "Claims") {
+
+                {
+                    // Increasing default update interval to 30 seconds.
+                    setUpdateInterval(30);
+                }
+
+                @Override
+                public @NotNull Collection<Marker<?>> getMarkers() {
+                    return instance.getClaimManager().getClaims().stream().map(claim -> {
+                        final Point min = Point.of(claim.getCenter().x() + claim.getType().getRadius(), claim.getCenter().z() + claim.getType().getRadius());
+                        final Point max = Point.of(claim.getCenter().x() - claim.getType().getRadius(), claim.getCenter().z() - claim.getType().getRadius());
+                        final int size = claim.getType().getRadius() * 2 + 1;
+                        return Marker.rectangle(claim.getId(), min, max)
+                                .setOptions(Options.builder()
+                                        .fillColor(0x4000FF00)
+                                        .strokeColor(0xFF00FF00)
+                                        .strokeWeight(1)
+                                        .tooltipContent(claim.getOwners().getFirst().toUser().getName() + " (" + size + "x" + size + ")")
+                                        .tooltipDirection(Tooltip.Direction.CENTER)
+                                        .build());
+                    }).collect(Collectors.toList());
+                }
+
+            });
+        }
+
     }
 
     @Override
