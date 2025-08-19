@@ -23,6 +23,7 @@ import net.pl3x.map.core.markers.marker.Marker;
 import net.pl3x.map.core.markers.option.Options;
 import net.pl3x.map.core.markers.option.Tooltip;
 import net.pl3x.map.core.world.World;
+import org.bukkit.Location;
 
 import java.util.Collection;
 import java.util.function.Supplier;
@@ -58,13 +59,13 @@ public final class Pl3xMapIntegration extends WorldLayer {
     @Override
     public @NotNull Collection<Marker<?>> getMarkers() {
         return plugin.getClaimManager().getClaims().stream().map(claim -> {
-            final Point min = Point.of(claim.getCenter().x() + claim.getType().getRadius(), claim.getCenter().z() + claim.getType().getRadius());
-            final Point max = Point.of(claim.getCenter().x() - claim.getType().getRadius(), claim.getCenter().z() - claim.getType().getRadius());
-            return Marker.rectangle(claim.getId(), min, max)
+            final Location center = claim.getCenter();
+            final int radius = claim.getType().getRadius();
+            return Marker.rectangle(claim.getId(), Point.of(center.getX() - radius, center.getZ() - radius), Point.of(center.getX() + radius + 0.5F, center.getZ() + radius + 0.5F))
                     .setOptions(Options.builder()
-                            .fillColor(0x4000FF00)
+                            .fillColor(0x3000FF00)
                             .strokeColor(0xFF00FF00)
-                            .strokeWeight(1)
+                            .strokeWeight(2)
                             .tooltipContent(claim.getOwners().getFirst().toUser().getName())
                             .tooltipDirection(Tooltip.Direction.CENTER)
                             .build());
