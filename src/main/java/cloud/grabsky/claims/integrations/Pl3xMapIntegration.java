@@ -60,13 +60,12 @@ public final class Pl3xMapIntegration extends WorldLayer {
         return plugin.getClaimManager().getClaims().stream().map(claim -> {
             final Point min = Point.of(claim.getCenter().x() + claim.getType().getRadius(), claim.getCenter().z() + claim.getType().getRadius());
             final Point max = Point.of(claim.getCenter().x() - claim.getType().getRadius(), claim.getCenter().z() - claim.getType().getRadius());
-            final int size = claim.getType().getRadius() * 2 + 1;
             return Marker.rectangle(claim.getId(), min, max)
                     .setOptions(Options.builder()
                             .fillColor(0x4000FF00)
                             .strokeColor(0xFF00FF00)
                             .strokeWeight(1)
-                            .tooltipContent(claim.getOwners().getFirst().toUser().getName() + " (" + size + "x" + size + ")")
+                            .tooltipContent(claim.getOwners().getFirst().toUser().getName())
                             .tooltipDirection(Tooltip.Direction.CENTER)
                             .build());
         }).collect(Collectors.toList());
