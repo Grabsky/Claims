@@ -33,7 +33,7 @@ import cloud.grabsky.claims.flags.EnterActionBarFlag;
 import cloud.grabsky.claims.flags.LeaveActionBarFlag;
 import cloud.grabsky.claims.flags.object.FixedTime;
 import cloud.grabsky.claims.flags.object.FixedWeather;
-import cloud.grabsky.claims.integrations.Pl3xMapIntegration;
+import cloud.grabsky.claims.integrations.BlueMapIntegration;
 import cloud.grabsky.claims.listeners.PlayerListener;
 import cloud.grabsky.claims.listeners.RegionListener;
 import cloud.grabsky.claims.listeners.WaypointListener;
@@ -146,9 +146,9 @@ public final class Claims extends BedrockPlugin {
                 // Registering commands...
                 .registerCommand(ClaimsCommand.class)
                 .registerCommand(WaypointCommand.class);
-        // Initializing Pl3xMap integration if plugin is available.
-        if (this.getServer().getPluginManager().getPlugin("Pl3xMap") != null)
-            Pl3xMapIntegration.initialize(this);
+        // Initializing BlueMap integration if plugin is available.
+        if (this.getServer().getPluginManager().getPlugin("BlueMap") != null)
+            BlueMapIntegration.initialize(this);
         // Initializing PacketEvents.
         PacketEvents.getAPI().init();
         // Registering PlaceholderAPI placeholders.

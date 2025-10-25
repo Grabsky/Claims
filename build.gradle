@@ -1,9 +1,9 @@
 plugins {
     id("java-library")
-    id("xyz.jpenilla.run-paper") version "2.3.1"
-    id("de.eldoria.plugin-yml.paper") version "0.7.1"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.17"
+    id("xyz.jpenilla.run-paper") version "3.0.2"
+    id("de.eldoria.plugin-yml.paper") version "0.8.0"
+    //id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
 }
 
 final String VERSION = "1.21.8"
@@ -23,8 +23,8 @@ repositories {
     maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
     // Repository containing the 'PacketEvents' dependency.
     maven { url = "https://repo.codemc.io/repository/maven-releases" }
-    // Repository containing 'Pl3xMap' dependency.
-    maven { url = "https://api.modrinth.com/maven/" }
+    // Repository containing 'BlueMap' dependency.
+    maven { url = "https://repo.bluecolored.de/releases" }
     // Repository containing all my libraries.
     maven { url = "https://vela.grabsky.workers.dev/releases" }
 }
@@ -51,17 +51,14 @@ dependencies {
     compileOnly("me.clip:placeholderapi:2.11.6")
     // https://github.com/retrooper/packetevents
     compileOnly("com.github.retrooper:packetevents-spigot:2.9.4")
-    // https://github.com/granny/Pl3xMap
-    compileOnly("maven.modrinth:pl3xmap:1.21.8-534")
+    // https://github.com/BlueMap-Minecraft/BlueMap
+    compileOnly("de.bluecolored:bluemap-api:2.7.4")
 }
 
 tasks {
     runServer {
         minecraftVersion("1.21.8")
         jvmArgs("--enable-preview")
-    }
-    shadowJar {
-        shadowJar.archiveFileName = "${rootProject.name}-${project.version}.jar"
     }
     compileJava {
         options.fork = true
@@ -76,13 +73,13 @@ paper {
     main = "cloud.grabsky.claims.Claims"
     loader = "cloud.grabsky.claims.Claims\$PluginLoader"
     generateLibrariesJson = true
-    apiVersion = "1.21.7"
+    apiVersion = "1.21.8"
     serverDependencies {
         "PlaceholderAPI" { load = "BEFORE"; required = true }
         "packetevents"   { load = "BEFORE"; required = true }
         "WorldGuard"     { load = "BEFORE"; required = true }
         "Azure"          { load = "BEFORE"; required = true }
-        "Pl3xMap"        { load = "BEFORE"; required = false }
+        "BlueMap"        { load = "BEFORE"; required = false }
     }
 }
 
@@ -92,7 +89,7 @@ tasks.withType(xyz.jpenilla.runtask.task.AbstractRun.class).configureEach {
         vendor = JvmVendorSpec.JETBRAINS
         languageVersion = JavaLanguageVersion.of(21)
     }
-    jvmArgs("-XX:+AllowEnhancedClassRedefinition")
+    jvmArgs("-XX:+AllowEnhancedClassRedefinition", "--enable-preview")
 }
 
 // Returns formatted release name. (for GitHub Actions)
