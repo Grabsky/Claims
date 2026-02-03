@@ -222,16 +222,21 @@ public final class Waypoint {
                 return CompletableFuture.completedFuture(true);
             // "Undecorating" the block.
             return location.getWorld().getChunkAtAsync(location).thenApplyAsync(chunk -> {
-                // Playing effects...
-                location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1.0F, 1.0F);
-                location.getWorld().spawnParticle(Particle.DRAGON_BREATH, location, 80, 0.25, 0.25, 0.25, 0.03);
-                // Removing TextDisplay above the block.
-                location.clone().add(0.0F, 0.75F, 0.0F).getNearbyEntities(0.05, 0.05, 0.05).stream().filter(TextDisplay.class::isInstance).map(TextDisplay.class::cast).forEach(display -> {
-                    if (display.getPersistentDataContainer().has(Claims.Key.WAYPOINT_DECORATION, PersistentDataType.BYTE) == true)
-                        display.remove();
-                });
-                // Removing the block.
-                location.getBlock().setType(Material.AIR);
+                try {
+                    // Playing effects...
+                    location.getWorld().playSound(location, Sound.BLOCK_RESPAWN_ANCHOR_DEPLETE, 1.0F, 1.0F);
+                    location.getWorld().spawnParticle(Particle.DRAGON_BREATH, location, 80, 0.25, 0.25, 0.25, 0.03, 1F);
+                } catch (final Throwable thr) {
+                    thr.printStackTrace();
+                } finally {
+                    // Removing TextDisplay above the block.
+                    location.clone().add(0.0F, 0.75F, 0.0F).getNearbyEntities(0.25, 0.25, 0.25).stream().filter(TextDisplay.class::isInstance).map(TextDisplay.class::cast).forEach(display -> {
+                        if (display.getPersistentDataContainer().has(Claims.Key.WAYPOINT_DECORATION, PersistentDataType.BYTE) == true)
+                            display.remove();
+                    });
+                    // Removing the block.
+                    location.getBlock().setType(Material.AIR);
+                }
                 // Returning true as decorations should now be removed.
                 return true;
             }, Claims.MAIN_THREAD_EXECUTOR);
