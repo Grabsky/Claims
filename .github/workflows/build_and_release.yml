@@ -21,7 +21,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       # Build
       - name: Build
-        run: ./gradlew clean shadowJar
+        run: ./gradlew clean build
       # Expose Release & Tag
       - name: Expose Release & Tag
         run: |

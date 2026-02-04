@@ -23,7 +23,7 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
       # Build
       - name: Build
-        run: ./gradlew clean shadowJar
+        run: ./gradlew clean build
       # Upload Artifacts
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
