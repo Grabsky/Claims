@@ -1,6 +1,5 @@
 plugins {
     id("java-library")
-    id("maven-publish")
     // https://github.com/jpenilla/run-task
     id("xyz.jpenilla.run-paper") version "3.0.2"
     // https://github.com/eldoriarpg/plugin-yml
@@ -14,14 +13,6 @@ final String RUN_NUMBER = System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"
 
 group = "cloud.grabsky"
 version = "$VERSION+$RUN_NUMBER"
-
-publishing {
-    publications {
-        register("maven", MavenPublication.class) {
-            from components.java
-        }
-    }
-}
 
 repositories {
     mavenLocal()
@@ -37,7 +28,7 @@ repositories {
     // Repository containing 'BlueMap' dependency.
     maven { url = "https://repo.bluecolored.de/releases" }
     // Repository containing all my libraries.
-    maven { url = "https://vela.grabsky.workers.dev/releases" }
+    maven { url = "https://repo.repsy.io/grabsky/maven" }
 }
 
 dependencies {
@@ -47,19 +38,23 @@ dependencies {
     // https://github.com/PaperMC/Paper
     paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
     // https://github.com/Grabsky/bedrock
-    paperLibrary("cloud.grabsky:bedrock:1.21-67")
+    paperLibrary("cloud.grabsky:bedrock:1.21.X-70")
     // https://github.com/Grabsky/commands
-    paperLibrary("cloud.grabsky:commands:1.20.1-40")
+    paperLibrary("cloud.grabsky:commands:1.21.X-41")
     // https://github.com/Grabsky/configuration
-    paperLibrary("cloud.grabsky:configuration-paper:1.21.4-55")
+    paperLibrary("cloud.grabsky:configuration-paper:1.21.4-58")
     // https://github.com/EngineHub/WorldGuard
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.9-SNAPSHOT")
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.15") {
+        exclude group: "com.google.code.gson"
+        exclude group: "com.google.guava"
+        exclude group: "it.unimi.dsi"
+    }
     // https://github.com/Grabsky/Azure
-    compileOnly("cloud.grabsky:azure-api:1.21.8-163") {
+    compileOnly("cloud.grabsky:azure-api:1.21.11-169") {
         exclude group: "cloud.grabsky", module: "bedrock"
     }
     // https://github.com/PlaceholderAPI/PlaceholderAPI
-    compileOnly("me.clip:placeholderapi:2.11.7")
+    compileOnly("me.clip:placeholderapi:2.12.2")
     // https://github.com/retrooper/packetevents
     compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
     // https://github.com/BlueMap-Minecraft/BlueMapAPI/
@@ -69,22 +64,20 @@ dependencies {
 tasks {
     runServer {
         minecraftVersion("1.21.11")
-        jvmArgs("--enable-preview")
         downloadPlugins {
             modrinth("worldedit", "CkT32vix") // 7.4.0
             modrinth("worldguard", "WaElxvDz") // 7.0.15
-            modrinth("placeholderapi", "2.11.7")
+            modrinth("placeholderapi", "2.12.2")
             modrinth("luckperms", "v5.5.17-bukkit")
             modrinth("packetevents", "2.11.2+spigot")
-            github("Grabsky", "Azure", "1.21.8+163", "Azure-1.21.8-163.jar")
+            github("Grabsky", "Azure", "1.21.11+169", "Azure-1.21.11-169.jar")
         }
     }
     compileJava {
         options.fork = true
-        options.compilerArgs += "--enable-preview"
         // Setting compatibility to Java 21 (above should work too).
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_25
+        targetCompatibility = JavaVersion.VERSION_25
     }
 }
 
@@ -104,10 +97,7 @@ paper {
 
 // Configuring runServer task to use JetBrains' JDK 21 for expanded hot-swap features.
 tasks.withType(xyz.jpenilla.runtask.task.AbstractRun.class).configureEach {
-    javaLauncher = javaToolchains.launcherFor {
-        vendor = JvmVendorSpec.JETBRAINS
-        languageVersion = JavaLanguageVersion.of(21)
-    }
+    javaLauncher = javaToolchains.launcherFor { vendor = JvmVendorSpec.JETBRAINS; languageVersion = JavaLanguageVersion.of(25) }
     jvmArgs("-Xmx1G", "-XX:+AllowEnhancedClassRedefinition", "-Dcom.mojang.eula.agree=true", "-Dnet.kyori.ansi.colorLevel=truecolor")
 }
 

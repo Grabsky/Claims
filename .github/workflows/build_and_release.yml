@@ -1,27 +1,29 @@
-name: Build & Release (Dispatch)
+name: Build & Release
 
-on: [workflow_dispatch]
+on:
+  push:
+    branches: ["main"]
 
 permissions:
   contents: write
 
 jobs:
-  build:
+  build_and_release:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      # Setup Java 21
-      - name: JDK 21
+      # Setup Java 25
+      - name: JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: 21
+          java-version: 25
           distribution: temurin
       # Setup Gradle
       - name: Gradle
         uses: gradle/actions/setup-gradle@v4
       # Build
       - name: Build
-        run: ./gradlew clean build
+        run: ./gradlew clean build --no-daemon
       # Expose Release & Tag
       - name: Expose Release & Tag
         run: |
@@ -36,8 +38,9 @@ jobs:
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
+          prerelease: true
           # Configuring release name and tag.
-          name: "${{ env.PROJECT_RELEASE_NAME }}"
+          name: "${{ env.PROJECT_RELEASE }}"
           tag_name: "${{ env.PROJECT_TAG }}"
           # Configuring files that are attached to the release.
           files: "build/libs/Claims-*.jar"
