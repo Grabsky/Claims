@@ -94,6 +94,9 @@ public final class WaypointListener implements Listener {
         // Skipping non-right-click-block actions and cancelled actions.
         if (event.getAction() != Action.RIGHT_CLICK_BLOCK || event.useInteractedBlock() == Event.Result.DENY || event.useItemInHand() == Event.Result.DENY)
             return;
+        // Allowing the use of compass.
+        if (event.getItem() != null && event.getItem().getType() == Material.COMPASS)
+            return;
         // ...
         final @Nullable Block block = event.getClickedBlock();
         // ...
