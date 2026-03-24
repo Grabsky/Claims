@@ -114,12 +114,19 @@
         // Interface > Members > Remove
         "members_remove_success": "<dark_gray>› <gray>Gracz <gold><player><gray> został usunięty do terenu.",
         "members_remove_failure_not_a_member": "<dark_gray>› <red>Ten gracz nie jest członkiem terenu.",
+        // Interface > Rename Panel
+        "rename_panel_title": "Zmień Nazwę",
+        "rename_panel_input_label": "Wybierz nową nazwę:",
+        "rename_panel_button_confirm": "Potwierdź",
+        "rename_panel_button_cancel": "Anuluj",
         // Interface > Browse Waypoints
         "waypoint_rename_success": "<dark_gray>› <gray>Nazwa magnetytu została zaktualizowana: <gold><name>",
         "waypoint_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
+        "waypoint_rename_failure_no_longer_exists": "<dark_gray>› <red>Ten magnetyt już nie istnieje.",
         // Interface > Browse Owned Claims
         "claim_rename_success": "<dark_gray>› <gray>Nazwa terenu została zaktualizowana: <gold><name>",
         "claim_rename_failure_invalid_string": "<dark_gray>› <red>Nazwa musi mieć długość od 1 do 32 znaków.",
+        "claim_rename_failure_no_longer_exists": "<dark_gray>› <red>Ten teren już nie istnieje.",
         // Interface > Transfer Waypoint
         "waypoint_transfer_success": "<dark_gray>› <gray>Przekazałeś magnetyt <gold><name><gray> graczowi <gold><player><gray>.",
         "waypoint_transfer_success_target": "<dark_gray>› <gray>Gracz <gold><player><gray> przekazał Ci magnetyt <gold><name><gray>.",

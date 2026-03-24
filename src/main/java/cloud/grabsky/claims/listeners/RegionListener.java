@@ -26,7 +26,6 @@ import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
-import cloud.grabsky.claims.session.Session;
 import com.destroystokyo.paper.MaterialTags;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 
@@ -183,24 +182,8 @@ public final class RegionListener implements Listener {
                         // Removing drops. Item is dropped independently.
                         event.setExpToDrop(0);
                         event.setDropItems(false);
-                        // ...
-                        final Location location = event.getBlock().getLocation();
                         // Invalidating sessions and closing inventories.
                         Bukkit.getOnlinePlayers().forEach((onlinePlayer) -> {
-                            final UUID onlineUniqueId = onlinePlayer.getUniqueId();
-                            final @Nullable Session<?> session = Session.Listener.CURRENT_EDIT_SESSIONS.getIfPresent(onlineUniqueId);
-                            if (session != null) {
-                                final @Nullable Location sessionAccessBlockLocation = session.getAssociatedPanel().getAccessBlockLocation();
-                                // Skipping unrelated sessions.
-                                if (sessionAccessBlockLocation != null && (location.equals(sessionAccessBlockLocation) == true || session.getSubject().equals(claim) == true)) {
-                                    final @Nullable Player sessionOperator = Bukkit.getPlayer(onlineUniqueId);
-                                    // Invalidating and clearing the title.
-                                    if (sessionOperator != null && sessionOperator.isOnline() == true) {
-                                        Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(onlineUniqueId);
-                                        sessionOperator.clearTitle();
-                                    }
-                                }
-                            }
                             // Closing open panels.
                             if (onlinePlayer.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel)
                                 if (cPanel.getClaim() != null && cPanel.getClaim().equals(claim) == true)

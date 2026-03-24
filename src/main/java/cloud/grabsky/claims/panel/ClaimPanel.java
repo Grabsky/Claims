@@ -20,7 +20,6 @@ import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
 import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
-import cloud.grabsky.claims.session.Session;
 import cloud.grabsky.claims.util.InventoryViewExtensions;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -133,8 +132,6 @@ public final class ClaimPanel extends Panel {
                         // Cancelling the even in case other Player is currently viewing this inventory instance.
                         if (event.getInventory().getViewers().size() != 1)
                             event.setCancelled(true);
-                        // Cancelling sessions. See comments in Session.Listener.class for more details.
-                        Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(event.getPlayer().getUniqueId());
                         // Removing title that may (or may not) be associated with the session.
                         event.getPlayer().clearTitle();
                         // Changing edit state of associated Claim, if present.

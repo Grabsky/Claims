@@ -29,7 +29,6 @@ import cloud.grabsky.claims.waypoints.Waypoint.Source;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -37,7 +36,6 @@ import org.bukkit.inventory.ItemStack;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -150,24 +148,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                     }
                     // Changing name...
                     case RIGHT, SHIFT_RIGHT -> {
-                        // Creating new (or overriding previous) session.
-                        Session.Listener.CURRENT_EDIT_SESSIONS.put(event.getWhoClicked().getUniqueId(), new Session.WaypointRenameSession(waypoint, cPanel));
-                        // ...
-                        waypoint.setPendingRename(true);
-                        // Creating a title.
-                        final Title title = Title.title(
-                                PluginConfig.WAYPOINT_SETTINGS_RENAME_PROMPT_TITLE,
-                                PluginConfig.WAYPOINT_SETTINGS_RENAME_PROMPT_SUBTITLE,
-                                Title.Times.times(
-                                        Duration.ofMillis(200),
-                                        Duration.ofMillis((PluginConfig.WAYPOINT_SETTINGS_RENAME_PROMPT_DURATION * 1000) - 400),
-                                        Duration.ofMillis(200)
-                                )
-                        );
-                        // Closing panel for viewer(s).
-                        cPanel.close();
-                        // Showing title to the player.
-                        viewer.showTitle(title);
+                        Session.openWaypointRenameDialog(viewer,waypoint,cPanel);
                     }
                     case DROP -> cPanel.applyClaimTemplate(new Confirmation(waypoint), true);
                     case SWAP_OFFHAND -> cPanel.applyClaimTemplate(new BrowseWaypointOnlinePlayers(waypoint), true);
@@ -206,7 +187,6 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                     });
                     // Otherwise, sending error message to the sender.
                     else Message.of(PluginLocale.RANDOM_TELEPORT_FAILURE_NOT_FOUND).sendActionBar(viewer);
-
                 });
                 // ...
                 cPanel.close();

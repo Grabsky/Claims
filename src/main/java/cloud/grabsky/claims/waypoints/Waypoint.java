@@ -195,19 +195,6 @@ public final class Waypoint {
             // Invalidating sessions and closing open panels.
             manager.getPlugin().getServer().getOnlinePlayers().forEach(currPlayer -> {
                 final UUID currUniqueId = currPlayer.getUniqueId();
-                // Getting active session of the current player. This will be null in case no session is currently active.
-                final @Nullable Session<?> session = Session.Listener.CURRENT_EDIT_SESSIONS.getIfPresent(currUniqueId);
-                // Invalidating sessions...
-                if (session != null) {
-                    final @Nullable Location accessLocation = session.getAssociatedPanel().getAccessBlockLocation();
-                    // Skipping unrelated sessions.
-                    if (session.getSubject().equals(this) == true || Utilities.equalsNonNull(accessLocation, location) == true) {
-                        // Invalidating the session.
-                        Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(currUniqueId);
-                        // Clearing the title.
-                        currPlayer.clearTitle();
-                    }
-                }
                 // Closing open panels...
                 if (currPlayer.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel) {
                     // Getting the access Location object, this will be null in case of trigger by command.
