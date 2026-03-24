@@ -23,9 +23,12 @@ import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
 import io.papermc.paper.math.Position;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.jetbrains.annotations.NotNull;
@@ -214,6 +217,23 @@ public final class Claim {
 
         @Getter(AccessLevel.PUBLIC)
         private final @NotNull ItemStack block;
+
+        public ItemStack getPlainBlock() {
+            final var item = block.clone();
+            item.editMeta(it -> {
+                final var lore = it.lore();
+                final var newLore = new ArrayList<Component>();
+                if (lore != null) for (final var line : lore) {
+                    switch (PlainTextComponentSerializer.plainText().serialize(line)) {
+                        case "[MEMBERS]", "[FLAGS]" -> { /* SKIP */ }
+                        default -> newLore.add(line);
+                    }
+                }
+                if (newLore.equals(lore) == false)
+                    it.lore(newLore);
+            });
+            return item;
+        }
 
         @Getter(AccessLevel.PUBLIC) @Setter(AccessLevel.MODULE)
         private @Nullable Claim.Type nextType;

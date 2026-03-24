@@ -318,6 +318,20 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("flags.default_claim_leave")
     public static String FLAGS_CLAIM_LEAVE;
 
+    // Claim Block
+
+    @JsonPath("claim_block.members_header")
+    public static String MEMBERS_HEADER;
+
+    @JsonPath("claim_block.members_entry")
+    public static String MEMBERS_ENTRY;
+
+    @JsonPath("claim_block.flags_header")
+    public static String FLAGS_HEADER;
+
+    @JsonPath("claim_block.flags_entry")
+    public static String FLAGS_ENTRY;
+
 
     public static final class Commands implements JsonConfiguration {
 

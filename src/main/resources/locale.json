@@ -144,5 +144,12 @@
     "flags": {
         "default_claim_enter": "<gray>Wszedłeś na teren gracza <gold><player>",
         "default_claim_leave": "<gray>Opuściłeś teren gracza <gold><player>"
+    },
+    // This will be shown as part of claim block item lore.
+    "claim_block": {
+        "members_header": "<!i><gray>Członkowie:",
+        "members_entry": "<!i><dark_gray>› <gold><player>",
+        "flags_header": "<!i><gray>Flagi:",
+        "flags_entry": "<!i><dark_gray>› <gray><flag>: <gold><value>"
     }
 }

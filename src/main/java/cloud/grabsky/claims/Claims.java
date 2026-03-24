@@ -201,14 +201,9 @@ public final class Claims extends BedrockPlugin {
      */
     public static final class Key {
 
-        /**
-         * Represents the {@link NamespacedKey} for the claim type.
-         */
         public static final NamespacedKey CLAIM_TYPE = new NamespacedKey("claims", "claim_level");
-
-        /**
-         * Represents the {@link NamespacedKey} for the waypoint decoration. Used to identify the decoration associated with waypoints.
-         */
+        public static final NamespacedKey CLAIM_OWNER = new NamespacedKey("claims", "claim_owner");
+        public static final NamespacedKey CLAIM_MEMBERS = new NamespacedKey("claims", "claim_members");
         public static final NamespacedKey WAYPOINT_DECORATION = new NamespacedKey("claims", "waypoint_decoration");
 
     }

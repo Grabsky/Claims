@@ -14,6 +14,7 @@
  */
 package cloud.grabsky.claims.listeners;
 
+import cloud.grabsky.azure.api.AzureProvider;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.Claims;
@@ -28,13 +29,15 @@ import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import cloud.grabsky.claims.session.Session;
 import com.destroystokyo.paper.MaterialTags;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
-import com.sk89q.worldedit.bukkit.BukkitPlayer;
-import com.sk89q.worldedit.world.World;
+
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.protection.regions.ProtectedRegion;
-import com.sk89q.worldguard.protection.regions.RegionContainer;
+import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
+import io.papermc.paper.persistence.PersistentDataContainerView;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -42,7 +45,6 @@ import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Crafter;
-import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
@@ -62,14 +64,13 @@ import org.bukkit.event.inventory.PrepareAnvilEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.inventory.PrepareSmithingEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.world.PortalCreateEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.persistence.PersistentDataContainer;
 import org.bukkit.persistence.PersistentDataType;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.jetbrains.annotations.NotNull;
@@ -90,66 +91,75 @@ public final class RegionListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true) // TO-DO: Perhaps allow for collisions between owned regions?
     public void onClaimPlace(final BlockPlaceEvent event) {
-        // Not sure if that covers all possible cases including building in WorldGuard regions, but it's better than nothing.
-        if (event.canBuild() == false || event.getItemInHand().hasItemMeta() == false)
+        // Skipping placing in unauthorized regions.
+        if (event.canBuild() == false)
             return;
-        // Checking if placed block is a claim block.
-        final PersistentDataContainer data = event.getItemInHand().getItemMeta().getPersistentDataContainer();
-        if (data.has(Claims.Key.CLAIM_TYPE, STRING) == true) {
-            final Player player = event.getPlayer();
-            // Checking if player has permission to create a claim.
-            if (player.hasPermission("claims.plugin.place") == true) {
-                // Checking if player can create claim in that world
-                if (event.getBlock().getWorld() == PluginConfig.DEFAULT_WORLD) {
-                    final UUID uuid = player.getUniqueId();
-                    final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(uuid);
-                    final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
-                    // Making sure player does not exceed claim limit.
-                    if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < claimPlayer.getClaimsLimit()) {
-                        // Setting 5 second cooldown to prevent block place spam. Unfortunately this works per-material and not per-item.
-                        event.getPlayer().setCooldown(event.getItemInHand().getType(), PluginConfig.CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN * 20);
-                        // Making sure that placed region is far enough from spawn
-                        if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN) == false) {
-                            final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, STRING));
-                            // ...
-                            if (type != null) {
-                                // Checking if player has all existing claims fully upgraded.
-                                if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || type.isUpgradeable() == false || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
-                                    // Finally, trying to create a claim.
-                                    final @Nullable Claim claim = claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type);
-                                    // Post creation actions...
-                                    if (claim != null) {
-                                        // Sending success message.
-                                        Message.of(PluginLocale.PLACEMENT_PLACE_SUCCESS).send(player);
-                                        return;
-                                    }
-                                    event.setCancelled(true);
-                                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OVERLAPS).send(player);
-                                    return;
+        final PersistentDataContainerView data = event.getItemInHand().getPersistentDataContainer();
+        // Skipping if placed item is not a claim block.
+        if (data.has(Claims.Key.CLAIM_TYPE, STRING) == false)
+            return;
+        // Cancelling the event as most paths lead to block placement denial.
+        // It'll be uncanceled on a success path.
+        event.setCancelled(true);
+        // Getting the player instance.
+        final Player player = event.getPlayer();
+        // Sending error message if player does not have permission to create a claim.
+        if (player.hasPermission("claims.plugin.place") == false) {
+            Message.of(PluginLocale.MISSING_PERMISSIONS).send(player);
+            return;
+        }
+        // Sending error message if placing in a non-default world.
+        if (event.getBlock().getWorld() != PluginConfig.DEFAULT_WORLD) {
+            Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_BLACKLISTED_WORLD).send(player);
+            return;
+        }
+        // Checking if player can create claim in that world
+        final UUID uuid = player.getUniqueId();
+        final ClaimPlayer claimPlayer = claimManager.getClaimPlayer(uuid);
+        final Location location = event.getBlock().getLocation(); // This is already a copy, meaning it can be freely modified.
+        // Making sure player does not exceed claim limit.
+        if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || claimPlayer.getClaims().size() < claimPlayer.getClaimsLimit()) {
+            // Setting a 5-second cooldown to prevent block place spam.
+            event.getPlayer().setCooldown(event.getItemInHand(), PluginConfig.CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN * 20);
+            // Making sure that the placed region is far enough from spawn
+            if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN) == false) {
+                final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, STRING));
+                // ...
+                if (type != null) {
+                    // Checking if player has all existing claims fully upgraded.
+                    if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || type.isUpgradeable() == false || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
+                        // Finally, trying to create a claim. This method returns `null` if a new region overlaps with another region.
+                        final @Nullable Claim claim = claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type);
+                        // Post-creation actions...
+                        if (claim != null) {
+                            // At this point, all checks passed and block placement can be uncanceled.
+                            event.setCancelled(false);
+                            // Transferring stored properties to a new claim. Only if placed by the same person.
+                            if (data.getOrDefault(Claims.Key.CLAIM_OWNER, STRING, "").equals(uuid.toString()) == true) {
+                                final var rawMembers = data.get(Claims.Key.CLAIM_MEMBERS, PersistentDataType.LIST.strings());
+                                if (rawMembers != null) for (final var rawMember : rawMembers) {
+                                    final var memberUniqueId = UUID.fromString(rawMember);
+                                    final var member = claimManager.getClaimPlayer(memberUniqueId);
+                                    claim.addMember(member);
                                 }
-                                event.setCancelled(true);
-                                Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED).send(player);
-                                return;
                             }
-                            event.setCancelled(true);
-                            Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE).send(player);
+                            // Sending success message.
+                            Message.of(PluginLocale.PLACEMENT_PLACE_SUCCESS).send(player);
                             return;
                         }
-                        event.setCancelled(true);
-                        Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN).placeholder("distance", PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN).send(player);
+                        Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OVERLAPS).send(player);
                         return;
                     }
-                    event.setCancelled(true);
-                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT).placeholder("limit", claimPlayer.getClaimsLimit()).send(player);
+                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED).send(player);
                     return;
                 }
-                event.setCancelled(true);
-                Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_BLACKLISTED_WORLD).send(player);
+                Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE).send(player);
                 return;
             }
-            event.setCancelled(true);
-            Message.of(PluginLocale.MISSING_PERMISSIONS).send(player);
+            Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN).placeholder("distance", PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN).send(player);
+            return;
         }
+        Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_REACHED_CLAIMS_LIMIT).placeholder("limit", claimPlayer.getClaimsLimit()).send(player);
     }
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -196,18 +206,46 @@ public final class RegionListener implements Listener {
                                 if (cPanel.getClaim() != null && cPanel.getClaim().equals(claim) == true)
                                     onlinePlayer.closeInventory();
                         });
+                        // Getting the claim members.
+                        final List<UUID> members = claim.getMembers().stream().map(ClaimPlayer::getUniqueId).toList();
                         // Deleting the claim and associated region.
                         claimManager.deleteClaim(claim);
                         // Dropping claim block item if player is not in creative mode.
                         if (player.getGameMode() == GameMode.SURVIVAL || player.getGameMode() == GameMode.ADVENTURE) {
                             // Getting identifier of this claim type.
-                            final String typeId = claim.getType().getId();
+                            final var typeId = claim.getType().getId();
                             // Getting block item of this claim type.
-                            final ItemStack blockItem = claim.getType().getBlock();
+                            final var blockItem = claim.getType().getBlock();
+                            // Getting the lore of the item.
+                            final var lore = blockItem.lore();
+                            // Preparing the builder and clearing the lore.
+                            final var builder = new ItemBuilder(blockItem).setLore(new Component[0]);
+                            // Replacing [MEMBERS] and [FLAGS] in the ItemStack lore.
+                            if (lore != null) for (final var line : lore) {
+                                switch (PlainTextComponentSerializer.plainText().serialize(line)) {
+                                    case "[MEMBERS]" -> {
+                                        if (members.isEmpty() == false) {
+                                            builder.addLore("", PluginLocale.MEMBERS_HEADER);
+                                            // Appending members list to the lore.
+                                            for (final var member : members) {
+                                                final var user = AzureProvider.getAPI().getUserCache().getUser(member);
+                                                builder.addLore(PluginLocale.MEMBERS_ENTRY.replace("<player>", (user != null) ? user.getName() : member.toString()));
+                                            }
+                                        }
+                                    }
+                                    case "[FLAGS]" -> {
+                                        // TO-DO
+                                    }
+                                    default -> builder.addLore(line);
+                                }
+                            }
                             // Dropping claim block item.
                             event.getBlock().getWorld().dropItem(
                                     event.getBlock().getLocation(),
-                                    new ItemBuilder(blockItem).setPersistentData(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, typeId).build()
+                                    builder.setPersistentData(Claims.Key.CLAIM_OWNER, PersistentDataType.STRING, player.getUniqueId().toString())
+                                           .setPersistentData(Claims.Key.CLAIM_MEMBERS, PersistentDataType.LIST.strings(), members.stream().map(UUID::toString).toList())
+                                           .setPersistentData(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, typeId)
+                                           .build()
                             );
                         }
                         // Showing success message.
@@ -224,6 +262,17 @@ public final class RegionListener implements Listener {
             }
             event.setCancelled(true);
             Message.of(PluginLocale.MISSING_PERMISSIONS).send(player);
+        }
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onClaimItemPickup(final PlayerInventorySlotChangeEvent event) {
+        final var storedOwner = event.getNewItemStack().getPersistentDataContainer().get(Claims.Key.CLAIM_OWNER, PersistentDataType.STRING);
+        if (storedOwner != null && storedOwner.equals(event.getPlayer().getUniqueId().toString()) == false) {
+            final var type = event.getNewItemStack().getPersistentDataContainer().get(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING);
+            final var blockItem = claimManager.getClaimTypes().get(type).getPlainBlock();
+            // Replacing slot with a brand-new claim block.
+            event.getPlayer().getInventory().setItem(event.getSlot(), new ItemBuilder(blockItem).setPersistentData(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, type).build());
         }
     }
 

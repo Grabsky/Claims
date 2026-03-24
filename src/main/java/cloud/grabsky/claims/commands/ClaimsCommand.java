@@ -39,13 +39,11 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityData;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.type.EntityTypes;
 import com.github.retrooper.packetevents.util.Quaternion4f;
-import com.github.retrooper.packetevents.util.Vector3d;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerDestroyEntities;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityMetadata;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
-import com.google.common.util.concurrent.AtomicDouble;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.math.BlockPosition;
@@ -62,7 +60,6 @@ import org.bukkit.persistence.PersistentDataType;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.jetbrains.annotations.ApiStatus.Experimental;
 import org.jetbrains.annotations.NotNull;
@@ -387,11 +384,9 @@ public class ClaimsCommand extends RootCommand {
                     // Getting identifier of this claim type.
                     final String id = type.getId();
                     // Getting block item of this claim type.
-                    final ItemStack blockItem = type.getBlock();
+                    final ItemStack blockItem = type.getPlainBlock();
                     // Adding the block item to sender's inventory.
-                    sender.getInventory().addItem(
-                            new ItemBuilder(blockItem).setPersistentData(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, id).build()
-                    );
+                    sender.getInventory().addItem(new ItemBuilder(blockItem).setPersistentData(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, id).build());
                 });
                 // Sending success message to the sender.
                 Message.of(PluginLocale.COMMAND_CLAIMS_GET_SUCCESS).send(sender);
