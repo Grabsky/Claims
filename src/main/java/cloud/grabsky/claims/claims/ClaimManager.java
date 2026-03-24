@@ -346,12 +346,12 @@ public final class ClaimManager {
 
     @Experimental
     private static boolean isColliding(final BlockVector3 min, final BlockVector3 max, final BlockVector3 otherMin, final BlockVector3 otherMax) {
-        return min.getBlockX() <= otherMax.getBlockX()
-                && min.getBlockY() <= otherMax.getBlockY()
-                && min.getBlockZ() <= otherMax.getBlockZ()
-                && max.getBlockX() >= otherMin.getBlockX()
-                && max.getBlockY() >= otherMin.getBlockY()
-                && max.getBlockZ() >= otherMin.getBlockZ();
+        return min.x() <= otherMax.x()
+                && min.y() <= otherMax.y()
+                && min.z() <= otherMax.z()
+                && max.x() >= otherMin.x()
+                && max.y() >= otherMin.y()
+                && max.z() >= otherMin.z();
     }
 
     private static void setDefaultFlags(final @NotNull ProtectedRegion region, final @NotNull Location center, final @NotNull Player owner) {
