@@ -16,7 +16,7 @@ package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.session.RenameSession;
 import cloud.grabsky.claims.util.LazyLocation;
 import cloud.grabsky.claims.util.Utilities;
 import org.bukkit.Color;
@@ -121,19 +121,6 @@ public final class Waypoint {
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull Source source;
 
-    @Getter(AccessLevel.PUBLIC)
-    private transient boolean isPendingRename = false;
-
-    /**
-     * Updates state of whether this {@link Waypoint} is currently under ongoing "rename session".
-     *
-     * @apiNote For internal use only.
-     */
-    @Internal
-    public void setPendingRename(final boolean state) {
-        this.isPendingRename = state;
-    }
-
 
     /**
      * Represents source context of how {@link Waypoint} has been created.
@@ -194,7 +181,9 @@ public final class Waypoint {
                 return CompletableFuture.completedFuture(false);
             // Invalidating sessions and closing open panels.
             manager.getPlugin().getServer().getOnlinePlayers().forEach(currPlayer -> {
-                final UUID currUniqueId = currPlayer.getUniqueId();
+                // Closing open dialogs...
+                if (RenameSession.isSessionActive(currPlayer, location) == true)
+                    currPlayer.closeDialog();
                 // Closing open panels...
                 if (currPlayer.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel) {
                     // Getting the access Location object, this will be null in case of trigger by command.

@@ -22,7 +22,7 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.session.RenameSession;
 import cloud.grabsky.claims.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -141,7 +141,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
                         });
                     }
                     case RIGHT, SHIFT_RIGHT -> {
-                        Session.openClaimRenameDialog(viewer,claim, cPanel);
+                        RenameSession.openClaimRenameDialog(viewer,claim, cPanel);
                     }
                 }
             });

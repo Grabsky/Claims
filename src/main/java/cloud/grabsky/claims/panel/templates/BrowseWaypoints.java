@@ -22,7 +22,7 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.session.RenameSession;
 import cloud.grabsky.claims.util.Utilities;
 import cloud.grabsky.claims.waypoints.Waypoint;
 import cloud.grabsky.claims.waypoints.Waypoint.Source;
@@ -148,7 +148,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                     }
                     // Changing name...
                     case RIGHT, SHIFT_RIGHT -> {
-                        Session.openWaypointRenameDialog(viewer,waypoint,cPanel);
+                        RenameSession.openWaypointRenameDialog(viewer,waypoint,cPanel);
                     }
                     case DROP -> cPanel.applyClaimTemplate(new Confirmation(waypoint), true);
                     case SWAP_OFFHAND -> cPanel.applyClaimTemplate(new BrowseWaypointOnlinePlayers(waypoint), true);

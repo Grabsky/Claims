@@ -26,6 +26,7 @@ import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
+import cloud.grabsky.claims.session.RenameSession;
 import com.destroystokyo.paper.MaterialTags;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 
@@ -184,6 +185,9 @@ public final class RegionListener implements Listener {
                         event.setDropItems(false);
                         // Invalidating sessions and closing inventories.
                         Bukkit.getOnlinePlayers().forEach((onlinePlayer) -> {
+                            // Closing open dialogs...
+                            if (RenameSession.isSessionActive(onlinePlayer, event.getBlock().getLocation()) == true)
+                                onlinePlayer.closeDialog();
                             // Closing open panels.
                             if (onlinePlayer.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel)
                                 if (cPanel.getClaim() != null && cPanel.getClaim().equals(claim) == true)
