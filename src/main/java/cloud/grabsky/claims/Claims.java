@@ -37,6 +37,7 @@ import cloud.grabsky.claims.integrations.BlueMapIntegration;
 import cloud.grabsky.claims.listeners.PlayerListener;
 import cloud.grabsky.claims.listeners.RegionListener;
 import cloud.grabsky.claims.listeners.WaypointListener;
+import cloud.grabsky.claims.session.RenameSession;
 import cloud.grabsky.claims.waypoints.WaypointManager;
 import cloud.grabsky.commands.RootCommandManager;
 import cloud.grabsky.configuration.ConfigurationHolder;
@@ -132,6 +133,7 @@ public final class Claims extends BedrockPlugin {
         this.getServer().getPluginManager().registerEvents(new RegionListener(this, claimManager), this);
         this.getServer().getPluginManager().registerEvents(new WaypointListener(this), this);
         this.getServer().getPluginManager().registerEvents(new PlayerListener(this), this);
+        this.getServer().getPluginManager().registerEvents(RenameSession.INSTANCE, this);
         // Setting-up RootCommandManager... (applying templates, registering commands)
         new RootCommandManager(this)
                 // Registering templates...
