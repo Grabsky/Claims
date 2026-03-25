@@ -241,6 +241,20 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("interface.members_remove_failure_not_a_member")
     public static Component UI_MEMBERS_REMOVE_FAILURE_NOT_A_MEMBER;
 
+    // Interface > Rename Panel
+
+    @JsonPath("interface.rename_panel_title")
+    public static Component UI_RENAME_PANEL_TITLE;
+
+    @JsonPath("interface.rename_panel_input_label")
+    public static Component UI_RENAME_PANEL_INPUT_LABEL;
+
+    @JsonPath("interface.rename_panel_button_confirm")
+    public static Component UI_RENAME_PANEL_BUTTON_CONFIRM;
+
+    @JsonPath("interface.rename_panel_button_cancel")
+    public static Component UI_RENAME_PANEL_BUTTON_CANCEL;
+
     // Interface > Browse Waypoints
 
     @JsonPath("interface.waypoint_rename_success")
@@ -249,6 +263,9 @@ public final class PluginLocale implements JsonConfiguration {
     @JsonPath("interface.waypoint_rename_failure_invalid_string")
     public static Component UI_WAYPOINT_RENAME_FAILURE_INVALID_STRING;
 
+    @JsonPath("interface.waypoint_rename_failure_no_longer_exists")
+    public static Component UI_WAYPOINT_RENAME_FAILURE_NO_LONGER_EXISTS;
+
     // Interface > Browse Owned Claims
 
     @JsonPath("interface.claim_rename_success")
@@ -256,6 +273,9 @@ public final class PluginLocale implements JsonConfiguration {
 
     @JsonPath("interface.claim_rename_failure_invalid_string")
     public static Component UI_CLAIM_RENAME_FAILURE_INVALID_STRING;
+
+    @JsonPath("interface.claim_rename_failure_no_longer_exists")
+    public static Component UI_CLAIM_RENAME_FAILURE_NO_LONGER_EXISTS;
 
     // Interface > Transfer Waypoint
 

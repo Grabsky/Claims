@@ -15,8 +15,6 @@
 package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
-import cloud.grabsky.claims.claims.Claim;
-import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.util.InstanceCreator;
 import cloud.grabsky.claims.util.Utilities;

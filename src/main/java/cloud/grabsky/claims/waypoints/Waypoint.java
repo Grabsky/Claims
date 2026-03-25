@@ -16,7 +16,7 @@ package cloud.grabsky.claims.waypoints;
 
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.session.RenameSession;
 import cloud.grabsky.claims.util.LazyLocation;
 import cloud.grabsky.claims.util.Utilities;
 import org.bukkit.Color;
@@ -121,19 +121,6 @@ public final class Waypoint {
     @Getter(AccessLevel.PUBLIC)
     private final @NotNull Source source;
 
-    @Getter(AccessLevel.PUBLIC)
-    private transient boolean isPendingRename = false;
-
-    /**
-     * Updates state of whether this {@link Waypoint} is currently under ongoing "rename session".
-     *
-     * @apiNote For internal use only.
-     */
-    @Internal
-    public void setPendingRename(final boolean state) {
-        this.isPendingRename = state;
-    }
-
 
     /**
      * Represents source context of how {@link Waypoint} has been created.
@@ -194,20 +181,9 @@ public final class Waypoint {
                 return CompletableFuture.completedFuture(false);
             // Invalidating sessions and closing open panels.
             manager.getPlugin().getServer().getOnlinePlayers().forEach(currPlayer -> {
-                final UUID currUniqueId = currPlayer.getUniqueId();
-                // Getting active session of the current player. This will be null in case no session is currently active.
-                final @Nullable Session<?> session = Session.Listener.CURRENT_EDIT_SESSIONS.getIfPresent(currUniqueId);
-                // Invalidating sessions...
-                if (session != null) {
-                    final @Nullable Location accessLocation = session.getAssociatedPanel().getAccessBlockLocation();
-                    // Skipping unrelated sessions.
-                    if (session.getSubject().equals(this) == true || Utilities.equalsNonNull(accessLocation, location) == true) {
-                        // Invalidating the session.
-                        Session.Listener.CURRENT_EDIT_SESSIONS.invalidate(currUniqueId);
-                        // Clearing the title.
-                        currPlayer.clearTitle();
-                    }
-                }
+                // Closing open dialogs...
+                if (RenameSession.isSessionActive(currPlayer, location) == true)
+                    currPlayer.closeDialog();
                 // Closing open panels...
                 if (currPlayer.getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel cPanel) {
                     // Getting the access Location object, this will be null in case of trigger by command.

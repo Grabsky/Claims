@@ -22,12 +22,11 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import cloud.grabsky.claims.session.Session;
+import cloud.grabsky.claims.session.RenameSession;
 import cloud.grabsky.claims.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
-import net.kyori.adventure.title.Title;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -36,7 +35,6 @@ import org.bukkit.inventory.meta.SkullMeta;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.time.Duration;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -143,24 +141,7 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
                         });
                     }
                     case RIGHT, SHIFT_RIGHT -> {
-                        // Overriding previous session(s).
-                        Session.Listener.CURRENT_EDIT_SESSIONS.put(event.getWhoClicked().getUniqueId(), new Session.ClaimRenameSession(claim, cPanel));
-                        // ...
-                        claim.setPendingRename(true);
-                        // Creating a title.
-                        final Title title = Title.title(
-                                PluginConfig.CLAIM_SETTINGS_RENAME_PROMPT_TITLE,
-                                PluginConfig.CLAIM_SETTINGS_RENAME_PROMPT_SUBTITLE,
-                                Title.Times.times(
-                                        Duration.ofMillis(200),
-                                        Duration.ofMillis((PluginConfig.CLAIM_SETTINGS_RENAME_PROMPT_DURATION * 1000) - 400),
-                                        Duration.ofMillis(200)
-                                )
-                        );
-                        // Closing panel for viewer(s).
-                        cPanel.close();
-                        // Showing title to the player.
-                        viewer.showTitle(title);
+                        RenameSession.openClaimRenameDialog(viewer,claim, cPanel);
                     }
                 }
             });
