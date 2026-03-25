@@ -75,7 +75,7 @@ public class Session {
             // Trimming whitespaces and replacing all double-whitespaces with single whitespace.
             final var name = rawName.trim().replace("  ", " ");
             // Returning if invalid input.
-            if (inRange(name.length(), 3, 32) == false) {
+            if (inRange(name.length(), 1, 32) == false) {
                 Message.of(PluginLocale.UI_WAYPOINT_RENAME_FAILURE_INVALID_STRING).send(audience);
                 return;
             }
@@ -115,7 +115,7 @@ public class Session {
             // Trimming whitespaces and replacing all double-whitespaces with single whitespace.
             final var name = rawName.trim().replace("  ", " ");
             // Returning if invalid input.
-            if (inRange(name.length(), 3, 32) == false) {
+            if (inRange(name.length(), 1, 32) == false) {
                 Message.of(PluginLocale.UI_CLAIM_RENAME_FAILURE_INVALID_STRING).send(audience);
                 return;
             }
