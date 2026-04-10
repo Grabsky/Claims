@@ -42,7 +42,7 @@ dependencies {
     // https://github.com/Grabsky/commands
     paperLibrary("cloud.grabsky:commands:1.21.X-41")
     // https://github.com/Grabsky/configuration
-    paperLibrary("cloud.grabsky:configuration-paper:1.21.4-58")
+    paperLibrary("cloud.grabsky:configuration-paper:1.21.4-59")
     // https://github.com/EngineHub/WorldGuard
     compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.15") {
         exclude group: "com.google.code.gson"
