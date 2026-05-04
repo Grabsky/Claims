@@ -40,7 +40,7 @@ public final class BlueMapIntegration {
 
     // Initializes this integration module.
     public static void initialize(final @NotNull Claims plugin) {
-        final @Nullable World world = Bukkit.getWorld(PluginConfig.DEFAULT_WORLD.getName());
+        final @Nullable World world = Bukkit.getWorld(PluginConfig.CLAIMS_WORLD.getName());
         // Returning if world ends up being null. Not really possible but needed to satisfy code analysis.
         if (world == null)
             return;

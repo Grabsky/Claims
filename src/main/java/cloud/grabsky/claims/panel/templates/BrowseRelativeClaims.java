@@ -22,6 +22,7 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
+import cloud.grabsky.claims.util.Extensions;
 import cloud.grabsky.claims.util.Utilities;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
@@ -44,12 +45,14 @@ import org.jetbrains.annotations.Nullable;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 
 import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static net.kyori.adventure.text.Component.translatable;
 
 // TO-DO: Clean up the mess.
+@ExtensionMethod(Extensions.class)
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
     /* SINGLETON */ public static final BrowseRelativeClaims INSTANCE = new BrowseRelativeClaims();
@@ -181,10 +184,10 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
                 // ...
                 cPanel.close();
             });
-            // Otherwise, rendering SPAWN TELEPORT button.
+        // Otherwise, rendering SPAWN TELEPORT button.
         else cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_SPAWN), (event) -> {
             final Player viewer = cPanel.getViewer();
-            final Location location = AzureProvider.getAPI().getWorldManager().getSpawnPoint(PluginConfig.DEFAULT_WORLD);
+            final Location location = PluginConfig.SPAWN_WORLD.getCenteredSpawnLocation();
             // Closing the panel.
             cPanel.close();
             // Teleporting...

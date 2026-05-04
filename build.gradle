@@ -3,12 +3,12 @@ plugins {
     // https://github.com/jpenilla/run-task
     id("xyz.jpenilla.run-paper") version "3.0.2"
     // https://github.com/eldoriarpg/plugin-yml
-    id("de.eldoria.plugin-yml.paper") version "0.8.0"
+    id("de.eldoria.plugin-yml.paper") version "0.9.0"
     // https://github.com/PaperMC/paperweight
-    id("io.papermc.paperweight.userdev") version "2.0.0-beta.19"
+    id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
 }
 
-final String VERSION = "1.21.11"
+final String VERSION = "26.1"
 final String RUN_NUMBER = System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"
 
 group = "cloud.grabsky"
@@ -36,7 +36,7 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
     // https://github.com/PaperMC/Paper
-    paperweight.paperDevBundle("1.21.11-R0.1-SNAPSHOT")
+    paperweight.paperDevBundle("26.1.2.build.+")
     // https://github.com/Grabsky/bedrock
     paperLibrary("cloud.grabsky:bedrock:1.21.X-70")
     // https://github.com/Grabsky/commands
@@ -50,7 +50,7 @@ dependencies {
         exclude group: "it.unimi.dsi"
     }
     // https://github.com/Grabsky/Azure
-    compileOnly("cloud.grabsky:azure-api:1.21.11-169") {
+    compileOnly("cloud.grabsky:azure-api:26.1-177") {
         exclude group: "cloud.grabsky", module: "bedrock"
     }
     // https://github.com/PlaceholderAPI/PlaceholderAPI
@@ -63,14 +63,14 @@ dependencies {
 
 tasks {
     runServer {
-        minecraftVersion("1.21.11")
+        minecraftVersion("26.1.2")
         downloadPlugins {
             modrinth("worldedit", "CkT32vix") // 7.4.0
             modrinth("worldguard", "WaElxvDz") // 7.0.15
             modrinth("placeholderapi", "2.12.2")
             modrinth("luckperms", "v5.5.17-bukkit")
             modrinth("packetevents", "2.11.2+spigot")
-            github("Grabsky", "Azure", "1.21.11+169", "Azure-1.21.11-169.jar")
+            github("Grabsky", "Azure", "26.1+177", "Azure-26.1-177.jar")
         }
     }
     compileJava {
@@ -85,7 +85,7 @@ paper {
     main = "cloud.grabsky.claims.Claims"
     loader = "cloud.grabsky.claims.Claims\$PluginLoader"
     generateLibrariesJson = true
-    apiVersion = "1.21.11"
+    apiVersion = "26.1"
     serverDependencies {
         "PlaceholderAPI" { load = "BEFORE"; required = true }
         "packetevents"   { load = "BEFORE"; required = true }

@@ -31,7 +31,10 @@ import org.jetbrains.annotations.Nullable;
 public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("claims_world")
-    public static World DEFAULT_WORLD;
+    public static World CLAIMS_WORLD;
+
+    @JsonPath("spawn_world")
+    public static World SPAWN_WORLD;
 
     @JsonPath("region_prefix")
     public static String REGION_PREFIX;

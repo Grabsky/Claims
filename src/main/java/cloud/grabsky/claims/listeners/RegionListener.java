@@ -27,6 +27,7 @@ import cloud.grabsky.claims.panel.ClaimPanel;
 import cloud.grabsky.claims.panel.templates.BrowseCategories;
 import cloud.grabsky.claims.panel.templates.BrowseWaypoints;
 import cloud.grabsky.claims.session.RenameSession;
+import cloud.grabsky.claims.util.Extensions;
 import com.destroystokyo.paper.MaterialTags;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 
@@ -78,11 +79,13 @@ import org.jetbrains.annotations.Nullable;
 
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
+import lombok.experimental.ExtensionMethod;
 
 import static cloud.grabsky.claims.panel.ClaimPanel.isClaimPanelOpen;
 import static cloud.grabsky.claims.util.Utilities.getAroundPosition;
 import static org.bukkit.persistence.PersistentDataType.STRING;
 
+@ExtensionMethod(Extensions.class)
 @RequiredArgsConstructor(access = AccessLevel.PUBLIC)
 public final class RegionListener implements Listener {
 
@@ -109,7 +112,7 @@ public final class RegionListener implements Listener {
             return;
         }
         // Sending error message if placing in a non-default world.
-        if (event.getBlock().getWorld() != PluginConfig.DEFAULT_WORLD) {
+        if (event.getBlock().getWorld() != PluginConfig.CLAIMS_WORLD) {
             Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_BLACKLISTED_WORLD).send(player);
             return;
         }
@@ -122,7 +125,7 @@ public final class RegionListener implements Listener {
             // Setting a 5-second cooldown to prevent block place spam.
             event.getPlayer().setCooldown(event.getItemInHand(), PluginConfig.CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN * 20);
             // Making sure that the placed region is far enough from spawn
-            if (ClaimManager.isWithinSquare(location, PluginConfig.DEFAULT_WORLD.getSpawnLocation(), PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN) == false) {
+            if (ClaimManager.isWithinSquare(location, PluginConfig.CLAIMS_WORLD.getCenteredSpawnLocation(), PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN) == false) {
                 final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, STRING));
                 // ...
                 if (type != null) {
@@ -165,7 +168,7 @@ public final class RegionListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onClaimBreak(final BlockBreakEvent event) {
         // Skipping event for disabled worlds.
-        if (event.getBlock().getWorld() != PluginConfig.DEFAULT_WORLD)
+        if (event.getBlock().getWorld() != PluginConfig.CLAIMS_WORLD)
             return;
         // Generating claim ID at block break location.
         final String id = Claim.createId(event.getBlock().getLocation());

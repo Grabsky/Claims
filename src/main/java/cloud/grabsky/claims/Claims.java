@@ -120,7 +120,7 @@ public final class Claims extends BedrockPlugin {
         if (this.onReload() == false)
             this.getServer().shutdown();
         // Creating instance of RegionManager
-        final World world = BukkitAdapter.adapt(PluginConfig.DEFAULT_WORLD);
+        final World world = BukkitAdapter.adapt(PluginConfig.CLAIMS_WORLD);
         final RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // Registering additional WorldGuard flags' handlers.
         Claims.CustomFlag.registerHandlers();

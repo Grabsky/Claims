@@ -16,9 +16,10 @@ package cloud.grabsky.claims.util;
 
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.title.Title;
 import net.kyori.adventure.title.TitlePart;
+import org.bukkit.Location;
+import org.bukkit.World;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
@@ -26,6 +27,10 @@ import java.time.temporal.ChronoUnit;
 import org.jetbrains.annotations.NotNull;
 
 public final class Extensions {
+
+    public static Location getCenteredSpawnLocation(final World world) {
+        return world.getSpawnLocation().add(0.5, 0, 0.5);
+    }
 
     public static void showRichTitle(final @NotNull Audience audience, final @NotNull Component title, final @NotNull Component subtitle, final long fadeInTicks, final long stayTicks, final long fadeOutTicks) {
         audience.showTitle(

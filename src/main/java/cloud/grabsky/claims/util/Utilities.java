@@ -236,7 +236,7 @@ public final class Utilities {
                 // Incrementing attempts counter.
                 attempts.set(attempts.get() + 1);
                 // Getting random location in the specified radius.
-                final Location location = getRandomLocationInSquare(PluginConfig.DEFAULT_WORLD.getSpawnLocation(), minRadius, maxRadius);
+                final Location location = getRandomLocationInSquare(PluginConfig.CLAIMS_WORLD.getCenteredSpawnLocation(), minRadius, maxRadius);
                 // Getting chunk from the random location.
                 final Chunk chunk = location.getChunk();
                 // Getting the highest solid block Y at the specified location.

@@ -1,6 +1,8 @@
 {
     // World used to fetch all regions from. Default world defined in server.properties is always 'minecraft:overworld'.
     "claims_world": "minecraft:overworld",
+    // World used for spawn teleportation.
+    "spawn_world": "minecraft:overworld",
     // Prefix used to distinguish claims from regular WorldGuard regions.
     "region_prefix": "claims_",
     // Priority of underlying region.
