@@ -126,37 +126,41 @@ public final class RegionListener implements Listener {
             event.getPlayer().setCooldown(event.getItemInHand(), PluginConfig.CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN * 20);
             // Making sure that the placed region is far enough from spawn
             if (ClaimManager.isWithinSquare(location, PluginConfig.CLAIMS_WORLD.getCenteredSpawnLocation(), PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN) == false) {
-                final Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, STRING));
-                // ...
-                if (type != null) {
-                    // Checking if player has all existing claims fully upgraded.
-                    if (player.hasPermission("claims.bypass.ignore_claims_limit") == true || type.isUpgradeable() == false || claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true) == false) {
-                        // Finally, trying to create a claim. This method returns `null` if a new region overlaps with another region.
-                        final @Nullable Claim claim = claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type);
-                        // Post-creation actions...
-                        if (claim != null) {
-                            // At this point, all checks passed and block placement can be uncanceled.
-                            event.setCancelled(false);
-                            // Transferring stored properties to a new claim. Only if placed by the same person.
-                            if (data.getOrDefault(Claims.Key.CLAIM_OWNER, STRING, "").equals(uuid.toString()) == true) {
-                                final var rawMembers = data.get(Claims.Key.CLAIM_MEMBERS, PersistentDataType.LIST.strings());
-                                if (rawMembers != null) for (final var rawMember : rawMembers) {
-                                    final var memberUniqueId = UUID.fromString(rawMember);
-                                    final var member = claimManager.getClaimPlayer(memberUniqueId);
-                                    claim.addMember(member);
-                                }
-                            }
-                            // Sending success message.
-                            Message.of(PluginLocale.PLACEMENT_PLACE_SUCCESS).send(player);
-                            return;
-                        }
-                        Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OVERLAPS).send(player);
-                        return;
-                    }
-                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED).send(player);
+                final @Nullable Claim.Type type = claimManager.getClaimTypes().get(data.get(Claims.Key.CLAIM_TYPE, STRING));
+                // Exiting in case placed claim type was not found.
+                if (type == null) {
+                    Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE).send(player);
                     return;
                 }
-                Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_INVALID_CLAIM_TYPE).send(player);
+                // Exiting if strict placement requirements are enabled and player does not meet them.
+                // (1) any of their claims is not fully upgraded
+                // (2) claim they're trying to place is not fully upgraded
+                // (3) they do not have bypass permission
+                if (PluginConfig.CLAIM_SETTINGS_STRICT_PLACEMENT_RULES == true && player.hasPermission("claims.bypass.ignore_claims_limit") == false)
+                    if (type.isUpgradeable() == true && claimPlayer.getClaims().stream().anyMatch(claim -> claim.getType().isUpgradeable() == true)) {
+                        Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OTHER_CLAIMS_MUST_BE_UPGRADED).send(player);
+                        return;
+                }
+                // Finally, trying to create a claim. This method returns `null` if a new region overlaps with another region.
+                final @Nullable Claim claim = claimManager.createClaim(location.add(0.5, 0.5, 0.5), player, type);
+                // Post-creation actions...
+                if (claim != null) {
+                    // At this point, all checks passed and block placement can be uncanceled.
+                    event.setCancelled(false);
+                    // Transferring stored properties to a new claim. Only if placed by the same person.
+                    if (data.getOrDefault(Claims.Key.CLAIM_OWNER, STRING, "").equals(uuid.toString()) == true) {
+                        final var rawMembers = data.get(Claims.Key.CLAIM_MEMBERS, PersistentDataType.LIST.strings());
+                        if (rawMembers != null) for (final var rawMember : rawMembers) {
+                            final var memberUniqueId = UUID.fromString(rawMember);
+                            final var member = claimManager.getClaimPlayer(memberUniqueId);
+                            claim.addMember(member);
+                        }
+                    }
+                    // Sending success message.
+                    Message.of(PluginLocale.PLACEMENT_PLACE_SUCCESS).send(player);
+                    return;
+                }
+                Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_OVERLAPS).send(player);
                 return;
             }
             Message.of(PluginLocale.PLACEMENT_PLACE_FAILURE_TOO_CLOSE_TO_SPAWN).placeholder("distance", PluginConfig.CLAIMS_SETTINGS_MINIMUM_DISTANCE_FROM_SPAWN).send(player);

@@ -76,6 +76,9 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonPath("claim_settings.claims_limit")
     public static int CLAIM_SETTINGS_CLAIMS_LIMIT;
 
+    @JsonPath("claim_settings.strict_placement_rules")
+    public static Boolean CLAIM_SETTINGS_STRICT_PLACEMENT_RULES;
+
     @JsonPath("claim_settings.place_attempt_cooldown")
     public static int CLAIM_SETTINGS_PLACE_ATTEMPT_COOLDOWN;
 

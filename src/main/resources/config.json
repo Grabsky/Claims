@@ -57,8 +57,10 @@
 
     // Claims settings.
     "claim_settings": {
-        // Limit of claims that can be placed by a single player. Another one can be placed if previous is fully upgraded.
+        // Limit of claims that can be placed by a single player.
         "claims_limit": 1,
+        // Whether new claim can only be placed if all previous are fully upgraded.
+        "strict_placement_rules": true,
         // Claim block place attempt cooldown. Cooldown is applied to all blocks of the same type, no matter whether it is a claim block or not, so try to keep it low. (in seconds)
         "place_attempt_cooldown": 5,
         // Limit of players that can be added to a single claim
@@ -89,5 +91,17 @@
         "place_cooldown": 5,
         // Rename prompt.
         "rename_prompt": { "duration": 15, "title": "<yellow>Zmień Nazwę", "subtitle": "<gray>Podaj nową nazwę na czacie..." }
+    },
+
+    "blocked_commands_settings": {
+        // List of commands to be blocked in all regions.
+        // Can be bypassed with 'claims.plugin.bypass_blocked_commands' permisison.
+        "blocked_commands": [],
+        // Regions blocked commands will be allowed in.
+        "allow_in_regions": [],
+        // Whether blocked commands should be allowed on authorized claims.
+        "allow_on_authorized_claims": true,
+        // Whether blocked commands should be allowed on unauthorized claims.
+        "allow_on_unauthorized_claims": false
     }
 }
