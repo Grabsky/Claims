@@ -19,7 +19,6 @@ import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
 import net.kyori.adventure.sound.Sound;
-import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 
 import java.util.List;
@@ -97,20 +96,6 @@ public final class PluginConfig implements JsonConfiguration {
     @JsonNullable @JsonPath("claim_settings.interface_click_sound")
     public static Sound CLAIMS_SETTINGS_UI_CLICK_SOUND;
 
-    @JsonPath("claim_settings.override_blocked_cmds_flag")
-    public static Boolean CLAIMS_SETTINGS_OVERRIDE_BLOCKED_CMDS_FLAG;
-
-    // Claim Settings > Rename Prompt
-
-    @JsonPath("claim_settings.rename_prompt.duration")
-    public static long CLAIM_SETTINGS_RENAME_PROMPT_DURATION;
-
-    @JsonPath("claim_settings.rename_prompt.title")
-    public static Component CLAIM_SETTINGS_RENAME_PROMPT_TITLE;
-
-    @JsonPath("claim_settings.rename_prompt.subtitle")
-    public static Component CLAIM_SETTINGS_RENAME_PROMPT_SUBTITLE;
-
     // Waypoint Settings
 
     @JsonPath("waypoint_settings.enhanced_lodestone_blocks")
@@ -127,13 +112,16 @@ public final class PluginConfig implements JsonConfiguration {
 
     // Waypoint Settings > Rename Prompt
 
-    @JsonPath("waypoint_settings.rename_prompt.duration")
-    public static long WAYPOINT_SETTINGS_RENAME_PROMPT_DURATION;
+    @JsonPath("blocked_commands_settings.blocked_commands")
+    public static List<String> BLOCKED_COMMANDS_SETTINGS_BLOCKED_COMMANDS;
 
-    @JsonPath("waypoint_settings.rename_prompt.title")
-    public static Component WAYPOINT_SETTINGS_RENAME_PROMPT_TITLE;
+    @JsonPath("blocked_commands_settings.allow_in_regions")
+    public static List<String> BLOCKED_COMMANDS_SETTINGS_ALLOW_IN_REGIONS;
 
-    @JsonPath("waypoint_settings.rename_prompt.subtitle")
-    public static Component WAYPOINT_SETTINGS_RENAME_PROMPT_SUBTITLE;
+    @JsonPath("blocked_commands_settings.allow_on_authorized_claims")
+    public static Boolean BLOCKED_COMMANDS_SETTINGS_ALLOW_ON_AUTHORIZED_CLAIMS;
+
+    @JsonPath("blocked_commands_settings.allow_on_unauthorized_claims")
+    public static Boolean BLOCKED_COMMANDS_SETTINGS_ALLOW_ON_UNAUTHORIZED_CLAIMS;
 
 }
