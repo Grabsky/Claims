@@ -62,7 +62,7 @@
         // Whether new claim can only be placed if all previous are fully upgraded.
         "strict_placement_rules": true,
         // Claim block place attempt cooldown. Cooldown is applied to all blocks of the same type, no matter whether it is a claim block or not, so try to keep it low. (in seconds)
-        "place_attempt_cooldown": 5,
+        "place_attempt_cooldown": 3,
         // Limit of players that can be added to a single claim
         "members_limit": 10,
         // Default display name of a claim.
