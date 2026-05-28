@@ -153,7 +153,9 @@ public final class BrowseRelativeClaims implements Consumer<ClaimPanel> {
     }
 
     private static void renderCommonButtons(final ClaimPanel cPanel) {
-        // In case access location is a public waypoint, rendering RANDOM TELEPORT button.
+        // In case access location is a PUBLIC LODESTONE, rendering RANDOM TELEPORT button.
+        // - COMMAND_BLOCK -> WITH RANDOM TELEPORT BUTTON (FOR SPAWN)
+        // - CHAIN_COMMAND_BLOCK -> WITH SPAWN TELEPORT BUTTON (FOR ANY OTHER LOCATION WHERE PUBLIC LODESTONE IS NEEDED) (HANDLED BELOW)
         if (cPanel.getAccessBlockLocation() != null && Utilities.findFirstBlockUnder(cPanel.getAccessBlockLocation(), 5, Material.COMMAND_BLOCK) != null)
             cPanel.setItem(10, new ItemStack(PluginItems.INTERFACE_FUNCTIONAL_ICON_RANDOM_TELEPORT), (event) -> {
                 final Player viewer = cPanel.getViewer();

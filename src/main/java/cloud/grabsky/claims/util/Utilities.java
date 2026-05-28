@@ -37,6 +37,7 @@ import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.ListIterator;
 import java.util.Objects;
 import java.util.Random;
@@ -317,9 +318,9 @@ public final class Utilities {
     private static final org.bukkit.util.Vector BOTTOM = new Vector(0, -1, 0);
 
     @SuppressWarnings("UnstableApiUsage")
-    public static @Nullable Block findFirstBlockUnder(final Location location, final int depth, final Material type) {
+    public static @Nullable Block findFirstBlockUnder(final Location location, final int depth, final Material... types) {
         // Raytracing blocks. This is likely to be less performant than classic for-loop, but definitely cleaner and more readable.
-        final @Nullable RayTraceResult result = location.getWorld().rayTraceBlocks(location, BOTTOM, depth, FluidCollisionMode.NEVER, true, (block) -> block.getType() == type);
+        final @Nullable RayTraceResult result = location.getWorld().rayTraceBlocks(location, BOTTOM, depth, FluidCollisionMode.NEVER, true, (block) -> Arrays.stream(types).anyMatch(it -> it == block.getType()));
         // Returning the result Block instance or null.
         return (result != null) ? result.getHitBlock() : null;
     }

@@ -106,7 +106,9 @@ public final class WaypointListener implements Listener {
             // ...
             final @Nullable Waypoint waypoint = waypointManager.getBlockWaypoint(location);
             // Returning if waypoint at this location exists and player is not it's owner.
-            if (Utilities.findFirstBlockUnder(location, 5, Material.COMMAND_BLOCK) != null || (waypoint != null && waypoint.getOwner().equals(event.getPlayer().getUniqueId()) == true) == true) {
+            // COMMAND_BLOCK -> WITH RANDOM TELEPORT BUTTON (FOR SPAWN)
+            // CHAIN_COMMAND_BLOCK -> WITH SPAWN TELEPORT BUTTON (FOR ANY OTHER LOCATION WHERE PUBLIC LODESTONE IS NEEDED)
+            if (Utilities.findFirstBlockUnder(location, 5, Material.COMMAND_BLOCK, Material.CHAIN_COMMAND_BLOCK) != null || (waypoint != null && waypoint.getOwner().equals(event.getPlayer().getUniqueId()) == true) == true) {
                 // Skipping when player is trying to place a block.
                 if (event.getPlayer().isSneaking() == true && (isBlockOrSummonsEntity(event.getPlayer().getInventory().getItemInMainHand()) == true || isBlockOrSummonsEntity(event.getPlayer().getInventory().getItemInMainHand())) == true)
                     return;
