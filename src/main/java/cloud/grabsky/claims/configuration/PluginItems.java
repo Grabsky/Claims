@@ -52,6 +52,10 @@ public final class PluginItems implements JsonConfiguration {
     public static ItemStack INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS;
 
 
+    // Interface > Functional > Icon No Players Found
+    @JsonPath("interface.functional.icon_no_players_found")
+    public static ItemStack INTERFACE_FUNCTIONAL_ICON_NO_PLAYERS_FOUND;
+
     // Interface > Functional > Icon Add Member
     @JsonPath("interface.functional.icon_add_member")
     public static ItemStack INTERFACE_FUNCTIONAL_ICON_ADD_MEMBER;

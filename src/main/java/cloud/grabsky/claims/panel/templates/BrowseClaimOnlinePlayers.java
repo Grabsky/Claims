@@ -113,6 +113,9 @@ public final class BrowseClaimOnlinePlayers implements Consumer<ClaimPanel> {
         // Rendering NEXT PAGE button.
         if (onlineClaimPlayersIterator.hasNext() == true)
             cPanel.setItem(26, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> this.render(cPanel, pageToDisplay + 1, maxOnPage));
+        // Showing "No Players" button if online players list is empty.
+        if (onlineClaimPlayers.isEmpty() == true)
+            cPanel.setItem(10, PluginItems.INTERFACE_FUNCTIONAL_ICON_NO_PLAYERS_FOUND, null);
         // ...
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseMembers.INSTANCE, true));
     }

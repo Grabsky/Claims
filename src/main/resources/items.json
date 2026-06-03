@@ -60,6 +60,13 @@
         },
         // Functional items.
         "functional": {
+            "icon_no_players_found": {
+                "material": "minecraft:player_head",
+                "meta": {
+                    "custom_name": "<white>Pusto... nie znaleziono graczy.",
+                    "model": "firedot:smile/neutral"
+                }
+            },
             "icon_add_member": {
                 "material": "minecraft:player_head",
                 "meta": {

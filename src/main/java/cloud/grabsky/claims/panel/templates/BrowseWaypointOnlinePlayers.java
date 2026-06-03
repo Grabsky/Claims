@@ -86,7 +86,6 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
         // ...
         final var onlineClaimPlayersIterator = moveIterator(onlineClaimPlayers.listIterator(), (pageToDisplay * maxOnPage) - maxOnPage);
         final var uiSlotsIterator = UI_SLOTS.iterator();
-        // ...
         // Rendering PREVIOUS PAGE button.
         if (onlineClaimPlayersIterator.hasPrevious() == true)
             cPanel.setItem(18, PluginItems.INTERFACE_NAVIGATION_PREVIOUS_PAGE, (event) -> this.render(cPanel, pageToDisplay - 1, maxOnPage));
@@ -148,6 +147,9 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
         // Rendering NEXT PAGE button.
         if (onlineClaimPlayersIterator.hasNext() == true)
             cPanel.setItem(26, PluginItems.INTERFACE_NAVIGATION_NEXT_PAGE, (event) -> this.render(cPanel, pageToDisplay + 1, maxOnPage));
+        // Showing "No Players" button if online players list is empty.
+        if (onlineClaimPlayers.isEmpty() == true)
+            cPanel.setItem(10, PluginItems.INTERFACE_FUNCTIONAL_ICON_NO_PLAYERS_FOUND, null);
         // ...
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
     }
