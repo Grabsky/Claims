@@ -96,7 +96,10 @@ public enum RenameSession implements Listener {
                         ActionButton.builder(PluginLocale.UI_RENAME_PANEL_BUTTON_CANCEL)
                                 .action(DialogAction.staticAction(ClickEvent.callback((_) -> {
                                     CURRENTLY_OPEN_DIALOGS.invalidate(uniqueId);
-                                    associatedPanel.open(audience, null);
+                                    associatedPanel.open(audience, (panel) -> {
+                                        Claims.getInstance().getBedrockScheduler().run(1L, (_) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+                                        return true;
+                                    });
                                 })))
                                 .build()))
                 .base(DialogBase.builder(PluginLocale.UI_RENAME_PANEL_TITLE)
