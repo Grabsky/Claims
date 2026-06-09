@@ -51,7 +51,7 @@ public final class PlayerListener implements Listener {
         plugin.getClaimManager().getClaimPlayer(player).getBorderEntities().clear();
     }
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerCommand(final PlayerCommandPreprocessEvent event) {
         final Player player = event.getPlayer();
         // Skipping if player has bypass permission.
