@@ -343,17 +343,20 @@ public final class PluginLocale implements JsonConfiguration {
 
     // Claim Block
 
+    @JsonPath("claim_block.display_name")
+    public static String CLAIM_BLOCK_DISPLAY_NAME;
+
     @JsonPath("claim_block.members_header")
-    public static String MEMBERS_HEADER;
+    public static String CLAIM_BLOCK_MEMBERS_HEADER;
 
     @JsonPath("claim_block.members_entry")
-    public static String MEMBERS_ENTRY;
+    public static String CLAIM_BLOCK_MEMBERS_ENTRY;
 
     @JsonPath("claim_block.flags_header")
-    public static String FLAGS_HEADER;
+    public static String CLAIM_BLOCK_FLAGS_HEADER;
 
     @JsonPath("claim_block.flags_entry")
-    public static String FLAGS_ENTRY;
+    public static String CLAIM_BLOCK_FLAGS_ENTRY;
 
 
     public static final class Commands implements JsonConfiguration {

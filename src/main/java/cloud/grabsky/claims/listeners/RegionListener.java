@@ -38,6 +38,8 @@ import io.papermc.paper.event.player.PlayerInventorySlotChangeEvent;
 import io.papermc.paper.event.player.PlayerStonecutterRecipeSelectEvent;
 import io.papermc.paper.persistence.PersistentDataContainerView;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -149,6 +151,11 @@ public final class RegionListener implements Listener {
                     event.setCancelled(false);
                     // Transferring stored properties to a new claim. Only if placed by the same person.
                     if (data.getOrDefault(Claims.Key.CLAIM_OWNER, STRING, "").equals(uuid.toString()) == true) {
+                        // Display Name
+                        final var name = data.get(Claims.Key.CLAIM_DISPLAY_NAME, PersistentDataType.STRING);
+                        if (name != null)
+                            claim.setDisplayName(name);
+                        // Members
                         final var rawMembers = data.get(Claims.Key.CLAIM_MEMBERS, PersistentDataType.LIST.strings());
                         if (rawMembers != null) for (final var rawMember : rawMembers) {
                             final var memberUniqueId = UUID.fromString(rawMember);
@@ -200,6 +207,8 @@ public final class RegionListener implements Listener {
                                 if (cPanel.getClaim() != null && cPanel.getClaim().equals(claim) == true)
                                     onlinePlayer.closeInventory();
                         });
+                        // Getting the claim display name.
+                        final String displayName = claim.getDisplayName();
                         // Getting the claim members.
                         final List<UUID> members = claim.getMembers().stream().map(ClaimPlayer::getUniqueId).toList();
                         // Deleting the claim and associated region.
@@ -217,13 +226,17 @@ public final class RegionListener implements Listener {
                             // Replacing [MEMBERS] and [FLAGS] in the ItemStack lore.
                             if (lore != null) for (final var line : lore) {
                                 switch (PlainTextComponentSerializer.plainText().serialize(line)) {
+                                    case "[DISPLAY_NAME]" -> {
+                                        if (displayName.equals(PluginConfig.CLAIM_SETTINGS_DEFAULT_DISPLAY_NAME) == false)
+                                            builder.addLore(MiniMessage.miniMessage().deserialize(PluginLocale.CLAIM_BLOCK_DISPLAY_NAME, Placeholder.unparsed("<display_name>", displayName)));
+                                    }
                                     case "[MEMBERS]" -> {
                                         if (members.isEmpty() == false) {
-                                            builder.addLore("", PluginLocale.MEMBERS_HEADER);
+                                            builder.addLore("", PluginLocale.CLAIM_BLOCK_MEMBERS_HEADER);
                                             // Appending members list to the lore.
                                             for (final var member : members) {
                                                 final var user = AzureProvider.getAPI().getUserCache().getUser(member);
-                                                builder.addLore(PluginLocale.MEMBERS_ENTRY.replace("<player>", (user != null) ? user.getName() : member.toString()));
+                                                builder.addLore(PluginLocale.CLAIM_BLOCK_MEMBERS_ENTRY.replace("<player>", (user != null) ? user.getName() : member.toString()));
                                             }
                                         }
                                     }

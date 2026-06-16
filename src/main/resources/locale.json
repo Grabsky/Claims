@@ -156,6 +156,7 @@
     },
     // This will be shown as part of claim block item lore.
     "claim_block": {
+        "display_name": "<!i><gray>Nazwa: <gold><display_name>",
         "members_header": "<!i><gray>Członkowie:",
         "members_entry": "<!i><dark_gray>› <gold><player>",
         "flags_header": "<!i><gray>Flagi:",

@@ -201,6 +201,7 @@ public final class Claims extends BedrockPlugin {
      */
     public static final class Key {
 
+        public static final NamespacedKey CLAIM_DISPLAY_NAME = new NamespacedKey("claims", "claim_display_name");
         public static final NamespacedKey CLAIM_TYPE = new NamespacedKey("claims", "claim_level");
         public static final NamespacedKey CLAIM_OWNER = new NamespacedKey("claims", "claim_owner");
         public static final NamespacedKey CLAIM_MEMBERS = new NamespacedKey("claims", "claim_members");
