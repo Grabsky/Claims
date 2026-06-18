@@ -228,7 +228,7 @@ public final class RegionListener implements Listener {
                                 switch (PlainTextComponentSerializer.plainText().serialize(line)) {
                                     case "[DISPLAY_NAME]" -> {
                                         if (displayName.equals(PluginConfig.CLAIM_SETTINGS_DEFAULT_DISPLAY_NAME) == false)
-                                            builder.addLore(MiniMessage.miniMessage().deserialize(PluginLocale.CLAIM_BLOCK_DISPLAY_NAME, Placeholder.unparsed("<display_name>", displayName)));
+                                            builder.addLore(MiniMessage.miniMessage().deserialize(PluginLocale.CLAIM_BLOCK_DISPLAY_NAME, Placeholder.unparsed("display_name", displayName)));
                                     }
                                     case "[MEMBERS]" -> {
                                         if (members.isEmpty() == false) {
@@ -250,6 +250,7 @@ public final class RegionListener implements Listener {
                             event.getBlock().getWorld().dropItem(
                                     event.getBlock().getLocation(),
                                     builder.setPersistentData(Claims.Key.CLAIM_OWNER, PersistentDataType.STRING, player.getUniqueId().toString())
+                                           .setPersistentData(Claims.Key.CLAIM_DISPLAY_NAME, PersistentDataType.STRING, displayName)
                                            .setPersistentData(Claims.Key.CLAIM_MEMBERS, PersistentDataType.LIST.strings(), members.stream().map(UUID::toString).toList())
                                            .setPersistentData(Claims.Key.CLAIM_TYPE, PersistentDataType.STRING, typeId)
                                            .build()

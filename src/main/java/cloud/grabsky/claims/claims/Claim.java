@@ -225,7 +225,7 @@ public final class Claim {
                 final var newLore = new ArrayList<Component>();
                 if (lore != null) for (final var line : lore) {
                     switch (PlainTextComponentSerializer.plainText().serialize(line)) {
-                        case "[MEMBERS]", "[FLAGS]" -> { /* SKIP */ }
+                        case "[MEMBERS]", "[FLAGS]", "[DISPLAY_NAME]" -> { /* SKIP */ }
                         default -> newLore.add(line);
                     }
                 }
