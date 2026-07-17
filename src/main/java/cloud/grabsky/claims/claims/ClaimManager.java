@@ -386,6 +386,8 @@ public final class ClaimManager {
         region.setFlag(CustomFlag.CLAIM_CENTER, regionCenter);
         // Setting default home location (modifiable)
         region.setFlag(Flags.TELE_LOC, regionCenter.setY(regionCenter.getY() + 0.5F));
+        // Allowing cross-region redstone etc. (regions must be owned by the same player)
+        region.setFlag(Flags.NONPLAYER_PROTECTION_DOMAINS, Set.of(owner.getUniqueId().toString()));
     }
 
     public @Nullable Claim getClaim(final @NotNull String id) {

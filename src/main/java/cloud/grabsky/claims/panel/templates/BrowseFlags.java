@@ -28,6 +28,7 @@ import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.Set;
 import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.translatable;
@@ -46,6 +47,9 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
             claim.setFlag(Flags.LEAF_DECAY, PluginFlags.LEAF_DECAY.getDefaultValue());
         if (claim.getFlag(Flags.ENDER_BUILD) == null)
             claim.setFlag(Flags.ENDER_BUILD, PluginFlags.ENDERMAN_GRIEF.getDefaultValue());
+        // Allowing cross-region redstone etc. (regions must be owned by the same player)
+        if (claim.getFlag(Flags.NONPLAYER_PROTECTION_DOMAINS) == null)
+            claim.setFlag(Flags.NONPLAYER_PROTECTION_DOMAINS, Set.of(claim.getOwners().getFirst().getUniqueId().toString()));
     }
 
     @Override
