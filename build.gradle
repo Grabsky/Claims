@@ -8,7 +8,7 @@ plugins {
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
 }
 
-final String VERSION = "26.1"
+final String VERSION = "26.1+"
 final String RUN_NUMBER = System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"
 
 group = "cloud.grabsky"
@@ -36,41 +36,47 @@ dependencies {
     compileOnly("org.projectlombok:lombok:1.18.42")
     annotationProcessor("org.projectlombok:lombok:1.18.42")
     // https://github.com/PaperMC/Paper
-    paperweight.paperDevBundle("26.1.2.build.+")
+    paperweight.paperDevBundle("26.2.build.+")
     // https://github.com/Grabsky/bedrock
-    paperLibrary("cloud.grabsky:bedrock:1.21.X-70")
+    paperLibrary("cloud.grabsky:bedrock:1.21.X-77")
     // https://github.com/Grabsky/commands
     paperLibrary("cloud.grabsky:commands:1.21.X-41")
     // https://github.com/Grabsky/configuration
     paperLibrary("cloud.grabsky:configuration-paper:1.21.4-59")
     // https://github.com/EngineHub/WorldGuard
-    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.15") {
+    compileOnly("com.sk89q.worldguard:worldguard-bukkit:7.0.17") {
         exclude group: "com.google.code.gson"
         exclude group: "com.google.guava"
         exclude group: "it.unimi.dsi"
     }
     // https://github.com/Grabsky/Azure
-    compileOnly("cloud.grabsky:azure-api:26.1-177") {
+    compileOnly("cloud.grabsky:azure-api:26.1-182") {
         exclude group: "cloud.grabsky", module: "bedrock"
     }
     // https://github.com/PlaceholderAPI/PlaceholderAPI
-    compileOnly("me.clip:placeholderapi:2.12.2")
+    compileOnly("me.clip:placeholderapi:2.12.3")
     // https://github.com/retrooper/packetevents
-    compileOnly("com.github.retrooper:packetevents-spigot:2.11.2")
+    compileOnly("com.github.retrooper:packetevents-spigot:2.13.0")
     // https://github.com/BlueMap-Minecraft/BlueMapAPI/
-    compileOnly("de.bluecolored:bluemap-api:2.7.7")
+    compileOnly("de.bluecolored:bluemap-api:2.8.0")
 }
 
 tasks {
     runServer {
         minecraftVersion("26.1.2")
         downloadPlugins {
-            modrinth("worldedit", "CkT32vix") // 7.4.0
-            modrinth("worldguard", "WaElxvDz") // 7.0.15
-            modrinth("placeholderapi", "2.12.2")
-            modrinth("luckperms", "v5.5.17-bukkit")
-            modrinth("packetevents", "2.11.2+spigot")
-            github("Grabsky", "Azure", "26.1+177", "Azure-26.1-177.jar")
+            // https://modrinth.com/plugin/worldedit/versions
+            modrinth("worldedit", "qNuPcliz")
+            // https://modrinth.com/plugin/worldguard/versions
+            modrinth("worldguard", "pI4UHLJL")
+            // https://modrinth.com/plugin/placeholderapi/versions
+            modrinth("placeholderapi", "2.12.3")
+            // https://modrinth.com/plugin/luckperms/versions
+            modrinth("luckperms", "v5.5.53-bukkit")
+            // https://modrinth.com/plugin/packetevents/versions
+            modrinth("packetevents", "2.13.0+spigot")
+            // https://github.com/Grabsky/Azure
+            github("Grabsky", "Azure", "26.1+182", "Azure-26.1-182.jar")
         }
     }
     compileJava {
