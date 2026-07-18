@@ -300,7 +300,7 @@ public class ClaimsCommand extends RootCommand {
                     claim.getCenter().x(), sender.getY(), claim.getCenter().z(), 0.0F, 0.0F
             );
             // Getting the next entity ID...
-            final int id = Bukkit.getUnsafe().nextEntityId();
+            final int id = Bukkit.getUnsafe().nextEntityId(sender.getWorld());
             // Storing entity identifier so it can be removed / modified later.
             claimSender.getBorderEntities().add(id);
             // Constructing packet(s)...
