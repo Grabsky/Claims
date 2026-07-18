@@ -45,6 +45,7 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEn
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerEntityTeleport;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSpawnEntity;
 import io.github.retrooper.packetevents.util.SpigotConversionUtil;
+import io.github.retrooper.packetevents.util.SpigotReflectionUtil;
 import io.papermc.paper.datacomponent.DataComponentTypes;
 import io.papermc.paper.math.BlockPosition;
 import org.bukkit.Bukkit;
@@ -300,7 +301,7 @@ public class ClaimsCommand extends RootCommand {
                     claim.getCenter().x(), sender.getY(), claim.getCenter().z(), 0.0F, 0.0F
             );
             // Getting the next entity ID...
-            final int id = Bukkit.getUnsafe().nextEntityId(sender.getWorld());
+            final int id = SpigotReflectionUtil.generateEntityId(sender.getWorld());
             // Storing entity identifier so it can be removed / modified later.
             claimSender.getBorderEntities().add(id);
             // Constructing packet(s)...
