@@ -48,14 +48,12 @@ import com.github.retrooper.packetevents.PacketEvents;
 import com.google.gson.Gson;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.util.Location;
-import com.sk89q.worldedit.world.World;
 import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.EnumFlag;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.LocationFlag;
 import com.sk89q.worldguard.protection.flags.StringFlag;
 import com.sk89q.worldguard.protection.flags.registry.FlagRegistry;
-import com.sk89q.worldguard.protection.managers.RegionManager;
 import com.sk89q.worldguard.session.SessionManager;
 import com.sk89q.worldguard.session.handler.ExitFlag;
 import io.github.retrooper.packetevents.factory.spigot.SpigotPacketEventsBuilder;
@@ -119,13 +117,10 @@ public final class Claims extends BedrockPlugin {
         // Reloading configuration and shutting the server down in case it fails.
         if (this.onReload() == false)
             this.getServer().shutdown();
-        // Creating instance of RegionManager
-        final World world = BukkitAdapter.adapt(PluginConfig.CLAIMS_WORLD);
-        final RegionManager regionManager = WorldGuard.getInstance().getPlatform().getRegionContainer().get(world);
         // Registering additional WorldGuard flags' handlers.
         Claims.CustomFlag.registerHandlers();
         // Initializing ClaimManager
-        this.claimManager = new ClaimManager(this, regionManager);
+        this.claimManager = new ClaimManager(this, BukkitAdapter.adapt(PluginConfig.CLAIMS_WORLD));
         this.waypointManager = new WaypointManager(this);
         // Registering Panel/GUI listeners.
         Panel.registerDefaultListeners(this);

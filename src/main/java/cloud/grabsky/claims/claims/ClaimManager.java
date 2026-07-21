@@ -32,6 +32,8 @@ import cloud.grabsky.configuration.paper.adapter.NamespacedKeyAdapter;
 import cloud.grabsky.configuration.paper.adapter.PersistentDataEntryAdapterFactory;
 import cloud.grabsky.configuration.paper.adapter.PersistentDataTypeAdapterFactory;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.world.World;
+import com.sk89q.worldguard.WorldGuard;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
 import com.sk89q.worldguard.protection.flags.StateFlag;
@@ -81,8 +83,7 @@ public final class ClaimManager {
     @Getter(AccessLevel.PUBLIC)
     private final Claims plugin;
 
-    @Getter(AccessLevel.PUBLIC)
-    private final RegionManager regionManager;
+    private final World claimsWorld;
 
     private final Map<String, Claim> claimsCache = new HashMap<>();
     private final Map<UUID, ClaimPlayer> claimPlayerCache = new HashMap<>();
@@ -90,12 +91,17 @@ public final class ClaimManager {
     @Getter(AccessLevel.PUBLIC)
     private final LinkedHashMap<String, Claim.Type> claimTypes = new LinkedHashMap<>();
 
-    public ClaimManager(final Claims plugin, final RegionManager regionManager) {
+    public ClaimManager(final Claims plugin, final World claimsWorld) {
         this.plugin = plugin;
-        this.regionManager = regionManager;
+        this.claimsWorld = claimsWorld;
         // ...
         this.cacheClaimTypes();
         this.cacheClaims();
+    }
+
+    // Reference must not be hold as it can easily become stale upon e.g. WorldGuard reload.
+    public RegionManager getRegionManager() {
+        return WorldGuard.getInstance().getPlatform().getRegionContainer().get(claimsWorld);
     }
 
     /**
@@ -175,7 +181,7 @@ public final class ClaimManager {
         final AtomicInteger totalClaims = new AtomicInteger(0);
         final AtomicInteger loadedClaims = new AtomicInteger(0);
         // Iterating over all regions
-        regionManager.getRegions().forEach((id, region) -> {
+        getRegionManager().getRegions().forEach((id, region) -> {
             // Skipping regions that are not starting with configured prefix.
             if (region.getId().startsWith(PluginConfig.REGION_PREFIX) == false)
                 return;
@@ -208,7 +214,7 @@ public final class ClaimManager {
      */
     public boolean containsClaim(final @NotNull String id) {
         // Removing "stale" regions if they don't exist in world anymore.
-        if (regionManager.hasRegion(id) == false)
+        if (getRegionManager().hasRegion(id) == false)
             claimsCache.remove(id);
         // ...
         return claimsCache.containsKey(id);
@@ -233,7 +239,7 @@ public final class ClaimManager {
         final BlockVector3 tMin = BlockVector3.at(x - maxRadius, location.getWorld().getMinHeight(), z - maxRadius);
         final BlockVector3 tMax = BlockVector3.at(x + maxRadius, location.getWorld().getMaxHeight(), z + maxRadius);
         // Checking boundaries are not colliding with any other regions, including other, not fully upgraded claims.
-        final boolean isColliding = regionManager.getApplicableRegions(new ProtectedCuboidRegion("_", true, tMin.subtract(maxRadius, 0, maxRadius), tMax.add(maxRadius, 0, maxRadius))).getRegions().stream()
+        final boolean isColliding = getRegionManager().getApplicableRegions(new ProtectedCuboidRegion("_", true, tMin.subtract(maxRadius, 0, maxRadius), tMax.add(maxRadius, 0, maxRadius))).getRegions().stream()
                 .anyMatch(region -> {
                     // Ignoring regions with lower priority.
                     if (region.getPriority() < PluginConfig.REGION_PRIORITY)
@@ -265,7 +271,7 @@ public final class ClaimManager {
         // Setting region owner.
         region.getOwners().addPlayer(owner.getUniqueId());
         // Adding WorldGuard region to the RegionManager.
-        regionManager.addRegion(region);
+        getRegionManager().addRegion(region);
         // Creating Claim object and caching it.
         final Claim claim = new Claim(id, this, region, type);
         claimsCache.put(id, claim);
@@ -281,14 +287,14 @@ public final class ClaimManager {
         // Removing claim from cache
         claimsCache.remove(id);
         // Removing claim from the world
-        regionManager.removeRegion(id);
+        getRegionManager().removeRegion(id);
     }
 
     /**
      * Returns {@link Claim} at specified {@link Location} or {@code null} if none or multiple claims are found.
      */
     public @Nullable Claim getClaimAt(final @NotNull Location location) {
-        final List<String> ids = regionManager.getApplicableRegionsIDs(adapt(location).toVector().toBlockPoint())
+        final List<String> ids = getRegionManager().getApplicableRegionsIDs(adapt(location).toVector().toBlockPoint())
                 .stream().filter(id -> id.startsWith(PluginConfig.REGION_PREFIX) == true).toList();
         // ...
         if (ids.size() != 1)
@@ -329,7 +335,7 @@ public final class ClaimManager {
         region.setFlag(CustomFlag.CLAIM_TYPE, newType.getId());
         // Redefining region
         newRegion.copyFrom(region);
-        regionManager.addRegion(newRegion);
+        getRegionManager().addRegion(newRegion);
         // Updating Claim with new WorldGuard region
         claim.setRegion(newRegion);
         claim.setType(newType);
