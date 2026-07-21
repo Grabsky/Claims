@@ -335,6 +335,12 @@ public class ClaimsCommand extends RootCommand {
                     // Cancelling the task if there are no border entities to sync or player is no longer online.
                     if (claimSender.getBorderEntities().isEmpty() == true || sender.isConnected() == false)
                         return false;
+                    // Cancelling the task if player switched worlds or is out of range.
+                    final int distance = (int) Math.pow(Math.max(16 * sender.getViewDistance(), 16), 2);
+                    if (sender.getWorld().equals(claim.getCenter().getWorld()) == false || sender.getLocation().distanceSquared(claim.getCenter()) >= distance) {
+                        destroyBorderEntities(claimSender);
+                        return false;
+                    }
                     // Skipping if player is mid-air. This method is deprecated but there's no good alternative. Should work perfectly fine in this situation.
                     if (sender.isOnGround() == false)
                         return true;
