@@ -8,7 +8,7 @@ plugins {
     id("io.papermc.paperweight.userdev") version "2.0.0-beta.21"
 }
 
-final String VERSION = "26.1+"
+final String VERSION = "26.2"
 final String RUN_NUMBER = System.getenv("GITHUB_RUN_NUMBER") ?: "DEV"
 
 group = "cloud.grabsky"
@@ -63,7 +63,7 @@ dependencies {
 
 tasks {
     runServer {
-        minecraftVersion("26.1.2")
+        minecraftVersion("26.2")
         downloadPlugins {
             // https://modrinth.com/plugin/worldedit/versions
             modrinth("worldedit", "qNuPcliz")
@@ -91,7 +91,7 @@ paper {
     main = "cloud.grabsky.claims.Claims"
     loader = "cloud.grabsky.claims.Claims\$PluginLoader"
     generateLibrariesJson = true
-    apiVersion = "26.1"
+    apiVersion = "26.2"
     serverDependencies {
         "PlaceholderAPI" { load = "BEFORE"; required = true }
         "packetevents"   { load = "BEFORE"; required = true }
