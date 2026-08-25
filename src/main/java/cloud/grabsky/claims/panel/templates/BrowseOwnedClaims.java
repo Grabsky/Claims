@@ -53,9 +53,7 @@ import static net.kyori.adventure.text.Component.translatable;
 
 // TO-DO: Clean up the mess.
 @ExtensionMethod(Extensions.class)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
-    /* SINGLETON */ public static final BrowseOwnedClaims INSTANCE = new BrowseOwnedClaims();
 
     private List<Claim> claims;
 
@@ -212,9 +210,9 @@ public final class BrowseOwnedClaims implements Consumer<ClaimPanel> {
             });
         });
         // Rendering other buttons.
-        cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+        cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), (event) -> cPanel.applyClaimTemplate(new BrowseWaypoints(), true));
         cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), null);
-        cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseRelativeClaims.INSTANCE, true));
+        cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), (event) -> cPanel.applyClaimTemplate(new BrowseRelativeClaims(), true));
         // Rendering return button.
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> {
             // Returning to previous view if applicable.

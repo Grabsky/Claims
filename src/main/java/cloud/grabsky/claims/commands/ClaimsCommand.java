@@ -154,7 +154,7 @@ public class ClaimsCommand extends RootCommand {
                         .setAccessBlockLocation(null)
                         .build().open(sender, (panel) -> {
                             if (panel instanceof ClaimPanel cPanel) {
-                                plugin.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                                plugin.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(new BrowseWaypoints(), false));
                                 return true;
                             }
                             return false;

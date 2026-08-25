@@ -56,9 +56,7 @@ import static net.kyori.adventure.text.Component.translatable;
 
 // TO-DO: Clean up the mess.
 @ExtensionMethod(Extensions.class)
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class BrowseWaypoints implements Consumer<ClaimPanel> {
-    /* SINGLETON */ public static final BrowseWaypoints INSTANCE = new BrowseWaypoints();
 
     private List<Waypoint> waypoints;
 
@@ -221,8 +219,8 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
         });
         // Rendering other buttons.
         cPanel.setItem(12, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_WAYPOINTS), null);
-        cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseOwnedClaims.INSTANCE, true));
-        cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), (event) -> cPanel.applyClaimTemplate(BrowseRelativeClaims.INSTANCE, true));
+        cPanel.setItem(14, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_OWNED_CLAIMS), (event) -> cPanel.applyClaimTemplate(new BrowseOwnedClaims(), true));
+        cPanel.setItem(16, new ItemStack(PluginItems.INTERFACE_CATEGORIES_BROWSE_RELATIVE_CLAIMS), (event) -> cPanel.applyClaimTemplate(new BrowseRelativeClaims(), true));
         // Rendering return button.
         cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> {
             // Returning to previous view if applicable.
@@ -260,10 +258,10 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
             });
             // ...
             cPanel.setItem(13, icon.build(), (event) -> waypoint.destroy(Claims.getInstance().getWaypointManager()).thenAcceptAsync((___) -> {
-                cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true);
+                cPanel.applyClaimTemplate(new BrowseWaypoints(), true);
             }));
             // RETURN
-            cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+            cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(new BrowseWaypoints(), true));
         }
 
     }

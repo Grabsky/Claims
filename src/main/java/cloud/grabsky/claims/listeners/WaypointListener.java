@@ -122,7 +122,7 @@ public final class WaypointListener implements Listener {
                         .setClaimManager(claimManager)
                         .setAccessBlockLocation(location)
                         .build().open(event.getPlayer(), (panel) -> {
-                            plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                            plugin.getBedrockScheduler().run(1L, (task) -> ((ClaimPanel) panel).applyClaimTemplate(new BrowseWaypoints(), false));
                             return true;
                         });
             }

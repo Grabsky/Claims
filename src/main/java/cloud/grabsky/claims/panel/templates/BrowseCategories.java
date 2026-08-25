@@ -66,7 +66,7 @@ public enum BrowseCategories implements Consumer<ClaimPanel> {
         // ...
         final Player viewer = cPanel.getViewer();
         // Setting menu items
-        cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_TELEPORTS, (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+        cPanel.setItem(11, PluginItems.INTERFACE_CATEGORIES_BROWSE_TELEPORTS, (event) -> cPanel.applyClaimTemplate(new BrowseWaypoints(), true));
         cPanel.setItem(13, new ItemBuilder(PluginItems.INTERFACE_CATEGORIES_BROWSE_MEMBERS).setSkullTexture(viewer).build(), (event) -> cPanel.applyClaimTemplate(BrowseMembers.INSTANCE, true));
         // Button: FLAGS
         cPanel.setItem(15, PluginItems.INTERFACE_CATEGORIES_BROWSE_FLAGS, event -> cPanel.applyClaimTemplate(BrowseFlags.INSTANCE, true));

@@ -337,7 +337,7 @@ public final class RegionListener implements Listener {
                         .setAccessBlockLocation(block.getLocation())
                         .build().open(event.getPlayer(), (panel) -> {
                             if (panel instanceof ClaimPanel cPanel) {
-                                claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, false));
+                                claims.getBedrockScheduler().run(1L, (task) -> cPanel.applyClaimTemplate(new BrowseWaypoints(), false));
                                 return true;
                             }
                             return false;

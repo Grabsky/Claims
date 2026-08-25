@@ -97,7 +97,7 @@ public enum RenameSession implements Listener {
                                 .action(DialogAction.staticAction(ClickEvent.callback((_) -> {
                                     CURRENTLY_OPEN_DIALOGS.invalidate(uniqueId);
                                     associatedPanel.open(audience, (panel) -> {
-                                        Claims.getInstance().getBedrockScheduler().run(1L, (_) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+                                        Claims.getInstance().getBedrockScheduler().run(1L, (_) -> ((ClaimPanel) panel).applyClaimTemplate(new BrowseWaypoints(), true));
                                         return true;
                                     });
                                 })))
@@ -146,7 +146,7 @@ public enum RenameSession implements Listener {
                             .setClaim(associatedPanel.getClaim())
                             .setAccessBlockLocation(associatedPanel.getAccessBlockLocation())
                             .build().open(audience, (panel) -> {
-                                Claims.getInstance().getBedrockScheduler().run(1L, (_) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+                                Claims.getInstance().getBedrockScheduler().run(1L, (_) -> ((ClaimPanel) panel).applyClaimTemplate(new BrowseWaypoints(), true));
                                 return true;
                             });
                 });
@@ -178,7 +178,7 @@ public enum RenameSession implements Listener {
                     .setClaim(claim)
                     .setAccessBlockLocation(associatedPanel.getAccessBlockLocation())
                     .build().open(audience, (panel) -> {
-                        Claims.getInstance().getBedrockScheduler().run(1L, (_) -> ((ClaimPanel) panel).applyClaimTemplate(BrowseOwnedClaims.INSTANCE, true));
+                        Claims.getInstance().getBedrockScheduler().run(1L, (_) -> ((ClaimPanel) panel).applyClaimTemplate(new BrowseOwnedClaims(), true));
                         return true;
                     });
         });

@@ -151,7 +151,7 @@ public final class BrowseWaypointOnlinePlayers implements Consumer<ClaimPanel> {
         if (onlineClaimPlayers.isEmpty() == true)
             cPanel.setItem(10, PluginItems.INTERFACE_FUNCTIONAL_ICON_NO_PLAYERS_FOUND, null);
         // ...
-        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(BrowseWaypoints.INSTANCE, true));
+        cPanel.setItem(49, PluginItems.INTERFACE_NAVIGATION_RETURN, (event) -> cPanel.applyClaimTemplate(new BrowseWaypoints(), true));
     }
 
 }
