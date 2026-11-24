@@ -18,10 +18,10 @@ import cloud.grabsky.azure.api.user.User;
 import cloud.grabsky.bedrock.components.Message;
 import cloud.grabsky.bedrock.helpers.ItemBuilder;
 import cloud.grabsky.claims.claims.ClaimPlayer;
+import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.entity.Player;
@@ -31,12 +31,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
 
 public enum BrowseMembers implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
 
-    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_members", NamedTextColor.WHITE);
     private static final List<Integer> UI_SLOTS = List.of(11, 12, 13, 14, 15, 20, 21, 22, 23, 24);
 
     @Override
@@ -47,7 +45,7 @@ public enum BrowseMembers implements Consumer<ClaimPanel> {
             return;
         }
         // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
-        cPanel.updateTitle(INVENTORY_TITLE);
+        cPanel.updateTitle(PluginConfig.INTERFACE_TITLES_BROWSE_MEMBERS);
         // "Rendering" the inventory contents.
         this.render(cPanel);
     }

@@ -14,7 +14,6 @@
  */
 package cloud.grabsky.claims.panel;
 
-import cloud.grabsky.bedrock.components.ComponentBuilder;
 import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimManager;
@@ -22,7 +21,6 @@ import cloud.grabsky.claims.claims.ClaimPlayer;
 import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.util.InventoryViewExtensions;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -86,17 +84,13 @@ public final class ClaimPanel extends Panel {
 
     public void updateTitle(final @NotNull Component title) {
         final ClaimPlayer editor = manager.getClaimPlayer(this.getViewer());
-        // Setting the title. '*' is appended when modifying not-self-owned claim.
         if (editor.toPlayer().getOpenInventory().getTopInventory().getHolder() instanceof ClaimPanel)
             editor.toPlayer().getOpenInventory().title(
                     (claim != null && editor.isOwnerOf(claim) == false)
-                            ? ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.-10").append(title).appendTranslation("ui.util.blank.-176").appendTranslation("ui.claims.not_owner").build()
-                            : ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.-10").append(title).build()
+                            ? Component.empty().append(title).append(PluginConfig.INTERFACE_TITLES_NOT_OWNER)
+                            : title
             );
     }
-
-
-    public static final Component INVENTORY_TITLE = ComponentBuilder.of(ComponentBuilder.EMPTY).appendTranslation("ui.util.blank.-10").appendTranslation("ui.claims.empty").color(NamedTextColor.WHITE).build();
 
     public static final class Builder extends Panel.Builder<ClaimPanel> {
 
@@ -126,7 +120,7 @@ public final class ClaimPanel extends Panel {
 
         @Override
         public @NotNull ClaimPanel build() {
-            return new ClaimPanel(INVENTORY_TITLE, InventoryType.CHEST, 6,
+            return new ClaimPanel(PluginConfig.INTERFACE_TITLES_EMPTY, InventoryType.CHEST, 6,
                     // OPEN ACTION
                     (event) -> {
                         // Cancelling the even in case other Player is currently viewing this inventory instance.

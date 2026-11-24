@@ -17,15 +17,15 @@ version = "$VERSION+$RUN_NUMBER"
 repositories {
     mavenLocal()
     mavenCentral()
-    // Repository for the Paper API.
+    // https://github.com/PaperMC/Paper
     maven { url = "https://repo.papermc.io/repository/maven-public/" }
-    // Repository for the WorldEdit and WorldGuard APIs.
+    // https://github.com/EngineHub/
     maven { url = "https://maven.enginehub.org/repo/" }
-    // Repository for the PlaceholderAPI, API.
+    // https://github.com/PlaceholderAPI/PlaceholderAPI
     maven { url = "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
-    // Repository containing the 'PacketEvents' dependency.
+    // https://github.com/retrooper/packetevents
     maven { url = "https://repo.codemc.io/repository/maven-releases" }
-    // Repository containing 'BlueMap' dependency.
+    // https://github.com/BlueMap-Minecraft/BlueMapAPI/
     maven { url = "https://repo.bluecolored.de/releases" }
     // Repository containing all my libraries.
     maven { url = "https://repo.repsy.io/grabsky/maven" }

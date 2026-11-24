@@ -52,7 +52,6 @@ import lombok.experimental.ExtensionMethod;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
 
 // TO-DO: Clean up the mess.
 @ExtensionMethod(Extensions.class)
@@ -60,7 +59,6 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
 
     private List<Waypoint> waypoints;
 
-    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_waypoints", NamedTextColor.WHITE);
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("dd.MM.yyyy HH:mm");
     private static final List<Integer> UI_SLOTS = List.of(29, 30, 31, 32, 33);
 
@@ -76,7 +74,7 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
                 .sorted((s1, s2) -> s1.getDisplayName().compareToIgnoreCase(s2.getDisplayName()))
                 .toList();
         // ...
-        cPanel.updateTitle(INVENTORY_TITLE);
+        cPanel.updateTitle(PluginConfig.INTERFACE_TITLES_BROWSE_WAYPOINTS);
         // ...
         this.render(cPanel, viewer, 1, UI_SLOTS.size());
     }
@@ -236,11 +234,9 @@ public final class BrowseWaypoints implements Consumer<ClaimPanel> {
 
         private final Waypoint waypoint;
 
-        private static final Component INVENTORY_TITLE = translatable("ui.claims.confirmation", NamedTextColor.WHITE);
-
         @Override
         public void accept(final @NotNull ClaimPanel cPanel) {
-            cPanel.updateTitle(INVENTORY_TITLE);
+            cPanel.updateTitle(PluginConfig.INTERFACE_TITLES_CONFIRMATION);
             // ...
             final Player viewer = (Player) cPanel.getInventory().getViewers().getFirst();
             // ...

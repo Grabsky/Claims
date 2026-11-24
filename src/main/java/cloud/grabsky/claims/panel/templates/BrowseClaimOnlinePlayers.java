@@ -24,7 +24,6 @@ import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Bukkit;
@@ -37,13 +36,11 @@ import java.util.function.Consumer;
 
 import static cloud.grabsky.claims.util.Utilities.moveIterator;
 import static net.kyori.adventure.text.Component.text;
-import static net.kyori.adventure.text.Component.translatable;
 
 public final class BrowseClaimOnlinePlayers implements Consumer<ClaimPanel> {
 
     private List<ClaimPlayer> onlineClaimPlayers = new ArrayList<>();
 
-    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_claim_online_players", NamedTextColor.WHITE);
     private static final List<Integer> UI_SLOTS = List.of(10, 11, 12, 13, 14, 15, 16, 19, 20, 21, 22, 23, 24, 25, 28, 29, 30, 31, 32, 33, 34);
 
     @Override
@@ -64,7 +61,7 @@ public final class BrowseClaimOnlinePlayers implements Consumer<ClaimPanel> {
                 .filter(claimPlayer -> claimPlayer.isMemberOf(claim) == false) // excluding member(s)
                 .toList();
         // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
-        cPanel.updateTitle(INVENTORY_TITLE);
+        cPanel.updateTitle(PluginConfig.INTERFACE_TITLES_BROWSE_CLAIM_ONLINE_PLAYERS);
         // "Rendering" the inventory contents.
         this.render(cPanel, 1, UI_SLOTS.size());
     }

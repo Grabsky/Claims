@@ -97,5 +97,22 @@
         "allow_on_authorized_claims": true,
         // Whether blocked commands should be allowed on unauthorized claims.
         "allow_on_unauthorized_claims": false
+    },
+
+    "interface_titles": {
+        "empty": "<shift:-8><white><lang:ui.claims.empty>",
+        "confirmation": "<shift:-8><white><lang:ui.claims.confirmation>",
+        // Lodestone
+        "browse_waypoints": "<shift:-8><white><lang:ui.claims.browse_waypoints>",
+        "browse_owned_claims": "<shift:-8><white><lang:ui.claims.browse_owned_claims>",
+        "browse_relative_claims": "<shift:-8><white><lang:ui.claims.browse_relative_claims>",
+        "browse_waypoint_online_players": "<shift:-8><white><lang:ui.claims.browse_waypoint_online_players>",
+        // Claim
+        "browse_categories": "<shift:-8><white><lang:ui.claims.browse_categories>",
+        "browse_members": "<shift:-8><white><lang:ui.claims.browse_members>",
+        "browse_claim_online_players": "<shift:-8><white><lang:ui.claims.browse_claim_online_players>",
+        "browse_flags": "<shift:-8><white><lang:ui.claims.browse_flags>",
+        // This is appended to the title when viewer has access to the UI but is not a claim owner.
+        "not_owner": "<shift:-175><lang:ui.claims.not_owner>"
     }
 }

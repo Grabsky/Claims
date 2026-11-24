@@ -19,6 +19,7 @@ import cloud.grabsky.configuration.JsonConfiguration;
 import cloud.grabsky.configuration.JsonNullable;
 import cloud.grabsky.configuration.JsonPath;
 import net.kyori.adventure.sound.Sound;
+import net.kyori.adventure.text.Component;
 import org.bukkit.World;
 
 import java.util.List;
@@ -123,5 +124,40 @@ public final class PluginConfig implements JsonConfiguration {
 
     @JsonPath("blocked_commands_settings.allow_on_unauthorized_claims")
     public static Boolean BLOCKED_COMMANDS_SETTINGS_ALLOW_ON_UNAUTHORIZED_CLAIMS;
+
+    // Interface Titles
+
+    @JsonPath("interface_titles.empty")
+    public static Component INTERFACE_TITLES_EMPTY;
+
+    @JsonPath("interface_titles.confirmation")
+    public static Component INTERFACE_TITLES_CONFIRMATION;
+
+    @JsonPath("interface_titles.browse_waypoints")
+    public static Component INTERFACE_TITLES_BROWSE_WAYPOINTS;
+
+    @JsonPath("interface_titles.browse_owned_claims")
+    public static Component INTERFACE_TITLES_BROWSE_OWNED_CLAIMS;
+
+    @JsonPath("interface_titles.browse_relative_claims")
+    public static Component INTERFACE_TITLES_BROWSE_RELATIVE_CLAIMS;
+
+    @JsonPath("interface_titles.browse_waypoint_online_players")
+    public static Component INTERFACE_TITLES_BROWSE_WAYPOINT_ONLINE_PLAYERS;
+
+    @JsonPath("interface_titles.browse_categories")
+    public static Component INTERFACE_TITLES_BROWSE_CATEGORIES;
+
+    @JsonPath("interface_titles.browse_members")
+    public static Component INTERFACE_TITLES_BROWSE_MEMBERS;
+
+    @JsonPath("interface_titles.browse_claim_online_players")
+    public static Component INTERFACE_TITLES_BROWSE_CLAIM_ONLINE_PLAYERS;
+
+    @JsonPath("interface_titles.browse_flags")
+    public static Component INTERFACE_TITLES_BROWSE_FLAGS;
+
+    @JsonPath("interface_titles.not_owner")
+    public static Component INTERFACE_TITLES_NOT_OWNER;
 
 }

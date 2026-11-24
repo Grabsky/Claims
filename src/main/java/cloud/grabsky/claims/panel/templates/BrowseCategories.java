@@ -22,7 +22,6 @@ import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.configuration.PluginLocale;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,13 +37,10 @@ import org.jetbrains.annotations.NotNull;
 import static cloud.grabsky.bedrock.helpers.Conditions.requirePresent;
 import static cloud.grabsky.bedrock.helpers.Inventories.hasSimilarItems;
 import static cloud.grabsky.bedrock.helpers.Inventories.removeSimilarItems;
-import static net.kyori.adventure.text.Component.translatable;
 import static net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer.plainText;
 
 public enum BrowseCategories implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
-
-    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_categories", NamedTextColor.WHITE);
 
     private static final String PERMISSION_BYPASS_UPGRADE_COST = "claims.bypass.ignore_upgrade_cost";
 
@@ -56,7 +52,7 @@ public enum BrowseCategories implements Consumer<ClaimPanel> {
             return;
         }
         // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
-        cPanel.updateTitle(INVENTORY_TITLE);
+        cPanel.updateTitle(PluginConfig.INTERFACE_TITLES_BROWSE_CATEGORIES);
         // "Rendering" the inventory contents.
         this.render(cPanel.getClaim(), cPanel);
     }

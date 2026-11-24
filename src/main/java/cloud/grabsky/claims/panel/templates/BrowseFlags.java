@@ -18,25 +18,21 @@ import cloud.grabsky.bedrock.inventory.Panel;
 import cloud.grabsky.claims.Claims;
 import cloud.grabsky.claims.claims.Claim;
 import cloud.grabsky.claims.claims.ClaimFlag;
+import cloud.grabsky.claims.configuration.PluginConfig;
 import cloud.grabsky.claims.configuration.PluginFlags;
 import cloud.grabsky.claims.configuration.PluginItems;
 import cloud.grabsky.claims.panel.ClaimPanel;
 import com.sk89q.worldguard.protection.flags.Flag;
 import com.sk89q.worldguard.protection.flags.Flags;
 import com.sk89q.worldguard.protection.flags.RegionGroup;
-import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.format.NamedTextColor;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.Set;
 import java.util.function.Consumer;
 
-import static net.kyori.adventure.text.Component.translatable;
 
 public enum BrowseFlags implements Consumer<ClaimPanel> {
     /* SINGLETON */ INSTANCE;
-
-    private static final Component INVENTORY_TITLE = translatable("ui.claims.browse_flags", NamedTextColor.WHITE);
 
     public void DFU(final Claim claim) {
         if (claim.getFlag(Flags.GRASS_SPREAD) == null)
@@ -64,7 +60,7 @@ public enum BrowseFlags implements Consumer<ClaimPanel> {
         // Calling DFU for flags that were added after claimed region has been created.
         DFU(claim);
         // Changing (client-side) title of the inventory to render custom resource-pack texture on top of it.
-        cPanel.updateTitle(INVENTORY_TITLE);
+        cPanel.updateTitle(PluginConfig.INTERFACE_TITLES_BROWSE_FLAGS);
         // ...ROW 1
         cPanel.setItem(11,
                 createDisplay(claim, Flags.USE, PluginFlags.USE),
